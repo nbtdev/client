@@ -10,13 +10,17 @@ function onLogin() {
 		type: "POST", 
 		data: JSON.stringify(login)
 	}).error(function(err) {
-		alert("error: " + err);
+		alert(err);
 	}).success(function(data) {
 		var resp = JSON.parse(data);
 		if (resp.error === true)
-			alert("failure: " + resp.message);
-		else
-			alert("success");
+			$("#loginBoxStatus").text(resp.message);
+		else {
+			token = JSON.parse(data);
+			
+			// replace login box with logged-in verbiage
+			$("#loginBox").empty();
+		}		
 	});
 }
 
@@ -71,6 +75,7 @@ function initLoginBox(loginBox) {
 			class: "loginBoxStatus",
 			id: "loginBoxStatus"
 		});
+		tr.append(td);
 		table.append(tr);
 
 		//form.append(table);
