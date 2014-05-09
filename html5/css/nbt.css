@@ -1,0 +1,8 @@
+.pseudo_link {
+	cursor: pointer;
+	color: #404080;
+}
+
+.pseudo_link:hover {
+	color: #404010;
+}
