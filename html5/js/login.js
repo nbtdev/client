@@ -1,5 +1,36 @@
 var token = null;
 
+var cookieString = document.cookie;
+var cookies = cookieString.split(';');
+var needle = "nbt_token=";
+for (var i=0; i<cookies.length; ++i) {
+	var c = cookies[i].trim();
+	if (c.indexOf(needle)==0) {
+		token = JSON.parse(c.substring(needle.length, c.length));
+		break;
+	}
+}
+
+function setLoggedIn() {
+	var box = $("#loginBox");
+	box.empty();
+	
+	var table = $("<table/>");
+	var tr = $("<tr/>");
+	var td = $("<td/>");
+	td.text("Logged in as " + token.displayName);
+	tr.append(td);
+	td = $("<td/>", {
+		class: "pseudo_link",
+		onclick: "onLogout()"
+	});
+	td.text("(Log Out)");
+	tr.append(td);
+	table.append(tr);
+	
+	box.append(table);
+}
+
 function onLogin() {
 	var login = new Object();
 	login.username = $("#txtUsername").val();
@@ -19,24 +50,16 @@ function onLogin() {
 			var resp = JSON.parse(data);
 			token = resp.data;
 			
+			if ($("#chkRememberMe").is(':checked')) {
+				// if the user has the "remember me" box checked, store
+				// the token value in a cookie
+//				var expString = $.format.date(token.expiry, 'yyyy/MM/dd HH:mm:ss');
+//				document.cookie="nbt_token=" + JSON.stringify(token) = "; expires=" + expString;
+				document.cookie="nbt_token=" + JSON.stringify(token);
+			}
+			
 			// replace login box with logged-in verbiage
-			var box = $("#loginBox");
-			box.empty();
-			
-			var table = $("<table/>");
-			var tr = $("<tr/>");
-			var td = $("<td/>");
-			td.text("Logged in as " + token.displayName);
-			tr.append(td);
-			td = $("<td/>", {
-				class: "pseudo_link",
-				onclick: "onLogout()"
-			});
-			td.text("(Log Out)");
-			tr.append(td);
-			table.append(tr);
-			
-			box.append(table);
+			setLoggedIn();
 		}		
 	});
 }
@@ -95,6 +118,20 @@ function initLoginBox(loginBox) {
 			});
 			tr.append(td);
 			table.append(tr);
+			
+			tr = $("<tr/>");
+			td = $("<td/>", {
+				colspan: "2"
+			});
+			inp = $("<input/>", {
+				type: "checkbox",
+				id: "chkRememberMe",
+			});
+
+			td.append(inp);
+			td.append("Remember me");
+			tr.append(td);
+			table.append(tr);
 	
 			//form.append(table);
 			loginBox.append(table);
@@ -103,7 +140,7 @@ function initLoginBox(loginBox) {
 		}
 	}
 	else {
-		// check to see if token is valid
+		setLoggedIn();
 	}
 }
 
@@ -118,5 +155,8 @@ function onLogout() {
 		// regardless of success or failure, perform the logout stuff
 		token = null;
 		initLoginBox($("#loginBox"));
+		
+		// clear login token cookie
+		document.cookie = "nbt_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 	}
 }
