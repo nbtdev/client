@@ -11,8 +11,7 @@ for (var i=0; i<cookies.length; ++i) {
 	}
 }
 
-function setLoggedIn() {
-	var box = $("#loginBox");
+function setLoggedIn(box) {
 	box.empty();
 	
 	var table = $("<table/>");
@@ -31,6 +30,25 @@ function setLoggedIn() {
 	box.append(table);
 }
 
+function isTokenValid(tok) {
+	$.ajax({
+		url: "http://" + location.hostname + ":8080/api/v1.0/login/" + tok.value,
+		type: "GET"
+	}).error(function(err) {
+		alert(err);
+	}).success(function(data) {
+		var resp = JSON.parse(data);
+		if (resp.error === true)
+			alert(resp.message);
+		else {
+			var resp = JSON.parse(data);
+			return resp.data;
+		}
+	});
+
+	return true;
+}
+
 function onLogin() {
 	var login = new Object();
 	login.username = $("#txtUsername").val();
@@ -44,8 +62,11 @@ function onLogin() {
 		alert(err);
 	}).success(function(data) {
 		var resp = JSON.parse(data);
+		var loginBox = $("#loginBox");
+		var loginBoxStatus = $("#loginBoxStatus");
+		
 		if (resp.error === true)
-			$("#loginBoxStatus").text(resp.message);
+			loginBoxStatus.text(resp.message);
 		else {
 			var resp = JSON.parse(data);
 			token = resp.data;
@@ -59,7 +80,7 @@ function onLogin() {
 			}
 			
 			// replace login box with logged-in verbiage
-			setLoggedIn();
+			setLoggedIn(loginBox);
 		}		
 	});
 }
@@ -140,7 +161,7 @@ function initLoginBox(loginBox) {
 		}
 	}
 	else {
-		setLoggedIn();
+		setLoggedIn(loginBox);
 	}
 }
 
@@ -159,4 +180,13 @@ function onLogout() {
 		// clear login token cookie
 		document.cookie = "nbt_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 	}
+}
+
+// actually check the server to see if token is valid (if it's set)
+if (token) {
+	var loginBox = $("#loginBox");
+	if (isTokenValid(token))
+		setLoggedIn(loginBox);
+	else
+		initLoginBox(loginBox);
 }
