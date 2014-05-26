@@ -1,10 +1,61 @@
+body {
+	background-color: black;
+	color: #f0f0f0;
+	font-family: arial,verdana;
+	font-size: smaller;
+}
+
+input[type=text] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c04040;
+}
+
+input[type=password] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c04040;
+}
+
+input[type=button] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c06060;
+}
+
+.left_side {
+	display: inline-block;
+}
+
+.content_area {
+	display: inline-block;
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+.editable_data_table {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #660000;
+	border-spacing: 0px;
+}
+
+.editable_data_table th {
+	border-style: solid;
+	border-collapse: collapse;
+	text-align: left;
+	border-width: 1px;
+	border-color: #990000;
+	color: white;
+}
+
 .pseudo_link {
 	cursor: pointer;
-	color: #404080;
+	color: #8080c0;
 }
 
 .pseudo_link:hover {
-	color: #404010;
+	color: #c0c010;
 }
 
 .loginBoxStatus {

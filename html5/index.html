@@ -3,15 +3,115 @@
 <head>
 <meta charset="ISO-8859-1">
 <script src="js/jquery-2.1.1.js"></script>
-<script src="js/login.js"></script>
+<script src="js/jquery-ui-1.10.4.js"></script>
+<script src="js/nbt/v1.0/login.js"></script>
+<script src="js/nbt/v1.0/nbt.js"></script>
 <link href="css/nbt.css" rel="stylesheet" />
 <title>NetBattleTech Automation</title>
 </head>
 <body>
-<div id="loginBox" />
+
+<!--  header area (top)  -->
+<div>
+	<div id="loginBox"></div>
+</div>
+
+<!--  body area (middle) -->
+<div>
+	<!--  left side -->
+	<div class="left_side">
+		<div id="leagueListBox" >
+			<div>Leagues:</div>
+			<select id="lstLeagues" onchange="changeCurrentLeague(this);">
+				<option>Select League...</option>
+			</select>
+		</div>
+		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
+	</div>
+
+	<!--  content area -->
+	<div class="content_area" id="main_contents">
+	</div>
+</div>
+
+<!--  footer area (bottom) -->
+<div>
+</div>
 
 </body>
-<script language="javascript">
+<script>
+var leagueId = null;
+
 initLoginBox($("#loginBox"));
+
+var rtn = fetchLeagues(
+		token, 
+		function(obj) {
+			// assume that obj is a list of League objects, with displayName and leagueId props on each
+			var lstLeagues = $("#lstLeagues");
+			var selectedIdx = 0;
+			for (var i=0; i<obj.length; ++i) {
+				var opt = $("<option/>");
+				opt.val(obj[i].leagueId);
+				opt.text(obj[i].displayName);
+				
+				if (leagueId === obj[i].leagueId)
+					selectedIdx = i;
+					
+				lstLeagues.append(opt);
+			}
+			
+			lstLeagues[0].selectedIndex = selectedIdx + 1;
+		},
+		function (errText) {
+			alert (errText);
+		}
+	);
+
+//check cookies to see if we saved off a previous league choice
+var cookieString = document.cookie;
+var cookies = cookieString.split(';');
+var needle = "nbt_league=";
+for (var i=0; i<cookies.length; ++i) {
+	var c = cookies[i].trim();
+	if (c.indexOf(needle)==0) {
+		leagueId = c.substring(needle.length, c.length);
+		break;
+	}
+}
+
+function changeCurrentLeague(_this) {
+	var id = _this.options[_this.selectedIndex].value;
+	document.cookie="nbt_league=" + id;
+	leagueId = id;
+	
+	// TODO: Make selected league name bold?
+			
+	// TODO: show list of units
+} 
+
+// 'data' will be an array of Unit objects
+function populateUnits(data) {
+	var body = $("#main_contents");
+	body.empty();
+	
+	var headers = {name: "Name", stat: "Status", type: "Class"};
+	
+	createEditableTable(
+		body,
+		data,
+		headers);
+}
+
+function listUnits() {
+	var rtn = fetchUnits(
+		token, 
+		leagueId,
+		populateUnits,
+		function(errMsg) {
+			alert(errMsg);
+		}
+	);
+}
 </script>
 </html>

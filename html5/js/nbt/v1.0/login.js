@@ -1,5 +1,7 @@
+// "the" token
 var token = null;
 
+// check cookies to see if we saved off a previous token
 var cookieString = document.cookie;
 var cookies = cookieString.split(';');
 var needle = "nbt_token=";
