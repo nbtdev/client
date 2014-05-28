@@ -27,6 +27,7 @@
 			</select>
 		</div>
 		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
+		<div><span class="pseudo_link" onclick="listRoles()">Roles</span></div>
 	</div>
 
 	<!--  content area -->
@@ -90,7 +91,7 @@ function changeCurrentLeague(_this) {
 	// TODO: show list of units
 } 
 
-// 'data' will be an array of Unit objects
+//'data' will be an array of Unit objects
 function populateUnits(data) {
 	var body = $("#main_contents");
 	body.empty();
@@ -103,11 +104,34 @@ function populateUnits(data) {
 		headers);
 }
 
+// 'data' will be an array of Role objects
+function populateRoles(roles) {
+	var body = $("#main_contents");
+	body.empty();
+	
+	var headers = {name: "Name", shortName: "Short Name"};
+	
+	createEditableTable(
+		body,
+		roles,
+		headers);
+}
+
 function listUnits() {
 	var rtn = fetchUnits(
 		token, 
 		leagueId,
 		populateUnits,
+		function(errMsg) {
+			alert(errMsg);
+		}
+	);
+}
+
+function listRoles() {
+	var rtn = fetchRoles(
+		token, 
+		populateRoles,
 		function(errMsg) {
 			alert(errMsg);
 		}

@@ -9,10 +9,12 @@ var urlPrefix = "http://";
 function fetchLeagues(token, cbSuccess, cbErr) {
 	// token may be null for this
 	
+	var strToken = JSON.stringify(token);
+	
 	$.ajax({
 		url: urlPrefix + location.hostname + ":8080/api/v1.0/leagues",
 		type: "GET",
-		data: JSON.stringify(token)
+		data: strToken
 	}).error(function (errText) {
 		cbErr(errText); 
 	}).success(function(data) {
@@ -61,6 +63,38 @@ function fetchUnits(token, leagueId, cbSuccess, cbErr) {
 }
 
 /**
+ * Return all roles defined for the automation. Token access level must
+ * be "Site Admin" to see this list.
+ */
+function fetchRoles(token, cbSuccess, cbErr) {
+	// validate inputs
+	if (token == null) {
+		//return "token may not be null";
+		token = new Object();
+	}
+	
+	var strToken = JSON.stringify(token);
+	
+	$.ajax({
+		url: urlPrefix + location.hostname + ":8080/api/v1.0/security/role",
+		type: "GET",
+		data: strToken
+	}).error(function (errText) {
+		cbErr(errText); 
+	}).success(function(data) {
+		var resp = JSON.parse(data);
+		if (resp.error === true)
+			cbErr(resp.message);
+		else {
+			var resp = JSON.parse(data);
+			cbSuccess(resp.data);
+		}
+	});
+	
+	return null;
+}
+
+/**
  * Create an editable table in 'container' using the objects in 'objArray'
  * and header data from 'headerArray', which is an associative array with 
  * keys matching field names on the objects in objArray, and the values
@@ -76,7 +110,7 @@ function createEditableTable(container, objArray, headerArray) {
 	
 	var fields = [];
 	$.each(headerArray, function(key, val) {
-		$("<th/>").text(val).appendTo(tr);
+		$("<th/>", {class: "sortable"}).text(val).appendTo(tr);
 		fields.push(key);
 	});
 	table.append(tr);

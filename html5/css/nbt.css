@@ -25,10 +25,12 @@ input[type=button] {
 
 .left_side {
 	display: inline-block;
+	vertical-align: top;
 }
 
 .content_area {
 	display: inline-block;
+	width: 90%;
 	margin-left: 20px;
 	margin-top: 20px;
 }
@@ -38,6 +40,7 @@ input[type=button] {
 	border-width: 1px;
 	border-color: #660000;
 	border-spacing: 0px;
+	width: 90%;
 }
 
 .editable_data_table th {
@@ -45,7 +48,22 @@ input[type=button] {
 	border-collapse: collapse;
 	text-align: left;
 	border-width: 1px;
-	border-color: #990000;
+	border-color: #660000;
+	background-color: #990000;
+	color: white;
+}
+
+th.sortable {
+	color: yellow;
+	cursor: pointer;
+}
+
+.editable_data_table td {
+	border-style: solid;
+	border-collapse: collapse;
+	text-align: left;
+	border-width: 1px;
+	border-color: #660000;
 	color: white;
 }
 
