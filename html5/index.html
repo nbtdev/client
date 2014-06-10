@@ -27,7 +27,6 @@
 			</select>
 		</div>
 		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
-		<div><span class="pseudo_link" onclick="listRoles()">Roles</span></div>
 	</div>
 
 	<!--  content area -->
@@ -45,30 +44,6 @@ var leagueId = null;
 
 initLoginBox($("#loginBox"));
 
-var rtn = fetchLeagues(
-		token, 
-		function(obj) {
-			// assume that obj is a list of League objects, with displayName and leagueId props on each
-			var lstLeagues = $("#lstLeagues");
-			var selectedIdx = 0;
-			for (var i=0; i<obj.length; ++i) {
-				var opt = $("<option/>");
-				opt.val(obj[i].leagueId);
-				opt.text(obj[i].displayName);
-				
-				if (leagueId === obj[i].leagueId)
-					selectedIdx = i;
-					
-				lstLeagues.append(opt);
-			}
-			
-			lstLeagues[0].selectedIndex = selectedIdx + 1;
-		},
-		function (errText) {
-			alert (errText);
-		}
-	);
-
 //check cookies to see if we saved off a previous league choice
 var cookieString = document.cookie;
 var cookies = cookieString.split(';');
@@ -80,6 +55,30 @@ for (var i=0; i<cookies.length; ++i) {
 		break;
 	}
 }
+
+var rtn = fetchLeagues(
+	token, 
+	function(obj) {
+		// assume that obj is a list of League objects, with displayName and leagueId props on each
+		var lstLeagues = $("#lstLeagues");
+		var selectedIdx = 0;
+		for (var i=0; i<obj.length; ++i) {
+			var opt = $("<option/>");
+			opt.val(obj[i].leagueId);
+			opt.text(obj[i].displayName);
+			
+			if (leagueId === obj[i].leagueId)
+				selectedIdx = i;
+				
+			lstLeagues.append(opt);
+		}
+		
+		lstLeagues[0].selectedIndex = selectedIdx + 1;
+	},
+	function (errText) {
+		alert (errText);
+	}
+);
 
 function changeCurrentLeague(_this) {
 	var id = _this.options[_this.selectedIndex].value;
@@ -96,7 +95,7 @@ function populateUnits(data) {
 	var body = $("#main_contents");
 	body.empty();
 	
-	var headers = {name: "Name", stat: "Status", type: "Class"};
+	var headers = {displayName: "Name", co: "Commanding Officer", xo: "Executive Officer", type: "Class", stat: "Status", www: "WWW", tags: "Tags", tz: "Timezone"};
 	
 	createEditableTable(
 		body,
