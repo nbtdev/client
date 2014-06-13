@@ -38,6 +38,102 @@
 <div>
 </div>
 
+<div id="unit_detail_template" class="unit_detail" style="display: none;">
+<table>
+	<tr>
+		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
+		<td class="dark_header">Unit Name:</td>
+		<td class="datal" colspan="3" id="unit_detail_display_name" style="width: 225px;"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Unit Type:</td>
+		<td class="datal" id="unit_detail_type" style="width: 100px;"></td>
+		<td class="dark_header">Status:</td>
+		<td class="datal" id="unit_detail_status" style="width: 100px;"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">CO:</td>
+		<td class="datal" colspan="3" id="unit_detail_co"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">XO:</td>
+		<td class="datal" colspan="3" id="unit_detail_xo"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">WWW:</td>
+		<td class="datal" id="unit_detail_www"></td>
+		<td class="dark_header">Tags:</td>
+		<td class="datal" id="unit_detail_tags"></td>
+	</tr>
+	<tr>
+		<td class="dark_header" style="height: 56px;">Description:</td>
+		<td class="dataj" id="unit_detail_description" colspan="3"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Battles Pending:</td>
+		<td class="datal" id="unit_detail_battles_pending"></td>
+		<td class="dark_header">Planets:</td>
+		<td class="datal" id="unit_detail_planets"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Contact:</td>
+		<td class="datal" id="unit_detail_contact_form"></td>
+		<td class="dark_header">Timezone:</td>
+		<td class="datal" id="unit_detail_tz"></td>
+	</tr>
+	<tr id="unit_detail_tools">
+		<td colspan="5" style="text-align: right;">
+			<input type="button" id="cmdUnitDetailEdit" value="Edit" onclick="onUnitDetailEdit()"/>
+			<input type="button" id="cmdUnitDetailClose" value="Close" onclick="onUnitDetailClose()"/>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id="unit_detail_editor_template" class="unit_detail" style="display: none;">
+<table>
+	<tr>
+		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
+		<td class="dark_header">Unit Name:</td>
+		<td class="datal" colspan="3" style="width: 225px;"><input type="text" id="unit_detail_editor_display_name"/></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Unit Type:</td>
+		<td class="datal" style="width: 100px;"><select id="unit_detail_editor_type" ></select></td>
+		<td class="dark_header">Status:</td>
+		<td class="datal" style="width: 100px;"><select id="unit_detail_editor_status"></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header">CO:</td>
+		<td class="datal" colspan="3"><input type="text" id="unit_detail_editor_co"/></td>
+	</tr>
+	<tr>
+		<td class="dark_header">XO:</td>
+		<td class="datal" colspan="3"><input type="text" id="unit_detail_editor_xo"/></td>
+	</tr>
+	<tr>
+		<td class="dark_header">WWW:</td>
+		<td class="datal"><input type="text" id="unit_detail_editor_www"/></td>
+		<td class="dark_header">Tags:</td>
+		<td class="datal"><input type="text" id="unit_detail_editor_tags"/></td>
+	</tr>
+	<tr>
+		<td class="dark_header" style="height: 56px;">Description:</td>
+		<td class="dataj" colspan="3"><textarea id="unit_detail_editor_description"></textarea></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Timezone:</td>
+		<td class="datal" colspan="3"><select id="unit_detail_editor_tz" ></select></td>
+	</tr>
+	<tr id="unit_detail_tools">
+		<td colspan="5" style="text-align: right;">
+			<input type="button" id="cmdUnitDetailClose" value="Cancel" onclick="onUnitDetailCancel()"/>
+			<input type="button" id="cmdUnitDetailEdit" value="Save" onclick="onUnitDetailSave()"/>
+		</td>
+	</tr>
+</table>
+</div>
+
 </body>
 <script>
 var leagueId = null;
@@ -88,7 +184,121 @@ function changeCurrentLeague(_this) {
 	// TODO: Make selected league name bold?
 			
 	// TODO: show list of units
-} 
+}
+
+var collapsedRow = null;
+var detailRow = null;
+var editingRow = null;
+var detailUnit = null;
+
+function onUnitDetailClose() {
+	var tmpl = $("#unit_detail_template");
+	tmpl.hide();
+	$("body").append(tmpl);
+	$(detailRow).remove();
+	detailRow = null;
+	$(collapsedRow).show();
+	collapsedRow = null;
+	detailUnit = null;
+}
+
+function onUnitDetailCancel() {
+	// hide the edit template, show the detail template
+	var detailTmpl = $("#unit_detail_template");
+	detailTmpl.show();
+	
+	var editTmpl = $("#unit_detail_editor_template");
+	$("body").append(editTmpl);
+	editTmpl.hide();
+	
+	collapsedRow = editingRow;
+	editingRow = null;
+}
+
+function onUnitDetailEdit() {
+	editingRow = collapsedRow;
+	var unit = detailUnit;
+	
+	var detailTmpl = $("#unit_detail_template");
+	detailTmpl.hide();
+	
+	var editTmpl = $("#unit_detail_editor_template");
+	detailTmpl.parent().append(editTmpl);
+	editTmpl.show();
+	
+	$("#unit_detail_editor_display_name").val(unit.displayName);
+	
+	var lstStatus = $("#unit_detail_editor_status");
+	if (lstStatus)
+		populateUnitStatus(lstStatus[0], unit.stat);
+	
+	var lstClass = $("#unit_detail_editor_type");
+	if (lstClass)
+		populateUnitClass(lstClass[0], unit.type);
+	
+	var lstTimezone = $("#unit_detail_editor_tz");
+	if (lstTimezone)
+		populateTimezone(lstTimezone[0], unit.tz);
+	
+	//$("#unit_detail_editor_type").text(unit.type);
+	//$("#unit_detail_editor_status").text(unit.stat);
+	$("#unit_detail_editor_co").val(unit.co);
+	$("#unit_detail_editor_xo").val(unit.xo);
+	$("#unit_detail_editor_www").val(unit.www);
+	$("#unit_detail_editor_tags").val(unit.tags);
+	//$("#unit_detail_editor_tz").text(unit.tz);
+}
+
+function showUnitDetail(unit, canEdit) {
+	if (editingRow != null)
+		return;
+	
+	var _row = $("#id_" + unit.id);
+	if (_row != null) {
+		var row = _row[0];
+		
+		detailRow = $("<tr/>", {
+			class: "no_select"
+		});
+		
+		var td = $("<td/>", {
+			colspan: 8,
+			style: "text-align: center"
+		});
+		detailRow.append(td);
+		
+		var tmpl = $("#unit_detail_template");
+		tmpl.show();
+		td.append(tmpl);
+		
+		detailRow.insertAfter(row);
+		
+		if (collapsedRow != null) {
+			$(collapsedRow).show();
+			$(collapsedRow).next().remove();
+		}
+		
+		$(row).hide();
+		collapsedRow = row;
+		
+		$("#unit_detail_display_name").text(unit.displayName);
+		$("#unit_detail_type").text(unit.type);
+		$("#unit_detail_status").text(unit.stat);
+		$("#unit_detail_co").text(unit.co);
+		$("#unit_detail_xo").text(unit.xo);
+		$("#unit_detail_www").text(unit.www);
+		$("#unit_detail_tags").text(unit.tags);
+		$("#unit_detail_tz").text(unit.tz);
+		$("#unit_detail_battles_pending").text(unit.battlesPending);
+		$("#unit_detail_planets").text(unit.planets);
+		
+		detailUnit = unit;
+		
+		if (!canEdit) {
+			$("#cmdUnitDetailEdit").hide();
+		}
+	}
+}
 
 //'data' will be an array of Unit objects
 function populateUnits(data) {
@@ -100,20 +310,22 @@ function populateUnits(data) {
 	createEditableTable(
 		body,
 		data,
-		headers);
-}
-
-// 'data' will be an array of Role objects
-function populateRoles(roles) {
-	var body = $("#main_contents");
-	body.empty();
-	
-	var headers = {name: "Name", shortName: "Short Name"};
-	
-	createEditableTable(
-		body,
-		roles,
-		headers);
+		headers,
+		function() {
+			var id = this["id"].split("_");
+			var strToken = JSON.stringify(token);
+			
+			$.ajax({
+				url: NBTCall(location.hostname, leagueId, "unit", id[1]),
+				type: "GET",
+				data: strToken
+			}).error(function(msg) {
+				alert(msg);
+			}).success( function(data) {
+				var resp = JSON.parse(data);
+				showUnitDetail(resp.data[0], resp.canEdit);
+			});
+		});
 }
 
 function listUnits() {
@@ -127,14 +339,80 @@ function listUnits() {
 	);
 }
 
-function listRoles() {
-	var rtn = fetchRoles(
-		token, 
-		populateRoles,
-		function(errMsg) {
-			alert(errMsg);
-		}
-	);
+function populateUnitStatus(lstStatus, selected) {
+	var strToken = JSON.stringify(token);
+
+	$.ajax({
+		url: NBTCall(location.hostname, "system", "unitStatus"),
+		type: "GET",
+		data: strToken
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		$.each(resp.data, function(i, item) {
+			var opt = $("<option/>", {
+				value: item.key,
+				text: item.value
+			});
+			
+			if (item.value === selected)
+				opt.prop('selected', true);
+			
+			$(lstStatus).append(opt);
+		});
+	});
 }
+
+function populateUnitClass(lstClass, selected) {
+	var strToken = JSON.stringify(token);
+
+	$.ajax({
+		url: NBTCall(location.hostname, "system", "unitClass"),
+		type: "GET",
+		data: strToken
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		$.each(resp.data, function(i, item) {
+			var opt = $("<option/>", {
+				value: item.key,
+				text: item.value
+			});
+			
+			if (item.value === selected)
+				opt.prop('selected', true);
+			
+			$(lstClass).append(opt);
+		});
+	});
+}
+
+function populateTimezone(lstTimezone, selected) {
+	var strToken = JSON.stringify(token);
+
+	$.ajax({
+		url: NBTCall(location.hostname, "system", "timezone"),
+		type: "GET",
+		data: strToken
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		$.each(resp.data, function(i, item) {
+			var opt = $("<option/>", {
+				value: item.key,
+				text: item.value
+			});
+			
+			if (item.value === selected)
+				opt.prop('selected', true);
+			
+			$(lstTimezone).append(opt);
+		});
+	});
+}
+
 </script>
 </html>

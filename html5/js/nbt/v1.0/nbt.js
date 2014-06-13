@@ -5,6 +5,26 @@
  */
 
 var urlPrefix = "http://";
+var urlPort = 8080;
+var urlApiVersion = "v1.0";
+
+function NBTCall(hostname, leagueId, resource, resourceId) {
+	var rtn = urlPrefix + hostname + ":" + urlPort + "/api/" + urlApiVersion;
+	
+	if (leagueId != null) {
+		rtn += "/" + leagueId;
+	}
+	
+	if (resource != null) {
+		rtn += "/" + resource;
+	}
+	
+	if (resourceId != null) {
+		rtn += "/" + resourceId;
+	}
+	
+	return rtn;
+}
 
 function fetchLeagues(token, cbSuccess, cbErr) {
 	// token may be null for this
@@ -12,7 +32,7 @@ function fetchLeagues(token, cbSuccess, cbErr) {
 	var strToken = JSON.stringify(token);
 	
 	$.ajax({
-		url: urlPrefix + location.hostname + ":8080/api/v1.0/leagues",
+		url: NBTCall(location.hostname, null, "leagues"),
 		type: "GET",
 		data: strToken
 	}).error(function (errText) {
@@ -44,41 +64,9 @@ function fetchUnits(token, leagueId, cbSuccess, cbErr) {
 		return "leagueId may not be null or zero-length";
 	
 	$.ajax({
-		url: urlPrefix + location.hostname + ":8080/api/v1.0/" + leagueId + "/unit",
+		url: NBTCall(location.hostname, leagueId, "unit"),
 		type: "GET",
 		data: JSON.stringify(token)
-	}).error(function (errText) {
-		cbErr(errText); 
-	}).success(function(data) {
-		var resp = JSON.parse(data);
-		if (resp.error === true)
-			cbErr(resp.message);
-		else {
-			var resp = JSON.parse(data);
-			cbSuccess(resp.data);
-		}
-	});
-	
-	return null;
-}
-
-/**
- * Return all roles defined for the automation. Token access level must
- * be "Site Admin" to see this list.
- */
-function fetchRoles(token, cbSuccess, cbErr) {
-	// validate inputs
-	if (token == null) {
-		//return "token may not be null";
-		token = new Object();
-	}
-	
-	var strToken = JSON.stringify(token);
-	
-	$.ajax({
-		url: urlPrefix + location.hostname + ":8080/api/v1.0/security/role",
-		type: "GET",
-		data: strToken
 	}).error(function (errText) {
 		cbErr(errText); 
 	}).success(function(data) {
@@ -104,8 +92,8 @@ function fetchRoles(token, cbSuccess, cbErr) {
  * @param objArray
  * @param headerArray
  */
-function createEditableTable(container, objArray, headerArray) {
-	var table = $("<table/>", {id: "unitTable", class: "editable_data_table"});
+function createEditableTable(container, objArray, headerArray, rowClickFn) {
+	var table = $("<table/>", {class: "editable_data_table"});
 	var tr = $("<tr/>");
 	
 	var fields = [];
@@ -117,7 +105,13 @@ function createEditableTable(container, objArray, headerArray) {
 	
 	$.each(objArray, function(key, val) {
 		// in this case, the 'val' is the object with the data for this row
-		tr = $("<tr/>");
+		var rowId = "id_" + val['id'];
+		tr = $("<tr/>", {
+			id: rowId
+		});
+		
+		tr.bind("click", rowClickFn);
+		
 		$.each(fields, function(k, v) {
 			$("<td/>").text(val[v]).appendTo(tr);
 		});
