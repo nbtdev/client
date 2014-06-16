@@ -215,6 +215,54 @@ function onUnitDetailCancel() {
 	editingRow = null;
 }
 
+function onUnitDetailSave() {
+	var unitDetail = new Object();
+	
+	unitDetail.displayName = $("#unit_detail_editor_display_name").val();
+	unitDetail.typeCode = $("#unit_detail_editor_type").val();
+	unitDetail.statCode = $("#unit_detail_editor_status").val();
+	unitDetail.tz = $("#unit_detail_editor_tz").val();
+	unitDetail.co = $("#unit_detail_editor_co").val();
+	unitDetail.xo = $("#unit_detail_editor_xo").val();
+	unitDetail.tags = $("#unit_detail_editor_tags").val();
+	unitDetail.www = $("#unit_detail_editor_www").val();
+	
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = token;
+	nbtReq.unitDetail = unitDetail;
+	var strReq = JSON.stringify(nbtReq);
+	
+	$.ajax({
+		url: NBTCall(location.hostname, leagueId, "unit", detailUnit.id),
+		type: "PUT",
+		data: strReq
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			alert(resp.message);
+		}
+		else {
+			var unitDetail = resp.data;
+			
+			// update the detail template with new values
+			$("#unit_detail_display_name").text(unitDetail.displayName);
+			$("#unit_detail_type").text($("#unit_detail_editor_type option:selected").text());
+			$("#unit_detail_status").text($("#unit_detail_editor_status option:selected").text());
+			$("#unit_detail_tz").text($("#unit_detail_editor_tz option:selected").text());
+			$("#unit_detail_co").text(unitDetail.co);
+			$("#unit_detail_xo").text(unitDetail.xo);
+			$("#unit_detail_tags").text(unitDetail.tags);
+			$("#unit_detail_www").text(unitDetail.www);
+		}
+	});
+	
+	onUnitDetailCancel();
+}
+
 function onUnitDetailEdit() {
 	editingRow = collapsedRow;
 	var unit = detailUnit;
@@ -240,13 +288,10 @@ function onUnitDetailEdit() {
 	if (lstTimezone)
 		populateTimezone(lstTimezone[0], unit.tz);
 	
-	//$("#unit_detail_editor_type").text(unit.type);
-	//$("#unit_detail_editor_status").text(unit.stat);
 	$("#unit_detail_editor_co").val(unit.co);
 	$("#unit_detail_editor_xo").val(unit.xo);
 	$("#unit_detail_editor_www").val(unit.www);
 	$("#unit_detail_editor_tags").val(unit.tags);
-	//$("#unit_detail_editor_tz").text(unit.tz);
 }
 
 function showUnitDetail(unit, canEdit) {
@@ -349,6 +394,7 @@ function populateUnitStatus(lstStatus, selected) {
 	}).error(function(msg) {
 		alert(msg);
 	}).success( function(data) {
+		$(lstStatus).empty();
 		var resp = JSON.parse(data);
 		$.each(resp.data, function(i, item) {
 			var opt = $("<option/>", {
@@ -374,6 +420,7 @@ function populateUnitClass(lstClass, selected) {
 	}).error(function(msg) {
 		alert(msg);
 	}).success( function(data) {
+		$(lstClass).empty();
 		var resp = JSON.parse(data);
 		$.each(resp.data, function(i, item) {
 			var opt = $("<option/>", {
@@ -399,6 +446,7 @@ function populateTimezone(lstTimezone, selected) {
 	}).error(function(msg) {
 		alert(msg);
 	}).success( function(data) {
+		$(lstTimezone).empty();
 		var resp = JSON.parse(data);
 		$.each(resp.data, function(i, item) {
 			var opt = $("<option/>", {
