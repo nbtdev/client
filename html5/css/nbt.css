@@ -59,6 +59,11 @@ th.sortable {
 	cursor: pointer;
 }
 
+.centered {
+	text-align: center;
+	vertical-align: middle;
+}
+
 .editable_data_table td {
 	border-style: solid;
 	text-align: left;
@@ -74,6 +79,27 @@ th.sortable {
 .editable_data_table tr.no_select {
 	background-color: #000000;
 	cursor: auto;
+}
+
+.noselect {
+	cursor: auto;
+	background-color: black;
+}
+
+.no_select {
+	cursor: auto;
+	background-color: black;
+}
+
+.linkbutton {
+	color: yellow;
+	font-weight: bold;
+	font-style: italic;
+	cursor: pointer;
+}
+
+.linkbutton:hover {
+	color: white;
 }
 
 .dark_header {

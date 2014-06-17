@@ -43,7 +43,9 @@
 	<tr>
 		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
 		<td class="dark_header">Unit Name:</td>
-		<td class="datal" colspan="3" id="unit_detail_display_name" style="width: 225px;"></td>
+		<td class="datal" id="unit_detail_display_name"></td>
+		<td class="dark_header">Short Name:</td>
+		<td class="datal" id="unit_detail_short_name"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Unit Type:</td>
@@ -95,7 +97,9 @@
 	<tr>
 		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
 		<td class="dark_header">Unit Name:</td>
-		<td class="datal" colspan="3" style="width: 225px;"><input type="text" id="unit_detail_editor_display_name"/></td>
+		<td class="datal"><input type="text" id="unit_detail_editor_display_name"/></td>
+		<td class="dark_header">Short Name:</td>
+		<td class="datal"><input type="text" id="unit_detail_editor_short_name"/></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Unit Type:</td>
@@ -127,8 +131,8 @@
 	</tr>
 	<tr id="unit_detail_tools">
 		<td colspan="5" style="text-align: right;">
-			<input type="button" id="cmdUnitDetailClose" value="Cancel" onclick="onUnitDetailCancel()"/>
-			<input type="button" id="cmdUnitDetailEdit" value="Save" onclick="onUnitDetailSave()"/>
+			<input type="button" id="cmdUnitDetailEditorCancel" value="Cancel"/>
+			<input type="button" id="cmdUnitDetailEditorSave" value="Save"/>
 		</td>
 	</tr>
 </table>
@@ -213,12 +217,16 @@ function onUnitDetailCancel() {
 	
 	collapsedRow = editingRow;
 	editingRow = null;
+	
+	$("#cmdUnitDetailEditorCancel").unbind("click", onUnitDetailCancel);
+	$("#cmdUnitDetailEditorSave").unbind("click", onUnitDetailSave);
 }
 
 function onUnitDetailSave() {
 	var unitDetail = new Object();
 	
 	unitDetail.displayName = $("#unit_detail_editor_display_name").val();
+	unitDetail.shortName = $("#unit_detail_editor_short_name").val();
 	unitDetail.typeCode = $("#unit_detail_editor_type").val();
 	unitDetail.statCode = $("#unit_detail_editor_status").val();
 	unitDetail.tz = $("#unit_detail_editor_tz").val();
@@ -250,6 +258,7 @@ function onUnitDetailSave() {
 			
 			// update the detail template with new values
 			$("#unit_detail_display_name").text(unitDetail.displayName);
+			$("#unit_detail_short_name").text(unitDetail.shortName);
 			$("#unit_detail_type").text($("#unit_detail_editor_type option:selected").text());
 			$("#unit_detail_status").text($("#unit_detail_editor_status option:selected").text());
 			$("#unit_detail_tz").text($("#unit_detail_editor_tz option:selected").text());
@@ -257,6 +266,9 @@ function onUnitDetailSave() {
 			$("#unit_detail_xo").text(unitDetail.xo);
 			$("#unit_detail_tags").text(unitDetail.tags);
 			$("#unit_detail_www").text(unitDetail.www);
+			
+			// and reload the unit listing
+			listUnits();
 		}
 	});
 	
@@ -270,11 +282,15 @@ function onUnitDetailEdit() {
 	var detailTmpl = $("#unit_detail_template");
 	detailTmpl.hide();
 	
+	$("#cmdUnitDetailEditorCancel").bind("click", onUnitDetailCancel);
+	$("#cmdUnitDetailEditorSave").bind("click", onUnitDetailSave);
+	
 	var editTmpl = $("#unit_detail_editor_template");
 	detailTmpl.parent().append(editTmpl);
 	editTmpl.show();
 	
 	$("#unit_detail_editor_display_name").val(unit.displayName);
+	$("#unit_detail_editor_short_name").val(unit.shortName);
 	
 	var lstStatus = $("#unit_detail_editor_status");
 	if (lstStatus)
@@ -292,6 +308,111 @@ function onUnitDetailEdit() {
 	$("#unit_detail_editor_xo").val(unit.xo);
 	$("#unit_detail_editor_www").val(unit.www);
 	$("#unit_detail_editor_tags").val(unit.tags);
+}
+
+function onAddUnitSave() {
+	var unitDetail = new Object();
+	
+	unitDetail.displayName = $("#unit_detail_editor_display_name").val();
+	unitDetail.shortName = $("#unit_detail_editor_short_name").val();
+	unitDetail.typeCode = $("#unit_detail_editor_type").val();
+	unitDetail.statCode = $("#unit_detail_editor_status").val();
+	unitDetail.tz = $("#unit_detail_editor_tz").val();
+	unitDetail.co = $("#unit_detail_editor_co").val();
+	unitDetail.xo = $("#unit_detail_editor_xo").val();
+	unitDetail.tags = $("#unit_detail_editor_tags").val();
+	unitDetail.www = $("#unit_detail_editor_www").val();
+	
+	// validate data
+	if (unitDetail.displayName.length == 0) {
+		alert("Unit name cannot be empty");
+		return;
+	}
+	
+	if (unitDetail.shortName.length == 0) {
+		alert("Unit short name cannot be empty");
+		return;
+	}
+	
+	if (unitDetail.tags.length == 0) {
+		alert("Unit tags cannot be empty");
+		return;
+	}
+	
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = token;
+	nbtReq.unitDetail = unitDetail;
+	var strReq = JSON.stringify(nbtReq);
+	
+	$.ajax({
+		url: NBTCall(location.hostname, leagueId, "unit"),
+		type: "POST",
+		data: strReq
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			alert(resp.message);
+		}
+		else {
+			// reload the unit listing
+			listUnits();
+		}
+	});
+}
+
+function onAddUnitCancel() {
+	var cmd = $("#cmdNewUnit");
+	cmd.show();
+	
+	var editorTmpl = $("#unit_detail_editor_template");
+	editorTmpl.hide();
+	
+	editingRow = null;
+
+	$("#cmdUnitDetailEditorCancel").unbind("click", onAddUnitCancel);
+	$("#cmdUnitDetailEditorSave").unbind("click", onAddUnitSave);
+}
+
+function onAddNewUnit() {
+	// ignore this if we are currently editing another row; list must be in 
+	// default state to add a new unit
+	if (editingRow || collapsedRow)
+		return;
+
+	var cmd = $("#cmdNewUnit");
+	cmd.hide();
+	
+	var editorTmpl = $("#unit_detail_editor_template");
+	cmd.parent().append(editorTmpl);
+	editorTmpl.show();
+	
+	$("#cmdUnitDetailEditorCancel").bind("click", onAddUnitCancel);
+	$("#cmdUnitDetailEditorSave").bind("click", onAddUnitSave);
+	
+	var lstStatus = $("#unit_detail_editor_status");
+	if (lstStatus)
+		populateUnitStatus(lstStatus[0]);
+	
+	var lstClass = $("#unit_detail_editor_type");
+	if (lstClass)
+		populateUnitClass(lstClass[0]);
+	
+	var lstTimezone = $("#unit_detail_editor_tz");
+	if (lstTimezone)
+		populateTimezone(lstTimezone[0]);
+	
+	$("#unit_detail_editor_display_name").val("");
+	$("#unit_detail_editor_short_name").val("");
+	$("#unit_detail_editor_co").val("");
+	$("#unit_detail_editor_xo").val("");
+	$("#unit_detail_editor_tags").val("");
+	$("#unit_detail_editor_www").val("");
+	
+	editingRow = cmd.parent().parent();
 }
 
 function showUnitDetail(unit, canEdit) {
@@ -327,6 +448,7 @@ function showUnitDetail(unit, canEdit) {
 		collapsedRow = row;
 		
 		$("#unit_detail_display_name").text(unit.displayName);
+		$("#unit_detail_short_name").text(unit.shortName);
 		$("#unit_detail_type").text(unit.type);
 		$("#unit_detail_status").text(unit.stat);
 		$("#unit_detail_co").text(unit.co);
@@ -346,7 +468,7 @@ function showUnitDetail(unit, canEdit) {
 }
 
 //'data' will be an array of Unit objects
-function populateUnits(data) {
+function populateUnits(data, canEdit) {
 	var body = $("#main_contents");
 	body.empty();
 	
@@ -357,6 +479,8 @@ function populateUnits(data) {
 		data,
 		headers,
 		function() {
+			if (editingRow) return;
+			
 			var id = this["id"].split("_");
 			var strToken = JSON.stringify(token);
 			
@@ -370,7 +494,9 @@ function populateUnits(data) {
 				var resp = JSON.parse(data);
 				showUnitDetail(resp.data[0], resp.canEdit);
 			});
-		});
+		},
+		onAddNewUnit,
+		canEdit);
 }
 
 function listUnits() {

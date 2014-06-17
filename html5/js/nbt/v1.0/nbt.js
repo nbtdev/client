@@ -75,7 +75,7 @@ function fetchUnits(token, leagueId, cbSuccess, cbErr) {
 			cbErr(resp.message);
 		else {
 			var resp = JSON.parse(data);
-			cbSuccess(resp.data);
+			cbSuccess(resp.data, resp.canEdit);
 		}
 	});
 	
@@ -92,7 +92,7 @@ function fetchUnits(token, leagueId, cbSuccess, cbErr) {
  * @param objArray
  * @param headerArray
  */
-function createEditableTable(container, objArray, headerArray, rowClickFn) {
+function createEditableTable(container, objArray, headerArray, rowClickFn, addNewFn, canEdit) {
 	var table = $("<table/>", {class: "editable_data_table"});
 	var tr = $("<tr/>");
 	
@@ -117,6 +117,32 @@ function createEditableTable(container, objArray, headerArray, rowClickFn) {
 		});
 		table.append(tr);
 	});
+	
+	if (canEdit) {
+		var tr = $("<tr/>", {
+			class: "no_select",
+			id: "id_new"
+		});
+		
+		var td = $("<td/>", {
+			colspan: fields.length
+		});
+		
+		var div = $("<div/>", {
+			id: "cmdNewUnit"
+		});
+		
+		var cmdAdd = $("<span/>", {
+			class: "linkbutton"
+		}).text("Add New");
+		
+		cmdAdd.bind("click", addNewFn);
+		
+		div.append(cmdAdd);
+		td.append(div);
+		tr.append(td);
+		table.append(tr);
+	}
 
 	container.append(table);
 }
