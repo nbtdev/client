@@ -41,52 +41,53 @@
 <div id="unit_detail_template" class="unit_detail" style="display: none;">
 <table>
 	<tr>
-		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
+		<td rowspan="8"><img id="detail_tmpl_logo" class="unit_logo_large"></img></td>
 		<td class="dark_header">Unit Name:</td>
-		<td class="datal" id="unit_detail_display_name"></td>
+		<td class="datal" id="detail_tmpl_displayName"></td>
 		<td class="dark_header">Short Name:</td>
-		<td class="datal" id="unit_detail_short_name"></td>
+		<td class="datal" id="detail_tmpl_shortName"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Unit Type:</td>
-		<td class="datal" id="unit_detail_type" style="width: 100px;"></td>
+		<td class="datal" id="detail_tmpl_type" style="width: 100px;"></td>
 		<td class="dark_header">Status:</td>
-		<td class="datal" id="unit_detail_status" style="width: 100px;"></td>
+		<td class="datal" id="detail_tmpl_stat" style="width: 100px;"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">CO:</td>
-		<td class="datal" colspan="3" id="unit_detail_co"></td>
+		<td class="datal" colspan="3" id="detail_tmpl_co"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">XO:</td>
-		<td class="datal" colspan="3" id="unit_detail_xo"></td>
+		<td class="datal" colspan="3" id="detail_tmpl_xo"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">WWW:</td>
-		<td class="datal" id="unit_detail_www"></td>
+		<td class="datal" id="detail_tmpl_www"></td>
 		<td class="dark_header">Tags:</td>
-		<td class="datal" id="unit_detail_tags"></td>
+		<td class="datal" id="detail_tmpl_tags"></td>
 	</tr>
 	<tr>
 		<td class="dark_header" style="height: 56px;">Description:</td>
-		<td class="dataj" id="unit_detail_description" colspan="3"></td>
+		<td class="dataj" id="detail_tmpl_description" colspan="3"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Battles Pending:</td>
-		<td class="datal" id="unit_detail_battles_pending"></td>
+		<td class="datal" id="detail_tmpl_battles_pending"></td>
 		<td class="dark_header">Planets:</td>
-		<td class="datal" id="unit_detail_planets"></td>
+		<td class="datal" id="detail_tmpl_planets"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Contact:</td>
-		<td class="datal" id="unit_detail_contact_form"></td>
+		<td class="datal" id="detail_tmpl_contact_form"></td>
 		<td class="dark_header">Timezone:</td>
-		<td class="datal" id="unit_detail_tz"></td>
+		<td class="datal" id="detail_tmpl_tz"></td>
 	</tr>
 	<tr id="unit_detail_tools">
 		<td colspan="5" style="text-align: right;">
-			<input type="button" id="cmdUnitDetailEdit" value="Edit" onclick="onUnitDetailEdit()"/>
-			<input type="button" id="cmdUnitDetailClose" value="Close" onclick="onUnitDetailClose()"/>
+			<input type="button" id="cmdDetailDelete" value="Delete"/>
+			<input type="button" id="cmdDetailEdit" value="Edit"/>
+			<input type="button" id="cmdDetailClose" value="Close"/>
 		</td>
 	</tr>
 </table>
@@ -95,44 +96,44 @@
 <div id="unit_detail_editor_template" class="unit_detail" style="display: none;">
 <table>
 	<tr>
-		<td rowspan="8"><img id="unit_detail_logo" class="unit_logo_large"></img></td>
+		<td rowspan="8"><img id="edit_tmpl_logo" class="unit_logo_large"></img></td>
 		<td class="dark_header">Unit Name:</td>
-		<td class="datal"><input type="text" id="unit_detail_editor_display_name"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_displayName"/></td>
 		<td class="dark_header">Short Name:</td>
-		<td class="datal"><input type="text" id="unit_detail_editor_short_name"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_shortName"/></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Unit Type:</td>
-		<td class="datal" style="width: 100px;"><select id="unit_detail_editor_type" ></select></td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_type" ></select></td>
 		<td class="dark_header">Status:</td>
-		<td class="datal" style="width: 100px;"><select id="unit_detail_editor_status"></select></td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_stat"></select></td>
 	</tr>
 	<tr>
 		<td class="dark_header">CO:</td>
-		<td class="datal" colspan="3"><input type="text" id="unit_detail_editor_co"/></td>
+		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_co"/></td>
 	</tr>
 	<tr>
 		<td class="dark_header">XO:</td>
-		<td class="datal" colspan="3"><input type="text" id="unit_detail_editor_xo"/></td>
+		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_xo"/></td>
 	</tr>
 	<tr>
 		<td class="dark_header">WWW:</td>
-		<td class="datal"><input type="text" id="unit_detail_editor_www"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_www"/></td>
 		<td class="dark_header">Tags:</td>
-		<td class="datal"><input type="text" id="unit_detail_editor_tags"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_tags"/></td>
 	</tr>
 	<tr>
 		<td class="dark_header" style="height: 56px;">Description:</td>
-		<td class="dataj" colspan="3"><textarea id="unit_detail_editor_description"></textarea></td>
+		<td class="dataj" colspan="3"><textarea id="edit_tmpl_description"></textarea></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Timezone:</td>
-		<td class="datal" colspan="3"><select id="unit_detail_editor_tz" ></select></td>
+		<td class="datal" colspan="3"><select id="edit_tmpl_tz" ></select></td>
 	</tr>
 	<tr id="unit_detail_tools">
 		<td colspan="5" style="text-align: right;">
-			<input type="button" id="cmdUnitDetailEditorCancel" value="Cancel"/>
-			<input type="button" id="cmdUnitDetailEditorSave" value="Save"/>
+			<input type="button" id="cmdDetailEditorCancel" value="Cancel"/>
+			<input type="button" id="cmdDetailEditorSave" value="Save"/>
 		</td>
 	</tr>
 </table>
@@ -140,9 +141,8 @@
 
 </body>
 <script>
-var leagueId = null;
-
 initLoginBox($("#loginBox"));
+var API = new NBT(token);
 
 //check cookies to see if we saved off a previous league choice
 var cookieString = document.cookie;
@@ -151,13 +151,14 @@ var needle = "nbt_league=";
 for (var i=0; i<cookies.length; ++i) {
 	var c = cookies[i].trim();
 	if (c.indexOf(needle)==0) {
-		leagueId = c.substring(needle.length, c.length);
+		API.setLeagueId(c.substring(needle.length, c.length));
 		break;
 	}
 }
 
-var rtn = fetchLeagues(
-	token, 
+var unitListing = null;
+
+var rtn = API.fetchLeagues(
 	function(obj) {
 		// assume that obj is a list of League objects, with displayName and leagueId props on each
 		var lstLeagues = $("#lstLeagues");
@@ -167,7 +168,7 @@ var rtn = fetchLeagues(
 			opt.val(obj[i].leagueId);
 			opt.text(obj[i].displayName);
 			
-			if (leagueId === obj[i].leagueId)
+			if (API.leagueId() === obj[i].leagueId)
 				selectedIdx = i;
 				
 			lstLeagues.append(opt);
@@ -183,7 +184,7 @@ var rtn = fetchLeagues(
 function changeCurrentLeague(_this) {
 	var id = _this.options[_this.selectedIndex].value;
 	document.cookie="nbt_league=" + id;
-	leagueId = id;
+	API.setLeagueId(id);
 	
 	// TODO: Make selected league name bold?
 			
@@ -206,6 +207,32 @@ function onUnitDetailClose() {
 	detailUnit = null;
 }
 
+function onUnitDetailDelete() {
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = token;
+	nbtReq.unitDetail = detailUnit;
+	var strReq = JSON.stringify(nbtReq);
+	
+	$.ajax({
+		url: NBTCall(location.hostname, leagueId, "unit", detailUnit.id),
+		type: "DELETE",
+		data: strReq
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			alert(resp.message);
+		}
+		else {
+			// reload the unit listing
+			populateUnits(resp.data, resp.canEdit);
+		}
+	});
+}
+
 function onUnitDetailCancel() {
 	// hide the edit template, show the detail template
 	var detailTmpl = $("#unit_detail_template");
@@ -215,7 +242,7 @@ function onUnitDetailCancel() {
 	$("body").append(editTmpl);
 	editTmpl.hide();
 	
-	collapsedRow = editingRow;
+	collapsedRow = null;
 	editingRow = null;
 	
 	$("#cmdUnitDetailEditorCancel").unbind("click", onUnitDetailCancel);
@@ -472,9 +499,28 @@ function populateUnits(data, canEdit) {
 	var body = $("#main_contents");
 	body.empty();
 	
-	var headers = {displayName: "Name", co: "Commanding Officer", xo: "Executive Officer", type: "Class", stat: "Status", www: "WWW", tags: "Tags", tz: "Timezone"};
+	var headers = {
+			displayName: new HeaderElement("Name", true), 
+			co:          new HeaderElement("Commanding Officer"), 
+			xo:          new HeaderElement("Executive Officer"), 
+			type:        new HeaderElement("Class", true, true, populateUnitClass), 
+			stat:        new HeaderElement("Status", true, true, populateUnitStatus), 
+			www:         new HeaderElement("WWW"), 
+			tags:        new HeaderElement("Tags"), 
+			tz:          new HeaderElement("Timezone", true, true, populateTimezone)
+	};
 	
-	createEditableTable(
+	unitListing = new EditableTable(
+			body, 
+			$("#unit_detail_template")[0], 
+			$("#unit_detail_editor_template")[0], 
+			data, 
+			headers);
+	
+	unitListing.setEditable(canEdit);
+	unitListing.show();
+	
+/* 	createEditableTable(
 		body,
 		data,
 		headers,
@@ -485,7 +531,7 @@ function populateUnits(data, canEdit) {
 			var strToken = JSON.stringify(token);
 			
 			$.ajax({
-				url: NBTCall(location.hostname, leagueId, "unit", id[1]),
+				url: API.call(location.hostname, leagueId, "unit", id[1]),
 				type: "GET",
 				data: strToken
 			}).error(function(msg) {
@@ -497,12 +543,14 @@ function populateUnits(data, canEdit) {
 		},
 		onAddNewUnit,
 		canEdit);
+	
+	collapsedRow = null;
+	editingRow = null;
+	detailRow = null; */
 }
 
 function listUnits() {
-	var rtn = fetchUnits(
-		token, 
-		leagueId,
+	var rtn = API.fetchUnits(
 		populateUnits,
 		function(errMsg) {
 			alert(errMsg);
@@ -514,7 +562,7 @@ function populateUnitStatus(lstStatus, selected) {
 	var strToken = JSON.stringify(token);
 
 	$.ajax({
-		url: NBTCall(location.hostname, "system", "unitStatus"),
+		url: API.call(location.hostname, "system", "unitStatus"),
 		type: "GET",
 		data: strToken
 	}).error(function(msg) {
@@ -540,7 +588,7 @@ function populateUnitClass(lstClass, selected) {
 	var strToken = JSON.stringify(token);
 
 	$.ajax({
-		url: NBTCall(location.hostname, "system", "unitClass"),
+		url: API.call(location.hostname, "system", "unitClass"),
 		type: "GET",
 		data: strToken
 	}).error(function(msg) {
@@ -566,7 +614,7 @@ function populateTimezone(lstTimezone, selected) {
 	var strToken = JSON.stringify(token);
 
 	$.ajax({
-		url: NBTCall(location.hostname, "system", "timezone"),
+		url: API.call(location.hostname, "system", "timezone"),
 		type: "GET",
 		data: strToken
 	}).error(function(msg) {
