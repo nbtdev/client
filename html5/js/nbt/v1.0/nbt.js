@@ -148,6 +148,8 @@ function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isL
  * @param editTmpl The HTML container (<div>, for example) that will be used for editing row detail (and for editing new row data)
  * @param objArray  The data displayed in the table (one row per object array element). Each object array element should have field values that correspond to the "field name" keys in the 'headerArray' parameter.
  * @param headerArray Associative array of "field name" -> "header text" values, that also determines how the columns will be arranged. Elements of the header array are HeaderElement objects. 
+ * @param saveCallback Function taking a single parameter (data) for saving edited/added object data (added data will have no unique identifier)
+ * @param deleteCallback Function taking a single parameter (data) for deleting object data
  */
 
 function EditableTable(
@@ -155,7 +157,9 @@ function EditableTable(
 		detailTmpl,
 		editTmpl,
 		objArray,
-		headerArray) 
+		headerArray,
+		saveCallback,
+		deleteCallback) 
 {
 	// reference to <div> containing the row-detail template
 	this.mDetailTmpl = detailTmpl;
@@ -169,6 +173,10 @@ function EditableTable(
 	this.mHeaders = headerArray;
 	// flag to determine if table can be edited (rows added/removed)
 	this.mCanEdit = false;
+	// callback for saving modified/new data object
+	this.mSave = saveCallback;
+	// callback for deleting data object
+	this.mDelete = deleteCallback;
 	
 	// internal state management
 	this.TableState = {
