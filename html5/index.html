@@ -191,307 +191,60 @@ function changeCurrentLeague(_this) {
 	// TODO: show list of units
 }
 
-var collapsedRow = null;
-var detailRow = null;
-var editingRow = null;
-var detailUnit = null;
-
-function onUnitDetailClose() {
-	var tmpl = $("#unit_detail_template");
-	tmpl.hide();
-	$("body").append(tmpl);
-	$(detailRow).remove();
-	detailRow = null;
-	$(collapsedRow).show();
-	collapsedRow = null;
-	detailUnit = null;
-}
-
-function onUnitDetailDelete() {
+function onUnitSave(table, unitDetail) {
 	// submit data
 	var nbtReq = new Object();
-	nbtReq.token = token;
-	nbtReq.unitDetail = detailUnit;
+	nbtReq.token = API.token();
+	nbtReq.unitDetail = unitDetail;
+	var strReq = JSON.stringify(nbtReq);
+	
+	// check unit ID; if it exists, we are doing an update (PUT), 
+	// if not, we are doing an add (POST)
+	var type = "PUT";
+	if (!unitDetail.id)
+		type = "POST";
+	
+	$.ajax({
+		url: API.call(location.hostname, API.leagueId(), "unit", unitDetail.id),
+		type: type,
+		data: strReq
+	}).error(function(msg) {
+		table.onSaveFailed(unitDetail, msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			table.onSaveFailed(resp.message);
+		}
+		else {
+			table.onSaveSucceeded(table, resp.data);
+		}
+	});
+}
+
+function onUnitDelete(table, unitDetail) {
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = API.token();
+	nbtReq.unitDetail = unitDetail;
 	var strReq = JSON.stringify(nbtReq);
 	
 	$.ajax({
-		url: NBTCall(location.hostname, leagueId, "unit", detailUnit.id),
+		url: API.call(location.hostname, API.leagueId(), "unit", unitDetail.id),
 		type: "DELETE",
 		data: strReq
 	}).error(function(msg) {
-		alert(msg);
+		table.onDeleteFailed(unitDetail, resp.message);
 	}).success( function(data) {
 		var resp = JSON.parse(data);
 		
 		if (resp.error) {
-			alert(resp.message);
+			table.onDeleteFailed(resp.message);
 		}
 		else {
-			// reload the unit listing
-			populateUnits(resp.data, resp.canEdit);
+			table.onDeleteSucceeded(table, resp.data);
 		}
 	});
-}
-
-function onUnitDetailCancel() {
-	// hide the edit template, show the detail template
-	var detailTmpl = $("#unit_detail_template");
-	detailTmpl.show();
-	
-	var editTmpl = $("#unit_detail_editor_template");
-	$("body").append(editTmpl);
-	editTmpl.hide();
-	
-	collapsedRow = null;
-	editingRow = null;
-	
-	$("#cmdUnitDetailEditorCancel").unbind("click", onUnitDetailCancel);
-	$("#cmdUnitDetailEditorSave").unbind("click", onUnitDetailSave);
-}
-
-function onUnitDetailSave() {
-	var unitDetail = new Object();
-	
-	unitDetail.displayName = $("#unit_detail_editor_display_name").val();
-	unitDetail.shortName = $("#unit_detail_editor_short_name").val();
-	unitDetail.typeCode = $("#unit_detail_editor_type").val();
-	unitDetail.statCode = $("#unit_detail_editor_status").val();
-	unitDetail.tz = $("#unit_detail_editor_tz").val();
-	unitDetail.co = $("#unit_detail_editor_co").val();
-	unitDetail.xo = $("#unit_detail_editor_xo").val();
-	unitDetail.tags = $("#unit_detail_editor_tags").val();
-	unitDetail.www = $("#unit_detail_editor_www").val();
-	
-	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = token;
-	nbtReq.unitDetail = unitDetail;
-	var strReq = JSON.stringify(nbtReq);
-	
-	$.ajax({
-		url: NBTCall(location.hostname, leagueId, "unit", detailUnit.id),
-		type: "PUT",
-		data: strReq
-	}).error(function(msg) {
-		alert(msg);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
-		if (resp.error) {
-			alert(resp.message);
-		}
-		else {
-			var unitDetail = resp.data;
-			
-			// update the detail template with new values
-			$("#unit_detail_display_name").text(unitDetail.displayName);
-			$("#unit_detail_short_name").text(unitDetail.shortName);
-			$("#unit_detail_type").text($("#unit_detail_editor_type option:selected").text());
-			$("#unit_detail_status").text($("#unit_detail_editor_status option:selected").text());
-			$("#unit_detail_tz").text($("#unit_detail_editor_tz option:selected").text());
-			$("#unit_detail_co").text(unitDetail.co);
-			$("#unit_detail_xo").text(unitDetail.xo);
-			$("#unit_detail_tags").text(unitDetail.tags);
-			$("#unit_detail_www").text(unitDetail.www);
-			
-			// and reload the unit listing
-			listUnits();
-		}
-	});
-	
-	onUnitDetailCancel();
-}
-
-function onUnitDetailEdit() {
-	editingRow = collapsedRow;
-	var unit = detailUnit;
-	
-	var detailTmpl = $("#unit_detail_template");
-	detailTmpl.hide();
-	
-	$("#cmdUnitDetailEditorCancel").bind("click", onUnitDetailCancel);
-	$("#cmdUnitDetailEditorSave").bind("click", onUnitDetailSave);
-	
-	var editTmpl = $("#unit_detail_editor_template");
-	detailTmpl.parent().append(editTmpl);
-	editTmpl.show();
-	
-	$("#unit_detail_editor_display_name").val(unit.displayName);
-	$("#unit_detail_editor_short_name").val(unit.shortName);
-	
-	var lstStatus = $("#unit_detail_editor_status");
-	if (lstStatus)
-		populateUnitStatus(lstStatus[0], unit.stat);
-	
-	var lstClass = $("#unit_detail_editor_type");
-	if (lstClass)
-		populateUnitClass(lstClass[0], unit.type);
-	
-	var lstTimezone = $("#unit_detail_editor_tz");
-	if (lstTimezone)
-		populateTimezone(lstTimezone[0], unit.tz);
-	
-	$("#unit_detail_editor_co").val(unit.co);
-	$("#unit_detail_editor_xo").val(unit.xo);
-	$("#unit_detail_editor_www").val(unit.www);
-	$("#unit_detail_editor_tags").val(unit.tags);
-}
-
-function onAddUnitSave() {
-	var unitDetail = new Object();
-	
-	unitDetail.displayName = $("#unit_detail_editor_display_name").val();
-	unitDetail.shortName = $("#unit_detail_editor_short_name").val();
-	unitDetail.typeCode = $("#unit_detail_editor_type").val();
-	unitDetail.statCode = $("#unit_detail_editor_status").val();
-	unitDetail.tz = $("#unit_detail_editor_tz").val();
-	unitDetail.co = $("#unit_detail_editor_co").val();
-	unitDetail.xo = $("#unit_detail_editor_xo").val();
-	unitDetail.tags = $("#unit_detail_editor_tags").val();
-	unitDetail.www = $("#unit_detail_editor_www").val();
-	
-	// validate data
-	if (unitDetail.displayName.length == 0) {
-		alert("Unit name cannot be empty");
-		return;
-	}
-	
-	if (unitDetail.shortName.length == 0) {
-		alert("Unit short name cannot be empty");
-		return;
-	}
-	
-	if (unitDetail.tags.length == 0) {
-		alert("Unit tags cannot be empty");
-		return;
-	}
-	
-	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = token;
-	nbtReq.unitDetail = unitDetail;
-	var strReq = JSON.stringify(nbtReq);
-	
-	$.ajax({
-		url: NBTCall(location.hostname, leagueId, "unit"),
-		type: "POST",
-		data: strReq
-	}).error(function(msg) {
-		alert(msg);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
-		if (resp.error) {
-			alert(resp.message);
-		}
-		else {
-			// reload the unit listing
-			listUnits();
-		}
-	});
-}
-
-function onAddUnitCancel() {
-	var cmd = $("#cmdNewUnit");
-	cmd.show();
-	
-	var editorTmpl = $("#unit_detail_editor_template");
-	editorTmpl.hide();
-	
-	editingRow = null;
-
-	$("#cmdUnitDetailEditorCancel").unbind("click", onAddUnitCancel);
-	$("#cmdUnitDetailEditorSave").unbind("click", onAddUnitSave);
-}
-
-function onAddNewUnit() {
-	// ignore this if we are currently editing another row; list must be in 
-	// default state to add a new unit
-	if (editingRow || collapsedRow)
-		return;
-
-	var cmd = $("#cmdNewUnit");
-	cmd.hide();
-	
-	var editorTmpl = $("#unit_detail_editor_template");
-	cmd.parent().append(editorTmpl);
-	editorTmpl.show();
-	
-	$("#cmdUnitDetailEditorCancel").bind("click", onAddUnitCancel);
-	$("#cmdUnitDetailEditorSave").bind("click", onAddUnitSave);
-	
-	var lstStatus = $("#unit_detail_editor_status");
-	if (lstStatus)
-		populateUnitStatus(lstStatus[0]);
-	
-	var lstClass = $("#unit_detail_editor_type");
-	if (lstClass)
-		populateUnitClass(lstClass[0]);
-	
-	var lstTimezone = $("#unit_detail_editor_tz");
-	if (lstTimezone)
-		populateTimezone(lstTimezone[0]);
-	
-	$("#unit_detail_editor_display_name").val("");
-	$("#unit_detail_editor_short_name").val("");
-	$("#unit_detail_editor_co").val("");
-	$("#unit_detail_editor_xo").val("");
-	$("#unit_detail_editor_tags").val("");
-	$("#unit_detail_editor_www").val("");
-	
-	editingRow = cmd.parent().parent();
-}
-
-function showUnitDetail(unit, canEdit) {
-	if (editingRow != null)
-		return;
-	
-	var _row = $("#id_" + unit.id);
-	if (_row != null) {
-		var row = _row[0];
-		
-		detailRow = $("<tr/>", {
-			class: "no_select"
-		});
-		
-		var td = $("<td/>", {
-			colspan: 8,
-			style: "text-align: center"
-		});
-		detailRow.append(td);
-		
-		var tmpl = $("#unit_detail_template");
-		tmpl.show();
-		td.append(tmpl);
-		
-		detailRow.insertAfter(row);
-		
-		if (collapsedRow != null) {
-			$(collapsedRow).show();
-			$(collapsedRow).next().remove();
-		}
-		
-		$(row).hide();
-		collapsedRow = row;
-		
-		$("#unit_detail_display_name").text(unit.displayName);
-		$("#unit_detail_short_name").text(unit.shortName);
-		$("#unit_detail_type").text(unit.type);
-		$("#unit_detail_status").text(unit.stat);
-		$("#unit_detail_co").text(unit.co);
-		$("#unit_detail_xo").text(unit.xo);
-		$("#unit_detail_www").text(unit.www);
-		$("#unit_detail_tags").text(unit.tags);
-		$("#unit_detail_tz").text(unit.tz);
-		$("#unit_detail_battles_pending").text(unit.battlesPending);
-		$("#unit_detail_planets").text(unit.planets);
-		
-		detailUnit = unit;
-		
-		if (!canEdit) {
-			$("#cmdUnitDetailEdit").hide();
-		}
-	}
 }
 
 //'data' will be an array of Unit objects
@@ -510,43 +263,22 @@ function populateUnits(data, canEdit) {
 			tz:          new HeaderElement("Timezone", true, true, populateTimezone)
 	};
 	
+	if (unitListing) {
+		unitListing.clear();
+	}
+	
 	unitListing = new EditableTable(
+			API.token(),
 			body, 
 			$("#unit_detail_template")[0], 
 			$("#unit_detail_editor_template")[0], 
 			data, 
-			headers);
+			headers,
+			onUnitSave,
+			onUnitDelete);
 	
 	unitListing.setEditable(canEdit);
 	unitListing.show();
-	
-/* 	createEditableTable(
-		body,
-		data,
-		headers,
-		function() {
-			if (editingRow) return;
-			
-			var id = this["id"].split("_");
-			var strToken = JSON.stringify(token);
-			
-			$.ajax({
-				url: API.call(location.hostname, leagueId, "unit", id[1]),
-				type: "GET",
-				data: strToken
-			}).error(function(msg) {
-				alert(msg);
-			}).success( function(data) {
-				var resp = JSON.parse(data);
-				showUnitDetail(resp.data[0], resp.canEdit);
-			});
-		},
-		onAddNewUnit,
-		canEdit);
-	
-	collapsedRow = null;
-	editingRow = null;
-	detailRow = null; */
 }
 
 function listUnits() {
@@ -556,84 +288,6 @@ function listUnits() {
 			alert(errMsg);
 		}
 	);
-}
-
-function populateUnitStatus(lstStatus, selected) {
-	var strToken = JSON.stringify(token);
-
-	$.ajax({
-		url: API.call(location.hostname, "system", "unitStatus"),
-		type: "GET",
-		data: strToken
-	}).error(function(msg) {
-		alert(msg);
-	}).success( function(data) {
-		$(lstStatus).empty();
-		var resp = JSON.parse(data);
-		$.each(resp.data, function(i, item) {
-			var opt = $("<option/>", {
-				value: item.key,
-				text: item.value
-			});
-			
-			if (item.value === selected)
-				opt.prop('selected', true);
-			
-			$(lstStatus).append(opt);
-		});
-	});
-}
-
-function populateUnitClass(lstClass, selected) {
-	var strToken = JSON.stringify(token);
-
-	$.ajax({
-		url: API.call(location.hostname, "system", "unitClass"),
-		type: "GET",
-		data: strToken
-	}).error(function(msg) {
-		alert(msg);
-	}).success( function(data) {
-		$(lstClass).empty();
-		var resp = JSON.parse(data);
-		$.each(resp.data, function(i, item) {
-			var opt = $("<option/>", {
-				value: item.key,
-				text: item.value
-			});
-			
-			if (item.value === selected)
-				opt.prop('selected', true);
-			
-			$(lstClass).append(opt);
-		});
-	});
-}
-
-function populateTimezone(lstTimezone, selected) {
-	var strToken = JSON.stringify(token);
-
-	$.ajax({
-		url: API.call(location.hostname, "system", "timezone"),
-		type: "GET",
-		data: strToken
-	}).error(function(msg) {
-		alert(msg);
-	}).success( function(data) {
-		$(lstTimezone).empty();
-		var resp = JSON.parse(data);
-		$.each(resp.data, function(i, item) {
-			var opt = $("<option/>", {
-				value: item.key,
-				text: item.value
-			});
-			
-			if (item.value === selected)
-				opt.prop('selected', true);
-			
-			$(lstTimezone).append(opt);
-		});
-	});
 }
 
 </script>

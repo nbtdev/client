@@ -114,6 +114,44 @@ function NBT(token, leagueId)
 	};
 }
 
+function populateDropdown(token, lstDropdown, selected, resourceName) {
+	var strToken = JSON.stringify(token);
+
+	$.ajax({
+		url: API.call(location.hostname, "system", resourceName),
+		type: "GET",
+		data: strToken
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		$(lstDropdown).empty();
+		var resp = JSON.parse(data);
+		$.each(resp.data, function(i, item) {
+			var opt = $("<option/>", {
+				value: item.key,
+				text: item.value
+			});
+			
+			if (item.value === selected)
+				opt.prop('selected', true);
+			
+			$(lstDropdown).append(opt);
+		});
+	});
+}
+
+function populateUnitStatus(lstStatus, selected, token) {
+	populateDropdown(token, lstStatus, selected, "unitStatus");
+}
+
+function populateUnitClass(lstClass, selected, token) {
+	populateDropdown(token, lstClass, selected, "unitClass");
+}
+
+function populateTimezone(lstTimezone, selected, token) {
+	populateDropdown(token, lstTimezone, selected, "timezone");
+}
+
 // header definition for EditableTable; this class is typically used as the value in an associative array, where the
 // array key is the field name in a corresponding data object (row data)
 function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isLink)
@@ -153,6 +191,7 @@ function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isL
  */
 
 function EditableTable(
+		token,
 		container,
 		detailTmpl,
 		editTmpl,
@@ -161,6 +200,8 @@ function EditableTable(
 		saveCallback,
 		deleteCallback) 
 {
+	// reference to security token
+	this.mToken = token;
 	// reference to <div> containing the row-detail template
 	this.mDetailTmpl = detailTmpl;
 	// reference to <div> containing the row-edit template
@@ -196,9 +237,14 @@ EditableTable.prototype.onRowClicked = function(event) {
 	var table = event.data.table;
 	var row = event.currentTarget;
 
-	if (table.mState != table.TableState.NORMAL)
+	if (table.mState != table.TableState.NORMAL && table.mState != table.TableState.DETAIL)
 		return;
 
+	if (table.mCurrentRow) {
+		// restore this row
+		$(table.mCurrentRow).show();
+	}
+	
 	table.mCurrentRow = row;
 	
 	var tr = $("<tr/>", {
@@ -285,7 +331,7 @@ EditableTable.prototype.onDetailEdit = function(event) {
 			if (info) {
 				if (info.mIsList) {
 					// invoke the populate fn on the select element
-					info.mListPopulate(item, val);
+					info.mListPopulate(item, val, table.mToken);
 				}
 				else if (info.mImageUrl) {
 					
@@ -325,8 +371,176 @@ EditableTable.prototype.onDetailEditorCancel = function(event) {
 	table.mState = table.TableState.DETAIL;
 }
 
+EditableTable.prototype.onDetailEditorSave = function(event) {
+	var table = event.data.table;
+	var unitDetail = event.data.unit;
+	var row = event.data.tableRow;
+	
+	// first, construct a unitDetail from the fields in the edit tmpl form
+	var elems = $("#" + $(table.mEditTmpl).attr("id") + " select,input[type='text'],textarea");
+	$.each(elems, function(key, val) {
+		var elemVal = $(val).val();
+		var fieldName = $(val).attr("id").split("edit_tmpl_")[1];
+		unitDetail[fieldName] = elemVal;
+	});
+	
+	// submit the data
+	table.mSave(table, unitDetail);
+}
+
+EditableTable.prototype.onAddNewCancel = function(event) {
+	var table = event.data.table;
+	var insertedRow = event.data.insertedRow;
+	var addNewRow = event.data.addNewRow;
+
+	// hide the edit tmpl, and delete the row it was in
+	$(addNewRow).append(table.mEditTmpl);
+	$(table.mEditTmpl).hide();
+	$(insertedRow).remove();
+	$(addNewRow).show();
+
+	// unbind the buttons
+	$("#cmdDetailEditorCancel").unbind("click", table.onAddNewCancel);
+	$("#cmdDetailEditorSave").unbind("click", table.onAddNewSave);
+	
+	table.mState = table.TableState.NORMAL;
+}
+
+EditableTable.prototype.onAddNewSave = function(event) {
+	var table = event.data.table;
+	var insertedRow = event.data.insertedRow;
+	var addNewRow = event.data.addNewRow;
+	
+	// first, construct a unitDetail from the fields in the edit tmpl form
+	var elems = $("#" + $(table.mEditTmpl).attr("id") + " select,input[type='text'],textarea");
+	var unitDetail = new Object();
+	$.each(elems, function(key, val) {
+		var elemVal = $(val).val();
+		var fieldName = $(val).attr("id").split("edit_tmpl_")[1];
+		unitDetail[fieldName] = elemVal;
+	});
+	
+	// submit the data
+	table.mSave(table, unitDetail);
+}
+
 EditableTable.prototype.onAddNew = function(event) {
-	var tr = event.data;
+	var unitDetail = event.data.unit;
+	var table = event.data.table;
+	var row = event.data.row;
+
+	// only allow this in NORMAL state
+	if (table.mState != table.TableState.NORMAL)
+		return;
+	
+	// we want to insert a new row before this one
+	var tr = $("<tr/>", {
+		id: "id_0",
+		class: "no_select"
+	});
+	
+	tr.insertBefore(row);
+	$(row).hide();
+	
+	var td = $("<td/>", {
+		colspan: Object.keys(table.mHeaders).length,
+		style: "text-align: center;"
+	});
+	tr.append(td);
+	
+	// and fill in all of the properties, as applies
+	var tmp = $("#" + $(table.mEditTmpl).attr("id") + " select[id^='edit_tmpl_']");
+	$.each(tmp, function(key, val) {
+		// extract the field name from the element ID
+		var s = val.id.split("edit_tmpl_");
+		
+		// get the column type from the headers list
+		var info = table.mHeaders[s[1]];
+		if (info) {
+			if (info.mIsList) {
+				// invoke the populate fn on the select element
+				info.mListPopulate(val, null, table.mToken);
+			}
+		}
+	});
+	
+	$(table.mEditTmpl).appendTo(td);
+	$(table.mEditTmpl).show();
+	
+	// hook up the buttons
+	$("#cmdDetailEditorCancel").bind("click", {table: table, insertedRow: tr, addNewRow: row}, table.onAddNewCancel);
+	$("#cmdDetailEditorSave").bind("click", {table: table, insertedRow: tr, addNewRow: row}, table.onAddNewSave);
+
+	// change state
+	table.mState = table.TableState.ADD;
+}
+
+EditableTable.prototype.onDetailDelete = function(event) {
+	var unitDetail = event.data.unit;
+	var table = event.data.table;
+	
+	if (unitDetail) {
+		if (confirm("Are you sure you want to delete unit '" + unitDetail.displayName + "'?")) {
+			table.mDelete(table, unitDetail);
+		}
+	}
+}
+
+EditableTable.prototype.onDeleteSucceeded = function(table, unitList) {
+	// unhook the buttons
+	$("#cmdDetailClose").unbind("click", table.onDetailClose);
+	$("#cmdDetailEdit").unbind("click", table.onDetailEdit);
+	$("#cmdDetailDelete").unbind("click", table.onDetailDelete);
+	
+	table.setData(unitList);
+	table.show();
+	
+	table.mState = table.TableState.NORMAL;
+}
+
+EditableTable.prototype.onDeleteFailed = function(unit, reason) {
+	alert(reason);
+}
+
+EditableTable.prototype.onSaveSucceeded = function(table, data) {
+	// API returns a list for add-new, and a single unit detail object for an update
+	if ($.isArray(data)) {
+		$("#cmdDetailEditorCancel").unbind("click", table.onAddNewCancel);
+		$("#cmdDetailEditorSave").unbind("click", table.onAddNewSave);
+		
+		table.setData(data);
+		table.show();
+		
+		table.mState = table.TableState.NORMAL;
+	}
+	else {
+		$("#cmdDetailEditorCancel").unbind("click", table.onDetailEditorCancel);
+		$("#cmdDetailEditorSave").unbind("click", table.onDetailEditorSave);
+		
+		// change back into the detail view
+		$(table.mDetailTmpl).show();
+		$(table.mEditTmpl).hide();
+		
+		// update the array element in the table data
+		$.each(table.mData, function(idx, val) {
+			if (val.id == data.id) {
+				table.mData[idx] = data;
+			}
+		});
+		
+		// and fill in all of the properties, as applies
+		$.each(data, function(key, val) {
+			var pattern = "#detail_tmpl_" + key;
+			var item = $(pattern);
+			if (item.length) {
+				item.text(val);
+			}
+		});
+	}
+}
+
+EditableTable.prototype.onSaveFailed = function(reason) {
+	alert(reason);
 }
 
 EditableTable.prototype.setData = function(data) {
@@ -337,7 +551,18 @@ EditableTable.prototype.setEditable = function(editable) {
 	this.mCanEdit = editable;
 }
 
+EditableTable.prototype.clear = function() {
+	// move the detail and edit rows for safekeeping and delete any table contents
+	$(this.mDetailTmpl).appendTo($("body"));
+	$(this.mEditTmpl).appendTo($("body"));
+	$(this.mDetailTmpl).hide();
+	$(this.mEditTmpl).hide();
+	$(this.mParent).empty();
+}
+
 EditableTable.prototype.show = function() {
+	this.clear();
+	
 	// constructor body code
 	var table = $("<table/>", {class: "editable_data_table"});
 	var tr = $("<tr/>");
@@ -394,7 +619,7 @@ EditableTable.prototype.show = function() {
 			class: "linkbutton"
 		}).text("Add New");
 		
-		cmdAdd.bind("click", tr, this.onAddNew);
+		cmdAdd.bind("click", {table: editTable, row: tr}, this.onAddNew);
 		
 		div.append(cmdAdd);
 		td.append(div);
@@ -403,4 +628,6 @@ EditableTable.prototype.show = function() {
 	}
 
 	this.mParent.append(table);
+	this.mState = this.TableState.NORMAL;
+	this.mCurrentRow = null;
 }
