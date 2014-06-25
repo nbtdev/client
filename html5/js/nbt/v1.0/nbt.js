@@ -112,6 +112,36 @@ function NBT(token, leagueId)
 		
 		return null;
 	};
+
+	this.fetchUsers = function(cbSuccess, cbErr) {
+		// validate inputs
+		if (this.mToken == null) {
+			console.log("token may not be null");
+			return "token may not be null";
+		}
+		if (this.mLeagueId == null || this.mLeagueId.length <= 0) {
+			console.log("leagueId may not be null or zero-length");
+			return "leagueId may not be null or zero-length";
+		}
+		
+		$.ajax({
+			url: this.call(location.hostname, "security", "user"),
+			type: "GET",
+			data: JSON.stringify(this.mToken)
+		}).error(function (errText) {
+			cbErr(errText); 
+		}).success(function(data) {
+			var resp = JSON.parse(data);
+			if (resp.error === true)
+				cbErr(resp.message);
+			else {
+				var resp = JSON.parse(data);
+				cbSuccess(resp.data, resp.canEdit);
+			}
+		});
+		
+		return null;
+	};
 }
 
 function populateDropdown(token, lstDropdown, selected, resourceName) {
@@ -150,6 +180,10 @@ function populateUnitClass(lstClass, selected, token) {
 
 function populateTimezone(lstTimezone, selected, token) {
 	populateDropdown(token, lstTimezone, selected, "timezone");
+}
+
+function populateUserStatus(lstStatus, selected, token) {
+	populateDropdown(token, lstStatus, selected, "userStatus");
 }
 
 // header definition for EditableTable; this class is typically used as the value in an associative array, where the
@@ -412,7 +446,7 @@ EditableTable.prototype.onAddNewSave = function(event) {
 	var addNewRow = event.data.addNewRow;
 	
 	// first, construct a unitDetail from the fields in the edit tmpl form
-	var elems = $("#" + $(table.mEditTmpl).attr("id") + " select,input[type='text'],textarea");
+	var elems = $("select,input[type='text'],textarea", "#" + $(table.mEditTmpl).attr("id"));
 	var unitDetail = new Object();
 	$.each(elems, function(key, val) {
 		var elemVal = $(val).val();

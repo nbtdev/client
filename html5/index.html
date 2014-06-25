@@ -27,6 +27,7 @@
 			</select>
 		</div>
 		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
+		<div><span class="pseudo_link" onclick="listUsers()">Members</span></div>
 	</div>
 
 	<!--  content area -->
@@ -139,6 +140,57 @@
 </table>
 </div>
 
+<div id="user_detail_template" class="unit_detail" style="display: none;">
+<table>
+	<tr>
+		<td class="dark_header">Login:</td>
+		<td class="datal" colspan="3" id="detail_tmpl_login"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Display Name:</td>
+		<td class="datal" id="detail_tmpl_displayName" style="width: 100px;"></td>
+		<td class="dark_header">Status:</td>
+		<td class="datal" id="detail_tmpl_status" style="width: 100px;"></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Email:</td>
+		<td class="datal" colspan="3" id="detail_tmpl_email"></td>
+	</tr>
+	<tr id="unit_detail_tools">
+		<td colspan="4" style="text-align: right;">
+			<input type="button" id="cmdDetailDelete" value="Delete"/>
+			<input type="button" id="cmdDetailEdit" value="Edit"/>
+			<input type="button" id="cmdDetailClose" value="Close"/>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id="user_detail_editor_template" class="unit_detail" style="display: none;">
+<table>
+	<tr>
+		<td class="dark_header">Login:</td>
+		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_login"/></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Display Name:</td>
+		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_displayName"/></td>
+		<td class="dark_header">Status:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_status"></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Email:</td>
+		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_email"/></td>
+	</tr>
+	<tr id="unit_detail_tools">
+		<td colspan="5" style="text-align: right;">
+			<input type="button" id="cmdDetailEditorCancel" value="Cancel"/>
+			<input type="button" id="cmdDetailEditorSave" value="Save"/>
+		</td>
+	</tr>
+</table>
+</div>
+
 </body>
 <script>
 initLoginBox($("#loginBox"));
@@ -157,6 +209,7 @@ for (var i=0; i<cookies.length; ++i) {
 }
 
 var unitListing = null;
+var userListing = null;
 
 var rtn = API.fetchLeagues(
 	function(obj) {
@@ -247,6 +300,41 @@ function onUnitDelete(table, unitDetail) {
 	});
 }
 
+function onUserSave(table, user) {
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = API.token();
+	nbtReq.user = user;
+	var strReq = JSON.stringify(nbtReq);
+	
+	// check unit ID; if it exists, we are doing an update (PUT), 
+	// if not, we are doing an add (POST)
+	var type = "PUT";
+	if (!user.id)
+		type = "POST";
+	
+	$.ajax({
+		url: API.call(location.hostname, "security", "user", user.id),
+		type: type,
+		data: strReq
+	}).error(function(msg) {
+		table.onSaveFailed(user, msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			table.onSaveFailed(resp.message);
+		}
+		else {
+			table.onSaveSucceeded(table, resp.data);
+		}
+	});
+}
+
+function onUserDelete(table, userDetail) {
+	
+}
+
 //'data' will be an array of Unit objects
 function populateUnits(data, canEdit) {
 	var body = $("#main_contents");
@@ -284,6 +372,46 @@ function populateUnits(data, canEdit) {
 function listUnits() {
 	var rtn = API.fetchUnits(
 		populateUnits,
+		function(errMsg) {
+			alert(errMsg);
+		}
+	);
+}
+
+
+//'data' will be an array of Unit objects
+function populateUsers(data, canEdit) {
+	var body = $("#main_contents");
+	body.empty();
+	
+	var headers = {
+			login:       new HeaderElement("Login", true), 
+			displayName: new HeaderElement("Name", true), 
+			status:      new HeaderElement("Status", true, true, populateUserStatus), 
+			email:       new HeaderElement("Email"), 
+	};
+	
+	if (userListing) {
+		userListing.clear();
+	}
+	
+	userListing = new EditableTable(
+			API.token(),
+			body, 
+			$("#user_detail_template")[0], 
+			$("#user_detail_editor_template")[0], 
+			data, 
+			headers,
+			onUserSave,
+			onUserDelete);
+	
+	userListing.setEditable(canEdit);
+	userListing.show();
+}
+
+function listUsers() {
+	var rtn = API.fetchUsers(
+		populateUsers,
 		function(errMsg) {
 			alert(errMsg);
 		}
