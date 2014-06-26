@@ -188,25 +188,28 @@ function populateUserStatus(lstStatus, selected, token) {
 
 // header definition for EditableTable; this class is typically used as the value in an associative array, where the
 // array key is the field name in a corresponding data object (row data)
-function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isLink, linkText)
+function HeaderElement(initObj)
 {
-	this.mHeaderText = headerText;
-	this.mSortable = sortable;
+	this.mHeaderText = initObj.headerText;
+	this.mSortable = initObj.sortable;
 	
 	// mark this column as containing "list" data
-	this.mIsList = isList;
+	this.mIsList = initObj.isList;
 	// when editing, call this function to populate the list data (dropdown). The function should take two arguments: the <select> 
 	// element to populate, and the currently-selected value (in that order)
-	this.mListPopulate = listPopulate;
+	this.mListPopulate = initObj.listPopulate;
 	
 	// mark this column as containing image data, by providing an image URL
-	this.mImageUrl = imageUrl;
+	this.mImageUrl = initObj.imageUrl;
 	
 	// mark this column as containing a hyperlink (should be rendered as such) 
-	this.mIsLink = isLink;
+	this.mIsLink = initObj.isLink;
 	
 	// link text (if mIsLink)
-	this.mLinkText = linkText;
+	this.mLinkText = initObj.linkText;
+	
+	// allow calling code to modify a particular value in this column (to support alternative display types, etc)
+	this.mMutator = initObj.mutator;
 }
 
 /**
@@ -633,7 +636,11 @@ EditableTable.prototype.show = function() {
 		tr.bind("click", {unit: val, table: editTable}, cb);
 		
 		$.each(fields, function(k, v) {
-			if (editTable.mHeaders[v].mIsLink) {
+			var hdr = editTable.mHeaders[v]; 
+			if (hdr.mMutator)
+				hdr = hdr.mMutator(val, hdr);
+			
+			if (hdr.mIsLink) {
 				var td = $("<td/>");
 				var fieldVal = val[v];
 				if (fieldVal && fieldVal.length > 0) {
@@ -648,7 +655,7 @@ EditableTable.prototype.show = function() {
 						else event.cancelBubble = true; 
 					});
 					
-					a.text(editTable.mHeaders[v].mLinkText);
+					a.text(hdr.mLinkText);
 					td.append(a);
 				}
 				tr.append(td);

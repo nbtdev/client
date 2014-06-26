@@ -307,7 +307,7 @@ function onUserSave(table, user) {
 	nbtReq.user = user;
 	var strReq = JSON.stringify(nbtReq);
 	
-	// check unit ID; if it exists, we are doing an update (PUT), 
+	// check user ID; if it exists, we are doing an update (PUT), 
 	// if not, we are doing an add (POST)
 	var type = "PUT";
 	if (!user.id)
@@ -332,7 +332,40 @@ function onUserSave(table, user) {
 }
 
 function onUserDelete(table, userDetail) {
+	// submit data
+	var nbtReq = new Object();
+	nbtReq.token = API.token();
+	nbtReq.user = null;
+	var strReq = JSON.stringify(nbtReq);
 	
+	$.ajax({
+		url: API.call(location.hostname, "security", "user", userDetail.id),
+		type: "DELETE",
+		data: strReq
+	}).error(function(msg) {
+		table.onDeleteFailed(userDetail, resp.message);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			table.onDeleteFailed(resp.message);
+		}
+		else {
+			table.onDeleteSucceeded(table, resp.data);
+		}
+	});
+}
+
+// statusMutator will transform a status of Vacant into a link to Apply for the unit
+function statusMutator(obj, headerElem) {
+	if (obj.stat === "Vacant") {
+		var rtn = new HeaderElement({});
+		rtn.mIsLink = true;
+		rtn.mLinkText = "Apply";
+		return rtn;
+	}
+	
+	return headerElem;
 }
 
 //'data' will be an array of Unit objects
@@ -341,14 +374,14 @@ function populateUnits(data, canEdit) {
 	body.empty();
 	
 	var headers = {
-			displayName: new HeaderElement("Name", true), 
-			co:          new HeaderElement("Commanding Officer"), 
-			xo:          new HeaderElement("Executive Officer"), 
-			type:        new HeaderElement("Class", true, true, populateUnitClass), 
-			stat:        new HeaderElement("Status", true, true, populateUnitStatus), 
-			www:         new HeaderElement("WWW", false, false, null, null, true, "Website"), 
-			tags:        new HeaderElement("Tags"), 
-			tz:          new HeaderElement("Timezone", true, true, populateTimezone)
+			displayName: new HeaderElement({headerText: "Name", sortable: true}), 
+			co:          new HeaderElement({headerText: "Commanding Officer"}), 
+			xo:          new HeaderElement({headerText: "Executive Officer"}), 
+			type:        new HeaderElement({headerText: "Class", sortable: true, isList: true, listPopulate: populateUnitClass}), 
+			stat:        new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUnitStatus, mutator: statusMutator}), 
+			www:         new HeaderElement({headerText: "WWW", isLink: true, linkText: "Website"}), 
+			tags:        new HeaderElement({headerText: "Tags"}), 
+			tz:          new HeaderElement({headerText: "Timezone", sortable: true, isList: true, listPopulate: populateTimezone})
 	};
 	
 	if (unitListing) {
@@ -385,10 +418,10 @@ function populateUsers(data, canEdit) {
 	body.empty();
 	
 	var headers = {
-			login:       new HeaderElement("Login", true), 
-			displayName: new HeaderElement("Name", true), 
-			status:      new HeaderElement("Status", true, true, populateUserStatus), 
-			email:       new HeaderElement("Email"), 
+			login:       new HeaderElement({headerText: "Login", sortable: true}), 
+			displayName: new HeaderElement({headerText: "Name", sortable: true}), 
+			status:      new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUserStatus}), 
+			email:       new HeaderElement({headerText: "Email"}), 
 	};
 	
 	if (userListing) {
