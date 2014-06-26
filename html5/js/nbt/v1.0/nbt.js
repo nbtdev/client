@@ -188,7 +188,7 @@ function populateUserStatus(lstStatus, selected, token) {
 
 // header definition for EditableTable; this class is typically used as the value in an associative array, where the
 // array key is the field name in a corresponding data object (row data)
-function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isLink)
+function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isLink, linkText)
 {
 	this.mHeaderText = headerText;
 	this.mSortable = sortable;
@@ -204,6 +204,9 @@ function HeaderElement(headerText, sortable, isList, listPopulate, imageUrl, isL
 	
 	// mark this column as containing a hyperlink (should be rendered as such) 
 	this.mIsLink = isLink;
+	
+	// link text (if mIsLink)
+	this.mLinkText = linkText;
 }
 
 /**
@@ -630,7 +633,29 @@ EditableTable.prototype.show = function() {
 		tr.bind("click", {unit: val, table: editTable}, cb);
 		
 		$.each(fields, function(k, v) {
-			$("<td/>").text(val[v]).appendTo(tr);
+			if (editTable.mHeaders[v].mIsLink) {
+				var td = $("<td/>");
+				var fieldVal = val[v];
+				if (fieldVal && fieldVal.length > 0) {
+					var a = $("<span/>", {
+						class: "pseudo_link"
+					});
+					
+					a.click(function(event) { 
+						window.open(fieldVal);
+						
+						if (event.stopPropagation) event.stopPropagation();
+						else event.cancelBubble = true; 
+					});
+					
+					a.text(editTable.mHeaders[v].mLinkText);
+					td.append(a);
+				}
+				tr.append(td);
+			}
+			else {
+				$("<td/>").text(val[v]).appendTo(tr);
+			}
 		});
 		table.append(tr);
 	});

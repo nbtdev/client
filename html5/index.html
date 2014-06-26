@@ -346,7 +346,7 @@ function populateUnits(data, canEdit) {
 			xo:          new HeaderElement("Executive Officer"), 
 			type:        new HeaderElement("Class", true, true, populateUnitClass), 
 			stat:        new HeaderElement("Status", true, true, populateUnitStatus), 
-			www:         new HeaderElement("WWW"), 
+			www:         new HeaderElement("WWW", false, false, null, null, true, "Website"), 
 			tags:        new HeaderElement("Tags"), 
 			tz:          new HeaderElement("Timezone", true, true, populateTimezone)
 	};
