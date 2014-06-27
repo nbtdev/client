@@ -417,7 +417,7 @@ EditableTable.prototype.onDetailEditorSave = function(event) {
 	var row = event.data.tableRow;
 	
 	// first, construct a unitDetail from the fields in the edit tmpl form
-	var elems = $("#" + $(table.mEditTmpl).attr("id") + " select,input[type='text'],textarea");
+	var elems = $("select,input[type='text'],textarea", "#" + $(table.mEditTmpl).attr("id"));
 	$.each(elems, function(key, val) {
 		var elemVal = $(val).val();
 		var fieldName = $(val).attr("id").split("edit_tmpl_")[1];
@@ -473,6 +473,12 @@ EditableTable.prototype.onAddNew = function(event) {
 	if (table.mState != table.TableState.NORMAL)
 		return;
 	
+	// clear the edit form elements
+	var tmp = $("input[type='text']", "#" + $(table.mEditTmpl).attr("id"));
+	$.each(tmp, function(key, val) {
+		$(val).val("");
+	});
+	
 	// we want to insert a new row before this one
 	var tr = $("<tr/>", {
 		id: "id_0",
@@ -489,7 +495,7 @@ EditableTable.prototype.onAddNew = function(event) {
 	tr.append(td);
 	
 	// and fill in all of the properties, as applies
-	var tmp = $("#" + $(table.mEditTmpl).attr("id") + " select[id^='edit_tmpl_']");
+	var tmp = $("select[id^='edit_tmpl_']", "#" + $(table.mEditTmpl).attr("id"));
 	$.each(tmp, function(key, val) {
 		// extract the field name from the element ID
 		var s = val.id.split("edit_tmpl_");
