@@ -186,6 +186,14 @@ function populateUserStatus(lstStatus, selected, token) {
 	populateDropdown(token, lstStatus, selected, "userStatus");
 }
 
+function populateUnitDropdown(lstStatus, selected, token) {
+	populateDropdown(token, lstStatus, selected, "units");
+}
+
+function populateRoles(lstStatus, selected, token) {
+	populateDropdown(token, lstStatus, selected, "roles");
+}
+
 // header definition for EditableTable; this class is typically used as the value in an associative array, where the
 // array key is the field name in a corresponding data object (row data)
 function HeaderElement(initObj)
@@ -210,6 +218,9 @@ function HeaderElement(initObj)
 	
 	// allow calling code to modify a particular value in this column (to support alternative display types, etc)
 	this.mMutator = initObj.mutator;
+	
+	// cannot be edited in this table
+	this.mReadOnly = initObj.readOnly;
 }
 
 /**
@@ -377,8 +388,11 @@ EditableTable.prototype.onDetailEdit = function(event) {
 					
 				}
 				else {
-					// for simple text types, use .val()
-					item.val(val);
+					if (info.mReadOnly)
+						item.text(val);
+					else
+						// for simple text types, use .val()
+						item.val(val);
 				}
 			}
 			else {

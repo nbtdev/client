@@ -111,11 +111,11 @@
 	</tr>
 	<tr>
 		<td class="dark_header">CO:</td>
-		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_co"/></td>
+		<td class="datal" colspan="3"><span id="edit_tmpl_co"></span></td>
 	</tr>
 	<tr>
 		<td class="dark_header">XO:</td>
-		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_xo"/></td>
+		<td class="datal" colspan="3"><span id="edit_tmpl_xo"></span></td>
 	</tr>
 	<tr>
 		<td class="dark_header">WWW:</td>
@@ -131,7 +131,13 @@
 		<td class="dark_header">Timezone:</td>
 		<td class="datal" colspan="3"><select id="edit_tmpl_tz" ></select></td>
 	</tr>
-	<tr id="unit_detail_tools">
+	<tr>
+		<td class="dark_header">Unit:</td>
+		<td class="datal"><input type="text" id="edit_tmpl_unit"/></td>
+		<td class="dark_header">Role:</td>
+		<td class="datal"><input type="text" id="edit_tmpl_role"/></td>
+	</tr>
+	<tr id="user_detail_tools">
 		<td colspan="5" style="text-align: right;">
 			<input type="button" id="cmdDetailEditorCancel" value="Cancel"/>
 			<input type="button" id="cmdDetailEditorSave" value="Save"/>
@@ -144,7 +150,9 @@
 <table>
 	<tr>
 		<td class="dark_header">Login:</td>
-		<td class="datal" colspan="3" id="detail_tmpl_login"></td>
+		<td class="datal" id="detail_tmpl_login"></td>
+		<td class="dark_header">Unit:</td>
+		<td class="datal" id="detail_tmpl_unit" style="width: 100px;"></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Display Name:</td>
@@ -154,9 +162,11 @@
 	</tr>
 	<tr>
 		<td class="dark_header">Email:</td>
-		<td class="datal" colspan="3" id="detail_tmpl_email"></td>
+		<td class="datal" id="detail_tmpl_email"></td>
+		<td class="dark_header">Role:</td>
+		<td class="datal" id="detail_tmpl_role" style="width: 100px;"></td>
 	</tr>
-	<tr id="unit_detail_tools">
+	<tr id="user_detail_tools">
 		<td colspan="4" style="text-align: right;">
 			<input type="button" id="cmdDetailDelete" value="Delete"/>
 			<input type="button" id="cmdDetailEdit" value="Edit"/>
@@ -170,17 +180,21 @@
 <table>
 	<tr>
 		<td class="dark_header">Login:</td>
-		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_login"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_login"/></td>
+		<td class="dark_header">Unit:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_unit"></select></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Display Name:</td>
-		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_displayName"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_displayName"/></td>
 		<td class="dark_header">Status:</td>
 		<td class="datal" style="width: 100px;"><select id="edit_tmpl_status"></select></td>
 	</tr>
 	<tr>
 		<td class="dark_header">Email:</td>
-		<td class="datal" colspan="3"><input type="text" id="edit_tmpl_email"/></td>
+		<td class="datal"><input type="text" id="edit_tmpl_email"/></td>
+		<td class="dark_header">Role:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_role"></select></td>
 	</tr>
 	<tr id="unit_detail_tools">
 		<td colspan="5" style="text-align: right;">
@@ -375,8 +389,8 @@ function populateUnits(data, canEdit) {
 	
 	var headers = {
 			displayName: new HeaderElement({headerText: "Name", sortable: true}), 
-			co:          new HeaderElement({headerText: "Commanding Officer"}), 
-			xo:          new HeaderElement({headerText: "Executive Officer"}), 
+			co:          new HeaderElement({headerText: "Commanding Officer", readOnly: true}), 
+			xo:          new HeaderElement({headerText: "Executive Officer", readOnly: true}), 
 			type:        new HeaderElement({headerText: "Class", sortable: true, isList: true, listPopulate: populateUnitClass}), 
 			stat:        new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUnitStatus, mutator: statusMutator}), 
 			www:         new HeaderElement({headerText: "WWW", isLink: true, linkText: "Website"}), 
@@ -422,6 +436,8 @@ function populateUsers(data, canEdit) {
 			displayName: new HeaderElement({headerText: "Name", sortable: true}), 
 			status:      new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUserStatus}), 
 			email:       new HeaderElement({headerText: "Email"}), 
+			unit:        new HeaderElement({headerText: "Unit", sortable: true, isList: true, listPopulate: populateUnitDropdown}), 
+			role:        new HeaderElement({headerText: "Role", sortable: true, isList: true, listPopulate: populateRoles}), 
 	};
 	
 	if (userListing) {
