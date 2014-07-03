@@ -4,8 +4,11 @@
 <meta charset="ISO-8859-1">
 <script src="js/jquery-2.1.1.js"></script>
 <script src="js/jquery-ui-1.10.4.js"></script>
+<script src="js/gl-matrix/common.js"></script>
+<script src="js/gl-matrix/mat4.js"></script>
 <script src="js/nbt/v1.0/login.js"></script>
 <script src="js/nbt/v1.0/nbt.js"></script>
+<script src="js/nbt/v1.0/starmap.js"></script>
 <link href="css/nbt.css" rel="stylesheet" />
 <title>NetBattleTech Automation</title>
 </head>
@@ -28,6 +31,7 @@
 		</div>
 		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
 		<div><span class="pseudo_link" onclick="listUsers()">Members</span></div>
+		<div><span class="pseudo_link" onclick="openStarmap()">Starmap</span></div>
 	</div>
 
 	<!--  content area -->
@@ -205,6 +209,10 @@
 </table>
 </div>
 
+<canvas style="display: none;" class="starmap" id="starmapContext" width="800" height="600">
+	"Your browser must have HTML5 Canvas and WebGL support to use the starmap"
+</canvas>
+
 </body>
 <script>
 initLoginBox($("#loginBox"));
@@ -224,6 +232,7 @@ for (var i=0; i<cookies.length; ++i) {
 
 var unitListing = null;
 var userListing = null;
+var starmap = null;
 
 var rtn = API.fetchLeagues(
 	function(obj) {
@@ -465,6 +474,45 @@ function listUsers() {
 			alert(errMsg);
 		}
 	);
+}
+
+function openStarmap() {
+	var container = $("#main_contents");
+	container.empty();
+	
+	// submit request
+	var nbtReq = new Object();
+	nbtReq.token = API.token();
+	nbtReq.planet = new Object();
+	var strReq = JSON.stringify(nbtReq);
+	
+	// load new map data if necessary
+	if (starmap == null) {
+		$.ajax({
+			url: API.call(location.hostname, API.leagueId(), "planet"),
+			type: "GET",
+			data: strReq
+		}).error(function(msg) {
+			alert(msg);
+		}).success( function(data) {
+			var resp = JSON.parse(data);
+			
+			if (resp.error) {
+				alert(resp.message);
+			}
+			else {
+				var c = $("#starmapContext");
+				if (c) {
+					starmap = new Starmap(resp.data, c[0]);
+					starmap.init({token: token, container: container, _this: starmap});
+				}
+			}
+		});
+	}
+	else {
+		starmap.reset();
+		starmap.draw();
+	}
 }
 
 </script>

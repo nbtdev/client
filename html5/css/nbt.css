@@ -3,6 +3,7 @@ body {
 	color: #f0f0f0;
 	font-family: arial,verdana;
 	font-size: smaller;
+	height: 95%;
 }
 
 input[type=text] {
@@ -31,6 +32,7 @@ input[type=button] {
 .content_area {
 	display: inline-block;
 	width: 90%;
+	height: 90%;
 	margin-left: 20px;
 	margin-top: 20px;
 }
