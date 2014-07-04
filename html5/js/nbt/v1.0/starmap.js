@@ -23,6 +23,8 @@ function Starmap(planetData, canvas) {
 	
 	// circle object (used a lot...)
 	this.circle = null;
+	// center of circles (30 and 60LY)
+	this.circleCenter = null;
 
 	// default colors to use for various things on the map
 	this.mapColors = null;
@@ -88,8 +90,8 @@ function Starmap(planetData, canvas) {
 			// then done selecting/rubber-banding
 			
 			// TODO: raycast to see if a planet was selected
+			self.circleCenter = self.mouseDownPos;
 			self.draw();
-			self.drawCircle(self.mouseDownPos);
 			
 			self.mouseDownPos = null;
 		}
@@ -114,6 +116,9 @@ function Starmap(planetData, canvas) {
 			
 			mat4.lookAt(self.viewMat, self.camPos, [self.camPos[0],self.camPos[1],0], [0,1,0]);
 			self.draw();
+			
+			// don't propagate this (it will scroll the page, annoying)
+			event.stopPropagation();
 		}
 		
 		if (self.mouseDownPos != null) {
@@ -139,22 +144,13 @@ Starmap.prototype.fragmentShader =
 
 Starmap.prototype.init = function(args) {
 	var container = args.container;
-	
-	this.vp = new Object();
-	this.vp.x = 0;
-	this.vp.y = 0;
-	this.vp.width = window.innerWidth * 0.8;
-	this.vp.height = window.innerHeight * 0.9;
-	
+		
 	// move canvas into container
 	container.append($(this.canvas));
 	$(this.canvas).show();
 	
-	$(this.canvas).width(this.vp.width);
-	$(this.canvas).height(this.vp.height);
-	this.canvas.width = this.vp.width;
-	this.canvas.height = this.vp.height;
-	
+	this.reset();
+
 	if (!this.gl) {
 		try {
 			this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webgl");
@@ -170,16 +166,6 @@ Starmap.prototype.init = function(args) {
 		GL.enable(GL.DEPTH_TEST);
 		GL.depthFunc(GL.LEQUAL);
 		GL.clear(GL.COLOR_BUFFER_BIT|GL.DEPTH_BUFFER_BIT);
-		
-		this.projMat = mat4.create();
-		//mat4.ortho(this.camMat, 0, this.canvas.clientWidth, 0, this.canvas.clientHeight, 0.1, 10000);
-		mat4.perspective(this.projMat, Math.PI/2, this.canvas.clientWidth/this.canvas.clientHeight, 10, 10000);
-		
-		this.viewMat = mat4.create();
-		this.worldMat = mat4.create();
-		mat4.identity(this.worldMat);
-		mat4.identity(this.viewMat);
-		mat4.lookAt(this.viewMat, this.camPos, [this.camPos[0],this.camPos[1],0], [0,1,0]);
 	}
 	else {
 		alert("Could not create WebGL context, starmap functionality disabled!");
@@ -354,16 +340,15 @@ Starmap.prototype.initVBO = function() {
 	GL.bindBuffer(GL.ARRAY_BUFFER, circleVbo);
 	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, circleIbo);
 
-	var density = 2; /*because when zooming in, it's a dashed line instead of solid*/
-	var nSegments = 361 /*vertices in the circle*/ * density;
+	var nSegments = 361;
 	
 	var segments = new Float32Array(nSegments * 3 /*3 floats per vertex*/);
 	var ind = new Uint16Array(nSegments);
 	
 	var i = 0;
 	for (var idx=0; idx<nSegments; idx++) {
-		segments[i++] = Math.sin((idx/density)/180.0*Math.PI);
-		segments[i++] = Math.cos((idx/density)/180.0*Math.PI);
+		segments[i++] = Math.sin(idx/180.0*Math.PI);
+		segments[i++] = Math.cos(idx/180.0*Math.PI);
 		segments[i++] = 0;
 		ind[idx] = idx;
 	}
@@ -413,6 +398,10 @@ Starmap.prototype.draw = function() {
 			GL.drawElements(GL.TRIANGLES, iboData.length/3, GL.UNSIGNED_SHORT, 0);
 		}
 	});
+	
+	if (this.circleCenter) {
+		this.drawCircle(this.circleCenter);
+	}
 }
 
 Starmap.prototype.drawCircle = function(pos) {
@@ -433,15 +422,36 @@ Starmap.prototype.drawCircle = function(pos) {
 	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.circle.ibo);
 
 	GL.uniform3fv(this.col, [1.0,1.0,1.0]);
-	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length/3, GL.UNSIGNED_SHORT, 0);
+	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
 
 	mat4.identity(world);
 	mat4.scale(world, world, [60,60,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
 	GL.uniform3fv(this.col, [0.0,1.0,0.0]);
-	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length/3, GL.UNSIGNED_SHORT, 0);
+	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
 }
 
 Starmap.prototype.reset = function() {
+	this.camPos = [0,0,1000];
+
+	this.vp = new Object();
+	this.vp.x = 0;
+	this.vp.y = 0;
+	this.vp.width = window.innerWidth * 0.8;
+	this.vp.height = window.innerHeight * 0.9;
 	
+	$(this.canvas).width(this.vp.width);
+	$(this.canvas).height(this.vp.height);
+	this.canvas.width = this.vp.width;
+	this.canvas.height = this.vp.height;
+	
+	this.projMat = mat4.create();
+	//mat4.ortho(this.camMat, 0, this.canvas.clientWidth, 0, this.canvas.clientHeight, 0.1, 10000);
+	mat4.perspective(this.projMat, Math.PI/2, this.canvas.clientWidth/this.canvas.clientHeight, 10, 10000);
+	
+	this.viewMat = mat4.create();
+	this.worldMat = mat4.create();
+	mat4.identity(this.worldMat);
+	mat4.identity(this.viewMat);
+	mat4.lookAt(this.viewMat, this.camPos, [this.camPos[0],this.camPos[1],0], [0,1,0]);
 }

@@ -477,17 +477,17 @@ function listUsers() {
 }
 
 function openStarmap() {
-	var container = $("#main_contents");
-	container.empty();
-	
-	// submit request
-	var nbtReq = new Object();
-	nbtReq.token = API.token();
-	nbtReq.planet = new Object();
-	var strReq = JSON.stringify(nbtReq);
-	
 	// load new map data if necessary
 	if (starmap == null) {
+		var container = $("#main_contents");
+		container.empty();
+		
+		// submit request
+		var nbtReq = new Object();
+		nbtReq.token = API.token();
+		nbtReq.planet = new Object();
+		var strReq = JSON.stringify(nbtReq);
+		
 		$.ajax({
 			url: API.call(location.hostname, API.leagueId(), "planet"),
 			type: "GET",
