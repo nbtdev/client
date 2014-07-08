@@ -2,12 +2,15 @@
  * 
  */
 
-function Starmap(planetData, canvas) {
+function Starmap(planetData, canvas, overlay) {
 	// array of "Planet" objects containing all per-planet information
 	this.planets = planetData;
 	
 	// GL canvas
 	this.canvas = canvas;
+	
+	// overlay for text, etc
+	this.overlay = overlay;
 	
 	// GL context
 	this.gl = null;
@@ -61,12 +64,14 @@ function Starmap(planetData, canvas) {
 	this.scrollHandler = function(event) {
 		var self = event.data.self;
 		
-		var newZ = self.camPos[2] - event.originalEvent.wheelDelta;
-		if (newZ > 9 && newZ < 2001) {
-			self.camPos[2] -= event.originalEvent.wheelDelta;
+		var newZ = self.camPos[2] - event.originalEvent.wheelDelta/4;
+		if (newZ > 29 && newZ < 2001) {
+			self.camPos[2] -= event.originalEvent.wheelDelta/4;
 			mat4.lookAt(self.viewMat, self.camPos, [self.camPos[0],self.camPos[1],0], [0,1,0]);
 			self.draw();
 		}
+		
+		event.stopPropagation();
 	}
 	
 	this.mouseDownHandler = function (event) {
@@ -147,7 +152,9 @@ Starmap.prototype.init = function(args) {
 		
 	// move canvas into container
 	container.append($(this.canvas));
+	container.append($(this.overlay));
 	$(this.canvas).show();
+	$(this.overlay).show();
 	
 	this.reset();
 
@@ -261,17 +268,19 @@ Starmap.prototype.initVBO = function() {
 	this.ibo = new Object();
 	this.ibo.length = 0;
 	
+	console.log("this.planets.length: " + this.planets.length);
+	
 	// we can know the length of the VBO data; "planets.length" * 3 gives us the number of 
-	// center positions, and we can multiply that by 36 (center plus 35 circumference verts)
+	// center positions, and we can multiply that by 37 (center plus 36 circumference verts)
 	// to give us the total number of floats needed 
 	var arrayLen = this.planets.length * 3 * 37;
 	var arr = new Float32Array(arrayLen);
-	var indices = null;
+	var indices = new Uint16Array(this.planets.length * 3);
 
 	var i = 0;
 	var idx = 0;
-	var offset = 0;
 	var currentOwner = null;
+	var numPlanets = 0;
 	
 	for (var p=0; p<this.planets.length; ++p) {
 		var owner = this.planets[p].owner; 
@@ -279,30 +288,30 @@ Starmap.prototype.initVBO = function() {
 			if (currentOwner !== null) {
 				var ibo = GL.createBuffer();
 				GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, ibo);
-				GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), GL.STATIC_DRAW);
+				GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices.subarray(0, idx), GL.STATIC_DRAW);
 				
 				var vbo = GL.createBuffer();
 				GL.bindBuffer(GL.ARRAY_BUFFER, vbo);
-				GL.bufferData(GL.ARRAY_BUFFER, arr.subarray(0, i-1), GL.STATIC_DRAW);
+				GL.bufferData(GL.ARRAY_BUFFER, arr.subarray(0, i), GL.STATIC_DRAW);
 				
 				var obj = new Object();
 				obj.ibo = ibo;
 				obj.vbo = vbo;
-				obj.offset = offset;
-				obj.length = indices.length;
+				obj.length = idx;
+				obj.numPlanets = numPlanets;
 				obj.owner = this.planets[p].owner;
 
 				this.ibo[this.planets[p].owner] = obj;
 				this.ibo.length++;
-
-				offset += indices.length;
-				i = 0;
 			}
 			
-			currentOwner = this.planets[p].owner;
-			indices = [];
+			currentOwner = owner;
 			idx = 0;
+			i = 0;
+			numPlanets = 0;
 		}
+		
+		numPlanets++;
 		
 		for (var angle=0.0; angle<360.0;) {
 			var rad = angle / 180.0 * Math.PI;
@@ -311,13 +320,13 @@ Starmap.prototype.initVBO = function() {
 			arr[i++] = this.planets[p].x;
 			arr[i++] = this.planets[p].y;
 			arr[i++] = 0.0;
-			indices.push(idx++);
+			indices[idx] = idx++;
 			
 			// vert 1 of this triangle
 			arr[i++] = this.planets[p].x + Math.sin(rad) * radius;
 			arr[i++] = this.planets[p].y + Math.cos(rad) * radius;
 			arr[i++] = 0.0;
-			indices.push(idx++);
+			indices[idx] = idx++;
 			
 			angle += 10.0;
 			rad = angle / 180.0 * Math.PI;
@@ -326,8 +335,30 @@ Starmap.prototype.initVBO = function() {
 			arr[i++] = this.planets[p].x + Math.sin(rad) * radius;
 			arr[i++] = this.planets[p].y + Math.cos(rad) * radius;
 			arr[i++] = 0.0;
-			indices.push(idx++);
+			indices[idx] = idx++;
 		}
+	}
+	
+	// remainder
+	// TODO: figure out how to remove the remainder...
+	if (currentOwner !== null) {
+		var ibo = GL.createBuffer();
+		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, ibo);
+		GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, indices.subarray(0, idx), GL.STATIC_DRAW);
+		
+		var vbo = GL.createBuffer();
+		GL.bindBuffer(GL.ARRAY_BUFFER, vbo);
+		GL.bufferData(GL.ARRAY_BUFFER, arr.subarray(0, i), GL.STATIC_DRAW);
+		
+		var obj = new Object();
+		obj.ibo = ibo;
+		obj.vbo = vbo;
+		obj.length = idx;
+		obj.numPlanets = numPlanets;
+		obj.owner = currentOwner;
+
+		this.ibo[currentOwner] = obj;
+		this.ibo.length++;
 	}
 	
 	// init circle object (TODO: LoD versions?)
@@ -377,6 +408,9 @@ Starmap.prototype.draw = function() {
 	GL.uniformMatrix4fv(this.view, false, this.viewMat);
 
 	var _this = this;
+	var nDrawn = 0;
+	var numPlanets = 0;
+	var numOwners = 0;
 	
 	$.each(this.ibo, function(k, v) {
 		var iboData = v;
@@ -396,11 +430,64 @@ Starmap.prototype.draw = function() {
 			GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, iboData.ibo);
 
 			GL.drawElements(GL.TRIANGLES, iboData.length/3, GL.UNSIGNED_SHORT, 0);
+			
+			numPlanets += iboData.numPlanets;
+			
+			console.log("    owner (" + numOwners + "): " + iboData.owner + ", planets: " + iboData.numPlanets);
 		}
+		else {
+			console.log("    owner is " + typeof(iboData));
+		}
+		
+		numOwners++;
 	});
+	
+	console.log("numPlanets: " + numPlanets);
+	console.log("numOwners: " + numOwners);
 	
 	if (this.circleCenter) {
 		this.drawCircle(this.circleCenter);
+	}
+	
+	// draw any text; first, empty the overlay
+	$(this.overlay).empty();
+	if (this.camPos[2] < 100) {
+		var self = this;
+
+		var tmp = mat4.create();
+		mat4.mul(tmp, self.viewMat, self.projMat);
+		
+		var vpWidth = this.vp.width;
+		var vpHeight = this.vp.height;
+		var vpHalfWidth = vpWidth / 2;
+		var vpHalfHeight = vpHeight / 2;
+		
+		var vpLeft = -vpHalfWidth;
+		var vpRight = vpHalfWidth;
+		var vpTop = -vpHalfHeight;
+		var vpBottom = vpHalfHeight;
+		
+		$.each(this.planets, function(k, v) {
+			var pos = [v.x, v.y, 0];
+			var screenPos = [0,0,0];
+			vec3.transformMat4(screenPos, pos, tmp);
+			
+			var tx = screenPos[0];
+			var ty = screenPos[1];
+			
+			var adjX = tx + vpHalfWidth;
+			var adjY = ty + vpHalfHeight;			
+
+			if (adjX > 0 && adjX < vpWidth && adjY > 0 && adjY < vpHeight) {
+				var text = $("<div/>", {
+					style: "top: " + adjY + "px; left: " + adjX + "px;",
+					class: "starmapOverlayText"
+				});
+				
+				text.text(v.displayName);
+				text.appendTo($(self.overlay));
+			}
+		});
 	}
 }
 
@@ -444,6 +531,9 @@ Starmap.prototype.reset = function() {
 	$(this.canvas).height(this.vp.height);
 	this.canvas.width = this.vp.width;
 	this.canvas.height = this.vp.height;
+	
+	$(this.overlay).width(this.vp.width);
+	$(this.overlay).height(this.vp.height);
 	
 	this.projMat = mat4.create();
 	//mat4.ortho(this.camMat, 0, this.canvas.clientWidth, 0, this.canvas.clientHeight, 0.1, 10000);

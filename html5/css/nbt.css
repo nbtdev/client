@@ -31,6 +31,7 @@ input[type=button] {
 
 .content_area {
 	display: inline-block;
+	position: relative;
 	width: 90%;
 	height: 90%;
 	margin-left: 20px;
@@ -155,4 +156,24 @@ th.sortable {
 
 .loginBoxStatus {
 	color: #F04040;
+}
+
+.starmap {
+	z-index: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.starmapOverlay {
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 8pt;
+}
+
+.starmapOverlayText {
+	position: absolute;
+	color: white;
 }

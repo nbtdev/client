@@ -6,6 +6,7 @@
 <script src="js/jquery-ui-1.10.4.js"></script>
 <script src="js/gl-matrix/common.js"></script>
 <script src="js/gl-matrix/mat4.js"></script>
+<script src="js/gl-matrix/vec3.js"></script>
 <script src="js/nbt/v1.0/login.js"></script>
 <script src="js/nbt/v1.0/nbt.js"></script>
 <script src="js/nbt/v1.0/starmap.js"></script>
@@ -212,6 +213,7 @@
 <canvas style="display: none;" class="starmap" id="starmapContext" width="800" height="600">
 	"Your browser must have HTML5 Canvas and WebGL support to use the starmap"
 </canvas>
+<div id="starmapOverlay" class="starmapOverlay" style="display: none;"></div>
 
 </body>
 <script>
@@ -502,8 +504,9 @@ function openStarmap() {
 			}
 			else {
 				var c = $("#starmapContext");
-				if (c) {
-					starmap = new Starmap(resp.data, c[0]);
+				var o = $("#starmapOverlay");
+				if (c.length > 0 && o.length > 0) {
+					starmap = new Starmap(resp.data, c[0], o[0]);
 					starmap.init({token: token, container: container, _this: starmap});
 				}
 			}
