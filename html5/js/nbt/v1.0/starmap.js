@@ -281,14 +281,12 @@ Starmap.prototype.initVBO = function() {
 	this.ibo = new Object();
 	this.ibo.length = 0;
 	
-	console.log("this.planets.length: " + this.planets.length);
-	
 	// we can know the length of the VBO data; "planets.length" * 3 gives us the number of 
 	// center positions, and we can multiply that by 37 (center plus 36 circumference verts)
 	// to give us the total number of floats needed 
-	var arrayLen = this.planets.length * 3 * 37;
+	var arrayLen = this.planets.length * 3 * 3 * 19;
 	var arr = new Float32Array(arrayLen);
-	var indices = new Uint16Array(this.planets.length * 3);
+	var indices = new Uint16Array(this.planets.length * 3 * 19);
 
 	var i = 0;
 	var idx = 0;
@@ -341,7 +339,7 @@ Starmap.prototype.initVBO = function() {
 			arr[i++] = 0.0;
 			indices[idx] = idx++;
 			
-			angle += 10.0;
+			angle += 20.0;
 			rad = angle / 180.0 * Math.PI;
 			
 			// vert 2 of this triangle
@@ -440,21 +438,16 @@ Starmap.prototype.draw = function() {
 			
 			GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, iboData.ibo);
 
-			GL.drawElements(GL.TRIANGLES, iboData.length/3, GL.UNSIGNED_SHORT, 0);
+			GL.drawElements(GL.TRIANGLES, iboData.length, GL.UNSIGNED_SHORT, 0);
 			
 			numPlanets += iboData.numPlanets;
-			
-			//console.log("    owner (" + numOwners + "): " + iboData.owner + ", planets: " + iboData.numPlanets);
-		}
-		else {
-			//console.log("    owner is " + typeof(iboData));
 		}
 		
 		numOwners++;
 	});
 	
-	console.log("numPlanets: " + numPlanets);
-	console.log("numOwners: " + numOwners);
+	//console.log("numPlanets: " + numPlanets);
+	//console.log("numOwners: " + numOwners);
 	
 	if (this.circleCenter) {
 		this.drawCircle(this.circleCenter);
@@ -476,9 +469,12 @@ Starmap.prototype.draw = function() {
 			var x = (tx + 1) / 2 * self.canvas.width;
 			var y = (1 - (ty + 1) / 2) * self.canvas.height;
 			
+			var zoom = self.camPos[2] / (self.maxDist - self.minDist);
+			var adj = 1 / zoom;
+			
 			if (tx > -1 && tx < 1 && ty > -1 && ty < 1) {
 				var text = $("<div/>", {
-					style: "top: " + y + "px; left: " + x + "px;",
+					style: "top: " + y + "px; left: " + (x + adj) + "px;",
 					class: "starmapOverlayText"
 				});
 				
@@ -492,10 +488,23 @@ Starmap.prototype.draw = function() {
 Starmap.prototype.drawCircle = function(pos) {
 	var GL = this.gl;
 	
+	var nx = this.circleCenter.x / this.canvas.width;
+	var ny = this.circleCenter.y / this.canvas.height;
+
+	var tx = 2 * nx - 1;
+	var ty = -(2 * ny - 1);
+
+	var orthoInv = mat4.create();
+	mat4.invert(orthoInv, this.ortho);
+	var pos = [tx,ty,0];
+	var worldPos = vec3.create();
+	vec3.transformMat4(worldPos, pos, orthoInv);
+	
 	// for now, draw circle of 60 radius at center of map
 	var world = mat4.create();
 	mat4.identity(world);
 	
+	mat4.translate(world, world, worldPos);
 	mat4.scale(world, world, [30,30,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
 
@@ -510,6 +519,7 @@ Starmap.prototype.drawCircle = function(pos) {
 	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
 
 	mat4.identity(world);
+	mat4.translate(world, world, worldPos);
 	mat4.scale(world, world, [60,60,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
 	GL.uniform3fv(this.col, [0.0,1.0,0.0]);
