@@ -16,13 +16,7 @@ function Starmap(planetData, canvas, overlay) {
 	this.gl = null;
 	
 	// ortho camera
-	this.projMat = null;
-	
-	// model (world) matrix
-	this.worldMat = null;
-	
-	// view (camera) matrix
-	this.viewMat = null;
+	this.ortho = null;
 	
 	// circle object (used a lot...)
 	this.circle = null;
@@ -44,7 +38,6 @@ function Starmap(planetData, canvas, overlay) {
 	// program uniforms (for setting camera matrices)
 	this.proj = null;
 	this.world = null;
-	this.view = null;
 	this.col = null;
 	
 	// viewport (x, y, w, h)
@@ -60,14 +53,28 @@ function Starmap(planetData, canvas, overlay) {
 	// starting position for rubber banding
 	this.mouseDownPos = null;
 	
+	this.maxDist = 2001;
+	this.minDist = 29;
+	
 	// mouse scroll handler
 	this.scrollHandler = function(event) {
 		var self = event.data.self;
 		
 		var newZ = self.camPos[2] - event.originalEvent.wheelDelta/4;
+		
 		if (newZ > 29 && newZ < 2001) {
 			self.camPos[2] -= event.originalEvent.wheelDelta/4;
-			mat4.lookAt(self.viewMat, self.camPos, [self.camPos[0],self.camPos[1],0], [0,1,0]);
+			
+			var width = self.canvas.width;
+			var height = self.canvas.height;
+			var zoom = self.camPos[2] / (self.maxDist - self.minDist);
+			
+			var left = self.camPos[0] - (width/2 * zoom); 
+			var right = self.camPos[0] + (width/2 * zoom); 
+			var bottom = self.camPos[1] - (height/2 * zoom); 
+			var top = self.camPos[1] + (height/2 * zoom); 
+			
+			mat4.ortho(self.ortho, left, right, bottom, top, -1, 1);
 			self.draw();
 		}
 		
@@ -115,11 +122,20 @@ function Starmap(planetData, canvas, overlay) {
 			var deltaY = self.mapMoveLastPos.y - event.clientY;
 			self.mapMoveLastPos = {x: event.clientX, y: event.clientY};
 			
-			// update the modelview matrix with this info
-			self.camPos[0] += deltaX;
-			self.camPos[1] -= deltaY;
+			var width = self.canvas.width;
+			var height = self.canvas.height;
+			var zoom = self.camPos[2] / (self.maxDist - self.minDist);
+
+			self.camPos[0] += deltaX * zoom;
+			self.camPos[1] -= deltaY * zoom;
 			
-			mat4.lookAt(self.viewMat, self.camPos, [self.camPos[0],self.camPos[1],0], [0,1,0]);
+			var left = self.camPos[0] - (width/2 * zoom); 
+			var right = self.camPos[0] + (width/2 * zoom); 
+			var bottom = self.camPos[1] - (height/2 * zoom); 
+			var top = self.camPos[1] + (height/2 * zoom); 
+			
+			mat4.ortho(self.ortho, left, right, bottom, top, -1, 1);
+			
 			self.draw();
 			
 			// don't propagate this (it will scroll the page, annoying)
@@ -136,9 +152,8 @@ Starmap.prototype.vertexShader =
 	"attribute vec3 pos;\n" +
 	"uniform mat4 proj;\n" +
 	"uniform mat4 world;\n" +
-	"uniform mat4 view;\n" +
 	"void main() {\n" +
-	"	gl_Position = proj * world * view * vec4(pos, 1.0);\n" +
+	"	gl_Position = proj * world * vec4(pos, 1.0);\n" +
 	"}";
 
 Starmap.prototype.fragmentShader = 
@@ -214,11 +229,9 @@ Starmap.prototype.init = function(args) {
 		GL.useProgram(this.program);
 		
 		this.proj = GL.getUniformLocation(this.program, "proj");
-		GL.uniformMatrix4fv(this.proj, false, this.projMat);
+		GL.uniformMatrix4fv(this.proj, false, this.ortho);
 		this.world = GL.getUniformLocation(this.program, "world");
-		GL.uniformMatrix4fv(this.world, false, this.worldMat);
-		this.view = GL.getUniformLocation(this.program, "view");
-		GL.uniformMatrix4fv(this.view, false, this.viewMat);
+		
 		this.col = GL.getUniformLocation(this.program, "col");
 	}
 
@@ -399,13 +412,11 @@ Starmap.prototype.draw = function() {
 	
 	GL.viewport(0, 0, this.vp.width, this.vp.height);
 	GL.clear(GL.COLOR_BUFFER_BIT|GL.DEPTH_BUFFER_BIT);
-	
-	var tmp = mat4.create();
-	//GL.uniformMatrix4fv(this.proj, false, mat4.transpose(tmp, this.camMat));
-	//GL.uniformMatrix4fv(this.wv, false, mat4.transpose(tmp, this.mv));
-	GL.uniformMatrix4fv(this.proj, false, this.projMat);
-	GL.uniformMatrix4fv(this.world, false, this.worldMat);
-	GL.uniformMatrix4fv(this.view, false, this.viewMat);
+
+	var scale = mat4.create();
+	mat4.identity(scale);
+	GL.uniformMatrix4fv(this.proj, false, this.ortho);
+	GL.uniformMatrix4fv(this.world, false, scale);
 
 	var _this = this;
 	var nDrawn = 0;
@@ -433,10 +444,10 @@ Starmap.prototype.draw = function() {
 			
 			numPlanets += iboData.numPlanets;
 			
-			console.log("    owner (" + numOwners + "): " + iboData.owner + ", planets: " + iboData.numPlanets);
+			//console.log("    owner (" + numOwners + "): " + iboData.owner + ", planets: " + iboData.numPlanets);
 		}
 		else {
-			console.log("    owner is " + typeof(iboData));
+			//console.log("    owner is " + typeof(iboData));
 		}
 		
 		numOwners++;
@@ -451,36 +462,23 @@ Starmap.prototype.draw = function() {
 	
 	// draw any text; first, empty the overlay
 	$(this.overlay).empty();
-	if (this.camPos[2] < 100) {
+	if (this.camPos[2] < 400) {
 		var self = this;
-
-		var tmp = mat4.create();
-		mat4.mul(tmp, self.viewMat, self.projMat);
-		
-		var vpWidth = this.vp.width;
-		var vpHeight = this.vp.height;
-		var vpHalfWidth = vpWidth / 2;
-		var vpHalfHeight = vpHeight / 2;
-		
-		var vpLeft = -vpHalfWidth;
-		var vpRight = vpHalfWidth;
-		var vpTop = -vpHalfHeight;
-		var vpBottom = vpHalfHeight;
 		
 		$.each(this.planets, function(k, v) {
 			var pos = [v.x, v.y, 0];
-			var screenPos = [0,0,0];
-			vec3.transformMat4(screenPos, pos, tmp);
+			var screenPos = vec3.create();
+			vec3.transformMat4(screenPos, pos, self.ortho);
 			
 			var tx = screenPos[0];
 			var ty = screenPos[1];
 			
-			var adjX = tx + vpHalfWidth;
-			var adjY = ty + vpHalfHeight;			
-
-			if (adjX > 0 && adjX < vpWidth && adjY > 0 && adjY < vpHeight) {
+			var x = (tx + 1) / 2 * self.canvas.width;
+			var y = (1 - (ty + 1) / 2) * self.canvas.height;
+			
+			if (tx > -1 && tx < 1 && ty > -1 && ty < 1) {
 				var text = $("<div/>", {
-					style: "top: " + adjY + "px; left: " + adjX + "px;",
+					style: "top: " + y + "px; left: " + x + "px;",
 					class: "starmapOverlayText"
 				});
 				
@@ -535,13 +533,16 @@ Starmap.prototype.reset = function() {
 	$(this.overlay).width(this.vp.width);
 	$(this.overlay).height(this.vp.height);
 	
-	this.projMat = mat4.create();
-	//mat4.ortho(this.camMat, 0, this.canvas.clientWidth, 0, this.canvas.clientHeight, 0.1, 10000);
-	mat4.perspective(this.projMat, Math.PI/2, this.canvas.clientWidth/this.canvas.clientHeight, 10, 10000);
+	this.ortho = mat4.create();
+
+	var width = this.canvas.width;
+	var height = this.canvas.height;
+	var zoom = this.camPos[2] / (this.maxDist - this.minDist);
 	
-	this.viewMat = mat4.create();
-	this.worldMat = mat4.create();
-	mat4.identity(this.worldMat);
-	mat4.identity(this.viewMat);
-	mat4.lookAt(this.viewMat, this.camPos, [this.camPos[0],this.camPos[1],0], [0,1,0]);
+	var left = this.camPos[0] - (width/2 * zoom); 
+	var right = this.camPos[0] + (width/2 * zoom); 
+	var bottom = this.camPos[1] - (height/2 * zoom); 
+	var top = this.camPos[1] + (height/2 * zoom); 
+	
+	mat4.ortho(this.ortho, left, right, bottom, top, -1, 1);
 }
