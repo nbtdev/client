@@ -2,9 +2,22 @@
  * 
  */
 
-function Starmap(planetData, canvas, overlay) {
+function Starmap(mapData, canvas, overlay) {
+
 	// array of "Planet" objects containing all per-planet information
-	this.planets = planetData;
+	this.planets = mapData.planets;
+	
+	// map dimensions
+	this.minX = mapData.minX;
+	this.minY = mapData.minY;
+	this.maxX = mapData.maxX;
+	this.maxY = mapData.maxY;
+	
+	// quadtree for picking
+	this.quadtree = null;
+	
+	// picking support
+	this.selectedPlanet = null;
 	
 	// GL canvas
 	this.canvas = canvas;
@@ -84,9 +97,30 @@ function Starmap(planetData, canvas, overlay) {
 	this.mouseDownHandler = function (event) {
 		var self = event.data.self;
 		
+		var pos = $(self.canvas).offset();
+		
 		if (event.button == 0) {
 			// then selecting/rubber-banding
-			self.mouseDownPos = {x: event.clientX, y: event.clientY};
+			
+			// find a planet under the mouse?
+			var relX = event.clientX - pos.left;
+			var relY = event.clientY - pos.top;
+			var normX = relX / $(self.canvas).width();
+			var normY = 1 - relY / $(self.canvas).height();
+			
+			var invOrtho = mat4.create();
+			mat4.invert(invOrtho, self.ortho);
+			
+			var v = [2*normX-1, 2*normY-1, 0];
+			var pos = [0,0,0];
+			vec3.transformMat4(pos, v, invOrtho);
+
+			self.mouseDownPos = {x: pos[0], y: pos[1]};
+			
+			this.selectedPlanet = self.quadtree.find(pos[0], pos[1]);
+			if (this.selectedPlanet != null) {
+				console.log(planet.displayName);
+			}
 		}
 		else if (event.button == 1) {
 			// then moving the map
@@ -101,10 +135,14 @@ function Starmap(planetData, canvas, overlay) {
 		if (event.button == 0) {
 			// then done selecting/rubber-banding
 			
-			// TODO: raycast to see if a planet was selected
-			self.circleCenter = self.mouseDownPos;
+			self.circleCenter = null;
+
+			if (this.selectedPlanet != null) {
+				self.circleCenter = self.mouseDownPos;
+			}
+
 			self.draw();
-			
+		
 			self.mouseDownPos = null;
 		}
 		else if (event.button == 1) {
@@ -268,6 +306,13 @@ Starmap.prototype.init = function(args) {
 	$(window).on("mousedown", {self: this}, this.mouseDownHandler);
 	$(window).on("mouseup", {self: this}, this.mouseUpHandler);
 	$(window).on("mousemove", {self: this}, this.mouseMoveHandler);
+	
+	this.quadtree = new QuadTree({
+		left: this.minX,
+		right: this.maxX,
+		top: this.maxY,
+		bottom: this.minY
+	});
 }
 
 Starmap.prototype.initVBO = function() {
@@ -294,6 +339,9 @@ Starmap.prototype.initVBO = function() {
 	var numPlanets = 0;
 	
 	for (var p=0; p<this.planets.length; ++p) {
+		// insert into quadtree
+		this.quadtree.insert(this.planets[p]);
+		
 		var owner = this.planets[p].owner; 
 		if (owner !== currentOwner) {
 			if (currentOwner !== null) {
@@ -487,23 +535,11 @@ Starmap.prototype.draw = function() {
 
 Starmap.prototype.drawCircle = function(pos) {
 	var GL = this.gl;
-	
-	var nx = this.circleCenter.x / this.canvas.width;
-	var ny = this.circleCenter.y / this.canvas.height;
 
-	var tx = 2 * nx - 1;
-	var ty = -(2 * ny - 1);
-
-	var orthoInv = mat4.create();
-	mat4.invert(orthoInv, this.ortho);
-	var pos = [tx,ty,0];
-	var worldPos = vec3.create();
-	vec3.transformMat4(worldPos, pos, orthoInv);
-	
-	// for now, draw circle of 60 radius at center of map
 	var world = mat4.create();
 	mat4.identity(world);
 	
+	var worldPos = [pos.x, pos.y, 0];
 	mat4.translate(world, world, worldPos);
 	mat4.scale(world, world, [30,30,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
