@@ -177,3 +177,53 @@ th.sortable {
 	position: absolute;
 	color: white;
 }
+
+.planet_detail_template {
+	background-color: rgba(0,0,0,0.9);
+	width: auto;
+	overflow: auto;
+	z-index: 2;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #808080;
+}
+
+.planet_detail_template .planet_detail_header {
+	padding-left: 7px;
+	padding-right: 7px;
+	font-size: x-large;
+	font-weight: 900;
+	color: white;
+}
+
+.planet_detail_template .planet_detail_section_header {
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 7px;
+	font-size: large;
+	font-weight: 900;
+	color: white;
+}
+
+.planet_detail_template .planet_name {
+}
+
+.planet_detail_template .planet_owner_name {
+	color: red;
+}
+
+.planet_detail_template .planet_terrain_class {
+}
+
+.planet_detail_template .planet_neighbors {
+	white-space: nowrap;
+	padding: 7px;
+}
+
+.planet_detail_template .planet_description {
+	padding: 7px;
+}
+
+.planet_detail_template .ui-dialog-titlebar-close {
+	display: none;
+}

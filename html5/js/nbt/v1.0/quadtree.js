@@ -18,6 +18,10 @@ QuadTreeNode.prototype.insert = function(data) {
 	var top = this.mDimensions.top;
 	var bottom = this.mDimensions.bottom;
 	
+	if (data.displayName === "Hunts End") {
+		var i = 4;
+	}
+	
 	// if x and y are within our bounds...
 	if (left < data.x && data.x < right && bottom < data.y && data.y < top) {
 		// ...and this node has no data...
@@ -81,10 +85,10 @@ QuadTreeNode.prototype.insert = function(data) {
 				
 				// then insert this node's data into one of the children; first add
 				// the new data to the array so it can also be processed
-				this.mObjects[this.mNumObjects] = data;
+				this.mObjects[this.mNumObjects++] = data;
 				
-				while (this.mNumObjects > 0) {
-					var obj = this.mObjects[this.mNumObjects--];
+				for (var j=0; j<this.mNumObjects; ++j) {
+					var obj = this.mObjects[j];
 					
 					for (var i=0; i<4; ++i) {
 						if (this.mChildren[i].insert(obj)) {
@@ -94,6 +98,7 @@ QuadTreeNode.prototype.insert = function(data) {
 				}
 				
 				this.mObjects = null;
+				this.mNumObjects = 0;
 				return true;
 			}
 		}
@@ -154,6 +159,78 @@ QuadTreeNode.prototype.find = function(x, y) {
 	}
 }
 
+QuadTreeNode.prototype.addAllObjects = function(arr) {
+	if (this.mObjects) {
+		this.mObjects.forEach(function(elem, idx, array) {
+			arr.push(elem);
+		});
+	}
+	else {
+		// collect objects from the kiddies
+		if (this.mChildren) {
+			this.mChildren.forEach(function(elem, idx, array) {
+				elem.addAllObjects(arr);
+			});
+		}
+	}
+}
+
+QuadTreeNode.prototype.findAllWithinBox = function(l, r, b, t, objs) {
+	var left = this.mDimensions.left;
+	var right = this.mDimensions.right;
+	var top = this.mDimensions.top;
+	var bottom = this.mDimensions.bottom;
+	var centerX = left + (right - left) / 2;
+	var centerY = bottom + (top - bottom) / 2;
+	
+	// check to see if the test box intersects us; if not, early out
+	if (!(left < r && right > l && bottom < t && top > b))
+		return;
+	
+	// if we are fully enclosed, add all objects
+	if (l < left && r > right && b < bottom && t > top) {
+		this.addAllObjects(objs);
+	}
+	else {
+		// try each child node, if any
+		if (this.mChildren) {
+			this.mChildren.forEach(function(elem, idx, array) {
+				elem.findAllWithinBox(l, r, b, t, objs);
+			});
+		}
+		
+		// and then our own objects, if any
+		if (this.mObjects) {
+			this.mObjects.forEach(function(elem, idx, array) {
+				if (l < elem.x && r > elem.x && b < elem.y && t > elem.y)
+					objs.push(elem);
+			});
+		}
+	}
+}
+
+QuadTreeNode.prototype.findAllWithinRadius = function(center, radius, objs) {
+	// first do a simple box collection...
+	var left = center.x - radius;
+	var right = center.x + radius;
+	var bottom = center.y - radius;
+	var top = center.y + radius;
+
+	var tmp = [];
+	this.findAllWithinBox(left, right, bottom, top, tmp);
+	
+	// ... then prune those not within the specified radius
+	var radSqr = radius * radius;
+	tmp.forEach(function(e,i,a) {
+		var x = center.x - e.x;
+		var y = center.y - e.y;
+		var distSqr = x*x + y*y;
+		if (distSqr < radSqr) {
+			objs.push({planet: e, radius: Math.sqrt(distSqr)});
+		}
+	});
+}
+
 function QuadTree(dims) {
 	this.mDimensions = dims;
 	this.mRoot = new QuadTreeNode({
@@ -170,4 +247,16 @@ QuadTree.prototype.insert = function(data) {
 
 QuadTree.prototype.find = function(x, y) {
 	return this.mRoot.find(x, y);
+}
+
+QuadTree.prototype.findAllWithinBox = function(left, right, bottom, top) {
+	var objs = [];
+	this.mRoot.findAllWithinBox(left, right, bottom, top, objs);
+	return objs;
+}
+
+QuadTree.prototype.findAllWithinRadius = function(center, radius) {
+	var objs = [];
+	this.mRoot.findAllWithinRadius(center, radius, objs);
+	return objs;
 }

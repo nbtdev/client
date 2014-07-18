@@ -211,6 +211,17 @@
 </table>
 </div>
 
+<div id="planet_detail_template">
+	<div class="planet_detail_header" id="planet_detail_header">
+		<span class="planet_name" id="planet_detail_template_displayName"></span>
+		<span class="planet_owner_name" id="planet_detail_template_owner"></span>
+		<span class="planet_terrain_class" id="planet_detail_template_terrain"></span>
+	</div>
+	<div class="planet_neighbors" id="planet_neighbors"></div>
+	<div class="planet_detail_section_header" id="planet_detail_section_header">Description</div>
+	<div class="planet_description" id="planet_detail_template_description"></div>
+</div>
+
 <canvas style="display: none;" class="starmap" id="starmapContext" width="800" height="600">
 	"Your browser must have HTML5 Canvas and WebGL support to use the starmap"
 </canvas>
@@ -519,5 +530,16 @@ function openStarmap() {
 	}
 }
 
+$("#planet_detail_template").dialog({
+	dialogClass: "planet_detail_template",
+	modal: false, 
+	autoOpen: false, 
+	position: {
+		my: "right top",
+		at: "right top",
+		of: "#main_contents"
+	},
+	width: 500
+});
 </script>
 </html>

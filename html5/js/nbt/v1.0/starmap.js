@@ -117,9 +117,18 @@ function Starmap(mapData, canvas, overlay) {
 
 			self.mouseDownPos = {x: pos[0], y: pos[1]};
 			
-			this.selectedPlanet = self.quadtree.find(pos[0], pos[1]);
-			if (this.selectedPlanet != null) {
-				console.log(planet.displayName);
+			self.selectedPlanet = self.quadtree.find(pos[0], pos[1]);
+			if (self.selectedPlanet != null) {
+				// find planets of interest
+				var found = self.quadtree.findAllWithinRadius({x: pos[0], y: pos[1]}, 60);
+				
+				// sort in ascending order of distance from selected
+				var sorted = found.sort(function(a, b) { return a.radius - b.radius; });
+				
+				self.showSelectedDetail(sorted);
+			}
+			else {
+				self.clearSelectedDetail();
 			}
 		}
 		else if (event.button == 1) {
@@ -137,7 +146,7 @@ function Starmap(mapData, canvas, overlay) {
 			
 			self.circleCenter = null;
 
-			if (this.selectedPlanet != null) {
+			if (self.selectedPlanet != null) {
 				self.circleCenter = self.mouseDownPos;
 			}
 
@@ -183,6 +192,56 @@ function Starmap(mapData, canvas, overlay) {
 		if (self.mouseDownPos != null) {
 			// then we are selecting stuff with some form of rubber band
 		}
+	}
+	
+	this.showSelectedDetail = function(planets) {
+		var dlg = $("#planet_detail_template");
+		dlg.dialog("option", "height", this.canvas.height);
+		dlg.dialog("open");
+		
+		var selectedPlanet = this.selectedPlanet;
+		
+		$.each(selectedPlanet, function(key, val) {
+			var pattern = "#planet_detail_template_" + key;
+			var item = $(pattern);
+			if (item.length) {
+				item.text(val);
+			}
+		});
+		
+		// neighbors
+		var neighborDiv = $("#planet_neighbors", dlg);
+		neighborDiv.empty();
+		var table = $("<table/>");
+		var tr = $("<tr/>");
+		
+		$("<th/>", {text: "Planet"}).appendTo(tr);
+		$("<th/>", {text: "LY"}).appendTo(tr);
+		$("<th/>", {text: "Owner"}).appendTo(tr);
+		$("<th/>", {text: "Terrain"}).appendTo(tr);
+		$("<th/>", {text: "Keys"}).appendTo(tr);
+
+		tr.appendTo(table);
+		
+		planets.forEach(function(e,i,a) {
+			if (e.planet.displayName !== selectedPlanet.displayName) {
+				tr = $("<tr/>");
+				
+				$("<td/>", {text: e.planet.displayName}).appendTo(tr);
+				$("<td/>", {text: e.radius.toFixed(2)}).appendTo(tr);
+				$("<td/>", {text: e.planet.owner}).appendTo(tr);
+				$("<td/>", {text: e.planet.terrain}).appendTo(tr);
+				$("<td/>", {text: ""}).appendTo(tr);
+				
+				tr.appendTo(table);
+			}
+		});
+		
+		table.appendTo(neighborDiv);
+	}
+	
+	this.clearSelectedDetail = function() {
+		$("#planet_detail_template").dialog("close");
 	}
 }
 
@@ -302,10 +361,10 @@ Starmap.prototype.init = function(args) {
 		});
 	}
 	
-	$(window).on("mousewheel DOMMouseScroll", {self: this}, this.scrollHandler);
-	$(window).on("mousedown", {self: this}, this.mouseDownHandler);
-	$(window).on("mouseup", {self: this}, this.mouseUpHandler);
-	$(window).on("mousemove", {self: this}, this.mouseMoveHandler);
+	$(container).on("mousewheel DOMMouseScroll", {self: this}, this.scrollHandler);
+	$(container).on("mousedown", {self: this}, this.mouseDownHandler);
+	$(container).on("mouseup", {self: this}, this.mouseUpHandler);
+	$(container).on("mousemove", {self: this}, this.mouseMoveHandler);
 	
 	this.quadtree = new QuadTree({
 		left: this.minX,
