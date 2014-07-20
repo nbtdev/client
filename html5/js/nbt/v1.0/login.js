@@ -51,6 +51,10 @@ function isTokenValid(tok) {
 	return true;
 }
 
+function onRegister() {
+	window.open("register.html");
+}
+
 function onLogin() {
 	var login = new Object();
 	login.username = $("#txtUsername").val();
@@ -125,7 +129,16 @@ function initLoginBox(loginBox) {
 			table.append(tr);
 			
 			tr = $("<tr/>");
-			td = $("<td/>");
+			td = $("<td/>", {
+				colspan: 2,
+				class: "loginBoxStatus",
+				id: "loginBoxStatus"
+			});
+			tr.append(td);
+			table.append(tr);
+			
+			tr = $("<tr/>");
+			td = $("<td/>", {colspan: 2});
 			inp = $("<input/>", {
 				name: "cmdLogin",
 				type: "button",
@@ -133,12 +146,14 @@ function initLoginBox(loginBox) {
 				onclick: "onLogin()"
 			});
 			td.append(inp);
-			tr.append(td);
-			
-			td = $("<td/>", {
-				class: "loginBoxStatus",
-				id: "loginBoxStatus"
+
+			inp = $("<input/>", {
+				name: "cmdRegister",
+				type: "button",
+				value: "Register",
+				onclick: "onRegister()"
 			});
+			td.append(inp);
 			tr.append(td);
 			table.append(tr);
 			
