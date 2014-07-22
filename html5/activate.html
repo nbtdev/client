@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/nbt/v1.0/nbt.js"></script>
+<link href="css/nbt.css" rel="stylesheet" />
+<title>NetBattleTech Automation - Account Activation</title>
+</head>
+<body>
+<div>
+	<table>
+		<tr>
+			<td>Enter Password:</td> 
+			<td><input type="password" id="txtPassword"/></td> 
+		</tr>
+		<tr>
+			<td>Enter Password (again, to verify):</td> 
+			<td><input type="password" id="txtPassword2"/></td> 
+		</tr>
+		<tr>
+			<td colspan="2"><input type="button" id="cmdActivate" value="Activate" onclick="onActivate()"/></td> 
+		</tr>
+		<tr>
+			<td colspan="2" style="display:none" id="txtMessage"></td> 
+		</tr>
+	</table>
+</div>
+<script>
+var API = new NBT();
+
+function onActivate() {
+	// make sure we have a key in the query string
+	var str = location.search.substr(1);
+	var parts = str.split('&');
+	var key = null;
+	$.each(parts, function(k,v) {
+		var kv = v.split('=');
+		if (kv.length > 1 && kv[0] === "key")
+			key = kv[1];
+	});
+	
+	if (key == null) {
+		return;
+	}
+	
+	if ($("#txtPassword").val() !== $("#txtPassword2").val()) {
+		$("#txtMessage").text("Passwords do not match");
+		$("#txtMessage").show();
+		return;
+	}
+	
+	var nbtRequest = new Object();
+	
+	var user = new Object();
+	user.password = $("#txtPassword").val();
+	
+	nbtRequest.user = user;
+	nbtRequest.activationKey = key;
+	
+	$.ajax({
+		url: API.call(location.hostname, "security", "activate"),
+		type: "PUT",
+		data: JSON.stringify(nbtRequest)
+	}).error(function(msg) {
+		// give user the sad news
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		var m = $("#txtMessage");
+		
+		if (resp.error) {
+			// give user the sad news
+			m.text(resp.message);
+		}
+		else {
+			// give user the happy news
+			m.text("Your account has been activated!");
+		}
+
+		m.show();
+	});
+}
+</script>
+</body>
+</html>
