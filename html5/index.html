@@ -137,13 +137,7 @@
 		<td class="dark_header">Timezone:</td>
 		<td class="datal" colspan="3"><select id="edit_tmpl_tz" ></select></td>
 	</tr>
-	<tr>
-		<td class="dark_header">Unit:</td>
-		<td class="datal"><input type="text" id="edit_tmpl_unit"/></td>
-		<td class="dark_header">Role:</td>
-		<td class="datal"><input type="text" id="edit_tmpl_role"/></td>
-	</tr>
-	<tr id="user_detail_tools">
+	<tr id="unit_detail_tools">
 		<td colspan="5" style="text-align: right;">
 			<input type="button" id="cmdDetailEditorCancel" value="Cancel"/>
 			<input type="button" id="cmdDetailEditorSave" value="Save"/>
@@ -247,6 +241,7 @@ for (var i=0; i<cookies.length; ++i) {
 var unitListing = null;
 var userListing = null;
 var starmap = null;
+var unitApplications = null;
 
 var rtn = API.fetchLeagues(
 	function(obj) {
@@ -393,50 +388,110 @@ function onUserDelete(table, userDetail) {
 	});
 }
 
+function onClickUnitApply(event) {
+	if (event.stopPropagation) event.stopPropagation();
+	else event.cancelBubble = true; 
+	
+	var unit = event.data;
+	var span = event.target;
+	
+	var req = new Object();
+	req.token = token;
+	req.unitId = unit.id;
+	
+	$.ajax({
+		url: API.call(location.hostname, API.leagueId(), "unitApplication"),
+		type: "POST",
+		data: JSON.stringify(req)
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			alert(resp.message);
+		}
+		else {
+			$(span).attr("class", "");
+			$(span).attr("id", "");
+			$(span).text("App Pending");
+		}
+	});
+}
+
 // statusMutator will transform a status of Vacant into a link to Apply for the unit
 function statusMutator(obj, headerElem) {
 	if (obj.stat === "Vacant") {
-		var rtn = new HeaderElement({});
-		rtn.mIsLink = true;
-		rtn.mLinkText = "Apply";
-		return rtn;
+		if (unitApplications.indexOf(obj.id) < 0) {
+			var rtn = new HeaderElement({});
+			rtn.mIsLink = true;
+			rtn.mLinkText = "Apply";
+			rtn.mLinkClickFn = onClickUnitApply;
+			rtn.mLinkClickData = obj;
+			return rtn;
+		}
+		else {
+			obj.stat = "App Pending";
+		}
 	}
 	
 	return headerElem;
 }
 
 //'data' will be an array of Unit objects
-function populateUnits(data, canEdit) {
-	var body = $("#main_contents");
-	body.empty();
+function populateUnits(aData, canEdit) {
+	// get a list of the units for which this user has applied
+	var req = new Object();
+	req.token = token;
 	
-	var headers = {
-			displayName: new HeaderElement({headerText: "Name", sortable: true}), 
-			co:          new HeaderElement({headerText: "Commanding Officer", readOnly: true}), 
-			xo:          new HeaderElement({headerText: "Executive Officer", readOnly: true}), 
-			type:        new HeaderElement({headerText: "Class", sortable: true, isList: true, listPopulate: populateUnitClass}), 
-			stat:        new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUnitStatus, mutator: statusMutator}), 
-			www:         new HeaderElement({headerText: "WWW", isLink: true, linkText: "Website"}), 
-			tags:        new HeaderElement({headerText: "Tags"}), 
-			tz:          new HeaderElement({headerText: "Timezone", sortable: true, isList: true, listPopulate: populateTimezone})
-	};
-	
-	if (unitListing) {
-		unitListing.clear();
-	}
-	
-	unitListing = new EditableTable(
-			API.token(),
-			body, 
-			$("#unit_detail_template")[0], 
-			$("#unit_detail_editor_template")[0], 
-			data, 
-			headers,
-			onUnitSave,
-			onUnitDelete);
-	
-	unitListing.setEditable(canEdit);
-	unitListing.show();
+	$.ajax({
+		url: API.call(location.hostname, API.leagueId(), "unitApplication"),
+		type: "GET",
+		data: JSON.stringify(req)
+	}).error(function(msg) {
+		unitApplications = null;
+	}).success( function(data) {
+		var resp = JSON.parse(data);
+		
+		if (resp.error) {
+			//alert(resp.message);
+			unitApplications = null;
+		}
+		else {
+			unitApplications = resp.data;
+		}
+
+		var body = $("#main_contents");
+		body.empty();
+		
+		var headers = {
+				displayName: new HeaderElement({headerText: "Name", sortable: true}), 
+				co:          new HeaderElement({headerText: "Commanding Officer", readOnly: true}), 
+				xo:          new HeaderElement({headerText: "Executive Officer", readOnly: true}), 
+				type:        new HeaderElement({headerText: "Class", sortable: true, isList: true, listPopulate: populateUnitClass}), 
+				stat:        new HeaderElement({headerText: "Status", sortable: true, isList: true, listPopulate: populateUnitStatus, mutator: statusMutator}), 
+				www:         new HeaderElement({headerText: "WWW", isLink: true, linkText: "Website"}), 
+				tags:        new HeaderElement({headerText: "Tags"}), 
+				tz:          new HeaderElement({headerText: "Timezone", sortable: true, isList: true, listPopulate: populateTimezone})
+		};
+		
+		if (unitListing) {
+			unitListing.clear();
+		}
+		
+		unitListing = new EditableTable(
+				API.token(),
+				body, 
+				$("#unit_detail_template")[0], 
+				$("#unit_detail_editor_template")[0], 
+				aData, 
+				headers,
+				onUnitSave,
+				onUnitDelete);
+		
+		unitListing.setEditable(canEdit);
+		unitListing.show();
+	});
 }
 
 function listUnits() {

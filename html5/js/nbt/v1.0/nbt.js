@@ -216,6 +216,12 @@ function HeaderElement(initObj)
 	// link text (if mIsLink)
 	this.mLinkText = initObj.linkText;
 	
+	// link click fn (if mIsLink)
+	this.mLinkClickFn = initObj.linkClickFn;
+	
+	// link click fn data (if mIsLink)
+	this.mLinkClickData = initObj.linkClickData;
+	
 	// allow calling code to modify a particular value in this column (to support alternative display types, etc)
 	this.mMutator = initObj.mutator;
 	
@@ -665,15 +671,17 @@ EditableTable.prototype.show = function() {
 				var fieldVal = val[v];
 				if (fieldVal && fieldVal.length > 0) {
 					var a = $("<span/>", {
-						class: "pseudo_link"
+						class: "pseudo_link",
+						id: "apply_unit_" + val["id"]
 					});
 					
-					a.click(function(event) { 
-						window.open(fieldVal);
-						
-						if (event.stopPropagation) event.stopPropagation();
-						else event.cancelBubble = true; 
-					});
+//					a.click(function(event) { 
+//						window.open(fieldVal);
+//						
+//						if (event.stopPropagation) event.stopPropagation();
+//						else event.cancelBubble = true; 
+//					});
+					a.click(hdr.mLinkClickData, hdr.mLinkClickFn);
 					
 					a.text(hdr.mLinkText);
 					td.append(a);
