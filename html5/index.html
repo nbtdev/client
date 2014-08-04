@@ -34,6 +34,7 @@
 		<div><span class="pseudo_link" onclick="listUnits()">Units</span></div>
 		<div><span class="pseudo_link" onclick="listUsers()">Members</span></div>
 		<div><span class="pseudo_link" onclick="openStarmap()">Starmap</span></div>
+		<div><span class="pseudo_link" onclick="listApps()">Unit Applications</span></div>
 	</div>
 
 	<!--  content area -->
@@ -216,6 +217,18 @@
 	<div class="planet_description" id="planet_detail_template_description"></div>
 </div>
 
+<div id="unit_app_detail_template" class="unit_app_detail" style="display: none;">
+<table>
+	<tr>
+		<td rowspan="2"><img id="detail_tmpl_logo" class="unit_logo_large"></img></td>
+		<td class="dark_header">Unit Name:</td>
+		<td class="datal" id="detail_tmpl_unitName"></td>
+		<td class="dark_header">Applicant:</td>
+		<td class="datal" id="detail_tmpl_userName"></td>
+	</tr>
+</table>
+</div>
+	
 <canvas style="display: none;" class="starmap" id="starmapContext" width="800" height="600">
 	"Your browser must have HTML5 Canvas and WebGL support to use the starmap"
 </canvas>
@@ -223,7 +236,6 @@
 
 </body>
 <script>
-initLoginBox($("#loginBox"));
 var API = new NBT(token);
 
 //check cookies to see if we saved off a previous league choice
@@ -241,7 +253,10 @@ for (var i=0; i<cookies.length; ++i) {
 var unitListing = null;
 var userListing = null;
 var starmap = null;
+// list of unit IDs for which the current user has applied
 var unitApplications = null;
+// list of open unit applications (admin function) 
+var applicationListing = null;
 
 var rtn = API.fetchLeagues(
 	function(obj) {
@@ -266,6 +281,8 @@ var rtn = API.fetchLeagues(
 	}
 );
 
+initLoginBox($("#loginBox"));
+
 function changeCurrentLeague(_this) {
 	var id = _this.options[_this.selectedIndex].value;
 	document.cookie="nbt_league=" + id;
@@ -278,10 +295,7 @@ function changeCurrentLeague(_this) {
 
 function onUnitSave(table, unitDetail) {
 	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = API.token();
-	nbtReq.unitDetail = unitDetail;
-	var strReq = JSON.stringify(nbtReq);
+	var strReq = JSON.stringify(unitDetail);
 	
 	// check unit ID; if it exists, we are doing an update (PUT), 
 	// if not, we are doing an add (POST)
@@ -290,14 +304,17 @@ function onUnitSave(table, unitDetail) {
 		type = "POST";
 	
 	$.ajax({
-		url: API.call(location.hostname, API.leagueId(), "unit", unitDetail.id),
+		url: API.call(location.hostname, "units", unitDetail.id),
 		type: type,
-		data: strReq
+		data: strReq,
+		contentType: "application/json",
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		table.onSaveFailed(unitDetail, msg);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+	}).success( function(resp) {
 		if (resp.error) {
 			table.onSaveFailed(resp.message);
 		}
@@ -309,20 +326,19 @@ function onUnitSave(table, unitDetail) {
 
 function onUnitDelete(table, unitDetail) {
 	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = API.token();
-	nbtReq.unitDetail = unitDetail;
-	var strReq = JSON.stringify(nbtReq);
+	var strReq = JSON.stringify(unitDetail);
 	
 	$.ajax({
-		url: API.call(location.hostname, API.leagueId(), "unit", unitDetail.id),
+		url: API.call(location.hostname, "unit", unitDetail.id),
 		type: "DELETE",
-		data: strReq
+		data: strReq,
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		table.onDeleteFailed(unitDetail, resp.message);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+	}).success( function(resp) {
 		if (resp.error) {
 			table.onDeleteFailed(resp.message);
 		}
@@ -334,10 +350,7 @@ function onUnitDelete(table, unitDetail) {
 
 function onUserSave(table, user) {
 	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = API.token();
-	nbtReq.user = user;
-	var strReq = JSON.stringify(nbtReq);
+	var strReq = JSON.stringify(user);
 	
 	// check user ID; if it exists, we are doing an update (PUT), 
 	// if not, we are doing an add (POST)
@@ -348,12 +361,15 @@ function onUserSave(table, user) {
 	$.ajax({
 		url: API.call(location.hostname, "security", "user", user.id),
 		type: type,
-		data: strReq
+		data: strReq,
+		contentType: "application/json",
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		table.onSaveFailed(user, msg);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+	}).success( function(resp) {
 		if (resp.error) {
 			table.onSaveFailed(resp.message);
 		}
@@ -365,15 +381,13 @@ function onUserSave(table, user) {
 
 function onUserDelete(table, userDetail) {
 	// submit data
-	var nbtReq = new Object();
-	nbtReq.token = API.token();
-	nbtReq.user = null;
-	var strReq = JSON.stringify(nbtReq);
-	
 	$.ajax({
 		url: API.call(location.hostname, "security", "user", userDetail.id),
 		type: "DELETE",
-		data: strReq
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		table.onDeleteFailed(userDetail, resp.message);
 	}).success( function(data) {
@@ -395,19 +409,21 @@ function onClickUnitApply(event) {
 	var unit = event.data;
 	var span = event.target;
 	
-	var req = new Object();
-	req.token = token;
-	req.unitId = unit.id;
+	var u = new Object();
+	u.id = unit.id;
 	
 	$.ajax({
-		url: API.call(location.hostname, API.leagueId(), "unitApplication"),
+		url: API.call(location.hostname, "unitApplication"),
 		type: "POST",
-		data: JSON.stringify(req)
+		data: JSON.stringify(u),
+		contentType: "application/json",
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		alert(msg);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+	}).success( function(resp) {
 		if (resp.error) {
 			alert(resp.message);
 		}
@@ -441,18 +457,18 @@ function statusMutator(obj, headerElem) {
 //'data' will be an array of Unit objects
 function populateUnits(aData, canEdit) {
 	// get a list of the units for which this user has applied
-	var req = new Object();
-	req.token = token;
+	var strToken = JSON.stringify(token);
 	
 	$.ajax({
-		url: API.call(location.hostname, API.leagueId(), "unitApplication"),
+		url: API.call(location.hostname, "unitApplications"),
 		type: "GET",
-		data: JSON.stringify(req)
+		headers: {
+			"X-NBT-Token": API.token().value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		unitApplications = null;
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+	}).success( function(resp) {
 		if (resp.error) {
 			//alert(resp.message);
 			unitApplications = null;
@@ -536,6 +552,83 @@ function populateUsers(data, canEdit) {
 	userListing.show();
 }
 
+//'data' will be an array of UnitApplication objects
+function populateUnitApps(data, canEdit) {
+	var body = $("#main_contents");
+	body.empty();
+	
+	var table = $("<table/>", {
+		class: "editable_data_table"
+	});
+	
+	var tr = $("<tr/>");
+	tr.appendTo(table);
+	
+	var th = $("<th/>");
+	th.text("Unit");
+	th.appendTo(tr);
+	
+	th = $("<th/>");
+	th.text("Applicant");
+	th.appendTo(tr);
+	
+	$("<th/>").appendTo(tr);
+	$("<th/>").appendTo(tr);
+	
+	for (var i=0; i<data.length; ++i) {
+		var unitApp = data[i];
+		tr = $("<tr/>");
+		tr.appendTo(table);
+		
+		$("<td/>").text(unitApp.unitName).appendTo(tr);
+		$("<td/>").text(unitApp.userName).appendTo(tr);
+		var td = $("<td/>");
+		var span = $("<span/>", {
+			class: "pseudo_link"
+		});
+		span.appendTo(td);
+		span.text("Approve");
+		span.click(unitApp, onAppApprove);
+		td.appendTo(tr);
+		
+		td = $("<td/>");
+		span = $("<span/>", {
+			class: "pseudo_link"
+		});
+		span.appendTo(td);
+		span.text("Deny");
+		span.click(unitApp, onAppReject);
+		td.appendTo(tr);
+	}
+	
+	table.appendTo(body);
+}
+
+function onAppApprove(event) {
+	$.ajax({
+		url: API.call(location.hostname, "unitApplication") + "/" + event.data.id + "/" + event.data.userId,
+		type: "PUT",
+		headers: {
+			"X-NBT-Token": API.token().value,
+			"X-NBT-League": API.leagueId()
+		}
+	}).error(function(msg) {
+		alert(msg);
+	}).success( function(resp) {
+		if (resp.error) {
+			alert(resp.message);
+		}
+		else {
+			// simply refresh the list
+			listApps();
+		}
+	});
+}
+
+function onAppReject(event) {
+	
+}
+
 function listUsers() {
 	var rtn = API.fetchUsers(
 		populateUsers,
@@ -551,21 +644,16 @@ function openStarmap() {
 		var container = $("#main_contents");
 		container.empty();
 		
-		// submit request
-		var nbtReq = new Object();
-		nbtReq.token = API.token();
-		nbtReq.planet = new Object();
-		var strReq = JSON.stringify(nbtReq);
-		
 		$.ajax({
-			url: API.call(location.hostname, API.leagueId(), "planet"),
+			url: API.call(location.hostname, "planets"),
 			type: "GET",
-			data: strReq
+			headers: {
+				"X-NBT-Token": token.value,
+				"X-NBT-League": API.leagueId()
+			}
 		}).error(function(msg) {
 			alert(msg);
-		}).success( function(data) {
-			var resp = JSON.parse(data);
-			
+		}).success( function(resp) {
 			if (resp.error) {
 				alert(resp.message);
 			}
@@ -583,6 +671,15 @@ function openStarmap() {
 		starmap.reset();
 		starmap.draw();
 	}
+}
+
+function listApps() {
+	var rtn = API.fetchUnitApps(
+		populateUnitApps,
+		function(errMsg) {
+			alert(errMsg);
+		}
+	);
 }
 
 $("#planet_detail_template").dialog({

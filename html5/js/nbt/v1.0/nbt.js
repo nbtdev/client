@@ -29,13 +29,9 @@ function NBT(token, leagueId)
 		return this.mToken;
 	};
 
-	this.call = function(hostname, leagueId, resource, resourceId) 
+	this.call = function(hostname, resource, resourceId) 
 	{
-		var rtn = this.mUrlPrefix + hostname + ":" + this.mUrlPort + "/api/" + this.mUrlApiVersion;
-		
-		if (leagueId) {
-			rtn += "/" + leagueId;
-		}
+		var rtn = this.mUrlPrefix + hostname + ":" + this.mUrlPort + "/api";
 		
 		if (resource != null) {
 			rtn += "/" + resource;
@@ -55,21 +51,23 @@ function NBT(token, leagueId)
 	 */
 	this.fetchLeagues = function(cbSuccess, cbErr) {
 		// token may be null for this
+		var strToken = null;
 		
-		var strToken = JSON.stringify(this.mToken);
+		if (this.mToken) {
+			//strToken = JSON.stringify(this.mToken);
+			strToken = this.mToken.value;
+		}
 		
 		$.ajax({
-			url: this.call(location.hostname, null, "leagues"),
+			url: this.call(location.hostname, "leagues"),
 			type: "GET",
-			data: strToken
+			headers: {"X-NBT-Token": strToken}
 		}).error(function (errText) {
 			cbErr(errText); 
-		}).success(function(data) {
-			var resp = JSON.parse(data);
+		}).success(function(resp) {
 			if (resp.error === true)
 				cbErr(resp.message);
 			else {
-				var resp = JSON.parse(data);
 				cbSuccess(resp.data);
 			}
 		});
@@ -93,19 +91,22 @@ function NBT(token, leagueId)
 			console.log("leagueId may not be null or zero-length");
 			return "leagueId may not be null or zero-length";
 		}
+
+		var strToken = this.mToken.value;
 		
 		$.ajax({
-			url: this.call(location.hostname, this.mLeagueId, "unit"),
+			url: this.call(location.hostname, "units"),
 			type: "GET",
-			data: JSON.stringify(this.mToken)
+			headers: {
+				"X-NBT-Token": strToken,
+				"X-NBT-League": this.mLeagueId
+			}
 		}).error(function (errText) {
 			cbErr(errText); 
-		}).success(function(data) {
-			var resp = JSON.parse(data);
+		}).success(function(resp) {
 			if (resp.error === true)
 				cbErr(resp.message);
 			else {
-				var resp = JSON.parse(data);
 				cbSuccess(resp.data, resp.canEdit);
 			}
 		});
@@ -125,17 +126,49 @@ function NBT(token, leagueId)
 		}
 		
 		$.ajax({
-			url: this.call(location.hostname, "security", "user"),
+			url: this.call(location.hostname, "security", "users"),
 			type: "GET",
-			data: JSON.stringify(this.mToken)
+			headers: {
+				"X-NBT-Token": this.mToken.value,
+				"X-NBT-League": this.mLeagueId
+			}
 		}).error(function (errText) {
 			cbErr(errText); 
-		}).success(function(data) {
-			var resp = JSON.parse(data);
+		}).success(function(resp) {
 			if (resp.error === true)
 				cbErr(resp.message);
 			else {
-				var resp = JSON.parse(data);
+				cbSuccess(resp.data, resp.canEdit);
+			}
+		});
+		
+		return null;
+	};
+
+	this.fetchUnitApps = function(cbSuccess, cbErr) {
+		// validate inputs
+		if (this.mToken == null) {
+			console.log("token may not be null");
+			return "token may not be null";
+		}
+		if (this.mLeagueId == null || this.mLeagueId.length <= 0) {
+			console.log("leagueId may not be null or zero-length");
+			return "leagueId may not be null or zero-length";
+		}
+		
+		$.ajax({
+			url: this.call(location.hostname, "unitApplications"),
+			type: "GET",
+			headers: {
+				"X-NBT-Token": this.mToken.value,
+				"X-NBT-League": this.mLeagueId
+			}
+		}).error(function (errText) {
+			cbErr(errText); 
+		}).success(function(resp) {
+			if (resp.error === true)
+				cbErr(resp.message);
+			else {
 				cbSuccess(resp.data, resp.canEdit);
 			}
 		});
@@ -150,12 +183,14 @@ function populateDropdown(token, lstDropdown, selected, resourceName) {
 	$.ajax({
 		url: API.call(location.hostname, "system", resourceName),
 		type: "GET",
-		data: strToken
+		headers: {
+			"X-NBT-Token": token.value,
+			"X-NBT-League": API.leagueId()
+		}
 	}).error(function(msg) {
 		alert(msg);
-	}).success( function(data) {
+	}).success( function(resp) {
 		$(lstDropdown).empty();
-		var resp = JSON.parse(data);
 		$.each(resp.data, function(i, item) {
 			var opt = $("<option/>", {
 				value: item.key,

@@ -337,12 +337,13 @@ Starmap.prototype.init = function(args) {
 		$.ajax({
 			url: API.call(location.hostname, "system", "mapColors"),
 			type: "GET",
-			data: JSON.stringify(args.token)
+			headers: {
+				"X-NBT-Token": token.value,
+				"X-NBT-League": API.leagueId()
+			}
 		}).error(function(msg) {
 			alert(msg);
-		}).success( function(data) {
-			var resp = JSON.parse(data);
-			
+		}).success( function(resp) {
 			if (resp.error) {
 				alert(resp.message);
 			}

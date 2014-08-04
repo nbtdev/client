@@ -34,16 +34,14 @@ function setLoggedIn(box) {
 
 function isTokenValid(tok) {
 	$.ajax({
-		url: "http://" + location.hostname + ":8080/api/v1.0/login/" + tok.value,
+		url: "http://" + location.hostname + ":8080/api/login/" + tok.value,
 		type: "GET"
 	}).error(function(err) {
 		alert(err);
-	}).success(function(data) {
-		var resp = JSON.parse(data);
+	}).success(function(resp) {
 		if (resp.error === true)
 			alert(resp.message);
 		else {
-			var resp = JSON.parse(data);
 			return resp.data;
 		}
 	});
@@ -61,20 +59,19 @@ function onLogin() {
 	login.password = $("#txtPassword").val();
 	
 	$.ajax({
-		url: "http://" + location.hostname + ":8080/api/v1.0/login",
+		url: "http://" + location.hostname + ":8080/api/login",
 		type: "POST", 
-		data: JSON.stringify(login)
+		data: JSON.stringify(login),
+		contentType: "application/json"
 	}).error(function(err) {
 		alert(err);
-	}).success(function(data) {
-		var resp = JSON.parse(data);
+	}).success(function(resp) {
 		var loginBox = $("#loginBox");
 		var loginBoxStatus = $("#loginBoxStatus");
 		
 		if (resp.error === true)
 			loginBoxStatus.text(resp.message);
 		else {
-			var resp = JSON.parse(data);
 			token = resp.data;
 			
 			if ($("#chkRememberMe").is(':checked')) {
@@ -185,7 +182,7 @@ function initLoginBox(loginBox) {
 function onLogout() {
 	if (token) {
 		$.ajax({
-			url: "http://" + location.hostname + ":8080/api/v1.0/login",
+			url: "http://" + location.hostname + ":8080/api/login",
 			type: "DELETE", 
 			data: JSON.stringify(token)
 		});
