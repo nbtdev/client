@@ -145,7 +145,7 @@ function NBT(token, leagueId)
 		return null;
 	};
 
-	this.fetchUnitApps = function(cbSuccess, cbErr) {
+	this.fetchUnitApps = function(cbSuccess, cbErr, userId) {
 		// validate inputs
 		if (this.mToken == null) {
 			console.log("token may not be null");
@@ -156,13 +156,20 @@ function NBT(token, leagueId)
 			return "leagueId may not be null or zero-length";
 		}
 		
+		var data = null;
+		if (userId) {
+			data = new Object();
+			data.userId = userId;
+		}
+		
 		$.ajax({
 			url: this.call(location.hostname, "unitApplications"),
 			type: "GET",
 			headers: {
 				"X-NBT-Token": this.mToken.value,
 				"X-NBT-League": this.mLeagueId
-			}
+			},
+			data: data
 		}).error(function (errText) {
 			cbErr(errText); 
 		}).success(function(resp) {

@@ -460,7 +460,7 @@ function populateUnits(aData, canEdit) {
 	var strToken = JSON.stringify(token);
 	
 	$.ajax({
-		url: API.call(location.hostname, "unitApplications"),
+		url: API.call(location.hostname, "unitApplications") + "/mine",
 		type: "GET",
 		headers: {
 			"X-NBT-Token": API.token().value,
@@ -673,12 +673,13 @@ function openStarmap() {
 	}
 }
 
-function listApps() {
+function listApps(userId) {
 	var rtn = API.fetchUnitApps(
 		populateUnitApps,
 		function(errMsg) {
 			alert(errMsg);
-		}
+		},
+		userId
 	);
 }
 
