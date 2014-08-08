@@ -35,6 +35,9 @@ function Starmap(mapData, canvas, overlay) {
 	this.circle = null;
 	// center of circles (30 and 60LY)
 	this.circleCenter = null;
+	
+	// rect object for rubberbanding
+	this.selectBox = null;
 
 	// default colors to use for various things on the map
 	this.mapColors = null;
@@ -91,7 +94,8 @@ function Starmap(mapData, canvas, overlay) {
 			self.draw();
 		}
 		
-		event.stopPropagation();
+		if (event.stopPropagation) event.stopPropagation();
+		else event.cancelBubble = true; 	
 	}
 	
 	this.mouseDownHandler = function (event) {
@@ -185,12 +189,28 @@ function Starmap(mapData, canvas, overlay) {
 			
 			self.draw();
 			
-			// don't propagate this (it will scroll the page, annoying)
-			event.stopPropagation();
+			if (event.stopPropagation) event.stopPropagation();
+			else event.cancelBubble = true; 
 		}
 		
 		if (self.mouseDownPos != null) {
+			var offPos = $(self.canvas).offset();
+			
 			// then we are selecting stuff with some form of rubber band
+			var relX = event.clientX - offPos.left;
+			var relY = event.clientY - offPos.top;
+			var normX = relX / $(self.canvas).width();
+			var normY = 1 - relY / $(self.canvas).height();
+			
+			var invOrtho = mat4.create();
+			mat4.invert(invOrtho, self.ortho);
+			
+			var v = [2*normX-1, 2*normY-1, 0];
+			var pos = [0,0,0];
+			vec3.transformMat4(pos, v, invOrtho);
+			
+			self.draw();
+			self.drawRect(self.mouseDownPos, pos);
 		}
 	}
 	
@@ -254,9 +274,9 @@ Starmap.prototype.vertexShader =
 	"}";
 
 Starmap.prototype.fragmentShader = 
-	"uniform mediump vec3 col;" +
+	"uniform mediump vec4 col;" +
 	"void main() {\n" + 
-	"	gl_FragColor = vec4(col, 1.0);\n" +
+	"	gl_FragColor = col;\n" +
 	"}";
 
 Starmap.prototype.init = function(args) {
@@ -283,6 +303,8 @@ Starmap.prototype.init = function(args) {
 	if (GL) {
 		GL.clearColor(0.0,0.0,0.0,1.0);
 		GL.enable(GL.DEPTH_TEST);
+		GL.enable(GL.BLEND);
+		GL.blendFunc(GL.SRC_ALPHA, GL.ONE);
 		GL.depthFunc(GL.LEQUAL);
 		GL.clear(GL.COLOR_BUFFER_BIT|GL.DEPTH_BUFFER_BIT);
 	}
@@ -510,6 +532,24 @@ Starmap.prototype.initVBO = function() {
 	this.circle.ibo = circleIbo;
 	this.circle.ibo.length = ind.length;
 	
+	// init rubberband object (it's just a rect that gets scaled
+	this.selectBox = new Object();
+	
+	var rectVbo = GL.createBuffer();
+	GL.bindBuffer(GL.ARRAY_BUFFER, rectVbo);
+	
+	var verts = new Float32Array(6 * 3); // 3 tri's worth of verts, we'll just make a non-indexed trilist
+	verts[0] = 0; verts[1] = 0; verts[2] = 0;
+	verts[3] = 0; verts[4] = 1; verts[2] = 0;
+	verts[6] = 1; verts[7] = 0; verts[2] = 0;
+
+	verts[9] = 0; verts[10] = 1; verts[11] = 0;
+	verts[12] = 1; verts[13] = 1; verts[14] = 0;
+	verts[15] = 1; verts[16] = 0; verts[17] = 0;
+	
+	GL.bufferData(GL.ARRAY_BUFFER, verts, GL.STATIC_DRAW);
+	this.selectBox.vbo = rectVbo;
+
 	this.draw();
 }
 
@@ -536,7 +576,7 @@ Starmap.prototype.draw = function() {
 			var mapCol = _this.mapColors[iboData.owner];
 
 			if (mapCol) {
-				GL.uniform3fv(_this.col, [mapCol.innerColor.r/255.0, mapCol.innerColor.g/255.0, mapCol.innerColor.b/255.0]);
+				GL.uniform4fv(_this.col, [mapCol.innerColor.r/255.0, mapCol.innerColor.g/255.0, mapCol.innerColor.b/255.0, 1.0]);
 			}
 			
 			GL.bindBuffer(GL.ARRAY_BUFFER, iboData.vbo);
@@ -611,15 +651,39 @@ Starmap.prototype.drawCircle = function(pos) {
 	
 	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.circle.ibo);
 
-	GL.uniform3fv(this.col, [1.0,1.0,1.0]);
+	GL.uniform4fv(this.col, [1.0,1.0,1.0,1.0]);
 	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
 
 	mat4.identity(world);
 	mat4.translate(world, world, worldPos);
 	mat4.scale(world, world, [60,60,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
-	GL.uniform3fv(this.col, [0.0,1.0,0.0]);
+	GL.uniform4fv(this.col, [0.0,1.0,0.0,1.0]);
 	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
+}
+
+// posA is where the user first pressed the mouse
+Starmap.prototype.drawRect = function(posA, posB) {
+	var GL = this.gl;
+
+	var scaleX = posB[0] - posA.x; 
+	var scaleY = posB[1] - posA.y; 
+
+	var world = mat4.create();
+	mat4.identity(world);
+	
+	var worldPos = [posA.x, posA.y, 0];
+	mat4.translate(world, world, worldPos);
+	mat4.scale(world, world, [scaleX,scaleY,1]);
+	GL.uniformMatrix4fv(this.world, false, world);
+
+	GL.bindBuffer(GL.ARRAY_BUFFER, this.selectBox.vbo);
+	
+	GL.enableVertexAttribArray(0);
+	GL.vertexAttribPointer(0, 3, GL.FLOAT, false, 3 * 4, 0);
+
+	GL.uniform4fv(this.col, [1.0,0.0,1.0,0.2]);
+	GL.drawArrays(GL.TRIANGLES, 0, 6);
 }
 
 Starmap.prototype.reset = function() {
