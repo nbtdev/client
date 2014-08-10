@@ -19,6 +19,9 @@ function Starmap(mapData, canvas, overlay) {
 	// picking support
 	this.selectedPlanet = null;
 	
+	// rubberbanding support
+	this.selectedPlanets = null;
+	
 	// GL canvas
 	this.canvas = canvas;
 	
@@ -104,7 +107,8 @@ function Starmap(mapData, canvas, overlay) {
 		var pos = $(self.canvas).offset();
 		
 		if (event.button == 0) {
-			// then selecting/rubber-banding
+			// then selecting/rubber-banding, clear any existing selection set
+			self.selectedPlanets = null;
 			
 			// find a planet under the mouse?
 			var relX = event.clientX - pos.left;
@@ -208,6 +212,29 @@ function Starmap(mapData, canvas, overlay) {
 			var v = [2*normX-1, 2*normY-1, 0];
 			var pos = [0,0,0];
 			vec3.transformMat4(pos, v, invOrtho);
+			
+			// collect everything inside the box
+			self.selectedPlanets = null;
+			
+			var posA = self.mouseDownPos;
+			var posB = pos;
+			
+			if (posA.x < posB[0]) {
+				if (posA.y > posB[1]) {
+					self.selectedPlanets = self.quadtree.findAllWithinBox(posA.x, posB[0], posB[1], posA.y);
+				}
+				else {
+					self.selectedPlanets = self.quadtree.findAllWithinBox(posA.x, posB[0], posA.y, posB[1]);
+				}
+			}
+			else {
+				if (posA.y > posB[1]) {
+					self.selectedPlanets = self.quadtree.findAllWithinBox(posB[0], posA.x, posB[1], posA.y);
+				}
+				else {
+					self.selectedPlanets = self.quadtree.findAllWithinBox(posB[0], posA.x, posA.y, posB[1]);
+				}
+			}
 			
 			self.draw();
 			self.drawRect(self.mouseDownPos, pos);
@@ -631,9 +658,18 @@ Starmap.prototype.draw = function() {
 			}
 		});
 	}
+	
+	// draw any selected planet highlights too
+	if (this.selectedPlanets && this.selectedPlanets.length > 0) {
+		// draw a white circle around each selected planet
+		for (var i=0; i<this.selectedPlanets.length; ++i) {
+			var planet = this.selectedPlanets[i];
+			this.drawRing({x: planet.x, y: planet.y}, 1.5, [1.0,1.0,1.0,1.0]);
+		}
+	}
 }
 
-Starmap.prototype.drawCircle = function(pos) {
+Starmap.prototype.drawRing = function(pos, radius, color) {
 	var GL = this.gl;
 
 	var world = mat4.create();
@@ -641,7 +677,7 @@ Starmap.prototype.drawCircle = function(pos) {
 	
 	var worldPos = [pos.x, pos.y, 0];
 	mat4.translate(world, world, worldPos);
-	mat4.scale(world, world, [30,30,1]);
+	mat4.scale(world, world, [radius,radius,1]);
 	GL.uniformMatrix4fv(this.world, false, world);
 
 	GL.bindBuffer(GL.ARRAY_BUFFER, this.circle.vbo);
@@ -651,15 +687,13 @@ Starmap.prototype.drawCircle = function(pos) {
 	
 	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.circle.ibo);
 
-	GL.uniform4fv(this.col, [1.0,1.0,1.0,1.0]);
+	GL.uniform4fv(this.col, color);
 	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
+}
 
-	mat4.identity(world);
-	mat4.translate(world, world, worldPos);
-	mat4.scale(world, world, [60,60,1]);
-	GL.uniformMatrix4fv(this.world, false, world);
-	GL.uniform4fv(this.col, [0.0,1.0,0.0,1.0]);
-	GL.drawElements(GL.LINE_STRIP, this.circle.ibo.length, GL.UNSIGNED_SHORT, 0);
+Starmap.prototype.drawCircle = function(pos) {
+	this.drawRing(pos, 30, [1.0,1.0,1.0,1.0]);
+	this.drawRing(pos, 60, [0.0,1.0,0.0,1.0]);
 }
 
 // posA is where the user first pressed the mouse
