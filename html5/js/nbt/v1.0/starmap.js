@@ -2,7 +2,7 @@
  * 
  */
 
-function Starmap(mapData, canvas, overlay) {
+function Starmap(mapData, canvas, overlay, ui) {
 
 	// array of "Planet" objects containing all per-planet information
 	this.planets = mapData.planets;
@@ -22,11 +22,17 @@ function Starmap(mapData, canvas, overlay) {
 	// rubberbanding support
 	this.selectedPlanets = null;
 	
+	// context menu for RMB things
+	this.contextMenu = null;
+	
 	// GL canvas
 	this.canvas = canvas;
 	
 	// overlay for text, etc
 	this.overlay = overlay;
+	
+	// UI layer for menus, etc
+	this.ui = ui;
 	
 	// GL context
 	this.gl = null;
@@ -75,6 +81,17 @@ function Starmap(mapData, canvas, overlay) {
 	this.maxDist = 2001;
 	this.minDist = 29;
 	
+	// and somewhere to store the current state
+	this.state = this.State.NORMAL;
+	
+	//
+	// user-definable callbacks
+	//
+	// onEditPlanet(selectedPlanet /*object*/);
+	this.onEditPlanet = null;
+	// onEditPlanet(selectedPlanets /*array*/);
+	this.onEditPlanets = null;
+	
 	// mouse scroll handler
 	this.scrollHandler = function(event) {
 		var self = event.data.self;
@@ -107,6 +124,10 @@ function Starmap(mapData, canvas, overlay) {
 		var pos = $(self.canvas).offset();
 		
 		if (event.button == 0) {
+			// ignore LMB events if the context menu is up
+			if (self.state == self.State.CONTEXT_MENU)
+				return;
+			
 			// then selecting/rubber-banding, clear any existing selection set
 			self.selectedPlanets = null;
 			
@@ -150,6 +171,10 @@ function Starmap(mapData, canvas, overlay) {
 		var self = event.data.self;
 		
 		if (event.button == 0) {
+			// ignore if we are in context-menu mode
+			if (self.state == self.State.CONTEXT_MENU)
+				return;
+			
 			// then done selecting/rubber-banding
 			
 			self.circleCenter = null;
@@ -157,7 +182,7 @@ function Starmap(mapData, canvas, overlay) {
 			if (self.selectedPlanet != null) {
 				self.circleCenter = self.mouseDownPos;
 			}
-
+			
 			self.draw();
 		
 			self.mouseDownPos = null;
@@ -165,6 +190,31 @@ function Starmap(mapData, canvas, overlay) {
 		else if (event.button == 1) {
 			// then done moving the map
 			self.mapMoveStartPos = null;
+		}
+		else if (event.button == 2) {
+			// then context menu (if no special keys pressed)
+			if (self.contextMenu) {
+				$(self.contextMenu).remove();
+				self.contextMenu = null;
+				self.state = self.State.NORMAL;
+			}
+			
+			if (self.selectedPlanet) {
+				var pos = $(self.canvas).offset();
+				var eventPos = {x: event.clientX - pos.left, y: event.clientY - pos.top};
+				self.contextMenu = self.editPlanetContextMenuAt(eventPos);
+				self.state = self.State.CONTEXT_MENU;
+			}
+			
+			if (self.selectedPlanets) {
+				var pos = $(self.canvas).offset();
+				var eventPos = {x: event.clientX - pos.left, y: event.clientY - pos.top};
+				self.contextMenu = self.editPlanetsContextMenuAt(eventPos);
+				self.state = self.State.CONTEXT_MENU;
+			}
+			
+			if (event.stopPropagation) event.stopPropagation();
+			else event.cancelBubble = true; 
 		}
 	}
 	
@@ -292,6 +342,110 @@ function Starmap(mapData, canvas, overlay) {
 	}
 }
 
+// starmap state (used for managing context-menu state)
+Starmap.prototype.State = {
+	NORMAL: 0,
+	CONTEXT_MENU: 1
+}
+
+Starmap.prototype.ContextMenuItemId = {
+	EDIT_PLANET: 0,	
+	CHANGE_PLANET_OWNER: 1	
+}
+
+Starmap.prototype.onClickContextMenuItem = function(event) {
+	var self = event.data.self;
+	var id = event.data.item;
+	
+	// do the callback
+	switch (id) {
+	case self.ContextMenuItemId.EDIT_PLANET:
+		if (self.onEditPlanet) self.onEditPlanet(self.selectedPlanet);
+		break;
+	case self.ContextMenuItemId.CHANGE_PLANET_OWNER:
+		if (self.onChangePlanetsOwner) self.onChangePlanetsOwner(self.selectedPlanets);
+		break;
+	}
+	
+	// then kill the menu
+	$(self.contextMenu).remove();
+	self.contextMenu = null;
+	self.state = self.State.NORMAL;
+}
+
+Starmap.prototype.editPlanetContextMenuAt = function(pos) {
+	var menu = $("<div/>", {
+		class: "context_menu"
+	});
+	
+	var table = $("<table/>", {
+		width: "100%"
+	});
+	table.appendTo(menu);
+	
+	var tr = $("<tr/>", {
+		class: "context_menu_item"
+	});
+	tr.appendTo(table);
+	tr.click({
+				self: this,
+				item: this.ContextMenuItemId.EDIT_PLANET
+			}, 
+			this.onClickContextMenuItem
+	);
+	
+	var td = $("<td/>", {
+		
+	}).text("Edit...");
+	td.appendTo(tr);
+	
+	tr = $("<tr/>", {
+		class: "context_menu_item"
+	});
+	tr.appendTo(table);
+	tr.click(this, this.onClickContextMenuItem);
+	
+	td = $("<td/>", {
+		
+	}).text("Thing...");
+	td.appendTo(tr);
+	
+	$(menu).css({top: pos.y, left: pos.x});
+	$(this.ui).append(menu);
+	return menu;
+}
+
+Starmap.prototype.editPlanetsContextMenuAt = function(pos) {
+	var menu = $("<div/>", {
+		class: "context_menu"
+	});
+	
+	var table = $("<table/>", {
+		width: "100%"
+	});
+	table.appendTo(menu);
+	
+	var tr = $("<tr/>", {
+		class: "context_menu_item"
+	});
+	tr.appendTo(table);
+	tr.click({
+				self: this,
+				item: this.ContextMenuItemId.CHANGE_PLANET_OWNER
+			}, 
+			this.onClickContextMenuItem
+	);
+	
+	var td = $("<td/>", {
+		
+	}).text("Change Owner...");
+	td.appendTo(tr);
+	
+	$(menu).css({top: pos.y, left: pos.x});
+	$(this.ui).append(menu);
+	return menu;
+}
+
 Starmap.prototype.vertexShader = 
 	"attribute vec3 pos;\n" +
 	"uniform mat4 proj;\n" +
@@ -308,13 +462,15 @@ Starmap.prototype.fragmentShader =
 
 Starmap.prototype.init = function(args) {
 	var container = args.container;
-		
+
 	// move canvas into container
 	container.append($(this.canvas));
 	container.append($(this.overlay));
+	container.append($(this.ui));
 	$(this.canvas).show();
 	$(this.overlay).show();
-	
+	$(this.ui).show();
+		
 	this.reset();
 
 	if (!this.gl) {
@@ -422,6 +578,9 @@ Starmap.prototype.init = function(args) {
 		top: this.maxY,
 		bottom: this.minY
 	});
+	
+	// save callbacks, if any
+	this.cbEditPlanet = args.onEditPlanet;
 }
 
 Starmap.prototype.initVBO = function() {
@@ -737,6 +896,9 @@ Starmap.prototype.reset = function() {
 	$(this.overlay).width(this.vp.width);
 	$(this.overlay).height(this.vp.height);
 	
+	$(this.ui).width(this.vp.width);
+	$(this.ui).height(this.vp.height);
+	
 	this.ortho = mat4.create();
 
 	var width = this.canvas.width;
@@ -749,4 +911,9 @@ Starmap.prototype.reset = function() {
 	var top = this.camPos[1] + (height/2 * zoom); 
 	
 	mat4.ortho(this.ortho, left, right, bottom, top, -1, 1);
+	
+	// disable default browser context menu
+	$(this.canvas).on("contextmenu", function(e) { e.preventDefault(); });
+	$(this.overlay).on("contextmenu", function(e) { e.preventDefault(); });
+	$(this.ui).on("contextmenu", function(e) { e.preventDefault(); });
 }

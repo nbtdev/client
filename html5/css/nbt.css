@@ -178,6 +178,13 @@ th.sortable {
 	color: white;
 }
 
+.starmapUI {
+	z-index: 5;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 .planet_detail_template {
 	background-color: rgba(0,0,0,0.9);
 	width: auto;
@@ -226,4 +233,28 @@ th.sortable {
 
 .planet_detail_template .ui-dialog-titlebar-close {
 	display: none;
+}
+
+.context_menu {
+	position: absolute;
+	background-color: gray;
+	min-width: 100px;
+	z-index: 5;
+}
+
+.context_menu table {
+	border: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.context_menu_item {
+	min-width: 100%;
+	font-weight: bolder;
+	font-size: larger;
+}
+
+.context_menu_item:hover {
+	background-color: navy;
+	cursor: pointer;
 }

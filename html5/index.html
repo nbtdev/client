@@ -217,6 +217,45 @@
 	<div class="planet_description" id="planet_detail_template_description"></div>
 </div>
 
+<div id="planet_detail_editor_template" class="unit_detail" style="display: none;">
+<table>
+	<tr>
+		<td class="dark_header">Name:</td>
+		<td class="datal"><input type="text" id="edit_tmpl_displayName"/></td>
+		<td class="dark_header">Unit:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_owner"></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Capital:</td>
+		<td class="datal"><select id="edit_tmpl_capital"><option value="yes">Yes</option><option value="no">No</option></select></td>
+		<td class="dark_header">Charge Station:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_chargeStation"><option value="yes">Yes</option><option value="no">No</option></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Industry:</td>
+		<td class="datal"><input type="text" id="edit_tmpl_factory"/></td>
+		<td class="dark_header">Factory:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_factory"><option value="yes">Yes</option><option value="no">No</option></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header">Terrain:</td>
+		<td class="datal"><select id="edit_tmpl_terrain"></td>
+		<td class="dark_header">Star:</td>
+		<td class="datal" style="width: 100px;"><select id="edit_tmpl_star"></select></td>
+	</tr>
+	<tr>
+		<td class="dark_header" style="height: 56px;">Description:</td>
+		<td class="dataj" colspan="3"><textarea id="edit_tmpl_description"></textarea></td>
+	</tr>
+	<tr id="unit_detail_tools">
+		<td colspan="5" style="text-align: right;">
+			<input type="button" id="cmdDetailEditorCancel" value="Cancel"/>
+			<input type="button" id="cmdDetailEditorSave" value="Save"/>
+		</td>
+	</tr>
+</table>
+</div>
+
 <div id="unit_app_detail_template" class="unit_app_detail" style="display: none;">
 <table>
 	<tr>
@@ -233,6 +272,7 @@
 	"Your browser must have HTML5 Canvas and WebGL support to use the starmap"
 </canvas>
 <div id="starmapOverlay" class="starmapOverlay" style="display: none;"></div>
+<div id="starmapUI" class="starmapUI" style="display: none;"></div>
 
 </body>
 <script>
@@ -638,6 +678,11 @@ function listUsers() {
 	);
 }
 
+function onStarmapEditPlanet(event) {
+	var planet = event.data;
+	$("planet_detail_editor_template").dialog("open");
+}
+
 function openStarmap() {
 	// load new map data if necessary
 	if (starmap == null) {
@@ -660,9 +705,15 @@ function openStarmap() {
 			else {
 				var c = $("#starmapContext");
 				var o = $("#starmapOverlay");
+				var u = $("#starmapUI");
 				if (c.length > 0 && o.length > 0) {
-					starmap = new Starmap(resp.data, c[0], o[0]);
-					starmap.init({token: token, container: container, _this: starmap});
+					starmap = new Starmap(resp.data, c[0], o[0], u[0]);
+					starmap.init({
+						token: token, 
+						container: container, 
+						_this: starmap,
+						onEditPlanet: onStarmapEditPlanet
+					});
 				}
 			}
 		});
