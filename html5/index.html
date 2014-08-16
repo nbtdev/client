@@ -711,9 +711,10 @@ function openStarmap() {
 					starmap.init({
 						token: token, 
 						container: container, 
-						_this: starmap,
-						onEditPlanet: onStarmapEditPlanet
+						_this: starmap
 					});
+					
+					starmap.onEditPlanet = onStarmapEditPlanet;
 				}
 			}
 		});

@@ -125,8 +125,10 @@ function Starmap(mapData, canvas, overlay, ui) {
 		
 		if (event.button == 0) {
 			// ignore LMB events if the context menu is up
-			if (self.state == self.State.CONTEXT_MENU)
+			if (self.state == self.State.CONTEXT_MENU) {
+				self.cancelIfOutsideContextMenu(event);
 				return;
+			}
 			
 			// then selecting/rubber-banding, clear any existing selection set
 			self.selectedPlanets = null;
@@ -180,7 +182,9 @@ function Starmap(mapData, canvas, overlay, ui) {
 			self.circleCenter = null;
 
 			if (self.selectedPlanet != null) {
-				self.circleCenter = self.mouseDownPos;
+				// this works because both Planet and the mouseEvent have "x" and "y" as properties, 
+				// so if Planet ever stops having "x" and "y" this will break...
+				self.circleCenter = self.selectedPlanet;
 			}
 			
 			self.draw();
@@ -205,8 +209,7 @@ function Starmap(mapData, canvas, overlay, ui) {
 				self.contextMenu = self.editPlanetContextMenuAt(eventPos);
 				self.state = self.State.CONTEXT_MENU;
 			}
-			
-			if (self.selectedPlanets) {
+			else if (self.selectedPlanets) {
 				var pos = $(self.canvas).offset();
 				var eventPos = {x: event.clientX - pos.left, y: event.clientY - pos.top};
 				self.contextMenu = self.editPlanetsContextMenuAt(eventPos);
@@ -286,6 +289,13 @@ function Starmap(mapData, canvas, overlay, ui) {
 				}
 			}
 			
+			if (self.selectedPlanets) {
+				if (self.selectedPlanets.length == 1)
+					self.selectedPlanet = self.selectedPlanets[0];
+				else
+					self.selectedPlanet = null;
+			}
+			
 			self.draw();
 			self.drawRect(self.mouseDownPos, pos);
 		}
@@ -339,6 +349,23 @@ function Starmap(mapData, canvas, overlay, ui) {
 	
 	this.clearSelectedDetail = function() {
 		$("#planet_detail_template").dialog("close");
+	}
+	
+	this.cancelIfOutsideContextMenu = function(event) {
+		if (this.contextMenu) {
+			var menu = $(this.contextMenu);
+			
+			if (   event.clientX < menu.offset().left
+				|| event.clientX > menu.offset().left + menu.width()
+				|| event.clientY < menu.offset().top
+				|| event.clientY > menu.offset().top + menu.height()
+				) {
+				// cancel the context menu
+				menu.remove();
+				this.contextMenu = null
+				this.state = this.State.NORMAL;
+			}
+		}
 	}
 }
 
@@ -825,6 +852,11 @@ Starmap.prototype.draw = function() {
 			var planet = this.selectedPlanets[i];
 			this.drawRing({x: planet.x, y: planet.y}, 1.5, [1.0,1.0,1.0,1.0]);
 		}
+	}
+	else if (this.selectedPlanet) {
+		// draw a white circle around the selected planet
+		var planet = this.selectedPlanet;
+		this.drawRing({x: planet.x, y: planet.y}, 1.5, [1.0,1.0,1.0,1.0]);
 	}
 }
 
