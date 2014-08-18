@@ -185,6 +185,17 @@ th.sortable {
 	left: 0;
 }
 
+.planet_detail_editor_template {
+	background-color: black;
+	border: solid 1px gray;
+	width: 800px;
+	z-index: 3;
+}
+
+.planet_detail_editor_template .ui-dialog-titlebar-close {
+	display: none;
+}
+
 .planet_detail_template {
 	background-color: rgba(0,0,0,0.9);
 	width: auto;

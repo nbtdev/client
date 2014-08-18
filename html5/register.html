@@ -33,24 +33,22 @@
 <script>
 var API = new NBT();
 function onRegister() {
-	var nbtRequest = new Object();
-	
 	var user = new Object();
 	user.login = $("#txtLogin").val();
 	user.displayName = $("#txtDisplayName").val();
 	user.email = $("#txtEmail").val();
 	
-	nbtRequest.user = user;
+	var m = $("#txtMessage");
 	
 	$.ajax({
 		url: API.call(location.hostname, "security", "user"),
 		type: "POST",
-		data: JSON.stringify(nbtRequest)
+		contentType: "application/json",
+		data: JSON.stringify(user)
 	}).error(function(msg) {
 		// give user the sad news
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		var m = $("#txtMessage");
+		m.text(msg.statusText);
+	}).success( function(resp) {
 		
 		if (resp.error) {
 			// give user the sad news
@@ -60,9 +58,9 @@ function onRegister() {
 			// give user the happy news
 			m.text("You will receive an email at the address provided containing instructions to activate your account");
 		}
-
-		m.show();
 	});
+
+	m.show();
 }
 </script>
 </body>

@@ -217,7 +217,7 @@
 	<div class="planet_description" id="planet_detail_template_description"></div>
 </div>
 
-<div id="planet_detail_editor_template" class="unit_detail" style="display: none;">
+<div id="planet_detail_editor_template">
 <table>
 	<tr>
 		<td class="dark_header">Name:</td>
@@ -422,17 +422,15 @@ function onUserSave(table, user) {
 function onUserDelete(table, userDetail) {
 	// submit data
 	$.ajax({
-		url: API.call(location.hostname, "security", "user", userDetail.id),
+		url: API.call(location.hostname, "security", "user") + "/" + userDetail.id,
 		type: "DELETE",
 		headers: {
 			"X-NBT-Token": token.value,
 			"X-NBT-League": API.leagueId()
 		}
 	}).error(function(msg) {
-		table.onDeleteFailed(userDetail, resp.message);
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		
+		table.onDeleteFailed(userDetail, msg.statusText);
+	}).success( function(resp) {
 		if (resp.error) {
 			table.onDeleteFailed(resp.message);
 		}
@@ -680,7 +678,7 @@ function listUsers() {
 
 function onStarmapEditPlanet(event) {
 	var planet = event.data;
-	$("planet_detail_editor_template").dialog("open");
+	$("#planet_detail_editor_template").dialog("open");
 }
 
 function openStarmap() {
@@ -746,5 +744,13 @@ $("#planet_detail_template").dialog({
 	},
 	width: 500
 });
+
+$("#planet_detail_editor_template").dialog({
+	dialogClass: "planet_detail_editor_template",
+	modal: false, 
+	autoOpen: false,
+	width: 400
+});
+
 </script>
 </html>
