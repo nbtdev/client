@@ -50,24 +50,21 @@ function onActivate() {
 		return;
 	}
 	
-	var nbtRequest = new Object();
-	
 	var user = new Object();
 	user.password = $("#txtPassword").val();
-	
-	nbtRequest.user = user;
-	nbtRequest.activationKey = key;
+
+	var m = $("#txtMessage");
+	m.val("");
 	
 	$.ajax({
-		url: API.call(location.hostname, "security", "activate"),
+		url: API.call(location.hostname, "security", "activate") + "/" + key,
 		type: "PUT",
-		data: JSON.stringify(nbtRequest)
+		contentType: "application/json",
+		data: JSON.stringify(user)
 	}).error(function(msg) {
 		// give user the sad news
-	}).success( function(data) {
-		var resp = JSON.parse(data);
-		var m = $("#txtMessage");
-		
+		m.text(msg.statusText);
+	}).success( function(resp) {
 		if (resp.error) {
 			// give user the sad news
 			m.text(resp.message);
@@ -76,9 +73,9 @@ function onActivate() {
 			// give user the happy news
 			m.text("Your account has been activated!");
 		}
-
-		m.show();
 	});
+
+	m.show();
 }
 </script>
 </body>
