@@ -394,18 +394,21 @@ function onUserSave(table, user) {
 	
 	// check user ID; if it exists, we are doing an update (PUT), 
 	// if not, we are doing an add (POST)
-	var type = "PUT";
-	if (!user.id)
-		type = "POST";
+	var type = "POST";
+	var url = API.call(location.hostname, "security", "users");
+
+	if (user.id) {
+		type = "PUT";
+		url = API.call(location.hostname, "security", "user") + "/" + user.id;
+	}
 	
 	$.ajax({
-		url: API.call(location.hostname, "security", "user", user.id),
+		url: url,
 		type: type,
 		data: strReq,
 		contentType: "application/json",
 		headers: {
-			"X-NBT-Token": token.value,
-			"X-NBT-League": API.leagueId()
+			"X-NBT-Token": token.value
 		}
 	}).error(function(msg) {
 		table.onSaveFailed(user, msg);
