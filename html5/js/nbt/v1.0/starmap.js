@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 function Starmap(mapData, canvas, overlay, ui) {
 
 	// array of "Planet" objects containing all per-planet information

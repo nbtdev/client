@@ -1,10 +1,3 @@
-/****************************************************************************
-This source file is (c) NetBattleTech. All rights reserved. 
-Redistribution and/or reproduction, in whole or in part, without prior
-written permission of a duly authorized representative of NetBattleTech
-is prohibited.
-****************************************************************************/
-
 function QuadTreeNode(dims) {
 	this.mDimensions = dims;
 	this.mObjects = null;
