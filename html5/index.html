@@ -3,36 +3,64 @@
 <head>
 <meta charset="ISO-8859-1">
 <script src="js/jquery-2.1.1.js"></script>
+<script src="js/gl-matrix/common.js"></script>
+<script src="js/gl-matrix/mat4.js"></script>
+<script src="js/gl-matrix/vec3.js"></script>
 <script src="js/nbt/v1.0/nbt.js"></script>
+<script src="js/nbt/v1.0/quadtree.js"></script>
+<script src="js/nbt/v1.0/starmap.js"></script>
 <link href="css/nbt.css" rel="stylesheet" />
 <link rel="shortcut icon" href="favicon.ico">
 <title>Welcome To NetBattleTech</title>
+<script>
+var origin = location.hostname;
+var port = 8080;
+
+$.ajax({
+    url: "http://" + origin + ":" + port,
+    type: "GET"
+}).success(function(resp) {
+    if (resp.error === true)
+        console.log(resp.message);
+    else {
+        // find the "leagues" link and follow it
+        var links = resp.links;
+        if (links !== null) {
+        	for (var i=0; i<links.length; ++i) {
+        		if (links[i].rel === "leagues") {
+        			$.ajax({
+        			    url: links[i].href,
+        			    type: "GET"
+        			}).success(layoutLeagues);
+        		}
+        	}
+        }
+    }
+});
+</script>
 </head>
 <body>
 <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
 
 <div class="login" id="loginBox">
-    <div style="text-align: right">Username:&nbsp;<input type="text" id="txtUsername" size="15" /></div>
-    <div style="text-align: right">Password:&nbsp;<input type="password" id="txtPassword" size="15" /></div>
-    <div style="text-align: right; margin-top: 3px;"><input type="button" value="Login" onclick="onLogin(document.getElementById('login'), document.getElementById('txtUsername'), document.getElementById('txtPassword'))" /></div>
 </div>
 
 <div class="title">
 Welcome To Netbattletech
 </div>
 
-<img style="float: right; margin: 20px" src="images/vulturefiring1.jpg" />
 
 <div class="paragraph">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris in justo malesuada, ultrices libero vel, vehicula orci. Suspendisse accumsan ante vitae faucibus varius. Aliquam erat volutpat. Phasellus volutpat fermentum consectetur. Aliquam facilisis consectetur nisi, id laoreet diam venenatis non. Vestibulum id vulputate elit, at rhoncus turpis. Nulla sollicitudin magna quis tristique congue. Proin ornare eros lectus, ac blandit sapien efficitur vitae. Nunc at nisi feugiat, accumsan justo sit amet, sagittis ex. Maecenas vitae tincidunt ante. Sed tincidunt tortor eget nibh bibendum, tempus mattis ante bibendum. Suspendisse dapibus lectus eget metus placerat, nec aliquet lectus molestie. Cras sit amet neque dapibus, blandit leo eget, semper felis.
 </div>
+<img style="float: right; margin: 20px" src="images/vulturefiring1.jpg" />
 <div class="paragraph">
 In porttitor sem est, at faucibus nisl accumsan a. Sed imperdiet, nulla vel tristique condimentum, mi tortor tempor turpis, vel convallis nulla est et est. Sed cursus efficitur nisi, a facilisis turpis vehicula consectetur. Curabitur vitae mauris sed quam bibendum placerat. Cras hendrerit ligula sit amet nunc accumsan laoreet. Aenean ornare rutrum metus in malesuada. Quisque ut lacus velit. Maecenas placerat iaculis aliquam. Suspendisse potenti. Nulla id porta sem, ac facilisis felis. Suspendisse semper egestas tincidunt. Praesent eu consequat magna. Nunc sed velit molestie, dignissim ex ac, pellentesque ante.
 </div>
-<img style="float: left; margin: 20px" src="images/sunset3.jpg" />
 <div class="paragraph">
 Duis tellus magna, tempor at efficitur imperdiet, venenatis a metus. Aliquam vitae finibus magna, id ultrices lectus. Duis ultricies euismod nulla, eget tempor ipsum auctor vulputate. Maecenas id massa placerat est ultrices gravida. Curabitur facilisis tristique sapien, at mollis ex tincidunt in. Morbi quis lectus suscipit, porta massa bibendum, porta felis. Curabitur a lacinia tellus. Curabitur iaculis sit amet velit id tempus. Aliquam faucibus molestie iaculis.
 </div>
+<img style="float: left; margin: 20px" src="images/sunset3.jpg" />
 <div class="paragraph">
 Fusce ut condimentum sapien, vehicula euismod risus. Morbi egestas imperdiet fringilla. Aliquam lacinia maximus velit at scelerisque. Nunc porttitor turpis eu fermentum ornare. Morbi ipsum est, sagittis nec ex non, bibendum feugiat massa. Vestibulum quis rhoncus mi. Phasellus mi odio, ultrices quis libero et, laoreet convallis nunc. Etiam ac rhoncus erat. In hac habitasse platea dictumst.
 </div>
@@ -43,5 +71,12 @@ Ut lobortis orci eu nulla pellentesque, in venenatis orci dignissim. Fusce gravi
 Nulla facilisi. Etiam faucibus ante vel nulla eleifend euismod. Fusce consectetur ex vel dolor efficitur rutrum. Nam rhoncus urna ante, eu aliquet nunc maximus a. Donec blandit a est nec pellentesque. Phasellus in libero eu est lacinia porttitor egestas ut dui. Nulla facilisi. Nam eget lectus tincidunt, elementum eros laoreet, ullamcorper nunc. Sed quis dolor scelerisque, egestas neque id, volutpat enim. Integer maximus eget augue ut tempus. Integer sagittis dui vitae mollis
 </div>
 
+<div id="leagues">
+<div class="title">Current NBT Leagues</div>
+</div>
+
+<script>
+renderLoginBox($("#loginBox"));
+</script>
 </body>
 </html>

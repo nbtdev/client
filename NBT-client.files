@@ -28,7 +28,6 @@ html5/js/gl-matrix/quat.js
 html5/js/gl-matrix/vec2.js
 html5/js/gl-matrix/vec3.js
 html5/js/gl-matrix/vec4.js
-html5/js/nbt/v1.0/login.js
 html5/js/nbt/v1.0/nbt.js
 html5/js/nbt/v1.0/quadtree.js
 html5/js/nbt/v1.0/starmap.js
@@ -37,3 +36,5 @@ html5/js/jquery-ui-1.10.4.js
 html5/activate.html
 html5/index.html
 html5/register.html
+html5/starmap.html
+html5/js/nbt/alpha/nbt.js

@@ -485,6 +485,7 @@ Starmap.prototype.fragmentShader =
 
 Starmap.prototype.init = function(args) {
 	var container = args.container;
+	var mapColors = args.mapColors;
 
 	// move canvas into container
 	container.append($(this.canvas));
@@ -498,7 +499,7 @@ Starmap.prototype.init = function(args) {
 
 	if (!this.gl) {
 		try {
-			this.gl = this.canvas.getContext("webgl") || this.canvas.getContext("experimental-webgl");
+			this.gl = this.canvas.getContext("webgl");
 		} catch (e) {
 			alert(e);
 			this.gl = null;
@@ -563,11 +564,9 @@ Starmap.prototype.init = function(args) {
 	// kick off requests for map data
 	if (!args._this.mapColors) {
 		$.ajax({
-			url: API.call(location.hostname, "system", "mapColors"),
+			url: mapColors,
 			type: "GET",
 			headers: {
-				"X-NBT-Token": token.value,
-				"X-NBT-League": API.leagueId()
 			}
 		}).error(function(msg) {
 			alert(msg);
@@ -785,7 +784,10 @@ Starmap.prototype.draw = function() {
 			var mapCol = _this.mapColors[iboData.owner];
 
 			if (mapCol) {
-				GL.uniform4fv(_this.col, [mapCol.innerColor.r/255.0, mapCol.innerColor.g/255.0, mapCol.innerColor.b/255.0, 1.0]);
+				var col = [mapCol.planetColor.r/255.0, mapCol.planetColor.g/255.0, mapCol.planetColor.b/255.0, 1.0];
+				GL.uniform4fv(_this.col, col);
+			} else {
+				GL.uniform4fv(_this.col, [0.5, 0.5, 0.5, 1.0]);
 			}
 			
 			GL.bindBuffer(GL.ARRAY_BUFFER, iboData.vbo);

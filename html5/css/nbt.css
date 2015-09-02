@@ -287,3 +287,51 @@ th.sortable {
     float: right;
     margin: 10px;
 }
+
+.title {
+	font-size: 36px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#leagues {
+	margin: 25px;
+}
+
+.league {
+	cursor: pointer;
+}
+
+.leagueBanner {
+	cursor: pointer;
+}
+
+.header {
+	display: block;
+}
+
+.footer {
+	display: block;
+}
+
+.content {
+	display: inline-block;
+}
+
+.menu {
+	margin-top: 20px;
+	margin-left: 5px;
+	margin-right: 15px;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.menuItem {
+	cursor: pointer;
+	color: yellow;
+	font-size: larger;
+}
+
+.menuItem:hover {
+	color: lightblue;
+}
