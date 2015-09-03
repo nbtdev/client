@@ -13,11 +13,10 @@
 <link rel="shortcut icon" href="favicon.ico">
 <title>Welcome To NetBattleTech</title>
 <script>
-var origin = location.hostname;
-var port = 8080;
+var origin = "api-dev.netbattletech.com";
 
 $.ajax({
-    url: "http://" + origin + ":" + port,
+    url: "http://" + origin,
     type: "GET"
 }).success(function(resp) {
     if (resp.error === true)
