@@ -267,7 +267,7 @@ function onSelectMenuItem(linkData) {
 	    	// </canvas>
 	    	// <div id="starmapOverlay" class="starmapOverlay" style="display: none;"></div>
 	    	// <div id="starmapUI" class="starmapUI" style="display: none;"></div>
-	    	var canvas = $("<canvas/>").attr("class", "starmap").attr("id", "starmapContext").attr("width", "800").attr("height", "600").text("Your browser must have HTML5 Canvas and WebGL support to use the starmap");
+	    	var canvas = $("<canvas/>").attr("class", "starmap_old").attr("id", "starmapContext").attr("width", "800").attr("height", "600").text("Your browser must have HTML5 Canvas and WebGL support to use the starmap");
 	    	var overlay = $("<div/>").attr("class", "starmapOverlay").attr("id", "starmapOverlay");
 	    	var ui = $("<div/>").attr("class", "starmapUI").attr("id", "starmapUI");
 	    	
