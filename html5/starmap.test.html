@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html ng-app="nbt.app" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
+    <script src="js/gl-matrix/common.js"></script>
+    <script src="js/gl-matrix/mat4.js"></script>
+    <script src="js/gl-matrix/vec3.js"></script>
+    <script src="js/nbt/util/quadtree.js"></script>
+    <script src="js/nbt/app.js"></script>
+    <script src="js/nbt/components/starmap/starmap.js"></script>
+    <title>NBT Starmap Test Page</title>
+    <script>
+        function bodyOnLoad() {
+            var starmap = document.getElementById("starmap");
+            starmap.setUrl('http://api.home.lan', '08800310de7af9bca3348e54c534334d7d56a53c');
+            //starmap.setUrl('http://api-dev.netbattletech.com', '08800310de7af9bca3348e54c534334d7d56a53c');
+        }
+    </script>
+    <style>
+        .tmp {
+            position: relative;
+            width: 1600px;
+            height: 1000px;
+            background-color: black;
+            color: wheat;
+        }
+        .starmapOverlay {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 100%;
+            z-index: 10;
+        }
+        .starmapUI {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 100%;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="bodyOnLoad()">Press</button>
+    <div class="tmp">
+        <starmap id="starmap"></starmap>
+    </div>
+</body>
+
+</html>
