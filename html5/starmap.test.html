@@ -12,10 +12,9 @@
     <script src="js/nbt/components/starmap/starmap.js"></script>
     <title>NBT Starmap Test Page</title>
     <script>
-        function bodyOnLoad() {
-            var starmap = document.getElementById("starmap");
+        function starmapOnLoad(starmap) {
             //starmap.setUrl('http://api.home.lan', '10e7c575f27b011abaee90c426e00d4809a0c096');
-            starmap.setUrl('http://api-dev.netbattletech.com', '290cdc9819bb4e99b09ad06530e1b723f5c3c0bd');
+            starmap.setUrl('http://api-dev.netbattletech.com');
         }
     </script>
     <style>
@@ -33,6 +32,7 @@
             height: 100%;
             width: 100%;
             z-index: 10;
+            pointer-events: none;
         }
         .starmapUI {
             position: absolute;
@@ -41,13 +41,13 @@
             height: 100%;
             width: 100%;
             z-index: 20;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <button onclick="bodyOnLoad()">Press</button>
     <div class="tmp">
-        <starmap id="starmap"></starmap>
+        <starmap id="starmap" onload="starmapOnLoad"></starmap>
     </div>
 </body>
 

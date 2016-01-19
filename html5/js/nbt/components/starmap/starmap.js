@@ -123,15 +123,25 @@
             };
 
             // WebGL (3D, three.js) objects
-            var gl = null;
-            var scene3D = null;
-            var camera3D = null;
+            this.gl = null;
+            this.scene3D = null;
+            this.camera3D = null;
+
+            // mouse manipulation state
+            this.mapZoom = 1.0;
+
+            // TODO: figure out how to do enums for this
+            // 1: move map
+            this.state = 0;
+
+            this.lastX = 0;
+            this.lastY = 0;
 
             // text overlay
-            var overlay = null;
+            this.overlay = null;
 
             // UI overlay
-            var ui = null;
+            this.ui = null;
 
             // initialize the 2D (for text overlays and GUI) and 3D (for starmap itself) objects
             this.initializeGraphics = function(parent) {
@@ -153,11 +163,18 @@
                 this.camera3D.position.x = 0;
                 this.camera3D.position.y = 0;
                 this.camera3D.position.z = 1;
+                this.camera3D.zoom = this.mapZoom;
 
                 this.scene3D.add(this.camera3D);
 
                 this.gl.domElement.style.zIndex = 1;
                 parent.append(this.gl.domElement);
+
+                // add mouse event handlers
+                this.gl.domElement.addEventListener('mousewheel', this.onMouseWheel);
+                this.gl.domElement.addEventListener('mousedown', this.onMouseDown);
+                this.gl.domElement.addEventListener('mouseup', this.onMouseUp);
+                this.gl.domElement.addEventListener('mousemove', this.onMouseMove);
             };
 
             this.reloadStarmapData = function() {
@@ -183,6 +200,60 @@
                 }
 
                 this.gl.render(this.scene3D, this.camera3D);
+            };
+
+            this.onMouseWheel = function(event) {
+                // calculate new zoom factor
+                var zoom = self.camera3D.zoom;
+                zoom += event.wheelDelta / 600;
+
+                if (zoom > 0.39 && zoom < 12.1) {
+                    self.camera3D.zoom = zoom;
+                    self.mapZoom = zoom;
+                    self.camera3D.updateProjectionMatrix();
+                    self.gl.render(self.scene3D, self.camera3D);
+                }
+
+                event.cancelBubble = true;
+                return false;
+            };
+
+            this.onMouseDown = function(event) {
+                // move the camera on middle-mouse down
+                if (event.button === 1) {
+                    self.lastX = event.offsetX;
+                    self.lastY = event.offsetY;
+                    self.state = 1;
+                }
+
+                return false;
+            };
+
+            this.onMouseUp = function(event) {
+                if (event.button === 1) {
+                    self.state = 0;
+                }
+
+                return false;
+            };
+
+            this.onMouseMove = function(event) {
+                if (self.state === 1) {
+                    var dX = self.lastX - event.offsetX;
+                    var dY = self.lastY - event.offsetY;
+
+                    dX /= self.mapZoom;
+                    dY /= self.mapZoom;
+
+                    self.lastX = event.offsetX;
+                    self.lastY = event.offsetY;
+
+                    self.camera3D.position.x += dX;
+                    self.camera3D.position.y -= dY;
+                    self.gl.render(self.scene3D, self.camera3D);
+                }
+
+                return false;
             };
         };
 
@@ -217,6 +288,12 @@
 
                 // init 2D Canvas and WebGL (three.js) systems
                 controller.initializeGraphics(element);
+
+                // invoke any onLoad callback
+                if (attrs.onload) {
+                    var expr = attrs.onload + '(element[0])';
+                    eval(expr);
+                }
             }
         };
     });
