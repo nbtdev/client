@@ -32,6 +32,9 @@
             // planet data from service
             this.planets = null;
 
+            // per-faction map colors
+            this.mapColors = null;
+
             this.rootUrl = "";
             this.token = "";
 
@@ -39,10 +42,29 @@
             this.width = 0;
             this.height = 0;
 
+            this.onMapColorData = function(data) {
+
+                // convert the returned object to a hashtable
+                self.mapColors = {};
+                for (var i=0; i<data.data._embedded.mapColors.length; ++i) {
+                    var mc = data.data._embedded.mapColors[i];
+                    self.mapColors[mc.factionName] = mc;
+                }
+
+                // finally, reset the map
+                self.reset();
+            }
+
             this.succeed = function(data) {
                 self.text = data;
                 self.planets = data.data;
-                self.reset();
+
+                // fetch map color data
+                $http({
+                    method: 'GET',
+                    url: self.rootUrl + '/system/mapColors'
+                })
+                    .then(self.onMapColorData, self.fail);
             };
 
             this.fail = function(msg) {
@@ -51,8 +73,8 @@
 
             var fetchPlanets = function() {
                 // temp hack -- do not hardcode resource paths
-                //var planetsUrl = self.rootUrl + "/leagues/1/planets";
-                var planetsUrl = 'http://localhost/planets.json';
+                var planetsUrl = self.rootUrl + "/leagues/1/planets";
+                //var planetsUrl = 'http://localhost/planets.json';
 
                 $http({
                         url: planetsUrl,
@@ -148,6 +170,10 @@
 
                     var geom = new THREE.CircleGeometry(1, 18);
                     var mtl = new THREE.MeshBasicMaterial();
+                    var mc = this.mapColors[p.ownerName];
+                    var color = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
+                    mtl.color.set(color);
+
                     var mesh = new THREE.Mesh(geom, mtl);
                     var obj = new THREE.Object3D();
                     obj.add(mesh);
