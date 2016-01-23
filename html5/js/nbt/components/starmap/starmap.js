@@ -32,6 +32,9 @@
             // planet data from service
             this.planets = null;
 
+            // quadtree to reduce overdraw
+            this.quadtree = null;
+
             // per-faction map colors
             this.mapColors = null;
 
@@ -59,10 +62,33 @@
                 self.text = data;
                 self.planets = data.data;
 
+                // get the "bounding area" of all of the planets
+                var minX = Infinity;
+                var minY = Infinity;
+                var maxX = -Infinity;
+                var maxY = -Infinity;
+
+                for (var i=0; i<self.planets._embedded.planets.length; ++i) {
+                    var p = self.planets._embedded.planets[i];
+                    if (p.x < minX) minX = p.x;
+                    if (p.x > maxX) maxX = p.x;
+                    if (p.y < minY) minY = p.y;
+                    if (p.y > maxY) maxY = p.y;
+                }
+
+                // create quadtree with dimensions specified in the data
+                self.quadtree = new QuadTree({left: minX, right: maxX, top: maxY, bottom: minY});
+
+                // ...aaaaaaand now go through planets again to insert them into the quadtree
+                for (var i=0; i<self.planets._embedded.planets.length; ++i) {
+                    var p = self.planets._embedded.planets[i];
+                    self.quadtree.insert(p);
+                }
+
                 // fetch map color data
                 $http({
                     method: 'GET',
-                    url: self.rootUrl + '/system/mapColors'
+                    url: self.planets._links.mapColors.href
                 })
                     .then(self.onMapColorData, self.fail);
             };
@@ -136,6 +162,11 @@
 
             this.lastX = 0;
             this.lastY = 0;
+
+            // when the map is moved, these track the virtual "offset" from the starting location
+            // (used for placing text in the overlay)
+            this.offsetX = 0;
+            this.offsetY = 0;
 
             // text overlay
             this.overlay = null;
@@ -214,6 +245,8 @@
                     self.gl.render(self.scene3D, self.camera3D);
                 }
 
+                self.updateOverlay();
+
                 event.cancelBubble = true;
                 return false;
             };
@@ -250,10 +283,61 @@
 
                     self.camera3D.position.x += dX;
                     self.camera3D.position.y -= dY;
+
+                    self.offsetX += dX;
+                    self.offsetY -= dY;
+
+                    // draw the planet graphics
                     self.gl.render(self.scene3D, self.camera3D);
+
+                    // update the text overlay
+                    self.updateOverlay();
                 }
 
                 return false;
+            };
+
+            // redraw the overlay text if the zoom level is beyond a certain value
+            this.updateOverlay = function() {
+                this.overlay.empty();
+
+                if (this.mapZoom < 4) return;
+
+                // which planets are visible?
+                var vpW = this.camera3D.right - this.camera3D.left;
+                var vpH = this.camera3D.top - this.camera3D.bottom;
+                var w = vpW / this.camera3D.zoom;
+                var h = vpH / this.camera3D.zoom;
+                var l = this.offsetX - w/2;
+                var r = this.offsetX + w/2;
+                var t = this.offsetY + h/2;
+                var b = this.offsetY - h/2;
+                var visible = this.quadtree.findAllWithinBox(l, r, b, t);
+
+                // draw these names upon the overlay
+                for (var i=0; i<visible.length; ++i) {
+                    var p = visible[i];
+                    var text = angular.element("<div/>");
+                    text.addClass('planetNameLabel');
+                    text.text(p.name);
+
+                    // normalized position in overlay viewport
+                    var nx = (p.x - l) / w;
+                    var ny = (p.y - b) / h;
+
+                    var vpX = nx * vpW + p.xtextOffset;
+                    var vpY = (1.0 - ny) * vpH + p.ytextOffset;
+
+                    var mc = this.mapColors[p.ownerName];
+                    var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0)
+
+                    text.css({
+                        top: vpY + 'px',
+                        left: vpX + 'px'
+                    });
+
+                    this.overlay.append(text);
+                }
             };
         };
 
