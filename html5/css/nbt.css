@@ -1,0 +1,35 @@
+.starmapOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.starmapUI {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.planetNameLabel {
+    color: white;
+    position: absolute;
+    font-size: smaller;
+    font-family: arial, helvetica, verdana;
+}
+
+.planetBrief {
+    color: white;
+    position: absolute;
+    border: solid 1px white;
+    font-family: arial, helvetica, verdana;
+    font-size: smaller;
+    background-color: darkblue;
+}
