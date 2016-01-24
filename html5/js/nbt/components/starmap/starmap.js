@@ -206,6 +206,7 @@
                 this.gl.domElement.addEventListener('mousedown', this.onMouseDown);
                 this.gl.domElement.addEventListener('mouseup', this.onMouseUp);
                 this.gl.domElement.addEventListener('mousemove', this.onMouseMove);
+                this.gl.domElement.addEventListener('mouseleave', this.onMouseExit);
             };
 
             this.reloadStarmapData = function() {
@@ -270,6 +271,11 @@
                 return false;
             };
 
+            this.onMouseExit = function(event) {
+                self.state = 0;
+                return false;
+            }
+
             this.onMouseMove = function(event) {
                 if (self.state === 1) {
                     var dX = self.lastX - event.offsetX;
@@ -292,6 +298,8 @@
 
                     // update the text overlay
                     self.updateOverlay();
+
+                    return true;
                 }
 
                 return false;

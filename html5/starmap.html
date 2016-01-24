@@ -10,6 +10,7 @@
     <script src="js/nbt/util/quadtree.js"></script>
     <script src="js/nbt/app.js"></script>
     <script src="js/nbt/components/starmap/starmap.js"></script>
+    <link rel="stylesheet" href="css/nbt.css">
     <title>NBT Starmap Test Page</title>
     <script>
         function starmapOnLoad(starmap) {
@@ -24,30 +25,6 @@
             height: 1000px;
             background-color: black;
             color: wheat;
-        }
-        .starmapOverlay {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            height: 100%;
-            width: 100%;
-            z-index: 10;
-            pointer-events: none;
-        }
-        .starmapUI {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            height: 100%;
-            width: 100%;
-            z-index: 20;
-            pointer-events: none;
-        }
-        .planetNameLabel {
-            color: white;
-            position: absolute;
-            font-size: smaller;
-            font-family: arial, helvetica, verdana;
         }
     </style>
 </head>

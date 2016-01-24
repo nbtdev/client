@@ -1,0 +1,347 @@
+body {
+	background-color: black;
+	color: #f0f0f0;
+	font-family: arial,verdana;
+	font-size: smaller;
+	height: 95%;
+}
+
+input[type=text] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c04040;
+}
+
+input[type=password] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c04040;
+}
+
+input[type=button] {
+	background-color: black;
+	color: #f06060;
+	border-color: #c06060;
+}
+
+.left_side {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.content_area {
+	display: inline-block;
+	position: relative;
+	width: 90%;
+	height: 90%;
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+.editable_data_table {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #660000;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	width: 90%;
+	color: white;
+}
+
+.editable_data_table th {
+	border-style: solid;
+	border-collapse: collapse;
+	text-align: left;
+	border-width: 1px;
+	border-color: #660000;
+	background-color: #990000;
+}
+
+th.sortable {
+	color: yellow;
+	cursor: pointer;
+}
+
+.centered {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.editable_data_table td {
+	border-style: solid;
+	text-align: left;
+	border-width: 1px;
+	border-color: #660000;
+}
+
+.editable_data_table tr:hover {
+	background-color: #404040;
+	cursor: pointer;
+}
+
+.editable_data_table tr.no_select {
+	background-color: #000000;
+	cursor: auto;
+}
+
+.noselect {
+	cursor: auto;
+	background-color: black;
+}
+
+.no_select {
+	cursor: auto;
+	background-color: black;
+}
+
+.linkbutton {
+	color: yellow;
+	font-weight: bold;
+	font-style: italic;
+	cursor: pointer;
+}
+
+.linkbutton:hover {
+	color: white;
+}
+
+.dark_header {
+	background-color: #003333;
+	color: #ffff99;
+	font-weight: bold;
+	font-size: x-small;
+}
+
+.unit_detail {
+	display: inline-block;
+	margin-left: auto;
+	margin-right: auto;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #660000;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.unit_detail tr:HOVER {
+	background-color: #000000;
+	cursor: auto;
+}
+
+.unit_detail td {
+	border-collapse: collapse;
+}
+
+.datal {
+	font-size: x-small;
+}
+
+.dataj {
+	font-size: x-small;
+}
+
+.unit_logo_large {
+	width: 220px;
+	height: 220px;
+}
+
+.pseudo_link {
+	cursor: pointer;
+	color: #8080c0;
+}
+
+.pseudo_link:hover {
+	color: #c0c010;
+}
+
+.loginBoxStatus {
+	color: #F04040;
+}
+
+.starmap {
+	z-index: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.starmapOverlay {
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 8pt;
+}
+
+.starmapOverlayText {
+	position: absolute;
+	color: white;
+}
+
+.starmapUI {
+	z-index: 5;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.planet_detail_editor_template {
+	background-color: black;
+	border: solid 1px gray;
+	width: 800px;
+	z-index: 3;
+}
+
+.planet_detail_editor_template .ui-dialog-titlebar-close {
+	display: none;
+}
+
+.planet_detail_template {
+	background-color: rgba(0,0,0,0.9);
+	width: auto;
+	overflow: auto;
+	z-index: 2;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #808080;
+}
+
+.planet_detail_template .planet_detail_header {
+	padding-left: 7px;
+	padding-right: 7px;
+	font-size: x-large;
+	font-weight: 900;
+	color: white;
+}
+
+.planet_detail_template .planet_detail_section_header {
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 7px;
+	font-size: large;
+	font-weight: 900;
+	color: white;
+}
+
+.planet_detail_template .planet_name {
+}
+
+.planet_detail_template .planet_owner_name {
+	color: red;
+}
+
+.planet_detail_template .planet_terrain_class {
+}
+
+.planet_detail_template .planet_neighbors {
+	white-space: nowrap;
+	padding: 7px;
+}
+
+.planet_detail_template .planet_description {
+	padding: 7px;
+}
+
+.planet_detail_template .ui-dialog-titlebar-close {
+	display: none;
+}
+
+.context_menu {
+	position: absolute;
+	background-color: gray;
+	min-width: 100px;
+	z-index: 5;
+}
+
+.context_menu table {
+	border: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.context_menu_item {
+	min-width: 100%;
+	font-weight: bolder;
+	font-size: larger;
+}
+
+.context_menu_item:hover {
+	background-color: navy;
+	cursor: pointer;
+}
+
+.title {
+    font-size: 48pt;
+    color: white;
+    font-weight: bolder;
+    font-family: Arial, Verdana;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.paragraph {
+    margin-bottom: 10px;
+}
+
+.login {
+    float: right;
+    margin: 10px;
+}
+
+.title {
+	font-size: 36px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#leagues {
+	margin: 25px;
+}
+
+.league {
+	cursor: pointer;
+}
+
+.leagueBanner {
+	cursor: pointer;
+}
+
+.header {
+	display: block;
+}
+
+.footer {
+	display: block;
+}
+
+.content {
+	display: inline-block;
+}
+
+.menu {
+	margin-top: 20px;
+	margin-left: 5px;
+	margin-right: 15px;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.menuItem {
+	cursor: pointer;
+	color: yellow;
+	font-size: larger;
+}
+
+.menuItem:hover {
+	color: lightblue;
+}
+
+.subtle_link {
+    color: lightgray;
+}
+
+.subtle_link:hover {
+    color: lightblue;
+    cursor: pointer;
+    text-decoration: underline;
+}
