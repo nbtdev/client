@@ -23,11 +23,12 @@
 (function() {
     var app = angular.module('nbt.starmap', []);
 
-    app.directive('starmap', function() {
+    app.directive('starmap', function($compile) {
 
         this.controller = function($scope, $attrs, $http) {
             var self = this;
             this.text = "(not set)";
+            $scope.showPlanetBrief = false;
 
             // planet data from service
             this.planets = null;
@@ -174,6 +175,12 @@
             // UI overlay
             this.ui = null;
 
+            // for hovering over planets to see info
+            this.hoverPlanet = null;
+            this.hoverPlanetTimeout = null;
+            this.hoverPlanetLoc = null;
+            this.hoverPlanetBrief = null;
+
             // initialize the 2D (for text overlays and GUI) and 3D (for starmap itself) objects
             this.initializeGraphics = function(parent) {
                 // create WebGL renderer, scene and camera
@@ -226,6 +233,7 @@
                     var mesh = new THREE.Mesh(geom, mtl);
                     var obj = new THREE.Object3D();
                     obj.add(mesh);
+                    obj.userData = p;
 
                     obj.position.set(x, y, 0);
                     this.scene3D.add(obj);
@@ -273,6 +281,7 @@
 
             this.onMouseExit = function(event) {
                 self.state = 0;
+
                 return false;
             }
 
@@ -300,9 +309,58 @@
                     self.updateOverlay();
 
                     return true;
+                } else {
+                    // see what's under the mouse, if anything. If it's a planet
+                    // then set a timeout to hover; if it's the same planet as
+                    // before, do nothing; if it's nothing, clear any existing timeout
+                    var vpW = self.camera3D.right - self.camera3D.left;
+                    var vpH = self.camera3D.top - self.camera3D.bottom;
+                    var w = vpW / self.camera3D.zoom;
+                    var h = vpH / self.camera3D.zoom;
+                    var l = self.offsetX - w/2;
+                    var t = self.offsetY + h/2;
+
+                    // normalized position in overlay viewport
+                    var nx = event.offsetX / vpW;
+                    var ny = event.offsetY / vpH;
+
+                    var mouseX = nx * w + l;
+                    var mouseY = t - ny * h;
+
+                    var obj = self.quadtree.find(mouseX, mouseY);
+
+                    if (obj) {
+                        if (obj !== self.hoverPlanet) {
+                            self.hoverPlanet = obj;
+
+                            if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
+
+                            self.hoverPlanetLoc = {x: event.offsetX, y: event.offsetY};
+                            self.hoverPlanetTimeout = setTimeout(self.showPlanetBrief, 500);
+                        }
+                    } else {
+                        self.removePlanetBrief();
+                        self.hoverPlanet = null;
+
+                        if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
+                        self.hoverPlanetTimeout = null;
+
+                        self.hoverPlanetLoc = null;
+                    }
                 }
 
                 return false;
+            };
+
+            this.showPlanetBrief = function() {
+                // add a planet_brief element to the UI layer
+                self.hoverPlanetBrief = angular.element($compile("<planet_brief></planet_brief>")($scope))[0];
+                self.hoverPlanetBrief.setPlanet(self.hoverPlanet, self.token, self.hoverPlanetLoc);
+                self.ui.append(self.hoverPlanetBrief);
+            };
+
+            this.removePlanetBrief = function() {
+                if (self.hoverPlanetBrief) self.hoverPlanetBrief.remove();
             };
 
             // redraw the overlay text if the zoom level is beyond a certain value
@@ -372,7 +430,7 @@
                 element.append(overlay);
 
                 // create UI overlay
-                var ui = angular.element('<div/>');
+                var ui = angular.element('<div><div/></div>');
                 ui.addClass('starmapUI');
                 element.append(ui);
 
@@ -385,6 +443,51 @@
                 if (attrs.onload) {
                     var expr = attrs.onload + '(element[0])';
                     eval(expr);
+                }
+            }
+        };
+    });
+
+    app.directive('planetBrief', function($templateRequest, $compile) {
+
+        this.controller = function($scope, $attrs, $http) {
+            var self = this;
+            $scope.posX = 0;
+            $scope.posY = 0;
+
+            this.updatePlanet = function(data) {
+                var p = data.data;
+                $scope.name = p.name;
+                $scope.description = p.description;
+                $scope.owner = p.ownerName;
+                $scope.terrain = p.terrain;
+            };
+
+            this.setPlanet = function(aPlanet, aToken, aScreenPos) {
+                $scope.posX = aScreenPos.x;
+                $scope.posY = aScreenPos.y;
+
+                $http({
+                    url: aPlanet._links.self.href,
+                    method: "GET",
+                    headers: {'X-NBT-Token': aToken === null ? '' : aToken}
+                }).then(this.updatePlanet);
+            }
+        };
+
+        return {
+            restrict: 'E',
+            controller: controller,
+            controllerAs: 'brief',
+            link: function(scope, element, attrs, controller) {
+                $templateRequest('js/nbt/components/starmap/planetBrief.html').then(function(html) {
+                    var templ = angular.element(html);
+                    element.append(templ);
+                    $compile(templ)(scope);
+                });
+
+                element[0].setPlanet = function(aPlanet, aToken, aScreenPos) {
+                    controller.setPlanet(aPlanet, aToken, aScreenPos);
                 }
             }
         };

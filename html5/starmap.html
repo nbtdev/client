@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r73/three.js"></script>
     <script src="js/gl-matrix/common.js"></script>
     <script src="js/gl-matrix/mat4.js"></script>
     <script src="js/gl-matrix/vec3.js"></script>
@@ -30,7 +30,9 @@
 </head>
 <body>
     <div class="tmp">
-        <starmap id="starmap" onload="starmapOnLoad"></starmap>
+        <starmap id="starmap" onload="starmapOnLoad">
+            <planet_brief id="planetBrief" ng-show="showPlanetBrief"></planet_brief>
+        </starmap>
     </div>
 </body>
 
