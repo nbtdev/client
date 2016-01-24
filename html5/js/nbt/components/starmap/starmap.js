@@ -243,6 +243,8 @@
             };
 
             this.onMouseWheel = function(event) {
+                event.preventDefault();
+
                 // calculate new zoom factor
                 var zoom = self.camera3D.zoom;
                 zoom += event.wheelDelta / 600;
