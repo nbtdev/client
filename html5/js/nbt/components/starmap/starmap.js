@@ -356,7 +356,7 @@
 
             this.showPlanetBrief = function() {
                 // add a planet_brief element to the UI layer
-                self.hoverPlanetBrief = angular.element($compile("<planet_brief></planet_brief>")($scope))[0];
+                self.hoverPlanetBrief = angular.element($compile('<planet_brief></planet_brief>')($scope))[0];
                 self.hoverPlanetBrief.setPlanet(self.hoverPlanet, self.token, self.hoverPlanetLoc);
                 self.ui.append(self.hoverPlanetBrief);
             };
@@ -411,7 +411,6 @@
 
         return {
             restrict: 'E',
-            //templateUrl: 'js/nbt/components/starmap/template.html',
             template: '<div></div>',
             controller: controller,
             controllerAs: 'starmap',
@@ -432,7 +431,7 @@
                 element.append(overlay);
 
                 // create UI overlay
-                var ui = angular.element('<div><div/></div>');
+                var ui = angular.element('<div><div/>');
                 ui.addClass('starmapUI');
                 element.append(ui);
 
@@ -482,7 +481,11 @@
             controller: controller,
             controllerAs: 'brief',
             link: function(scope, element, attrs, controller) {
-                $templateRequest('js/nbt/components/starmap/planetBrief.html').then(function(html) {
+                var i18n = 'en';
+
+                if (attrs.lang) i18n = attrs.lang;
+
+                $templateRequest('templates/' + i18n + '/starmap/planetBrief.html').then(function(html) {
                     var templ = angular.element(html);
                     element.append(templ);
                     $compile(templ)(scope);
