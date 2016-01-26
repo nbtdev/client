@@ -1,6 +1,6 @@
 <div class="planetBrief" ng-style="{'left': posX+'px', 'top': posY+'px'}">
     <div><b>Name:</b>&nbsp;{{name}}</div>
-    <div><b>Description:</b>&nbsp;{{description}}</div>
+    <div><b>Description:</b>&nbsp;<span ng-bind-html="description"></span></div>
     <div><b>Owner:</b>&nbsp;{{owner}}</div>
     <div><b>Terrain:</b>&nbsp;{{terrain}}</div>
 </div>

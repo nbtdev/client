@@ -454,7 +454,7 @@
 
     app.directive('planetBrief', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http) {
+        this.controller = function($scope, $attrs, $http, $sce) {
             var self = this;
             $scope.posX = 0;
             $scope.posY = 0;
@@ -462,7 +462,7 @@
             this.updatePlanet = function(data) {
                 var p = data.data;
                 $scope.name = p.name;
-                $scope.description = p.description;
+                $scope.description = $sce.trustAsHtml(p.description);
                 $scope.owner = p.ownerName;
                 $scope.terrain = p.terrain;
             };
@@ -472,7 +472,7 @@
                 $scope.posY = aScreenPos.y;
 
                 $scope.name = '(fetching)';
-                $scope.description = '(fetching)';
+                $scope.description = $sce.trustAsHtml('(fetching)');
                 $scope.owner = '(fetching)';
                 $scope.terrain = '(fetching)';
 
