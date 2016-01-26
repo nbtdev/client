@@ -362,7 +362,10 @@
             };
 
             this.removePlanetBrief = function() {
-                if (self.hoverPlanetBrief) self.hoverPlanetBrief.remove();
+                if (self.hoverPlanetBrief) {
+                    self.hoverPlanetBrief.clear();
+                    self.hoverPlanetBrief.remove();
+                }
             };
 
             // redraw the overlay text if the zoom level is beyond a certain value
@@ -468,12 +471,24 @@
                 $scope.posX = aScreenPos.x;
                 $scope.posY = aScreenPos.y;
 
+                $scope.name = '(fetching)';
+                $scope.description = '(fetching)';
+                $scope.owner = '(fetching)';
+                $scope.terrain = '(fetching)';
+
                 $http({
                     url: aPlanet._links.self.href,
-                    method: "GET",
+                    method: 'GET',
                     headers: {'X-NBT-Token': aToken === null ? '' : aToken}
                 }).then(this.updatePlanet);
-            }
+            };
+
+            this.clear = function() {
+                $scope.name = null;
+                $scope.description = null;
+                $scope.owner = null;
+                $scope.terrain = null;
+            };
         };
 
         return {
@@ -493,6 +508,10 @@
 
                 element[0].setPlanet = function(aPlanet, aToken, aScreenPos) {
                     controller.setPlanet(aPlanet, aToken, aScreenPos);
+                }
+
+                element[0].clear = function() {
+                    controller.clear();
                 }
             }
         };
