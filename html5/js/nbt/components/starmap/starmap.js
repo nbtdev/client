@@ -217,6 +217,19 @@
             };
 
             this.reloadStarmapData = function() {
+                var whiteMtl = new THREE.MeshBasicMaterial();
+                whiteMtl.color.setRGB(1,1,1);
+                var yellowMtl = new THREE.MeshBasicMaterial();
+                yellowMtl.color.setRGB(1,1,0);
+                var redMtl = new THREE.MeshBasicMaterial();
+                redMtl.color.setRGB(1,0,0);
+                var greenMtl = new THREE.MeshBasicMaterial();
+                greenMtl.color.setRGB(0,1,0);
+                var blueMtl = new THREE.MeshBasicMaterial();
+                blueMtl.color.setRGB(0,0,1);
+                var magentaMtl = new THREE.MeshBasicMaterial();
+                magentaMtl.color.setRGB(1,0,1);
+
                 // plow through the planets, making objects, geometries and meshes along the way
                 for (var i=0; i<this.planets._embedded.planets.length; ++i) {
                     var p = this.planets._embedded.planets[i];
@@ -237,6 +250,16 @@
 
                     obj.position.set(x, y, 0);
                     this.scene3D.add(obj);
+
+                    // add rings for various other properties
+                    if (p.capitalPlanet) {
+                        var ringGeom = new THREE.RingGeometry(1.5, 1.6, 36);
+                        var ringMesh = new THREE.Mesh(ringGeom, magentaMtl);
+                        var ringObj = new THREE.Object3D();
+                        ringObj.add(ringMesh);
+                        ringObj.position.set(x, y, 0);
+                        this.scene3D.add(ringObj);
+                    }
                 }
 
                 this.gl.render(this.scene3D, this.camera3D);
