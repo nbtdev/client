@@ -484,16 +484,43 @@
 
         this.controller = function($scope, $attrs, $http, $sce) {
             var self = this;
+            var token = null;
             $scope.posX = 0;
             $scope.posY = 0;
+
+            this.updatePlanetBattleDetail = function(data) {
+                var battleData = data.data;
+                $scope.battleId = battleData.id;
+                $scope.battleAttacker = battleData.primaryAttacker;
+                $scope.battleType = battleData.type;
+                $scope.battleLaunched = battleData.attackDate;
+            }
 
             this.updatePlanet = function(data) {
                 var p = data.data;
                 $scope.name = p.name;
-                $scope.description = $sce.trustAsHtml(p.description);
+
+                if (p.description.length > 0)
+                    $scope.description = $sce.trustAsHtml(p.description);
+
                 $scope.owner = p.ownerName;
                 $scope.terrain = p.terrain;
                 $scope.recharge = p.rechargeTime;
+                $scope.industry = p.industry;
+                $scope.chargeStation = p.chargeStation;
+                $scope.factory = p.factory;
+
+                // if there is an active battle on the planet, follow the link and get the details
+                if (p.battleId) {
+                    $http({
+                        url: p._links.battle.href,
+                        method: 'GET',
+                        headers: {'X-NBT-Token': token === null ? '' : token}
+                    }).then(self.updatePlanetBattleDetail);
+                    $scope.isBattle = true;
+                }
+
+                // if there is/are a factory/factories on the planet, follow the link and get the details
             };
 
             this.setPlanet = function(aPlanet, aToken, aScreenPos) {
@@ -501,16 +528,18 @@
                 $scope.posY = aScreenPos.y;
 
                 $scope.name = '(fetching)';
-                $scope.description = $sce.trustAsHtml('(fetching)');
+                $scope.description = null;
                 $scope.owner = '(fetching)';
                 $scope.terrain = '(fetching)';
                 $scope.recharge = '(fetching)';
+
+                token = aToken;
 
                 $http({
                     url: aPlanet._links.self.href,
                     method: 'GET',
                     headers: {'X-NBT-Token': aToken === null ? '' : aToken}
-                }).then(this.updatePlanet);
+                }).then(self.updatePlanet);
             };
 
             this.clear = function() {
@@ -519,6 +548,14 @@
                 $scope.owner = null;
                 $scope.terrain = null;
                 $scope.recharge = null;
+                $scope.battleId = null
+                $scope.battleAttacker = null
+                $scope.battleType = null
+                $scope.battleLaunched = null;
+                $scope.isBattle = false;
+                $scope.chargeStation = null;
+                $scope.factory = null;
+                $scope.industry = null;
             };
         };
 
