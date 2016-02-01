@@ -216,6 +216,15 @@
                 this.gl.domElement.addEventListener('mouseleave', this.onMouseExit);
             };
 
+            var addRing = function(planet, innerRadius, outerRadius, material) {
+                var ringGeom = new THREE.RingGeometry(innerRadius, outerRadius, 36);
+                var ringMesh = new THREE.Mesh(ringGeom, material);
+                var ringObj = new THREE.Object3D();
+                ringObj.add(ringMesh);
+                ringObj.position.set(planet.x, planet.y, 0);
+                self.scene3D.add(ringObj);
+            };
+
             this.reloadStarmapData = function() {
                 var whiteMtl = new THREE.MeshBasicMaterial();
                 whiteMtl.color.setRGB(1,1,1);
@@ -252,14 +261,10 @@
                     this.scene3D.add(obj);
 
                     // add rings for various other properties
-                    if (p.capitalPlanet) {
-                        var ringGeom = new THREE.RingGeometry(1.5, 1.6, 36);
-                        var ringMesh = new THREE.Mesh(ringGeom, magentaMtl);
-                        var ringObj = new THREE.Object3D();
-                        ringObj.add(ringMesh);
-                        ringObj.position.set(x, y, 0);
-                        this.scene3D.add(ringObj);
-                    }
+                    if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
+                    if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
+                    if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
+                    if (p.battleId) addRing(p, 2.4, 2.6, redMtl);
                 }
 
                 this.gl.render(this.scene3D, this.camera3D);
@@ -488,6 +493,7 @@
                 $scope.description = $sce.trustAsHtml(p.description);
                 $scope.owner = p.ownerName;
                 $scope.terrain = p.terrain;
+                $scope.recharge = p.rechargeTime;
             };
 
             this.setPlanet = function(aPlanet, aToken, aScreenPos) {
@@ -498,6 +504,7 @@
                 $scope.description = $sce.trustAsHtml('(fetching)');
                 $scope.owner = '(fetching)';
                 $scope.terrain = '(fetching)';
+                $scope.recharge = '(fetching)';
 
                 $http({
                     url: aPlanet._links.self.href,
@@ -511,6 +518,7 @@
                 $scope.description = null;
                 $scope.owner = null;
                 $scope.terrain = null;
+                $scope.recharge = null;
             };
         };
 
