@@ -21,13 +21,19 @@
  */
 
 (function() {
-    var app = angular.module('nbt.starmap', []);
+    var mod = angular.module('nbt.starmap', []);
 
-    app.directive('starmap', function($compile) {
+    mod.directive('starmap', function($compile) {
 
         this.controller = function($scope, $attrs, $http) {
+            var mStarmapDebug;
+            try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
+
             var self = this;
             this.text = "(not set)";
+            this.token = null;
+            this.planetsUrl = null;
+
             $scope.showPlanetBrief = false;
 
             // planet data from service
@@ -38,9 +44,6 @@
 
             // per-faction map colors
             this.mapColors = null;
-
-            this.rootUrl = "";
-            this.token = "";
 
             // starmap width and height (from parent size)
             this.width = 0;
@@ -56,7 +59,7 @@
                 }
 
                 // finally, reset the map
-                self.reset();
+                self.reloadStarmapData();
             }
 
             this.succeed = function(data) {
@@ -98,37 +101,14 @@
                 self.text = "Failed: " + msg.statusText;
             };
 
-            var fetchPlanets = function() {
-                // temp hack -- do not hardcode resource paths
-                var planetsUrl = self.rootUrl + "/leagues/1/planets";
-                //var planetsUrl = 'http://localhost/planets.json';
-
+            this.fetchPlanets = function() {
                 $http({
-                        url: planetsUrl,
+                        url: self.planetsUrl,
                         method: "GET",
                         headers: {'X-NBT-Token': self.token}
                 })
                 .then(self.succeed, self.fail);
             };
-
-            this.setUrl = function(url, aToken) {
-                self.rootUrl = url;
-
-                if (!aToken) {
-                    // temp hack -- do not hardcode resource paths
-                    var tokenUrl = url + "/security/tokens";
-                    var loginData = {username: "testuser", password: "testuser"};
-
-                    $http.post(tokenUrl, loginData)
-                        .then(function (data) {
-                            self.token = data.token;
-                            fetchPlanets();
-                        });
-                } else {
-                    self.token = aToken;
-                    fetchPlanets();
-                }
-            }
 
             this.setSize = function(w, h) {
                 self.width = w;
@@ -139,15 +119,6 @@
                 this.overlay = aText;
                 this.ui = aUI;
             }
-
-            this.token = null;
-
-            // reset the starmap, called after new data has been applied; this will
-            // clear everything and start over from scratch
-            this.reset = function() {
-                // init planet objects from this.planets (depends on WebGL initialized first)
-                this.reloadStarmapData();
-            };
 
             // WebGL (3D, three.js) objects
             this.gl = null;
@@ -184,36 +155,36 @@
             // initialize the 2D (for text overlays and GUI) and 3D (for starmap itself) objects
             this.initializeGraphics = function(parent) {
                 // create WebGL renderer, scene and camera
-                this.gl = new THREE.WebGLRenderer();
-                this.gl.setSize(this.width, this.height);
+                self.gl = new THREE.WebGLRenderer();
+                self.gl.setSize(self.width, self.height);
 
-                this.scene3D = new THREE.Scene();
+                self.scene3D = new THREE.Scene();
 
-                this.camera3D = new THREE.OrthographicCamera(
-                    this.width / -2,
-                    this.width / 2,
-                    this.height / 2,
-                    this.height / -2,
+                self.camera3D = new THREE.OrthographicCamera(
+                    self.width / -2,
+                    self.width / 2,
+                    self.height / 2,
+                    self.height / -2,
                     1,
-                    2
+                    100
                 );
 
-                this.camera3D.position.x = 0;
-                this.camera3D.position.y = 0;
-                this.camera3D.position.z = 1;
-                this.camera3D.zoom = this.mapZoom;
+                self.camera3D.position.x = 0;
+                self.camera3D.position.y = 0;
+                self.camera3D.position.z = 1;
+                self.camera3D.zoom = self.mapZoom;
 
-                this.scene3D.add(this.camera3D);
+                self.scene3D.add(self.camera3D);
 
-                this.gl.domElement.style.zIndex = 1;
-                parent.append(this.gl.domElement);
+                self.gl.domElement.style.zIndex = 1;
+                parent.append(self.gl.domElement);
 
                 // add mouse event handlers
-                this.gl.domElement.addEventListener('mousewheel', this.onMouseWheel);
-                this.gl.domElement.addEventListener('mousedown', this.onMouseDown);
-                this.gl.domElement.addEventListener('mouseup', this.onMouseUp);
-                this.gl.domElement.addEventListener('mousemove', this.onMouseMove);
-                this.gl.domElement.addEventListener('mouseleave', this.onMouseExit);
+                self.gl.domElement.addEventListener('mousewheel', self.onMouseWheel);
+                self.gl.domElement.addEventListener('mousedown', self.onMouseDown);
+                self.gl.domElement.addEventListener('mouseup', self.onMouseUp);
+                self.gl.domElement.addEventListener('mousemove', self.onMouseMove);
+                self.gl.domElement.addEventListener('mouseleave', self.onMouseExit);
             };
 
             var addRing = function(planet, innerRadius, outerRadius, material) {
@@ -239,16 +210,19 @@
                 var magentaMtl = new THREE.MeshBasicMaterial();
                 magentaMtl.color.setRGB(1,0,1);
 
+                self.scene3D = new THREE.Scene();
+                self.scene3D.add(self.camera3D);
+
                 // plow through the planets, making objects, geometries and meshes along the way
-                for (var i=0; i<this.planets._embedded.planets.length; ++i) {
-                    var p = this.planets._embedded.planets[i];
+                for (var i = 0; i < self.planets._embedded.planets.length; ++i) {
+                    var p = self.planets._embedded.planets[i];
                     var x = p.x;
                     var y = p.y;
                     var name = p.name;
 
                     var geom = new THREE.CircleGeometry(1, 18);
                     var mtl = new THREE.MeshBasicMaterial();
-                    var mc = this.mapColors[p.ownerName];
+                    var mc = self.mapColors[p.ownerName];
                     var color = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
                     mtl.color.set(color);
 
@@ -258,7 +232,8 @@
                     obj.userData = p;
 
                     obj.position.set(x, y, 0);
-                    this.scene3D.add(obj);
+
+                    self.scene3D.add(obj);
 
                     // add rings for various other properties
                     if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
@@ -267,12 +242,10 @@
                     if (p.battleId) addRing(p, 2.4, 2.6, redMtl);
                 }
 
-                this.gl.render(this.scene3D, this.camera3D);
+                self.gl.render(self.scene3D, self.camera3D);
             };
 
             this.onMouseWheel = function(event) {
-                event.preventDefault();
-
                 // calculate new zoom factor
                 var zoom = self.camera3D.zoom;
                 zoom += event.wheelDelta / 600;
@@ -281,12 +254,14 @@
                     self.camera3D.zoom = zoom;
                     self.mapZoom = zoom;
                     self.camera3D.updateProjectionMatrix();
+
                     self.gl.render(self.scene3D, self.camera3D);
+
+                    self.updateOverlay();
+
+                    event.preventDefault();
                 }
 
-                self.updateOverlay();
-
-                event.cancelBubble = true;
                 return false;
             };
 
@@ -357,7 +332,9 @@
                     var mouseX = nx * w + l;
                     var mouseY = t - ny * h;
 
-                    var obj = self.quadtree.find(mouseX, mouseY);
+                    var obj = null;
+                    if (self.quadtree)
+                        obj = self.quadtree.find(mouseX, mouseY);
 
                     if (obj) {
                         if (obj !== self.hoverPlanet) {
@@ -398,20 +375,20 @@
 
             // redraw the overlay text if the zoom level is beyond a certain value
             this.updateOverlay = function() {
-                this.overlay.empty();
+                self.overlay.empty();
 
-                if (this.mapZoom < 4) return;
+                if (self.mapZoom < 4) return;
 
                 // which planets are visible?
-                var vpW = this.camera3D.right - this.camera3D.left;
-                var vpH = this.camera3D.top - this.camera3D.bottom;
-                var w = vpW / this.camera3D.zoom;
-                var h = vpH / this.camera3D.zoom;
-                var l = this.offsetX - w/2;
-                var r = this.offsetX + w/2;
-                var t = this.offsetY + h/2;
-                var b = this.offsetY - h/2;
-                var visible = this.quadtree.findAllWithinBox(l, r, b, t);
+                var vpW = self.camera3D.right - self.camera3D.left;
+                var vpH = self.camera3D.top - self.camera3D.bottom;
+                var w = vpW / self.camera3D.zoom;
+                var h = vpH / self.camera3D.zoom;
+                var l = self.offsetX - w/2;
+                var r = self.offsetX + w/2;
+                var t = self.offsetY + h/2;
+                var b = self.offsetY - h/2;
+                var visible = self.quadtree.findAllWithinBox(l, r, b, t);
 
                 // draw these names upon the overlay
                 for (var i=0; i<visible.length; ++i) {
@@ -427,7 +404,7 @@
                     var vpX = nx * vpW + p.xtextOffset;
                     var vpY = (1.0 - ny) * vpH + p.ytextOffset;
 
-                    var mc = this.mapColors[p.ownerName];
+                    var mc = self.mapColors[p.ownerName];
                     var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0)
 
                     text.css({
@@ -435,9 +412,16 @@
                         left: vpX + 'px'
                     });
 
-                    this.overlay.append(text);
+                    self.overlay.append(text);
                 }
             };
+
+            this.reload = function(aPlanetsUrl, aToken) {
+                self.planetsUrl = aPlanetsUrl;
+                self.token = aToken;
+                self.fetchPlanets();
+                self.updateOverlay();
+            }
         };
 
         return {
@@ -446,8 +430,8 @@
             controller: controller,
             controllerAs: 'starmap',
             link: function(scope, element, attrs, controller) {
-                element[0].setUrl = function(url, token) {
-                    controller.setUrl(url, token);
+                element[0].reload = function(aPlanetsUrl, aToken) {
+                    controller.reload(aPlanetsUrl, aToken);
                 };
 
                 var w = element.parent()[0].offsetWidth;
@@ -471,16 +455,14 @@
                 // init 2D Canvas and WebGL (three.js) systems
                 controller.initializeGraphics(element);
 
-                // invoke any onLoad callback
-                if (attrs.onload) {
-                    var expr = attrs.onload + '(element[0])';
-                    eval(expr);
+                if (attrs.url) {
+                    controller.reload(attrs.url, attrs.token);
                 }
             }
         };
     });
 
-    app.directive('planetBrief', function($templateRequest, $compile) {
+    mod.directive('planetBrief', function($templateRequest, $compile) {
 
         this.controller = function($scope, $attrs, $http, $sce) {
             var self = this;
@@ -508,6 +490,7 @@
                 $scope.recharge = p.rechargeTime;
                 $scope.industry = p.industry;
                 $scope.chargeStation = p.chargeStation;
+                $scope.capital = p.capitalPlanet;
                 $scope.factory = p.factory;
 
                 // if there is an active battle on the planet, follow the link and get the details
@@ -544,6 +527,7 @@
 
             this.clear = function() {
                 $scope.name = null;
+                $scope.capital = null;
                 $scope.description = null;
                 $scope.owner = null;
                 $scope.terrain = null;
@@ -568,7 +552,7 @@
 
                 if (attrs.lang) i18n = attrs.lang;
 
-                $templateRequest('templates/' + i18n + '/starmap/planetBrief.html').then(function(html) {
+                $templateRequest('/templates/' + i18n + '/starmap/planetBrief.html').then(function(html) {
                     var templ = angular.element(html);
                     element.append(templ);
                     $compile(templ)(scope);

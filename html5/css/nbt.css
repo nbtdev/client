@@ -18,6 +18,22 @@
     pointer-events: none;
 }
 
+.starmapContainer {
+    position: relative;
+    padding: 0px;
+    height: 600px;
+}
+
+.starmap {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: black;
+    color: wheat;
+}
+
 .planetNameLabel {
     color: white;
     position: absolute;
@@ -32,4 +48,8 @@
     font-family: arial, helvetica, verdana;
     font-size: smaller;
     background-color: darkblue;
+}
+
+.profileInput {
+    color: black;
 }

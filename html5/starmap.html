@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html ng-app="nbt.app" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--<script>var starmapDebug=true;</script>-->
+    <!--<script>var gliEmbedDebug=true;</script>-->
+    <!--<script src="js/gli/core/embed.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/threejs/r73/three.js"></script>
     <script src="js/gl-matrix/common.js"></script>
@@ -10,14 +13,9 @@
     <script src="js/nbt/util/quadtree.js"></script>
     <script src="js/nbt/app.js"></script>
     <script src="js/nbt/components/starmap/starmap.js"></script>
+    <script src="js/nbt/components/profile/profile.js"></script>
     <link rel="stylesheet" href="css/nbt.css">
     <title>NBT Starmap Test Page</title>
-    <script>
-        function starmapOnLoad(starmap) {
-            starmap.setUrl('http://api.home.lan', '2849cde8ae7b33f4eed90b30caee97afac0720f4');
-            //starmap.setUrl('http://api-dev.netbattletech.com');
-        }
-    </script>
     <style>
         .tmp {
             position: relative;
@@ -30,7 +28,7 @@
 </head>
 <body>
     <div class="tmp">
-        <starmap id="starmap" onload="starmapOnLoad">
+        <starmap id="starmap" url="http://api.home.lan/leagues/1/planets">
             <planet_brief id="planetBrief" ng-show="showPlanetBrief"></planet_brief>
         </starmap>
     </div>
