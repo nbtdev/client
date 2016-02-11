@@ -83,25 +83,6 @@
                 }
             };
 
-            // check for any existing login data, and if it exists, set our initial
-            // data to it
-            if (this.loginData) {
-                this.mToken = this.loginData.login.value;
-                self.mLogoutLink = this.loginData.logout;
-                $scope.displayName = this.loginData.login.callsign;
-                $scope.twitter = null;
-                $scope.isLoggedIn = true;
-                $scope.username = null;
-                $scope.password = null;
-            } else {
-                this.mToken = null;
-                $scope.displayName = null;
-                $scope.twitter = null;
-                $scope.isLoggedIn = false;
-                $scope.username = null;
-                $scope.password = null;
-            }
-
             this.populateLeagueList = function(resp) {
                 self.leagues = resp.data._embedded.leagues;
                 $scope.leagues = self.leagues;
@@ -205,6 +186,28 @@
                 localStorage.selectedLeague = self.selectedLeague;
                 onLeagueChangedCb(self.selectedLeague);
             };
+
+            // check for any existing login data, and if it exists, set our initial
+            // data to it
+            if (this.loginData) {
+                this.mToken = this.loginData.login.value;
+                self.mLogoutLink = this.loginData.logout;
+                $scope.displayName = this.loginData.login.callsign;
+                $scope.twitter = null;
+                $scope.isLoggedIn = true;
+                $scope.username = null;
+                $scope.password = null;
+
+                // fetch league list to populate the dropdown
+                this.fetchLeagueList();
+            } else {
+                this.mToken = null;
+                $scope.displayName = null;
+                $scope.twitter = null;
+                $scope.isLoggedIn = false;
+                $scope.username = null;
+                $scope.password = null;
+            }
         };
 
         return {

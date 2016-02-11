@@ -24,8 +24,8 @@ function NBT() {
     var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile']);
 
     // root API url
-    //var API_URL = 'http://api.home.lan';
-    var API_URL = 'http://api-dev.netbattletech.com';
+    var API_URL = 'http://api.home.lan';
+    //var API_URL = 'http://api-dev.netbattletech.com';
 
     var mRootLinks = null;
     var mToken = null;
