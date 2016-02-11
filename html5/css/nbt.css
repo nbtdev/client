@@ -50,6 +50,16 @@
     background-color: darkblue;
 }
 
-.profileInput {
+/* the main site them does not actually have styles for selects... */
+
+select, option {
+    color: black;
+}
+
+input[type=text] {
+    color: black;
+}
+
+input[type=password] {
     color: black;
 }
