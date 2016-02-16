@@ -24,6 +24,12 @@
     height: 600px;
 }
 
+#map-details {
+    position: relative;
+    padding: 0px;
+    height: 600px;
+}
+
 .starmap {
     position: absolute;
     height: 100%;

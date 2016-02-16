@@ -125,6 +125,9 @@
             this.scene3D = null;
             this.camera3D = null;
 
+            // 30- and 60-LY rings
+            this.rings3060 = null
+
             // mouse manipulation state
             this.mapZoom = 1.0;
 
@@ -178,6 +181,17 @@
 
                 self.gl.domElement.style.zIndex = 1;
                 parent.append(self.gl.domElement);
+
+                // create the 30- and 60-LY rings
+                self.rings3060 = new THREE.Object3D();
+                var ring30 = new THREE.RingGeometry(29.9, 30.1, 90);
+                var ring60 = new THREE.RingGeometry(59.9, 60.1, 120);
+                var whtMtl = new THREE.MeshBasicMaterial();
+                whtMtl.color.setRGB(1,1,1);
+                var grnMtl = new THREE.MeshBasicMaterial();
+                grnMtl.color.setRGB(0,1,0);
+                self.rings3060.add(new THREE.Mesh(ring30, whtMtl));
+                self.rings3060.add(new THREE.Mesh(ring60, grnMtl));
 
                 // add mouse event handlers
                 self.gl.domElement.addEventListener('mousewheel', self.onMouseWheel);
@@ -245,6 +259,17 @@
                 self.gl.render(self.scene3D, self.camera3D);
             };
 
+            this.onPlanetSelected = function(planet) {
+                if (planet) {
+                    self.rings3060.position.set(planet.x, planet.y, 0);
+                    self.scene3D.add(self.rings3060);
+                } else {
+                    self.rings3060.parent.remove(self.rings3060);
+                }
+
+                self.gl.render(self.scene3D, self.camera3D);
+            }
+
             this.onMouseWheel = function(event) {
                 // calculate new zoom factor
                 var zoom = self.camera3D.zoom;
@@ -267,10 +292,32 @@
 
             this.onMouseDown = function(event) {
                 // move the camera on middle-mouse down
-                if (event.button === 1) {
+                if (event.button === 1 || (event.button === 0 && event.ctrlKey)) {
                     self.lastX = event.offsetX;
                     self.lastY = event.offsetY;
                     self.state = 1;
+                } else if (event.button === 0) {
+                    // then user wants to select something, find out what it is (if anything) and
+                    // have something handle it
+                    var vpW = self.camera3D.right - self.camera3D.left;
+                    var vpH = self.camera3D.top - self.camera3D.bottom;
+                    var w = vpW / self.camera3D.zoom;
+                    var h = vpH / self.camera3D.zoom;
+                    var l = self.offsetX - w/2;
+                    var t = self.offsetY + h/2;
+
+                    // normalized position in overlay viewport
+                    var nx = event.offsetX / vpW;
+                    var ny = event.offsetY / vpH;
+
+                    var mouseX = nx * w + l;
+                    var mouseY = t - ny * h;
+
+                    var obj = null;
+                    if (self.quadtree)
+                        obj = self.quadtree.find(mouseX, mouseY);
+
+                    self.onPlanetSelected(obj);
                 }
 
                 return false;
