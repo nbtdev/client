@@ -482,8 +482,8 @@
                 var p = data.data;
                 $scope.name = p.name;
 
-                if (p.description.length > 0)
-                    $scope.description = $sce.trustAsHtml(p.description);
+                //if (p.description.length > 0)
+                //    $scope.description = $sce.trustAsHtml(p.description);
 
                 $scope.owner = p.ownerName;
                 $scope.terrain = p.terrain;
