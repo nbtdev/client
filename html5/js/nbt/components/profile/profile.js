@@ -94,6 +94,7 @@
                     onLoginChangedCb(self.loginData.login.value);
 
                     onLeagueChangedCb(self.selectedLeague);
+                    self.changeProfileInfo();
                 }
             };
 
@@ -181,10 +182,34 @@
             this.onRegister = function() {
             };
 
+            this.populateProfileInfo = function(resp) {
+                var profile = resp.data;
+                $scope.displayName = profile.callsign;
+            };
+
+            this.changeProfileInfo = function() {
+                // figure out the proper profile to fetch for the user display information
+                for (var i=0; i<self.leagues.length; ++i) {
+                    var l = self.leagues[i];
+                    if (l._links.self.href !== self.selectedLeague)
+                        continue;
+
+                    // otherwise, fetch the user's profile for this league
+                    $http({
+                        method: 'GET', // TODO: get from links!
+                        url: l._links.profile.href,
+                        headers: {
+                            'X-NBT-Token': self.mToken
+                        }
+                    }).then(self.populateProfileInfo);
+                }
+            }
+
             this.onLeagueChanged = function() {
                 self.selectedLeague = $scope.selectedLeague;
                 localStorage.selectedLeague = self.selectedLeague;
                 onLeagueChangedCb(self.selectedLeague);
+                self.changeProfileInfo();
             };
 
             // check for any existing login data, and if it exists, set our initial
