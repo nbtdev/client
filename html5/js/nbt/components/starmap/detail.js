@@ -29,6 +29,8 @@
             var self = this;
             var token = null;
 
+            $scope.planet = null;
+
             this.updatePlanetBattleDetail = function(data) {
                 var battleData = data.data;
                 $scope.battleId = battleData.id;
@@ -40,6 +42,10 @@
             this.updatePlanet = function(data) {
                 var p = data.data;
                 $scope.name = p.name;
+                $scope.owner = p.ownerName;
+                $scope.chargeStation = p.chargeStation;
+                $scope.capital = p.capitalPlanet;
+                $scope.factory = p.factory;
 
                 //if (p.description.length > 0)
                 //    $scope.description = $sce.trustAsHtml(p.description);
@@ -66,16 +72,28 @@
             };
 
             this.setPlanet = function(aPlanet, aPlanets, aToken) {
+                $scope.planet = aPlanet;
                 $scope.planets = aPlanets;
+                $scope.name = null;
+                $scope.owner = null;
+                $scope.factory = false;
+                $scope.chargeStation = false;
+                $scope.capital = false;
+
+                $scope.planets.sort(function(p1, p2) {
+                    return p1.radius - p2.radius;
+                });
+
+                var idx = $scope.planets.findIndex(function(elem, i, arr) {
+                    return (this.id === elem.planet.id);
+                }, aPlanet);
+
+                $scope.planets.splice(idx, 1);
 
                 if (aPlanet === null) {
                     self.clear();
                     $scope.$apply();
                 } else {
-                    $scope.name = '';
-
-                    token = aToken;
-
                     $http({
                         url: aPlanet._links.self.href,
                         method: 'GET',
@@ -92,7 +110,13 @@
             };
 
             this.clear = function() {
-                $scope.name = '';
+                $scope.planet = null;
+                $scope.planets = null;
+                $scope.name = null;
+                $scope.owner = null;
+                $scope.factory = false;
+                $scope.chargeStation = false;
+                $scope.capital = false;
             };
         };
 

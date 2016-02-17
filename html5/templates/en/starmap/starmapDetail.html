@@ -1,4 +1,27 @@
-<div>{{name}}</div>
-<div ng-show="detail.hasPlanets()">
-    <div ng-repeat="planet in planets">{{planet.planet.name}}</div>
+<div style="margin: 5px">
+    <div style="font-weight: bolder; font-size: larger" ng-show="planet">
+        <span style="padding-right: 10px">{{name}}</span>
+        <span ng-show="owner">({{owner}})</span>
+    </div>
+    <div ng-show="planet">
+        <span ng-class="{'planetDetailEnabled': factory, 'planetDetailDisabled': !factory}">Factory</span>
+        &nbsp; | &nbsp;
+        <span ng-class="{'planetDetailEnabled': chargeStation, 'planetDetailDisabled': !chargeStation}">Charge Station</span>
+        &nbsp; | &nbsp;
+        <span ng-class="{'planetDetailEnabled': capital, 'planetDetailDisabled': !capital}">Capital Planet</span>
+    </div>
+    <div style="overflow: auto; max-height: 800px; background-color: rgba(0,0,0,0.5)">
+        <div ng-show="detail.hasPlanets()" style="display: table">
+            <div style="display: table-row; font-weight: bold; background-color: rgba(0,0,0,0.5)">
+                <span style="display: table-cell; margin-right: 5px">Planet</span>
+                <span style="display: table-cell; margin-right: 5px">Distance</span>
+                <span style="display: table-cell">Owner</span>
+            </div>
+            <div ng-repeat="planet in planets" style="display: table-row">
+                <span style="display: table-cell">{{planet.planet.name}}</span>
+                <span style="display: table-cell">{{planet.radius.toFixed(2)}}</span>
+                <span style="display: table-cell">{{planet.planet.ownerName}}</span>
+            </div>
+        </div>
+    </div>
 </div>

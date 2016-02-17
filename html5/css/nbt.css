@@ -25,12 +25,6 @@
     height: 800px;
 }
 
-#map-details {
-    position: relative;
-    padding: 0px;
-    height: 600px;
-}
-
 .starmap {
     position: absolute;
     height: 100%;
@@ -69,4 +63,12 @@ input[type=text] {
 
 input[type=password] {
     color: black;
+}
+
+.planetDetailEnabled {
+    color: white;
+}
+
+.planetDetailDisabled {
+    color: grey;
 }

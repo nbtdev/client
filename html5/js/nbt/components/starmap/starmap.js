@@ -336,7 +336,7 @@
                             planets = self.quadtree.findAllWithinRadius({x:mouseX, y:mouseY}, 60.0);
 
                         // call out
-                        self.planetChangedListener(obj, planets, self.mToken);
+                        self.planetChangedListener(obj, planets, self.token);
                     }
                 }
 
