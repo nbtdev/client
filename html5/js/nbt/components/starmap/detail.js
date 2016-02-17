@@ -143,9 +143,11 @@
 
                     // less easy -- any planet over 30, but less than 60, so long as
                     // (a) it's allied or owned, or
-                    if (planet.planet.ownerName === $scope.planet.ownerName)
+                    if (planet.planet.ownerName === $scope.planet.ownerName ||
+                        planet.planet.ownerName === 'Unassigned' // hacky...
+                    )
                         return true;
-                    
+
                     // (b) it is not allied, and is the closest planet for that faction
                     //     that does not already have one inside 30LY
                     var ne = self.mNearest[planet.planet.ownerName];
