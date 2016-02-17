@@ -71,6 +71,7 @@
                 // if there is/are a factory/factories on the planet, follow the link and get the details
             };
 
+            var mNearest = null;
             this.setPlanet = function(aPlanet, aPlanets, aToken) {
                 $scope.planet = aPlanet;
                 $scope.planets = aPlanets;
@@ -100,6 +101,21 @@
                         headers: {'X-NBT-Token': aToken === null ? '' : aToken}
                     }).then(self.updatePlanet);
                 }
+
+                // go through aPlanets and list the nearest for each faction
+                var nearest = {};
+                for (var i=0; i<aPlanets.length; ++i) {
+                    var p = aPlanets[i];
+                    var v = nearest[p.planet.ownerName];
+
+                    if (v) {
+                        if (v.radius > p.radius)
+                            nearest[p.planet.ownerName] = v;
+                    } else
+                        nearest[p.planet.ownerName] = p;
+                }
+
+                self.mNearest = nearest;
             };
 
             this.hasPlanets = function() {
@@ -117,6 +133,27 @@
                 $scope.factory = false;
                 $scope.chargeStation = false;
                 $scope.capital = false;
+            };
+
+            this.canJump = function(planet) {
+                if (planet && $scope.planet) {
+                    // easy one -- all planets within 30LY
+                    if (planet.radius <= 30.0)
+                        return true;
+
+                    // less easy -- any planet over 30, but less than 60, so long as
+                    // (a) it's allied or owned, or
+                    if (planet.planet.ownerName === $scope.planet.ownerName)
+                        return true;
+                    
+                    // (b) it is not allied, and is the closest planet for that faction
+                    //     that does not already have one inside 30LY
+                    var ne = self.mNearest[planet.planet.ownerName];
+                    if (ne.planet.id === planet.planet.id)
+                        return true;
+                }
+
+                return false;
             };
         };
 

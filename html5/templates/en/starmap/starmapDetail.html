@@ -17,7 +17,7 @@
                 <span style="display: table-cell; margin-right: 5px">Distance</span>
                 <span style="display: table-cell">Owner</span>
             </div>
-            <div ng-repeat="planet in planets" style="display: table-row">
+            <div ng-repeat="planet in planets" style="display: table-row" ng-class="{'planetDetailCanJump': detail.canJump(planet)}">
                 <span style="display: table-cell">{{planet.planet.name}}</span>
                 <span style="display: table-cell">{{planet.radius.toFixed(2)}}</span>
                 <span style="display: table-cell">{{planet.planet.ownerName}}</span>

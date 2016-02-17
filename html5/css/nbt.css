@@ -72,3 +72,8 @@ input[type=password] {
 .planetDetailDisabled {
     color: grey;
 }
+
+.planetDetailCanJump {
+    color: rgb(176, 255, 123);
+}
+
