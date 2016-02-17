@@ -98,6 +98,7 @@
 
         return {
             restrict: 'E',
+            scope: true,
             controller: controller,
             controllerAs: 'detail',
             link: function(scope, element, attrs, controller) {

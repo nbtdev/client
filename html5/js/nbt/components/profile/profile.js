@@ -237,6 +237,7 @@
 
         return {
             restrict: 'E',
+            scope: true,
             controller: controller,
             controllerAs: 'profile',
             link: function(scope, element, attrs, controller) {
