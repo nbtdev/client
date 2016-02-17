@@ -21,7 +21,7 @@
  */
 function NBT() {
     var self = this;
-    var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile']);
+    var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile', 'nbt.starmapDetail']);
 
     // root API url
     var API_URL = 'http://api.home.lan';
@@ -74,6 +74,11 @@ function NBT() {
                 self.mInitializing = false;
 
                 if (self.onbootstrap) self.onbootstrap();
+
+                // HACKY!!!! don't do this...
+                var starmap = document.getElementById('starmap');
+                var starmapDetails = document.getElementById('map-details');
+                starmap.setPlanetChangedListener(starmapDetails.onplanetchanged);
             });
         }
     };

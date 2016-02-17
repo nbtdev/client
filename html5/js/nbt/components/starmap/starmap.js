@@ -264,7 +264,7 @@
                     self.rings3060.position.set(planet.x, planet.y, 0);
                     self.scene3D.add(self.rings3060);
                 } else {
-                    self.rings3060.parent.remove(self.rings3060);
+                    self.scene3D.remove(self.rings3060);
                 }
 
                 self.gl.render(self.scene3D, self.camera3D);
@@ -296,6 +296,14 @@
                     self.lastX = event.offsetX;
                     self.lastY = event.offsetY;
                     self.state = 1;
+                }
+
+                return false;
+            };
+
+            this.onMouseUp = function(event) {
+                if (event.button === 1 || (event.button === 0 && event.ctrlKey)) {
+                    self.state = 0;
                 } else if (event.button === 0) {
                     // then user wants to select something, find out what it is (if anything) and
                     // have something handle it
@@ -318,14 +326,18 @@
                         obj = self.quadtree.find(mouseX, mouseY);
 
                     self.onPlanetSelected(obj);
-                }
 
-                return false;
-            };
+                    // call out to any registered listener as well
+                    if (self.planetChangedListener) {
+                        // first get the list of planets within 60LY
+                        var planets = [];
 
-            this.onMouseUp = function(event) {
-                if (event.button === 1) {
-                    self.state = 0;
+                        if (obj)
+                            planets = self.quadtree.findAllWithinRadius({x:mouseX, y:mouseY}, 60.0);
+
+                        // call out
+                        self.planetChangedListener(obj, planets, self.mToken);
+                    }
                 }
 
                 return false;
@@ -469,16 +481,27 @@
                 self.fetchPlanets();
                 self.updateOverlay();
             }
+
+            this.planetChangedListener = null;
+
+            this.setPlanetChangedListener = function(aListener) {
+                self.planetChangedListener = aListener;
+            }
         };
 
         return {
             restrict: 'E',
             template: '<div></div>',
+            scope: true,
             controller: controller,
             controllerAs: 'starmap',
             link: function(scope, element, attrs, controller) {
                 element[0].reload = function(aPlanetsUrl, aToken) {
                     controller.reload(aPlanetsUrl, aToken);
+                };
+
+                element[0].setPlanetChangedListener = function(aListener) {
+                    controller.setPlanetChangedListener(aListener);
                 };
 
                 var w = element.parent()[0].offsetWidth;
