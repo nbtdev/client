@@ -113,6 +113,16 @@
             this.setSize = function(w, h) {
                 self.width = w;
                 self.height = h;
+
+                if (self.gl) {
+                    self.gl.setSize(w, h);
+                    self.camera3D.left = self.width / -2;
+                    self.camera3D.right = self.width / 2;
+                    self.camera3D.top = self.height / 2;
+                    self.camera3D.bottom = self.height / -2;
+                    self.camera3D.updateProjectionMatrix();
+                    self.gl.render(self.scene3D, self.camera3D);
+                }
             }
 
             this.setOverlays = function(aText, aUI) {
@@ -199,7 +209,14 @@
                 self.gl.domElement.addEventListener('mouseup', self.onMouseUp);
                 self.gl.domElement.addEventListener('mousemove', self.onMouseMove);
                 self.gl.domElement.addEventListener('mouseleave', self.onMouseExit);
+                window.addEventListener('resize', self.onWindowResized);
             };
+
+            this.onWindowResized = function(event) {
+                var w = self.gl.domElement.parentElement.offsetWidth;
+                var h = self.gl.domElement.parentElement.offsetHeight;
+                self.setSize(w, h);
+            }
 
             var addRing = function(planet, innerRadius, outerRadius, material) {
                 var ringGeom = new THREE.RingGeometry(innerRadius, outerRadius, 36);
