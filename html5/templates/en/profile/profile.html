@@ -18,6 +18,7 @@
     <div ng-hide="isLoggedIn">
         <div>Username:&nbsp;<input class="profileInput" type="text" ng-model="username"></div>
         <div>Password:&nbsp;<input class="profileInput" type="password" ng-model="password"></div>
+        <div ng-show="passwordIncorrect" class="passwordIncorrect">Username not found or password incorrect!</div>
         <div class="profile-menu">
             <a href="#" ng-click="profile.onSignIn()">Sign In</a>&nbsp;&nbsp;<a href="#" ng-click="profile.onRegister()">Register</a>
         </div>

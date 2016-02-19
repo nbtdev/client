@@ -123,6 +123,7 @@
                 $scope.isLoggedIn = true;
                 $scope.password = null;
                 $scope.username = null;
+                $scope.passwordIncorrect = false;
 
                 // save off the logout link
                 self.mLogoutLink = userData._links.logout;
@@ -138,9 +139,13 @@
 
             this.signInFailed = function(resp) {
                 console.log(resp.data);
+                $scope.passwordIncorrect = true;
             };
 
             this.onSignIn = function() {
+                // hide the login-error message box
+                $scope.passwordIncorrect = false;
+
                 // attempt to get a token based on the provided login credentials
                 $http({
                     method: 'POST', // TODO: get this from the links!
@@ -175,6 +180,7 @@
                 $scope.isLoggedIn = false;
                 $scope.password = null;
                 $scope.username = null;
+                $scope.passwordIncorrect = false;
 
                 onLoginChangedCb(self.mToken);
             };
@@ -218,6 +224,7 @@
                 this.mToken = this.loginData.login.value;
                 self.mLogoutLink = this.loginData.logout;
                 $scope.displayName = this.loginData.login.callsign;
+                $scope.passwordIncorrect = false;
                 $scope.twitter = null;
                 $scope.isLoggedIn = true;
                 $scope.username = null;
@@ -230,6 +237,7 @@
                 $scope.displayName = null;
                 $scope.twitter = null;
                 $scope.isLoggedIn = false;
+                $scope.passwordIncorrect = false;
                 $scope.username = null;
                 $scope.password = null;
             }
