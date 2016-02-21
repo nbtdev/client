@@ -59,7 +59,7 @@
         var onLeagueChangeAttr = null;
         var onLoginChangeAttr = null;
 
-        this.controller = function($scope, $attrs, $http) {
+        this.controller = function($scope, $attrs, $http, $sce) {
 
             var self = this;
             var mToken = null;
@@ -219,6 +219,21 @@
                 }
             };
 
+            this.onPrivacy = function() {
+                if ($scope.privacyPolicy)
+                    $scope.privacyPolicy = null;
+                else
+                $scope.privacyPolicy = $sce.trustAsHtml(
+                        "<p>" +
+                        "We don't give your email address to anyone. We don't sell anything " +
+                        "or solicit for anything. However, we do need your email address in order " +
+                        "to send you notifications from the automation. " +
+                        "</p><p>" +
+                        "You will be able to opt out of any/all notifications via your User Profile." +
+                        "</p>"
+                );
+            };
+
             this.onLeagueChanged = function() {
                 self.selectedLeague = $scope.selectedLeague;
                 localStorage.selectedLeague = self.selectedLeague;
@@ -233,6 +248,8 @@
             };
 
             var minimize = function(elem) {
+                // make the element take up zero space on the screen (remove any 'fullscreen' and 'onTop'
+                // class names and replace them with 'minimized' and 'onBottom')
                 var arr = this.className.split(' ');
 
                 idx = arr.indexOf('onTop');
@@ -247,11 +264,9 @@
             };
 
             var maximize = function() {
+                // make the element take up the full screen (remove any 'minimized' and 'onBottom'
+                // class names and replace them with 'fullscreen' and 'onTop')
                 var arr = this.className.split(' ');
-
-                var idx = arr.indexOf('invisible');
-                if (idx >= 0)
-                    arr.splice(idx, 1);
 
                 idx = arr.indexOf('onBottom');
                 if (idx >= 0)
@@ -293,6 +308,7 @@
             // extremely hacky...
             window.addEventListener("transitionend", function(event) {
                 if (event.srcElement === self.registerForm) {
+                    // only do this if 'fadeOut' exists in the class name list
                     if (event.srcElement.className.indexOf('fadeOut') > 0) {
                         event.srcElement.minimize();
                     }

@@ -69,12 +69,17 @@
                         </div>
                     </div>
 
+                    <div style="margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
+                        <span style="padding-right: 25px;"><a href="#" ng-click="profile.onSubmitRegistration()">Submit</a></span>
+                        <span><a href="#" ng-click="profile.onCancelRegistration()">Cancel</a></span>
+                    </div>
+
                     <div style="font-size: small; width: 60%; margin: auto">
                         Notes: All fields are required. Please provide a valid email address, as
                         you will be sent a verification email containing a link to complete the signup process.
                     </div>
-                    <div style="font-size: small"><a href="#" ng-click="profile.onPrivacy()">Privacy Policy</a></div>
-                    <div ng-show="privacyPolicy">{{privacyPolicy}}</div>
+                    <div style="font-size: small; padding-top: 10px;"><a href="#" ng-click="profile.onPrivacy()">Privacy Policy</a></div>
+                    <div class="privacyPolicy" ng-show="privacyPolicy" ng-bind-html="privacyPolicy"></div>
                 </div>
             </div>
         </div>
