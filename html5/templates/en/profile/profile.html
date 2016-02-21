@@ -23,4 +23,60 @@
             <a href="#" ng-click="profile.onSignIn()">Sign In</a>&nbsp;&nbsp;<a href="#" ng-click="profile.onRegister()">Register</a>
         </div>
     </div>
+    <div class="modalDialog modalFade" ng-class="{'fadeIn': isRegistering, 'fadeOut': !isRegistering, 'minimized onBottom': initialized===0}" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="profile.onCancelRegistration()">×</button>
+                    <h4 class="modal-title">New Account Registration</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="display: table; margin: auto">
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Login:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="username"></div>
+                            <div style="display: table-cell"><span ng-show="usernameTaken">Username in use!</span></div>
+                        </div>
+
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Callsign:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="callsign"></div>
+                            <div style="display: table-cell"><span ng-show="usernameTaken">Callsign in use!</span></div>
+                        </div>
+
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Password:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="password" ng-model="password"></div>
+                            <div style="display: table-cell"><span ng-show="passwordMismatch">Passwords do not match!</span></div>
+                        </div>
+
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Verify Password:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="password" ng-model="passwordCheck"></div>
+                            <div style="display: table-cell">&nbsp;</div>
+                        </div>
+
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Email Address:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="emailAddress"></div>
+                            <div style="display: table-cell"><span ng-show="emailInUse">Email address in use!</span></div>
+                        </div>
+
+                        <div style="display: table-row">
+                            <div style="display: table-cell; text-align: right">Verify Email Address:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="emailAddressCheck"></div>
+                            <div style="display: table-cell"><span ng-show="emailMismatch">Email addresses do not match!</span></div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: small; width: 60%; margin: auto">
+                        Notes: All fields are required. Please provide a valid email address, as
+                        you will be sent a verification email containing a link to complete the signup process.
+                    </div>
+                    <div style="font-size: small"><a href="#" ng-click="profile.onPrivacy()">Privacy Policy</a></div>
+                    <div ng-show="privacyPolicy">{{privacyPolicy}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

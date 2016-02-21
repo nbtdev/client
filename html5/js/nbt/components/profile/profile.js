@@ -64,6 +64,7 @@
             var self = this;
             var mToken = null;
             var mLogoutLink = null;
+            var registerForm = null;
 
             this.leagues = [];
             this.selectedLeague = loadSelectedLeague();
@@ -186,11 +187,18 @@
             };
 
             this.onRegister = function() {
+                $scope.initialized = 1;
+                $scope.isRegistering = true;
+                self.registerForm.maximize();
             };
 
             this.populateProfileInfo = function(resp) {
                 var profile = resp.data;
                 $scope.displayName = profile.callsign;
+            };
+
+            this.onCancelRegistration = function() {
+                $scope.isRegistering = false;
             };
 
             this.changeProfileInfo = function() {
@@ -209,13 +217,51 @@
                         }
                     }).then(self.populateProfileInfo);
                 }
-            }
+            };
 
             this.onLeagueChanged = function() {
                 self.selectedLeague = $scope.selectedLeague;
                 localStorage.selectedLeague = self.selectedLeague;
                 onLeagueChangedCb(self.selectedLeague);
                 self.changeProfileInfo();
+            };
+
+            this.setRegisterForm = function(elem) {
+                self.registerForm = elem;
+                elem.maximize = maximize;
+                elem.minimize = minimize;
+            };
+
+            var minimize = function(elem) {
+                var arr = this.className.split(' ');
+
+                idx = arr.indexOf('onTop');
+                if (idx >= 0)
+                    arr.splice(idx, 1);
+
+                idx = arr.indexOf('fullscreen');
+                if (idx >= 0)
+                    arr.splice(idx, 1);
+
+                this.className = arr.join(' ') + ' minimized onBottom';
+            };
+
+            var maximize = function() {
+                var arr = this.className.split(' ');
+
+                var idx = arr.indexOf('invisible');
+                if (idx >= 0)
+                    arr.splice(idx, 1);
+
+                idx = arr.indexOf('onBottom');
+                if (idx >= 0)
+                    arr.splice(idx, 1);
+
+                idx = arr.indexOf('minimized');
+                if (idx >= 0)
+                    arr.splice(idx, 1);
+
+                this.className = arr.join(' ') + ' fullscreen onTop';
             };
 
             // check for any existing login data, and if it exists, set our initial
@@ -241,6 +287,17 @@
                 $scope.username = null;
                 $scope.password = null;
             }
+
+            $scope.initialized = 0;
+
+            // extremely hacky...
+            window.addEventListener("transitionend", function(event) {
+                if (event.srcElement === self.registerForm) {
+                    if (event.srcElement.className.indexOf('fadeOut') > 0) {
+                        event.srcElement.minimize();
+                    }
+                }
+            });
         };
 
         return {
@@ -257,6 +314,10 @@
                     var templ = angular.element(html);
                     element.append(templ);
                     $compile(templ)(scope);
+
+                    var elem = element[0].firstElementChild;
+                    var registerForm = elem.children[2];
+                    controller.setRegisterForm(registerForm);
                 });
 
                 onLeagueChangeAttr = attrs.onleaguechanged;
