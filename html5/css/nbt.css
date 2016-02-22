@@ -144,3 +144,7 @@ input[type=password] {
 .privacyPolicy {
     border: solid 1px white;
 }
+
+.g-recaptcha {
+    display: inline-block;
+}

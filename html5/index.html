@@ -2,44 +2,18 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<script src="js/jquery-2.1.1.js"></script>
-<script src="js/gl-matrix/common.js"></script>
-<script src="js/gl-matrix/mat4.js"></script>
-<script src="js/gl-matrix/vec3.js"></script>
-<script src="js/nbt/v1.0/nbt.js"></script>
-<script src="js/nbt/util/quadtree.js"></script>
-<script src="js/nbt/v1.0/starmap.js"></script>
 <link href="css/nbt.old.css" rel="stylesheet" />
 <link rel="shortcut icon" href="favicon.ico">
 <title>Welcome To NetBattleTech</title>
-<script>
-var origin = "api-dev.netbattletech.com";
 
-$.ajax({
-    url: "http://" + origin,
-    type: "GET"
-}).success(function(resp) {
-    if (resp.error === true)
-        console.log(resp.message);
-    else {
-        // find the "leagues" link and follow it
-        var links = resp.links;
-        if (links !== null) {
-        	for (var i=0; i<links.length; ++i) {
-        		if (links[i].rel === "leagues") {
-        			$.ajax({
-        			    url: links[i].href,
-        			    type: "GET"
-        			}).success(layoutLeagues);
-        		}
-        	}
-        }
-    }
-});
-</script>
+<script src='https://www.google.com/recaptcha/api.js' async defer></script>
+
 </head>
 <body>
 <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
+
+<div class="g-recaptcha" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+
 
 <div class="login" id="loginBox">
 </div>
@@ -74,8 +48,5 @@ Nulla facilisi. Etiam faucibus ante vel nulla eleifend euismod. Fusce consectetu
 <div class="title">Current NBT Leagues</div>
 </div>
 
-<script>
-renderLoginBox($("#loginBox"));
-</script>
 </body>
 </html>

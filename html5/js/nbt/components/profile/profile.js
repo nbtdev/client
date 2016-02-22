@@ -195,6 +195,18 @@
                 $scope.callsignError = null;
                 $scope.passwordError = null;
                 $scope.emailError = null;
+
+                if (self.recaptcha) {
+                    if (grecaptcha) {
+                        grecaptcha.render(
+                            self.recaptcha,
+                            {
+                                sitekey: self.recaptchaKey,
+                                size: 'normal'
+                            }
+                        );
+                    }
+                }
             };
 
             this.populateProfileInfo = function(resp) {
@@ -215,6 +227,7 @@
                 $scope.passwordCheckError = null;
                 $scope.emailAddressError = null;
                 $scope.emailAddressCheckError = null;
+                $scope.captchaError = null;
 
                 // TODO: for all of these strings, an i18n service maybe?
 
@@ -280,11 +293,20 @@
                     rtn = false;
                 }
 
+                // 4. has the user solved the captcha?
+                try {
+                    // failure to access any of these will throw, and we catch that into a 'false'
+                    if (grecaptcha.getResponse().length === 0)
+                        throw new Exception();
+                } catch(e) {
+                    $scope.captchaError = "reCaptcha must be solved before submitting!";
+                    rtn = false;
+                }
+
                 return rtn;
             };
 
             this.registrationSucceeded = function(data) {
-                //$scope.isRegistering = false;
                 console.log(data);
             };
 
@@ -301,11 +323,9 @@
                     $http({
                         method: 'POST', // TODO: get from links!
                         url: nbt.rootLinks().signup.href,
-                        data: {
-                            username: $scope.username,
-                            callsign: $scope.callsign,
-                            password: $scope.password,
-                            email: $scope.email
+                        data: $scope.regData,
+                        headers: {
+                            'X-NBT-Captcha-Token': grecaptcha.getResponse()
                         }
                     }).then(self.registrationSucceeded, self.registrationFailed);
                 } else {
@@ -359,6 +379,8 @@
                 self.registerForm = elem;
                 elem.maximize = maximize;
                 elem.minimize = minimize;
+                self.recaptcha = elem.querySelector('.g-recaptcha');
+                self.recaptchaKey = self.recaptcha.dataset.sitekey;
             };
 
             var minimize = function(elem) {

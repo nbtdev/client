@@ -31,7 +31,7 @@
                     <h4 class="modal-title">New Account Registration</h4>
                 </div>
                 <div class="modal-body">
-                    <div style="display: table; margin: auto" ng-form name="regForm">
+                    <div style="display: table; margin: auto" name="regForm" ng-form>
                         <div style="display: table-row">
                             <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
                             <div style="display: table-cell"><input class="profileInput" type="text" name="username" ng-model="regData.username" required></div>
@@ -69,9 +69,14 @@
                         </div>
                     </div>
 
+                    <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+                    <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;">
+                        <div ng-show="captchaError">{{captchaError}}</div>
+                    </div>
+
                     <div style="margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
-                        <span style="padding-right: 25px;"><a href="#" ng-click="profile.onSubmitRegistration()">Submit</a></span>
-                        <span><a href="#" ng-click="profile.onCancelRegistration()">Cancel</a></span>
+                        <span style="margin-right: 25px;"><a href="#" ng-click="profile.onSubmitRegistration()">Submit</a></span>
+                        <span style="display: inline;"><a href="#" ng-click="profile.onCancelRegistration()">Cancel</a></span>
                     </div>
 
                     <div style="font-size: small; width: 60%; margin: auto">
