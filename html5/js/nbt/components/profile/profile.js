@@ -190,6 +190,11 @@
                 $scope.initialized = 1;
                 $scope.isRegistering = true;
                 self.registerForm.maximize();
+
+                $scope.usernameError = null;
+                $scope.callsignError = null;
+                $scope.passwordError = null;
+                $scope.emailError = null;
             };
 
             this.populateProfileInfo = function(resp) {
@@ -199,6 +204,115 @@
 
             this.onCancelRegistration = function() {
                 $scope.isRegistering = false;
+            };
+
+            this.validateForm = function() {
+                var rtn = true;
+
+                $scope.usernameError = null;
+                $scope.callsignError = null;
+                $scope.passwordError = null;
+                $scope.passwordCheckError = null;
+                $scope.emailAddressError = null;
+                $scope.emailAddressCheckError = null;
+
+                // TODO: for all of these strings, an i18n service maybe?
+
+                // 1. basic validation (are things here, are they the right format?)
+                if (!$scope.regForm.$valid) {
+                    if ($scope.regForm.$error.required) {
+                        rtn = false;
+
+                        // see which elements are missing and report those
+                        for (var i = 0; i < $scope.regForm.$error.required.length; ++i) {
+                            var missing = $scope.regForm.$error.required[i];
+                            $scope[missing.$name + 'Error'] = 'Field Required';
+                        }
+                    }
+
+                    if ($scope.regForm.$error.email) {
+                        rtn = false;
+
+                        // see which elements are invalid and report those
+                        for (var i = 0; i < $scope.regForm.$error.email.length; ++i) {
+                            var invalid = $scope.regForm.$error.email[i];
+                            $scope[invalid.$name + 'Error'] = 'Incorrect email address format';
+                        }
+                    }
+
+                    if ($scope.regForm.$error.minlength) {
+                        rtn = false;
+
+                        // see which elements are too short and report those
+                        for (var i = 0; i < $scope.regForm.$error.minlength.length; ++i) {
+                            var tooShort = $scope.regForm.$error.minlength[i];
+                            $scope[tooShort.$name + 'Error'] = 'Must be at least 8 characters in length';
+                        }
+                    }
+
+                    return false;
+                }
+
+                // 2. Second-level checks -- check login, callsign and password for valid contents
+                // login can contain only alphanum and underscore
+                var re = /^[a-zA-Z0-9_]*$/;
+                if ($scope.regData.username.search(re) < 0) {
+                    $scope.usernameError = 'Username contains illegal characters';
+                    rtn = false;
+                }
+
+                // password needs to contain at least one of each of: uppercase, lowercase, digit, special-char
+                re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)]).+$/;
+                if ($scope.regData.password.search(re) < 0) {
+                    $scope.passwordError = 'Password must contain at least: one lowercase, one uppercase, one digit, one special character';
+                    rtn = false;
+                }
+
+                // 3. Compare the two password fields for equality
+                if ($scope.regData.password !== $scope.passwordCheck) {
+                    $scope.passwordCheckError = 'Passwords do not match!';
+                    rtn = false;
+                }
+
+                // 3. Compare the two email fields for equality
+                if ($scope.regData.email !== $scope.emailAddressCheck) {
+                    $scope.emailAddressCheckError = 'Email addresses do not match!';
+                    rtn = false;
+                }
+
+                return rtn;
+            };
+
+            this.registrationSucceeded = function(data) {
+                //$scope.isRegistering = false;
+                console.log(data);
+            };
+
+            this.registrationFailed = function(data) {
+                // tell the user what the problems were
+                console.log(data);
+            };
+
+            this.onSubmitRegistration = function() {
+                if (self.validateForm()) {
+                    $scope.errorMessage = null;
+
+                    // submit the new-user registration
+                    $http({
+                        method: 'POST', // TODO: get from links!
+                        url: nbt.rootLinks().signup.href,
+                        data: {
+                            username: $scope.username,
+                            callsign: $scope.callsign,
+                            password: $scope.password,
+                            email: $scope.email
+                        }
+                    }).then(self.registrationSucceeded, self.registrationFailed);
+                } else {
+                    // tell the user there were errors and to fix them first
+                    // TODO: i18n?
+                    $scope.errorMessage = "Registration form contains errors, please correct these and re-submit";
+                }
             };
 
             this.changeProfileInfo = function() {
@@ -304,6 +418,13 @@
             }
 
             $scope.initialized = 0;
+
+            $scope.regData = {
+                username: null,
+                callsign: null,
+                password: null,
+                email: null
+            };
 
             // extremely hacky...
             window.addEventListener("transitionend", function(event) {

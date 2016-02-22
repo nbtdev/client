@@ -57,6 +57,10 @@ select, option {
     color: black;
 }
 
+input[type=email] {
+    color: black;
+}
+
 input[type=text] {
     color: black;
 }

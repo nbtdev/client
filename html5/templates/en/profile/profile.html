@@ -31,41 +31,41 @@
                     <h4 class="modal-title">New Account Registration</h4>
                 </div>
                 <div class="modal-body">
-                    <div style="display: table; margin: auto">
+                    <div style="display: table; margin: auto" ng-form name="regForm">
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Login:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="username"></div>
-                            <div style="display: table-cell"><span ng-show="usernameTaken">Username in use!</span></div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" name="username" ng-model="regData.username" required></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="usernameError">{{usernameError}}</span></div>
                         </div>
 
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Callsign:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="callsign"></div>
-                            <div style="display: table-cell"><span ng-show="usernameTaken">Callsign in use!</span></div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Callsign:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="text" name="callsign" ng-model="regData.callsign" required></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="callsignError">{{callsignError}}</span></div>
                         </div>
 
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Password:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="password" ng-model="password"></div>
-                            <div style="display: table-cell"><span ng-show="passwordMismatch">Passwords do not match!</span></div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Password:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="password" name="password" ng-model="regData.password" required ng-minlength="8"></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="passwordError">{{passwordError}}</span></div>
                         </div>
 
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Verify Password:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="password" ng-model="passwordCheck"></div>
-                            <div style="display: table-cell">&nbsp;</div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Verify Password:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="password" name="passwordCheck" ng-model="passwordCheck" required ng-minlength="8"></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="passwordCheckError">{{passwordCheckError}}</span></div>
                         </div>
 
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Email Address:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="emailAddress"></div>
-                            <div style="display: table-cell"><span ng-show="emailInUse">Email address in use!</span></div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Email Address:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="email" name="emailAddress" ng-model="regData.email" required></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="emailAddressError">{{emailAddressError}}</span></div>
                         </div>
 
                         <div style="display: table-row">
-                            <div style="display: table-cell; text-align: right">Verify Email Address:&nbsp;</div>
-                            <div style="display: table-cell"><input class="profileInput" type="text" ng-model="emailAddressCheck"></div>
-                            <div style="display: table-cell"><span ng-show="emailMismatch">Email addresses do not match!</span></div>
+                            <div style="display: table-cell; text-align: right; padding-right: 5px;">Verify Email Address:&nbsp;</div>
+                            <div style="display: table-cell"><input class="profileInput" type="email" name="emailAddressCheck" ng-model="emailAddressCheck" required></div>
+                            <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="emailAddressCheckError">{{emailAddressCheckError}}</span></div>
                         </div>
                     </div>
 
