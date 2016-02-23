@@ -194,10 +194,20 @@
                 $scope.usernameError = null;
                 $scope.callsignError = null;
                 $scope.passwordError = null;
-                $scope.emailError = null;
+                $scope.passwordCheckError = null;
+                $scope.emailAddressError = null;
+                $scope.emailAddressCheckError = null;
+                $scope.captchaError = null;
+
+                $scope.regData.username = null;
+                $scope.regData.password = null;
+                $scope.regData.callsign = null;
+                $scope.regData.email = null;
+                $scope.emailAddressCheck = null;
+                $scope.passwordCheck = null;
 
                 if (self.recaptcha) {
-                    if (grecaptcha) {
+                    if (self.recaptcha.childElementCount === 0 && grecaptcha) {
                         grecaptcha.render(
                             self.recaptcha,
                             {
