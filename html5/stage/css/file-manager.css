@@ -136,7 +136,7 @@
 	left: 50%;
 	margin-left: -100px;
 	text-align: center;
-	background: url(../img/filemanager/progress.html) center bottom repeat-x;
+	background: url(../img/filemanager/progress.gif) center bottom repeat-x;
 }
 
 .elfinder-resize-row {
@@ -791,7 +791,7 @@
 .elfinder-notify-progress {
 	width: 100%;
 	height: 8px;
-	background: url(../img/filemanager/progress.html) center center repeat-x;
+	background: url(../img/filemanager/progress.gif) center center repeat-x;
 }
 
 .elfinder-info-title .elfinder-cwd-icon {
@@ -1598,52 +1598,52 @@ only screen and (                min-resolution: 2dppx) {
 	}
 	
 	.elfinder-button-icon-back {
-		background-image: url(../img/icon/back%402x.png);
+		background-image: url(../img/icon/back@2x.png);
 		background-size: 12px 20px;
 	}
 	
 	.elfinder-button-icon-forward {
-		background-image: url(../img/icon/forwad%402x.png);
+		background-image: url(../img/icon/forwad@2x.png);
 		background-size: 12px 20px;
 	}
 	
 	.elfinder-button-icon-reload {
-		background-image: url(../img/icon/refresh%402x.png);
+		background-image: url(../img/icon/refresh@2x.png);
 		background-size: 18px 19px;
 	}
 		
 	.elfinder-button-icon-mkdir {
-		background-image: url(../img/icon/folder%402x.png);
+		background-image: url(../img/icon/folder@2x.png);
 		background-size: 23px 21px;
 	}
 	
 	.elfinder-button-icon-mkfile {
-		background-image: url(../img/icon/file%402x.png);
+		background-image: url(../img/icon/file@2x.png);
 		background-size: 19px 21px;
 	}
 	
 	.elfinder-button-icon-upload {
-		background-image: url(../img/icon/upload%402x.png);
+		background-image: url(../img/icon/upload@2x.png);
 		background-size: 19px 21px;
 	}
 	
 	.elfinder-button-icon-view {
-		background-image: url(../img/icon/icon-view%402x.png);
+		background-image: url(../img/icon/icon-view@2x.png);
 		background-size: 20px 20px;
 	}
 	
 	.elfinder-button-icon-view-list {
-		background-image: url(../img/icon/list-view%402x.png);
+		background-image: url(../img/icon/list-view@2x.png);
 		background-size: 20px 20px;
 	}
 
 	.elfinder-button-icon-sort {
-		background-image: url(../img/icon/sorting%402x.png);
+		background-image: url(../img/icon/sorting@2x.png);
 		background-size:  19px 19px;
 	}
 	
 	.elfinder-navbar-icon {
-		background-image: url(../img/icon/folder-sm%402x.png);
+		background-image: url(../img/icon/folder-sm@2x.png);
 		background-size: 16px 14px;
 	}
 	

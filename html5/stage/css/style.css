@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'open-sans-semibold';
     src: url('../fonts/opan-sans/OpenSans-Semibold-webfont.eot');
-    src: url('../fonts/opan-sans/OpenSans-Semibold-webfontd41d.eot?#iefix') format('embedded-opentype'),
+    src: url('../fonts/opan-sans/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opan-sans/OpenSans-Semibold-webfont.woff') format('woff'),
          url('../fonts/opan-sans/OpenSans-Semibold-webfont.ttf') format('truetype'),
          url('../fonts/opan-sans/OpenSans-Semibold-webfont.svg#open_sanssemibold') format('svg');
@@ -12,7 +12,7 @@
 @font-face {
     font-family: 'open-sans-light';
     src: url('../fonts/opan-sans/OpenSans-Light-webfont.eot');
-    src: url('../fonts/opan-sans/OpenSans-Light-webfontd41d.eot?#iefix') format('embedded-opentype'),
+    src: url('../fonts/opan-sans/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opan-sans/OpenSans-Light-webfont.woff') format('woff'),
          url('../fonts/opan-sans/OpenSans-Light-webfont.ttf') format('truetype'),
          url('../fonts/opan-sans/OpenSans-Light-webfont.svg#open_sanslight') format('svg');
@@ -23,7 +23,7 @@
 @font-face {
     font-family: 'open-sans-regular';
     src: url('../fonts/opan-sans/OpenSans-Regular-webfont.eot');
-    src: url('../fonts/opan-sans/OpenSans-Regular-webfontd41d.eot?#iefix') format('embedded-opentype'),
+    src: url('../fonts/opan-sans/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opan-sans/OpenSans-Regular-webfont.woff') format('woff'),
          url('../fonts/opan-sans/OpenSans-Regular-webfont.ttf') format('truetype'),
          url('../fonts/opan-sans/OpenSans-Regular-webfont.svg#open_sansregular') format('svg');
@@ -120,52 +120,6 @@ small {
 
 img {
     max-width: 100%;
-}
-
-/* --------------------------------------------------------
-    Template Settings
------------------------------------------------------------*/
-#settings {
-    position: fixed;
-    right: 0;
-    color: #000;
-    background: rgba(255, 255, 255, 0.88);
-    padding: 7px 8px;
-    top: 120px;
-    z-index: 1000;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.22);
-    font-family: open-sans-regular;
-    border-radius: 5px 0px 0px 5px !important;
-    line-height: 20px;
-    width: 34px;
-    white-space: nowrap;
-    -webkit-transition: width 300ms;
-    -moz-transition: width 300ms;
-    transition: width 300ms;
-}
-
-#settings i {
-    font-size: 21px;
-    float: left;
-    margin-right: 10px;
-}
-
-#settings:hover {
-    background: #fff;
-    width: 130px;
-}
-
-.template-skins [class*="col-"] img {
-    border: 3px solid rgba(0,0,0,0.5);
-}
-
-.template-skins [class*="col-"] img:hover {
-    opacity: 0.8;
-}
-
-.template-skins [class*="col-"] {
-    margin-bottom: 10px;    
 }
 
 /* --------------------------------------------------------
@@ -393,7 +347,7 @@ blockquote small {
     padding: 2px 3px 3px;
     border-radius: 2px !important;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.06);
-    margin: 7px -0 0 -11px;
+    margin: 7px 0 0 -13px;
     font-style: normal;
     line-height: 100%;
     -webkit-animation-name: bounceIn;
@@ -1315,9 +1269,19 @@ hr {
     border-left: 5px solid #048F23;
 }
 
+.alert-success a {
+    color: #069727;
+    border-bottom: 1px dotted #09e33b;
+}
+
 .alert-info {
     color: #0B628D;
     border-left: 5px solid #0B628D;
+}
+
+.alert-info a {
+    color: #0B628D;
+    border-bottom: 1px dotted #61A8CA;
 }
 
 .alert-warning {
@@ -1325,9 +1289,23 @@ hr {
     border-left: 5px solid #A78C00;
 }
 
+.alert-warning a {
+    color: #A78C00;
+    border-bottom: 1px dotted #e9c300;
+}
+
 .alert-danger {
     color: #E02C29;
     border-left: 5px solid #FF524F
+}
+
+.alert-danger a {
+    color: #E02C29;
+    border-bottom: 1px dotted #FC9997;
+}
+
+.alert a:hover {
+    opacity: 0.7;
 }
 
 /* --------------------------------------------------------
@@ -1770,34 +1748,8 @@ a.list-group-item.active > .badge,
 }
 
 /* --------------------------------------------------------
-    Templates Skins for Desktop
------------------------------------------------------------*/
-#skin-cloth {
-    background: url(../img/body/cloth.png);
-}
-
-#skin-tectile {
-    background: url(../img/body/tectile.png);
-}
-
-@media (min-width: 1200px) {
-    /* Sidebar */
-    .side-widgets .profile-pic:hover {
-        -webkit-animation-name: tada;
-        animation-name: tada;
-    }
-    
-    /* List views */
-    .sortable.todo-list .media {
-        padding-left: 20px;
-        background: url(../img/sort.png) no-repeat 8px 11px;
-    }
-}
-
-/* --------------------------------------------------------
     Older IE Message
 -----------------------------------------------------------*/
-
 .ie-block {
     background: #000;
     height: 100%;
@@ -1808,6 +1760,10 @@ a.list-group-item.active > .badge,
     z-index: 10000000001;
     text-align: center;
     font-family: "Courier New", Courier, monospace;
+}
+
+#photo-gallery-alt .ie-block {
+    position: absolute;
 }
 
 .ie-block .Ops {
@@ -1853,6 +1809,31 @@ a.list-group-item.active > .badge,
 
 .ie-block .browsers li a:hover {
     background: #fff;
+}
+
+/* --------------------------------------------------------
+    Templates Skins for Desktop
+-----------------------------------------------------------*/
+#skin-cloth {
+    background: url(../img/body/cloth.png);
+}
+
+#skin-tectile {
+    background: url(../img/body/tectile.png);
+}
+
+@media (min-width: 1200px) {
+    /* Sidebar */
+    .side-widgets .profile-pic:hover {
+        -webkit-animation-name: tada;
+        animation-name: tada;
+    }
+    
+    /* List views */
+    .sortable.todo-list .media {
+        padding-left: 20px;
+        background: url(../img/sort.png) no-repeat 8px 11px;
+    }
 }
 
 @media (min-width: 1024px) {
@@ -1910,6 +1891,10 @@ a.list-group-item.active > .badge,
 
     #skin-blur-kiwi {
         background-image: url(../img/body/kiwi.jpg);
+    }
+    
+    #skin-blur-nexus {
+        background-image: url(../img/body/nexus.jpg);
     }
     
     /* Sidebar */
@@ -2082,6 +2067,9 @@ a.list-group-item.active > .badge,
         background: #0f4731;
     }
     
+    #skin-blur-nexus {
+        background: #8A033A;
+    }
 
     /* Shortcut icons */
     .shortcut {

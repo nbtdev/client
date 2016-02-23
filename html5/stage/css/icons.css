@@ -120,61 +120,61 @@ only screen and (                min-resolution: 1.25dppx) {
     /* Left Menu */
     .sa-side-typography, .sa-side-widget, .sa-side-table, .sa-side-ui, .sa-side-folder { background-size: 23px 21px; }
 
-    .sa-side-home { background-image: url(../img/icon/home%402x.png); background-size: 25px 25px; }
-    .sa-side-typography { background-image: url(../img/icon/typography%402x.png); }
-    .sa-side-widget { background-image: url(../img/icon/widgets%402x.png); }
-    .sa-side-table { background-image: url(../img/icon/table%402x.png); }
-    .sa-side-form { background-image: url(../img/icon/form%402x.png); background-size: 19px 25px; }
-    .sa-side-ui { background-image: url(../img/icon/ui%402x.png);  }
-    .sa-side-folder { background-image: url(../img/icon/folder%402x.png); }
-    .sa-side-calendar { background-image: url(../img/icon/calendar%402x.png); background-size: 23px 23px; }
-    .sa-side-page { background-image: url(../img/icon/pages%402x.png); background-size: 25px 21px; }
-    .sa-side-chart { background-image: url(../img/icon/chart%402x.png); background-size: 24px 19px; }
-    .sa-side-photos { background-image: url(../img/icon/photos%402x.png); background-size: 23px 19px; }
+    .sa-side-home { background-image: url(../img/icon/home@2x.png); background-size: 25px 25px; }
+    .sa-side-typography { background-image: url(../img/icon/typography@2x.png); }
+    .sa-side-widget { background-image: url(../img/icon/widgets@2x.png); }
+    .sa-side-table { background-image: url(../img/icon/table@2x.png); }
+    .sa-side-form { background-image: url(../img/icon/form@2x.png); background-size: 19px 25px; }
+    .sa-side-ui { background-image: url(../img/icon/ui@2x.png);  }
+    .sa-side-folder { background-image: url(../img/icon/folder@2x.png); }
+    .sa-side-calendar { background-image: url(../img/icon/calendar@2x.png); background-size: 23px 23px; }
+    .sa-side-page { background-image: url(../img/icon/pages@2x.png); background-size: 25px 21px; }
+    .sa-side-chart { background-image: url(../img/icon/chart@2x.png); background-size: 24px 19px; }
+    .sa-side-photos { background-image: url(../img/icon/photos@2x.png); background-size: 23px 19px; }
     
     /* Top Menu */
-    .sa-top-message { background-image: url(../img/icon/message%402x.png); background-size: 25px 17px; }
-    .sa-top-updates { background-image: url(../img/icon/updates%402x.png); background-size: 25px 25px; }
+    .sa-top-message { background-image: url(../img/icon/message@2x.png); background-size: 25px 17px; }
+    .sa-top-updates { background-image: url(../img/icon/updates@2x.png); background-size: 25px 25px; }
 
     /* Editor */
-    .editor-text { background-image: url(../img/editor/text%402x.png); background-size: 11px 13px; }
-    .editor-bold { background-image: url(../img/editor/bold%402x.png); background-size:  10px 13px;}
-    .editor-italic { background-image: url(../img/editor/italic%402x.png); background-size: 5px 13px; }
-    .editor-underline { background-image: url(../img/editor/underline%402x.png); background-size: 10px 13px; }
-    .editor-unstyle { background-image: url(../img/editor/unstyle%402x.png); background-size: 11px 13px; }
-    .editor-unlist { background-image: url(../img/editor/unlist%402x.png); background-size: 13px 13px; }
-    .editor-orderlist { background-image: url(../img/editor/orderlist%402x.png); background-size: 13px 13px; }
-    .editor-align { background-image: url(../img/editor/align%402x.png); background-size: 13px 13px; }
-    .editor-line-height { background-image: url(../img/editor/line-height%402x.png); background-size: 11px 13px; }
-    .editor-table { background-image: url(../img/editor/table%402x.png); background-size: 13px 13px; }
-    .editor-link { background-image: url(../img/editor/link%402x.png); background-size: 9px 13px; }
-    .editor-picture { background-image: url(../img/editor/picture%402x.png); background-size: 13px 13px; }
-    .editor-video { background-image: url(../img/editor/video%402x.png); background-size: 13px 13px; }
-    .editor-full-screen { background-image: url(../img/editor/full-screen%402x.png); background-size: 13px 13px; }
-    .editor-code { background-image: url(../img/editor/code%402x.png); background-size: 10px 13px;}
-    .editor-help { background-image: url(../img/editor/help%402x.png); background-size: 10px 13px; }
-    .editor-font { background-image: url(../img/editor/font%402x.png); background-size: 10px 13px; }
-    .editor-heading { background-image: url(../img/editor/heading%402x.png); background-size: 10px 13px; }
+    .editor-text { background-image: url(../img/editor/text@2x.png); background-size: 11px 13px; }
+    .editor-bold { background-image: url(../img/editor/bold@2x.png); background-size:  10px 13px;}
+    .editor-italic { background-image: url(../img/editor/italic@2x.png); background-size: 5px 13px; }
+    .editor-underline { background-image: url(../img/editor/underline@2x.png); background-size: 10px 13px; }
+    .editor-unstyle { background-image: url(../img/editor/unstyle@2x.png); background-size: 11px 13px; }
+    .editor-unlist { background-image: url(../img/editor/unlist@2x.png); background-size: 13px 13px; }
+    .editor-orderlist { background-image: url(../img/editor/orderlist@2x.png); background-size: 13px 13px; }
+    .editor-align { background-image: url(../img/editor/align@2x.png); background-size: 13px 13px; }
+    .editor-line-height { background-image: url(../img/editor/line-height@2x.png); background-size: 11px 13px; }
+    .editor-table { background-image: url(../img/editor/table@2x.png); background-size: 13px 13px; }
+    .editor-link { background-image: url(../img/editor/link@2x.png); background-size: 9px 13px; }
+    .editor-picture { background-image: url(../img/editor/picture@2x.png); background-size: 13px 13px; }
+    .editor-video { background-image: url(../img/editor/video@2x.png); background-size: 13px 13px; }
+    .editor-full-screen { background-image: url(../img/editor/full-screen@2x.png); background-size: 13px 13px; }
+    .editor-code { background-image: url(../img/editor/code@2x.png); background-size: 10px 13px;}
+    .editor-help { background-image: url(../img/editor/help@2x.png); background-size: 10px 13px; }
+    .editor-font { background-image: url(../img/editor/font@2x.png); background-size: 10px 13px; }
+    .editor-heading { background-image: url(../img/editor/heading@2x.png); background-size: 10px 13px; }
 
     /* List Icons */    
-    .sa-list-add { background-image: url(../img/icon/add%402x.png); background-size: 19px 19px;  }
-    .sa-list-refresh { background-image: url(../img/icon/refresh%402x.png); background-size: 18px 19px; }
-    .sa-list-move { background-image: url(../img/icon/move%402x.png); background-size: 19px 19px; }
-    .sa-list-delete { background-image: url(../img/icon/delete%402x.png); background-size: 15px 19px; }
-    .sa-list-back { background-image: url(../img/icon/back%402x.png); background-size: 12px 21px; }
-    .sa-list-forwad { background-image: url(../img/icon/forwad%402x.png); background-size: 12px 21px; }
-    .sa-list-day { background-image: url(../img/icon/day%402x.png); background-size: 21px 21px; }
-    .sa-list-week { background-image: url(../img/icon/week%402x.png); background-size: 21px 21px; }
-    .sa-list-month { background-image: url(../img/icon/month%402x.png); background-size: 21px 21px; }
-    .sa-list-spam { background-image: url(../img/icon/spam%402x.png); background-size: 17px 17px; }
-    .sa-list-archive { background-image: url(../img/icon/archive%402x.png); background-size: 17px 17px; }
+    .sa-list-add { background-image: url(../img/icon/add@2x.png); background-size: 19px 19px;  }
+    .sa-list-refresh { background-image: url(../img/icon/refresh@2x.png); background-size: 18px 19px; }
+    .sa-list-move { background-image: url(../img/icon/move@2x.png); background-size: 19px 19px; }
+    .sa-list-delete { background-image: url(../img/icon/delete@2x.png); background-size: 15px 19px; }
+    .sa-list-back { background-image: url(../img/icon/back@2x.png); background-size: 12px 21px; }
+    .sa-list-forwad { background-image: url(../img/icon/forwad@2x.png); background-size: 12px 21px; }
+    .sa-list-day { background-image: url(../img/icon/day@2x.png); background-size: 21px 21px; }
+    .sa-list-week { background-image: url(../img/icon/week@2x.png); background-size: 21px 21px; }
+    .sa-list-month { background-image: url(../img/icon/month@2x.png); background-size: 21px 21px; }
+    .sa-list-spam { background-image: url(../img/icon/spam@2x.png); background-size: 17px 17px; }
+    .sa-list-archive { background-image: url(../img/icon/archive@2x.png); background-size: 17px 17px; }
 
     /* Form */
-    .sa-plus { background-image: url(../img/icon/plus-sm%402x.png); background-size: 13px 13px; }
+    .sa-plus { background-image: url(../img/icon/plus-sm@2x.png); background-size: 13px 13px; }
     
     /* Others */
-    #menu-toggle { background-image: url(../img/icon/menu%402x.png); background-size: 18px 13px; }
-    .main-search { background-image: url(../img/icon/search%402x.png); background-size: 25px 25px; }
-    .tile-config > .tile-menu { background-image: url(../img/icon/tile-actions%402x.png); background-size: 13px 3px; }
-    .message-search:not(:focus) { background-image: url(../img/icon/search%402x.png); background-size: 25px 25px; }
+    #menu-toggle { background-image: url(../img/icon/menu@2x.png); background-size: 18px 13px; }
+    .main-search { background-image: url(../img/icon/search@2x.png); background-size: 25px 25px; }
+    .tile-config > .tile-menu { background-image: url(../img/icon/tile-actions@2x.png); background-size: 13px 3px; }
+    .message-search:not(:focus) { background-image: url(../img/icon/search@2x.png); background-size: 25px 25px; }
 }

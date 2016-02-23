@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- why no ng-app attribute? we bootstrap this application manually in code instead -->
 <html class="ie9">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -45,20 +44,20 @@
     <body id="skin-blur-violate">
 
         <header id="header" class="media">
-            <a href="#" id="menu-toggle"></a> 
-            <a class="logo pull-left" href="index-2.html">SUPER ADMIN 1.0</a>
+            <a href="" id="menu-toggle"></a> 
+            <a class="logo pull-left" href="index.html">SUPER ADMIN 1.0</a>
             
             <div class="media-body">
                 <div class="media" id="top-menu">
                     <div class="pull-left tm-icon">
-                        <a data-drawer="messages" class="drawer-toggle" href="#">
+                        <a data-drawer="messages" class="drawer-toggle" href="">
                             <i class="sa-top-message"></i>
                             <i class="n-count animated">5</i>
                             <span>Messages</span>
                         </a>
                     </div>
                     <div class="pull-left tm-icon">
-                        <a data-drawer="notifications" class="drawer-toggle" href="#">
+                        <a data-drawer="notifications" class="drawer-toggle" href="">
                             <i class="sa-top-updates"></i>
                             <i class="n-count animated">9</i>
                             <span>Updates</span>
@@ -93,7 +92,7 @@
                 <div class="side-widgets overflow">
                     <!-- Profile Menu -->
                     <profile onloginchanged="nbt.onLoginChanged" onleaguechanged="nbt.onLeagueChanged"></profile>
-                    
+
                     <!-- Calendar -->
                     <div class="s-widget m-b-25">
                         <div id="sidebar-calendar"></div>
@@ -164,7 +163,7 @@
                 <!-- Side Menu -->
                 <ul class="list-unstyled side-menu">
                     <li class="active">
-                        <a class="sa-side-home" href="index-2.html">
+                        <a class="sa-side-home" href="index.html">
                             <span class="menu-item">Dashboard</span>
                         </a>
                     </li>
@@ -184,7 +183,7 @@
                         </a>
                     </li>
                     <li class="dropdown">
-                        <a class="sa-side-form" href="#">
+                        <a class="sa-side-form" href="">
                             <span class="menu-item">Form</span>
                         </a>
                         <ul class="list-unstyled menu-item">
@@ -195,7 +194,7 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a class="sa-side-ui" href="#">
+                        <a class="sa-side-ui" href="">
                             <span class="menu-item">User Interface</span>
                         </a>
                         <ul class="list-unstyled menu-item">
@@ -206,6 +205,15 @@
                             <li><a href="media.html">Media</a></li>
                             <li><a href="components.html">Components</a></li>
                             <li><a href="other-components.html">Others</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="sa-side-photos" href="">
+                            <span class="menu-item">PHOTO GALLERY</span>
+                        </a>
+                        <ul class="list-unstyled menu-item">
+                            <li><a href="photo-gallery.html">Google Images like</a></li>
+                            <li><a href="photo-gallery-alt.html">Photo Gallery - 2</a></li>
                         </ul>
                     </li>
                     <li>
@@ -224,7 +232,7 @@
                         </a>
                     </li>
                     <li class="dropdown">
-                        <a class="sa-side-page" href="#">
+                        <a class="sa-side-page" href="">
                             <span class="menu-item">Pages</span>
                         </a>
                         <ul class="list-unstyled menu-item">
@@ -246,7 +254,7 @@
                 <div id="messages" class="tile drawer animated">
                     <div class="listview narrow">
                         <div class="media">
-                            <a href="#">Send a New Message</a>
+                            <a href="">Send a New Message</a>
                             <span class="drawer-close">&times;</span>
                             
                         </div>
@@ -257,7 +265,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Nadin Jackson - 2 Hours ago</small><br>
-                                    <a class="t-overflow" href="#">Mauris consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
+                                    <a class="t-overflow" href="">Mauris consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -266,7 +274,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">David Villa - 5 Hours ago</small><br>
-                                    <a class="t-overflow" href="#">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
+                                    <a class="t-overflow" href="">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -275,7 +283,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Harris worgon - On 15/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
+                                    <a class="t-overflow" href="">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -284,7 +292,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Mitch Bradberry - On 14/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
+                                    <a class="t-overflow" href="">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -293,7 +301,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Nadin Jackson - On 15/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Ipsum wintoo consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
+                                    <a class="t-overflow" href="">Ipsum wintoo consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -302,7 +310,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">David Villa - On 16/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
+                                    <a class="t-overflow" href="">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -311,7 +319,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Harris worgon - On 17/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
+                                    <a class="t-overflow" href="">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -320,7 +328,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Mitch Bradberry - On 18/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
+                                    <a class="t-overflow" href="">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -329,12 +337,12 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Wendy Mitchell - On 19/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Integer a eros dapibus, vehicula quam accumsan, tincidunt purus</a>
+                                    <a class="t-overflow" href="">Integer a eros dapibus, vehicula quam accumsan, tincidunt purus</a>
                                 </div>
                             </div>
                         </div>
                         <div class="media text-center whiter l-100">
-                            <a href="#"><small>VIEW ALL</small></a>
+                            <a href=""><small>VIEW ALL</small></a>
                         </div>
                     </div>
                 </div>
@@ -343,7 +351,7 @@
                 <div id="notifications" class="tile drawer animated">
                     <div class="listview narrow">
                         <div class="media">
-                            <a href="#">Notification Settings</a>
+                            <a href="">Notification Settings</a>
                             <span class="drawer-close">&times;</span>
                         </div>
                         <div class="overflow" style="height: 254px">
@@ -353,7 +361,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Nadin Jackson - 2 Hours ago</small><br>
-                                    <a class="t-overflow" href="#">Mauris consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
+                                    <a class="t-overflow" href="">Mauris consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -362,7 +370,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">David Villa - 5 Hours ago</small><br>
-                                    <a class="t-overflow" href="#">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
+                                    <a class="t-overflow" href="">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -371,16 +379,16 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Harris worgon - On 15/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
+                                    <a class="t-overflow" href="">Maecenas venenatis enim condimentum ultrices fringilla. Nulla eget libero rhoncus, bibendum diam eleifend, vulputate mi. Fusce non nibh pulvinar, ornare turpis id</a>
                                 </div>
                             </div>
-                            <div class="media">•••••••••
+                            <div class="media">
                                 <div class="pull-left">
                                     <img width="40" src="img/profile-pics/4.jpg" alt="">
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Mitch Bradberry - On 14/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
+                                    <a class="t-overflow" href="">Phasellus interdum felis enim, eu bibendum ipsum tristique vitae. Phasellus feugiat massa orci, sed viverra felis aliquet quis. Curabitur vel blandit odio. Vestibulum sagittis quis sem sit amet tristique.</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -389,7 +397,7 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">Nadin Jackson - On 15/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Ipsum wintoo consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
+                                    <a class="t-overflow" href="">Ipsum wintoo consectetur urna nec tempor adipiscing. Proin sit amet nisi ligula. Sed eu adipiscing lectus</a>
                                 </div>
                             </div>
                             <div class="media">
@@ -398,18 +406,16 @@
                                 </div>
                                 <div class="media-body">
                                     <small class="text-muted">David Villa - On 16/12/2013</small><br>
-                                    <a class="t-overflow" href="#">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
+                                    <a class="t-overflow" href="">Suspendisse in purus ut nibh placerat Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
                                 </div>
                             </div>
                         </div>
                         <div class="media text-center whiter l-100">
-                            <a href="#"><small>VIEW ALL</small></a>
+                            <a href=""><small>VIEW ALL</small></a>
                         </div>
                     </div>
                 </div>
-                <!--
-                •••••••••
-                -->
+                
                 <!-- Breadcrumb -->
                 <!--
                 <ol class="breadcrumb hidden-xs">
@@ -424,38 +430,38 @@
                 <!-- Shortcuts -->
                 <!--
                 <div class="block-area shortcut-area">
-                    <a class="shortcut tile" href="#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/money.png" alt="">
                         <small class="t-overflow">Purchases</small>
                     </a>
-                    <a class="shortcut tile" href="#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/twitter.png" alt="">
                         <small class="t-overflow">Tweets</small>
                     </a>
-                    <a class="shortcut tile" href="#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/calendar.png" alt="">
                         <small class="t-overflow">Calendar</small>
                     </a>
-                    <a class="shortcut tile" href=•••••••••"#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/stats.png" alt="">
                         <small class="t-overflow">Statistics</small>
                     </a>
-                    <a class="shortcut tile" href="#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/connections.png" alt="">
                         <small class="t-overflow">Connection</small>
                     </a>
-                    <a class="shortcut tile" href="#">
+                    <a class="shortcut tile" href="">
                         <img src="img/shortcuts/reports.png" alt="">
                         <small class="t-overflow">Reports</small>
                     </a>
                 </div>
-                -->
+
                 <hr class="whiter" />
-                
+                -->
                 <!-- Quick Stats -->
                 <!--
                 <div class="block-area">
-                    <div class="row">•••••••••
+                    <div class="row">
                         <div class="col-md-3 col-xs-6">
                             <div class="tile quick-stats">
                                 <div id="stats-line-2" class="pull-left"></div>
@@ -479,7 +485,7 @@
                         <div class="col-md-3 col-xs-6">
                             <div class="tile quick-stats media">
 
-                                <div id="stats-lin•••••••••e-4" class="pull-left"></div>
+                                <div id="stats-line-4" class="pull-left"></div>
 
                                 <div class="media-body">
                                     <h2 data-value="4896">0</h2>
@@ -500,11 +506,11 @@
 
                     </div>
 
-                </div>•••••••••
+                </div>
                 -->
 
                 <hr class="whiter" />
-                
+
                 <!-- Main Widgets -->
                
                 <div class="block-area">
@@ -514,11 +520,11 @@
                             <div class="tile">
                                 <h2 class="tile-title">Starmap</h2>
                                 <div class="tile-config dropdown">
-                                    <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                    <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                     <ul class="dropdown-menu pull-right text-right">
-                                        <li><a class="tile-info-toggle" href="#">Chart Information</a></li>
-                                        <li><a href="#">Refresh</a></li>
-                                        <li><a href="#">Settings</a></li>
+                                        <li><a class="tile-info-toggle" href="">Chart Information</a></li>
+                                        <li><a href="">Refresh</a></li>
+                                        <li><a href="">Settings</a></li>
                                     </ul>
                                 </div>
                                 <div class="p-10">
@@ -597,10 +603,10 @@
                                     <div class="tile">
                                         <h2 class="tile-title">Recent Postings</h2>
                                         <div class="tile-config dropdown">
-                                            <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                            <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                             <ul class="dropdown-menu animated pull-right text-right">
-                                                <li><a href="#">Refresh</a></li>
-                                                <li><a href="#">Settings</a></li>
+                                                <li><a href="">Refresh</a></li>
+                                                <li><a href="">Settings</a></li>
                                             </ul>
                                         </div>
                                         
@@ -611,7 +617,7 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <small class="text-muted">2 Hours ago by Adrien San</small><br/>
-                                                    <a class="t-overflow" href="#">Cras molestie fermentum nibh, ac semper</a>
+                                                    <a class="t-overflow" href="">Cras molestie fermentum nibh, ac semper</a>
                                                    
                                                 </div>
                                             </div>
@@ -621,7 +627,7 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <small class="text-muted">5 Hours ago by David Villa</small><br/>
-                                                    <a class="t-overflow" href="#">Suspendisse in purus ut nibh placerat</a>
+                                                    <a class="t-overflow" href="">Suspendisse in purus ut nibh placerat</a>
                                                     
                                                 </div>
                                             </div>
@@ -631,7 +637,7 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <small class="text-muted">On 15/12/2013 by Mitch bradberry</small><br/>
-                                                    <a class="t-overflow" href="#">Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
+                                                    <a class="t-overflow" href="">Cras pulvinar euismod nunc quis gravida. Suspendisse pharetra</a>
                                                     
                                                 </div>
                                             </div>
@@ -641,7 +647,7 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <small class="text-muted">On 14/12/2013 by Mitch bradberry</small><br/>
-                                                    <a class="t-overflow" href="#">Cras pulvinar euismod nunc quis gravida. </a>
+                                                    <a class="t-overflow" href="">Cras pulvinar euismod nunc quis gravida. </a>
                                                     
                                                 </div>
                                             </div>
@@ -651,12 +657,12 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <small class="text-muted">On 13/12/2013 by Mitch bradberry</small><br/>
-                                                    <a class="t-overflow" href="#">Integer a eros dapibus, vehicula quam accumsan, tincidunt purus</a>
+                                                    <a class="t-overflow" href="">Integer a eros dapibus, vehicula quam accumsan, tincidunt purus</a>
                                                     
                                                 </div>
                                             </div>
                                             <div class="media p-5 text-center l-100">
-                                                <a href="#"><small>VIEW ALL</small></a>
+                                                <a href=""><small>VIEW ALL</small></a>
                                             </div>
                                         </div>
                                     </div>
@@ -667,11 +673,11 @@
                                     <div class="tile">
                                         <h2 class="tile-title">Tasks to do</h2>
                                         <div class="tile-config dropdown">
-                                            <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                            <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                             <ul class="dropdown-menu pull-right text-right">
-                                                <li id="todo-add"><a href="#">Add New</a></li>
-                                                <li id="todo-refresh"><a href="#">Refresh</a></li>
-                                                <li id="todo-clear"><a href="#">Clear All</a></li>
+                                                <li id="todo-add"><a href="">Add New</a></li>
+                                                <li id="todo-refresh"><a href="">Refresh</a></li>
+                                                <li id="todo-clear"><a href="">Clear All</a></li>
                                             </ul>
                                         </div>
                                         
@@ -755,10 +761,10 @@
                             <div class="tile">
                                 <h2 class="tile-title">Detail</h2>
                                 <div class="tile-config dropdown">
-                                    <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                    <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                     <ul class="dropdown-menu pull-right text-right">
-                                        <li><a href="#">Refresh</a></li>
-                                        <li><a href="#">Settings</a></li>
+                                        <li><a href="">Refresh</a></li>
+                                        <li><a href="">Settings</a></li>
                                     </ul>
                                 </div>
 
@@ -767,15 +773,16 @@
                                 </div>
 
                             </div>
+    
                             <!-- Dynamic Chart -->
                             <!--
                             <div class="tile">
                                 <h2 class="tile-title">Server Process</h2>
                                 <div class="tile-config dropdown">
-                                    <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                    <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                     <ul class="dropdown-menu pull-right text-right">
-                                        <li><a href="#">Refresh</a></li>
-                                        <li><a href="#">Settings</a></li>
+                                        <li><a href="">Refresh</a></li>
+                                        <li><a href="">Settings</a></li>
                                     </ul>
                                 </div>
 
@@ -785,15 +792,16 @@
 
                             </div>
                             -->
+                            
                             <!-- Activity -->
                             <!--
                             <div class="tile">
                                 <h2 class="tile-title">Social Media activities</h2>
                                 <div class="tile-config dropdown">
-                                    <a data-toggle="dropdown" href="#" class="tile-menu"></a>
+                                    <a data-toggle="dropdown" href="" class="tile-menu"></a>
                                     <ul class="dropdown-menu pull-right text-right">
-                                        <li><a href="#">Refresh</a></li>
-                                        <li><a href="#">Settings</a></li>
+                                        <li><a href="">Refresh</a></li>
+                                        <li><a href="">Settings</a></li>
                                     </ul>
                                 </div>
                                 
@@ -899,7 +907,7 @@
                     <!-- Chat Area -->
                     <div class="media-body">
                         <div class="chat-header">
-                            <a class="btn btn-sm" href="#">
+                            <a class="btn btn-sm" href="">
                                 <i class="fa fa-circle-o status m-r-5"></i> Chat with Friends
                             </a>
                         </div>
