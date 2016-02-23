@@ -239,6 +239,7 @@
                 $scope.emailAddressCheckError = null;
                 $scope.captchaError = null;
 
+
                 // TODO: for all of these strings, an i18n service maybe?
 
                 // 1. basic validation (are things here, are they the right format?)
