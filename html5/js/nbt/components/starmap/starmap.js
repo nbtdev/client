@@ -436,6 +436,8 @@
             };
 
             this.showPlanetBrief = function() {
+                clearTimeout(self.hoverPlanetTimeout);
+
                 // add a planet_brief element to the UI layer
                 self.hoverPlanetBrief = angular.element($compile('<planet_brief></planet_brief>')($scope))[0];
                 self.hoverPlanetBrief.setPlanet(self.hoverPlanet, self.token, self.hoverPlanetLoc);
@@ -585,7 +587,10 @@
                     $http({
                         url: p._links.battle.href,
                         method: 'GET',
-                        headers: {'X-NBT-Token': token === null ? '' : token}
+                        headers: {
+                            'X-NBT-Token': self.token === null ? '' : self.token,
+                            'X-NBT-Activation-Form': window.location + "/activation.html"
+                        }
                     }).then(self.updatePlanetBattleDetail);
                     $scope.isBattle = true;
                 }
@@ -603,12 +608,14 @@
                 $scope.terrain = '(fetching)';
                 $scope.recharge = '(fetching)';
 
-                token = aToken;
+                self.token = aToken;
 
                 $http({
                     url: aPlanet._links.self.href,
                     method: 'GET',
-                    headers: {'X-NBT-Token': aToken === null ? '' : aToken}
+                    headers: {
+                        'X-NBT-Token': aToken === null ? '' : aToken
+                    }
                 }).then(self.updatePlanet);
             };
 

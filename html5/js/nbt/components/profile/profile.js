@@ -189,6 +189,8 @@
             this.onRegister = function() {
                 $scope.initialized = 1;
                 $scope.isRegistering = true;
+                $scope.registrationSucceeded = false;
+
                 self.registerForm.maximize();
 
                 $scope.usernameError = null;
@@ -203,6 +205,12 @@
                 $scope.regData.password = null;
                 $scope.regData.callsign = null;
                 $scope.regData.email = null;
+
+                var path = window.location.pathname.replace('index.html', '');
+
+                $scope.regData.activationUrl = window.location.origin + path + 'activate.html';
+                $scope.regData.privacyUrl = window.location.origin + path + "privacy.html";
+
                 $scope.emailAddressCheck = null;
                 $scope.passwordCheck = null;
 
@@ -215,6 +223,8 @@
                                 size: 'normal'
                             }
                         );
+                    } else {
+                        grecaptcha.reset();
                     }
                 }
             };
@@ -225,8 +235,23 @@
             };
 
             this.onCancelRegistration = function() {
-                $scope.isRegistering = false;
+                self.closeForm();
             };
+
+            this.closeForm = function() {
+                $scope.isRegistering = false;
+                $scope.usernameError = null;
+                $scope.callsignError = null;
+                $scope.passwordError = null;
+                $scope.passwordCheckError = null;
+                $scope.emailAddressError = null;
+                $scope.emailAddressCheckError = null;
+                $scope.captchaError = null;
+                $scope.regData.username = null;
+                $scope.regData.password = null;
+                $scope.regData.callsign = null;
+                $scope.regData.email = null;
+            }
 
             this.validateForm = function() {
                 var rtn = true;
@@ -319,11 +344,22 @@
 
             this.registrationSucceeded = function(data) {
                 console.log(data);
+                $scope.registrationSucceeded = true;
+                grecaptcha.reset();
             };
 
             this.registrationFailed = function(data) {
                 // tell the user what the problems were
-                console.log(data);
+                if (data.data.message.includes('[username]')) {
+                    $scope.usernameError = 'Username already taken!';
+                } else if (data.data.message.includes('[callsign]')) {
+                    $scope.callsignError = 'Callsign already taken!';
+                } else if (data.data.message.includes('[email]')) {
+                    $scope.emailAddressError = 'Email address already used!';
+                }
+
+                $scope.registrationSucceeded = false;
+                grecaptcha.reset();
             };
 
             this.onSubmitRegistration = function() {
@@ -456,7 +492,8 @@
                 username: null,
                 callsign: null,
                 password: null,
-                email: null
+                email: null,
+                activationUrl: null
             };
 
             // extremely hacky...

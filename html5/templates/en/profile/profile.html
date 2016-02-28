@@ -69,21 +69,34 @@
                         </div>
                     </div>
 
-                    <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
-                    <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;">
-                        <div ng-show="captchaError">{{captchaError}}</div>
+                    <div ng-hide="registrationSucceeded">
+                        <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+                        <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;">
+                            <div ng-show="captchaError">{{captchaError}}</div>
+                        </div>
                     </div>
 
-                    <div style="margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
+                    <div ng-hide="registrationSucceeded" style="margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
                         <span style="margin-right: 25px;"><a href="#" ng-click="profile.onSubmitRegistration()">Submit</a></span>
                         <span style="display: inline;"><a href="#" ng-click="profile.onCancelRegistration()">Cancel</a></span>
                     </div>
 
-                    <div style="font-size: small; width: 60%; margin: auto">
+                    <div ng-show="registrationSucceeded" style="margin: auto; width: 60%; padding-top: 4px; padding-bottom: 4px;">
+                        <div>
+                            Account registration was successful. An account activation email has been sent to {{regData.email}},
+                            containing further account setup instructions. Please make sure any
+                            spam-blocking features are set to allow emails from netbattletech.com.
+                        </div>
+                        <div style="margin: auto; text-align: center; padding-top: 4px;">
+                            <span style="margin-right: 25px;"><a href="#" ng-click="profile.closeForm()">Close Form</a></span>
+                        </div>
+                    </div>
+
+                    <div ng-hide="registrationSucceeded" style="font-size: small; width: 60%; margin: auto">
                         Notes: All fields are required. Please provide a valid email address, as
                         you will be sent a verification email containing a link to complete the signup process.
                     </div>
-                    <div style="font-size: small; padding-top: 10px;"><a href="#" ng-click="profile.onPrivacy()">Privacy Policy</a></div>
+                    <div style="margin: auto; text-align: center; font-size: small; padding-top: 10px;"><a href="#" ng-click="profile.onPrivacy()">Privacy Policy</a></div>
                     <div class="privacyPolicy" ng-show="privacyPolicy" ng-bind-html="privacyPolicy"></div>
                 </div>
             </div>
