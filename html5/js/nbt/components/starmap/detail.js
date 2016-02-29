@@ -25,7 +25,7 @@
 
     mod.directive('starmapDetail', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce) {
+        this.controller = function($scope, $attrs, $http, $sce, $rootScope) {
             var self = this;
             var token = null;
 
@@ -118,6 +118,10 @@
                 self.mNearest = nearest;
             };
 
+            this.setPlanetHandler = function(event, aPlanet, aPlanets, aToken) {
+                self.setPlanet(aPlanet, aPlanets, aToken);
+            };
+
             this.hasPlanets = function() {
                 if ($scope.planets)
                     return $scope.planets.length > 0;
@@ -157,6 +161,9 @@
 
                 return false;
             };
+
+            var unbind = $scope.$on('planetChanged', self.setPlanetHandler);
+            $scope.$on('destroy', unbind);
         };
 
         return {
@@ -174,14 +181,6 @@
                     element.append(templ);
                     $compile(templ)(scope);
                 });
-
-                element[0].onplanetchanged = function(
-                    aPlanet,  // the selected planet
-                    aPlanets, // all other planets within 60LY
-                    aToken    // security token (null if none)
-                ) {
-                    controller.setPlanet(aPlanet, aPlanets, aToken);
-                }
 
                 element[0].clear = function() {
                     controller.clear();

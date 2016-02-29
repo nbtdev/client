@@ -513,6 +513,9 @@
             controller: controller,
             controllerAs: 'profile',
             link: function(scope, element, attrs, controller) {
+                onLeagueChangeAttr = attrs.onleaguechanged;
+                onLoginChangeAttr = attrs.onloginchanged;
+
                 var i18n = 'en';
 
                 if (attrs.lang) i18n = attrs.lang;
@@ -526,9 +529,6 @@
                     var registerForm = elem.children[2];
                     controller.setRegisterForm(registerForm);
                 });
-
-                onLeagueChangeAttr = attrs.onleaguechanged;
-                onLoginChangeAttr = attrs.onloginchanged;
             }
         };
     });

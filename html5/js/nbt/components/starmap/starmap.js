@@ -25,7 +25,7 @@
 
     mod.directive('starmap', function($compile) {
 
-        this.controller = function($scope, $attrs, $http) {
+        this.controller = function($scope, $attrs, $http, $rootScope) {
             var mStarmapDebug;
             try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
 
@@ -344,17 +344,14 @@
 
                     self.onPlanetSelected(obj);
 
-                    // call out to any registered listener as well
-                    if (self.planetChangedListener) {
-                        // first get the list of planets within 60LY
-                        var planets = [];
+                    // get the list of planets within 60LY
+                    var planets = [];
 
-                        if (obj)
-                            planets = self.quadtree.findAllWithinRadius({x:mouseX, y:mouseY}, 60.0);
+                    if (obj)
+                        planets = self.quadtree.findAllWithinRadius({x:mouseX, y:mouseY}, 60.0);
 
-                        // call out
-                        self.planetChangedListener(obj, planets, self.token);
-                    }
+                    // call out
+                    $rootScope.$broadcast('planetChanged', obj, planets, self.token);
                 }
 
                 return false;
@@ -500,12 +497,6 @@
                 self.fetchPlanets();
                 self.updateOverlay();
             }
-
-            this.planetChangedListener = null;
-
-            this.setPlanetChangedListener = function(aListener) {
-                self.planetChangedListener = aListener;
-            }
         };
 
         return {
@@ -517,10 +508,6 @@
             link: function(scope, element, attrs, controller) {
                 element[0].reload = function(aPlanetsUrl, aToken) {
                     controller.reload(aPlanetsUrl, aToken);
-                };
-
-                element[0].setPlanetChangedListener = function(aListener) {
-                    controller.setPlanetChangedListener(aListener);
                 };
 
                 var w = element.parent()[0].offsetWidth;
@@ -642,6 +629,14 @@
             controller: controller,
             controllerAs: 'brief',
             link: function(scope, element, attrs, controller) {
+                element[0].setPlanet = function(aPlanet, aToken, aScreenPos) {
+                    controller.setPlanet(aPlanet, aToken, aScreenPos);
+                }
+
+                element[0].clear = function() {
+                    controller.clear();
+                }
+
                 var i18n = 'en';
 
                 if (attrs.lang) i18n = attrs.lang;
@@ -651,14 +646,6 @@
                     element.append(templ);
                     $compile(templ)(scope);
                 });
-
-                element[0].setPlanet = function(aPlanet, aToken, aScreenPos) {
-                    controller.setPlanet(aPlanet, aToken, aScreenPos);
-                }
-
-                element[0].clear = function() {
-                    controller.clear();
-                }
             }
         };
     });

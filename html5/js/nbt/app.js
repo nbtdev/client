@@ -76,9 +76,9 @@ function NBT() {
                 if (self.onbootstrap) self.onbootstrap();
 
                 // HACKY!!!! don't do this...
-                var starmap = document.getElementById('starmap');
-                var starmapDetails = document.getElementById('map-details');
-                starmap.setPlanetChangedListener(starmapDetails.onplanetchanged);
+                //var starmap = document.getElementById('starmap');
+                //var starmapDetails = document.getElementById('map-details');
+                //starmap.setPlanetChangedListener(starmapDetails.onplanetchanged);
             });
         }
     };
