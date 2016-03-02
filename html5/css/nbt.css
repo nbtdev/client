@@ -148,3 +148,11 @@ input[type=password] {
 .g-recaptcha {
     display: inline-block;
 }
+
+.sa-side-settings {
+    background-image: url(../stage/img/icon/gear21.png);
+}
+
+.sa-side-users {
+    background-image: url(../stage/img/icon/users21.png);
+}
