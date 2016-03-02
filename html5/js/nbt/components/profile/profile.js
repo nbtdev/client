@@ -59,7 +59,7 @@
         var onLeagueChangeAttr = null;
         var onLoginChangeAttr = null;
 
-        this.controller = function($scope, $attrs, $http, $sce) {
+        this.controller = function($scope, $attrs, $http, $sce, nbtUser) {
 
             var self = this;
             var mToken = null;
@@ -109,9 +109,7 @@
                 }).then(self.populateLeagueList);
             }
 
-            this.signInSuccess = function(resp) {
-                var userData = resp.data;
-
+            this.signInSuccess = function(event, userData) {
                 // store the token in userdata
                 saveLogin(userData, userData._links.logout.href);
 
@@ -138,25 +136,31 @@
                 onLoginChangedCb(self.mToken);
             };
 
-            this.signInFailed = function(resp) {
-                console.log(resp.data);
+            this.signInFailed = function(event, data) {
+                console.log(data);
                 $scope.passwordIncorrect = true;
             };
+
+            var cb = $scope.$on('loginSuccess', self.signInSuccess);
+            $scope.$on('destroy', cb);
+            cb = $scope.$on('loginFailed', self.signInFailed);
+            $scope.$on('destroy', cb);
 
             this.onSignIn = function() {
                 // hide the login-error message box
                 $scope.passwordIncorrect = false;
 
                 // attempt to get a token based on the provided login credentials
-                $http({
-                    method: 'POST', // TODO: get this from the links!
-                    url: nbt.rootLinks().login.href,
-                    data: { // TODO: fill out a template that we get from the links!
-                        username: $scope.username,
-                        password: $scope.password
-                    }
-                })
-                    .then(self.signInSuccess, self.signInFailed);
+                nbtUser.login($scope.username, $scope.password);
+                //$http({
+                //    method: 'POST', // TODO: get this from the links!
+                //    url: nbt.rootLinks().login.href,
+                //    data: { // TODO: fill out a template that we get from the links!
+                //        username: $scope.username,
+                //        password: $scope.password
+                //    }
+                //})
+                //    .then(self.signInSuccess, self.signInFailed);
             };
 
             this.onSignOut = function() {

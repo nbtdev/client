@@ -24,7 +24,8 @@ function NBT() {
     var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile', 'nbt.starmapDetail']);
 
     // root API url
-    var API_URL = 'http://api.home.lan';
+    //var API_URL = 'http://api.home.lan';
+    var API_URL = 'http://localhost:8080';
     //var API_URL = 'http://api-dev.netbattletech.com';
 
     var mRootLinks = null;
@@ -45,6 +46,12 @@ function NBT() {
 
     // allow external code to do something after bootstrap
     this.onbootstrap = null;
+
+    app.service('nbtRoot', [function() {
+        this.links = function() {
+            return self.mRootLinks;
+        };
+    }]);
 
     // thanks for this bootstrap code goes out to https://blog.mariusschulz.com/2014/10/22/asynchronously-bootstrapping-angularjs-applications-with-server-side-data
     this.init = function() {
