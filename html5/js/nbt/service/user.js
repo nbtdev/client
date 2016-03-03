@@ -28,15 +28,7 @@
 
         this.token = function() { return mToken; };
 
-        var signInSuccess = function(resp) {
-            $rootScope.$broadcast('loginSuccess', resp.data);
-        };
-
-        var signInFailed = function(resp) {
-            $rootScope.$broadcast('loginFailed', resp.data);
-        };
-
-        this.login = function(aUsername, aPassword) {
+        this.login = function(aUsername, aPassword, aSuccess, aFailure) {
             // attempt to get a token based on the provided login credentials
             $http({
                 method: 'POST', // TODO: get this from the links!
@@ -45,7 +37,10 @@
                     username: aUsername,
                     password: aPassword
                 }
-            }).then(signInSuccess, signInFailed);
+            }).then(
+                function(resp) { if (aSuccess) aSuccess(resp.data); },
+                function(resp) { if (aFailure) aFailure(resp.data); }
+            );
         };
     }]);
 })();

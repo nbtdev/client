@@ -109,7 +109,7 @@
                 }).then(self.populateLeagueList);
             }
 
-            this.signInSuccess = function(event, userData) {
+            this.signInSuccess = function(userData) {
                 // store the token in userdata
                 saveLogin(userData, userData._links.logout.href);
 
@@ -136,22 +136,17 @@
                 onLoginChangedCb(self.mToken);
             };
 
-            this.signInFailed = function(event, data) {
+            this.signInFailed = function(data) {
                 console.log(data);
                 $scope.passwordIncorrect = true;
             };
-
-            var cb = $scope.$on('loginSuccess', self.signInSuccess);
-            $scope.$on('destroy', cb);
-            cb = $scope.$on('loginFailed', self.signInFailed);
-            $scope.$on('destroy', cb);
 
             this.onSignIn = function() {
                 // hide the login-error message box
                 $scope.passwordIncorrect = false;
 
                 // attempt to get a token based on the provided login credentials
-                nbtUser.login($scope.username, $scope.password);
+                nbtUser.login($scope.username, $scope.password, self.signInSuccess, self.signInFailed);
                 //$http({
                 //    method: 'POST', // TODO: get this from the links!
                 //    url: nbt.rootLinks().login.href,
