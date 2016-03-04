@@ -23,12 +23,41 @@
 (function() {
     var mod = angular.module('nbt.app');
 
-    mod.service('nbtUser', ['$http', 'nbtRoot', '$rootScope', function($http, nbtRoot, $rootScope) {
-        var mToken = null;
+    mod.service('nbtUser', ['$http', '$rootScope', 'nbtRoot', 'nbtToken', function($http, $rootScope, nbtRoot, nbtToken) {
+        var mUserData = null;
+        var mCurrentProfile = null;
 
-        this.token = function() { return mToken; };
+        var clearLocalStorage = function() {
+            localStorage.removeItem('login');
+        };
+
+        var reset = function() {
+            // clear out any current user data object
+            mUserData = null;
+
+            // clear out any existing cached login data (local storage)
+            clearLocalStorage();
+        };
+
+        this.token = function() {
+            if (mUserData) return mUserData.value;
+            return null;
+        };
+
+        this.profile = function() {
+            if (mCurrentProfile) {
+                return {
+                    callsign: mCurrentProfile.callsign
+                };
+            }
+
+            return null;
+        };
 
         this.login = function(aUsername, aPassword, aSuccess, aFailure) {
+            // clear out any existing user data
+            reset();
+
             // attempt to get a token based on the provided login credentials
             $http({
                 method: 'POST', // TODO: get this from the links!
@@ -38,9 +67,74 @@
                     password: aPassword
                 }
             }).then(
-                function(resp) { if (aSuccess) aSuccess(resp.data); },
-                function(resp) { if (aFailure) aFailure(resp.data); }
+                function(resp) {
+                    // save the new user data
+                    mUserData = resp.data;
+
+                    // save the new token data
+                    nbtToken.set(resp.data);
+
+                    // invoke the callback, if any
+                    if (aSuccess) aSuccess(resp.data);
+                },
+                function(resp) {
+                    // invoke the callback, if any
+                    if (aFailure) aFailure(resp.data);
+                }
             );
+        };
+
+        this.logout = function() {
+            if (mUserData) {
+                $http({
+                    method: 'DELETE', // TODO: get this from the links!
+                    url: mUserData._links.logout.href,
+                    headers: {
+                        'X-NBT-Token': nbtToken.current()
+                    }
+                });
+            }
+        };
+
+        this.register = function(aRegData, aCaptchaResponse, aSuccess, aFailure) {
+            // submit the new-user registration
+            $http({
+                method: 'POST', // TODO: get from links!
+                url: nbtRoot.links().signup.href,
+                data: aRegData,
+                headers: {
+                    'X-NBT-Captcha-Token': aCaptchaResponse
+                }
+            }).then(
+                function(resp) {
+                    if (aSuccess) aSuccess(resp.data);
+                },
+                function(resp) {
+                    if (aFailure) aFailure(resp.data);
+                }
+            );
+        };
+
+        this.onLeagueChanged = function(aLeague) {
+            if (aLeague) {
+                // fetch the user's profile for this league
+                $http({
+                    method: 'GET', // TODO: get from links!
+                    url: aLeague._links.profile.href,
+                    headers: {
+                        'X-NBT-Token': nbtToken.current()
+                    }
+                }).then(function (resp) {
+                    // change callsign, email, etc.
+                    if (mUserData) {
+                        mUserData.callsign = resp.data.callsign;
+                        mUserData.email = resp.data.email;
+                        $rootScope.$broadcast('nbtProfileChanged', mUserData);
+                    }
+                });
+            } else {
+                // fetch default profile?
+            }
         };
     }]);
 })();

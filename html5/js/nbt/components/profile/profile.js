@@ -23,99 +23,57 @@
 (function() {
     var mod = angular.module('nbt.profile', []);
 
-    var loadSelectedLeague = function() {
-        if (localStorage.selectedLeague)
-            return localStorage.selectedLeague;
-
-        return null;
-    };
-
-    var saveSelectedLeague = function(aSelectedLeague) {
-        localStorage.setItem('selectedLeague', aSelectedLeague);
-    };
-
-    var loadLogin = function() {
-        var loginObj = null;
-        var logoutLink = null;
-
-        if (localStorage.login)
-            loginObj = JSON.parse(localStorage.login);
-
-        if (localStorage.logout)
-            logoutLink = localStorage.logout;
-
-        if (loginObj !== null && logoutLink !== null)
-            return {login: loginObj, logout: logoutLink};
-        else
-            return null;
-    };
-
-    var saveLogin = function(aLogin, aLogoutLink) {
-        localStorage.setItem('login', JSON.stringify(aLogin));
-        localStorage.setItem('logout', aLogoutLink);
-    };
-
     mod.directive('profile', function($templateRequest, $compile) {
-        var onLeagueChangeAttr = null;
-        var onLoginChangeAttr = null;
 
-        this.controller = function($scope, $attrs, $http, $sce, nbtUser) {
-
+        this.controller = function($scope, $attrs, $http, $sce, nbtUser, nbtRoot, nbtToken, nbtLeague) {
             var self = this;
-            var mToken = null;
-            var mLogoutLink = null;
-            var registerForm = null;
 
-            this.leagues = [];
-            this.selectedLeague = loadSelectedLeague();
-            this.loginData = loadLogin();
+            var resetRegistration = function() {
+                $scope.registrationSucceeded = false;
 
-            var onLeagueChangedCb = function(aSelectedLeagueUrl) {
-                if (onLeagueChangeAttr) {
-                    var expr = onLeagueChangeAttr + '(\'' + aSelectedLeagueUrl + '\')';
-                    eval(expr);
-                }
+                $scope.passwordCheck = null;
+                $scope.emailAddressCheck = null;
+
+                $scope.regData = {
+                    username: null,
+                    callsign: null,
+                    password: null,
+                    email: null,
+                    activationUrl: null
+                };
             };
 
-            var onLoginChangedCb = function(aToken) {
-                if (onLoginChangeAttr) {
-                    var expr = onLoginChangeAttr + '(\'' + aToken + '\')';
-                    eval(expr);
-                }
+            var resetError = function() {
+                $scope.usernameError = null;
+                $scope.callsignError = null;
+                $scope.passwordError = null;
+                $scope.passwordCheckError = null;
+                $scope.emailAddressError = null;
+                $scope.emailAddressCheckError = null;
+                $scope.captchaError = null;
             };
 
-            this.populateLeagueList = function(resp) {
-                self.leagues = resp.data._embedded.leagues;
-                $scope.leagues = self.leagues;
+            var reset = function() {
+                resetRegistration();
+                resetError();
 
-                if (self.selectedLeague) {
-                    $scope.selectedLeague = self.selectedLeague;
-
-                    // have to set any existing token value before doing league-changed callback
-                    onLoginChangedCb(self.loginData.login.value);
-
-                    onLeagueChangedCb(self.selectedLeague);
-                    self.changeProfileInfo();
-                }
+                $scope.selectedLeague = "0";
+                $scope.initialized = null;
+                $scope.isRegistering = false;
+                $scope.callsign = null;
+                $scope.twitter = null;
+                $scope.isLoggedIn = false;
+                $scope.password = null;
+                $scope.username = null;
+                $scope.passwordIncorrect = false;
             };
 
-            this.fetchLeagueList = function() {
-                $http({
-                    method: 'GET', // TODO: get from links!
-                    url: nbt.rootLinks().leagues.href,
-                    headers: {
-                        'X-NBT-Token': self.mToken
-                    }
-                }).then(self.populateLeagueList);
-            }
+            var populateLeagueList = function() {
+                var leagues = nbtLeague.leagues();
+                $scope.leagues = leagues;
+            };
 
             this.signInSuccess = function(userData) {
-                // store the token in userdata
-                saveLogin(userData, userData._links.logout.href);
-
-                // update the loginData object reference
-                self.loginData = {login: userData, logout: userData._links.logout.href};
-
                 // update the UI to reflect
                 $scope.displayName = userData.callsign;
                 $scope.twitter = null;
@@ -124,20 +82,11 @@
                 $scope.username = null;
                 $scope.passwordIncorrect = false;
 
-                // save off the logout link
-                self.mLogoutLink = userData._links.logout;
-
-                // update token with the new value
-                self.mToken = userData.value;
-
                 // THEN...populate the league list
-                self.fetchLeagueList();
-
-                onLoginChangedCb(self.mToken);
+                populateLeagueList();
             };
 
             this.signInFailed = function(data) {
-                console.log(data);
                 $scope.passwordIncorrect = true;
             };
 
@@ -147,71 +96,24 @@
 
                 // attempt to get a token based on the provided login credentials
                 nbtUser.login($scope.username, $scope.password, self.signInSuccess, self.signInFailed);
-                //$http({
-                //    method: 'POST', // TODO: get this from the links!
-                //    url: nbt.rootLinks().login.href,
-                //    data: { // TODO: fill out a template that we get from the links!
-                //        username: $scope.username,
-                //        password: $scope.password
-                //    }
-                //})
-                //    .then(self.signInSuccess, self.signInFailed);
             };
 
             this.onSignOut = function() {
-                // DELETE the existing token and null out any stored login data
-                $http({
-                    method: 'DELETE', // TODO: get this from the links!
-                    url: self.mLogoutLink.href,
-                    headers: {
-                        'X-NBT-Token': self.mToken
-                    }
-                });
-
-                // blow away any existing login data
-                localStorage.removeItem('login');
-                localStorage.removeItem('logout');
-                //localStorage.removeItem('selectedLeague');
-                self.mToken = null;
-
-                // update the UI to reflect
-                $scope.displayName = null;
-                $scope.twitter = null;
-                $scope.isLoggedIn = false;
-                $scope.password = null;
-                $scope.username = null;
-                $scope.passwordIncorrect = false;
-
-                onLoginChangedCb(self.mToken);
+                nbtUser.logout();
+                self.reset();
             };
 
             this.onRegister = function() {
+                self.resetRegistration();
                 $scope.initialized = 1;
                 $scope.isRegistering = true;
-                $scope.registrationSucceeded = false;
 
                 self.registerForm.maximize();
-
-                $scope.usernameError = null;
-                $scope.callsignError = null;
-                $scope.passwordError = null;
-                $scope.passwordCheckError = null;
-                $scope.emailAddressError = null;
-                $scope.emailAddressCheckError = null;
-                $scope.captchaError = null;
-
-                $scope.regData.username = null;
-                $scope.regData.password = null;
-                $scope.regData.callsign = null;
-                $scope.regData.email = null;
 
                 var path = window.location.pathname.replace('index.html', '');
 
                 $scope.regData.activationUrl = window.location.origin + path + 'activate.html';
                 $scope.regData.privacyUrl = window.location.origin + path + "privacy.html";
-
-                $scope.emailAddressCheck = null;
-                $scope.passwordCheck = null;
 
                 if (self.recaptcha) {
                     if (self.recaptcha.childElementCount === 0 && grecaptcha) {
@@ -228,41 +130,19 @@
                 }
             };
 
-            this.populateProfileInfo = function(resp) {
-                var profile = resp.data;
-                $scope.displayName = profile.callsign;
-            };
-
             this.onCancelRegistration = function() {
                 self.closeForm();
             };
 
             this.closeForm = function() {
-                $scope.isRegistering = false;
-                $scope.usernameError = null;
-                $scope.callsignError = null;
-                $scope.passwordError = null;
-                $scope.passwordCheckError = null;
-                $scope.emailAddressError = null;
-                $scope.emailAddressCheckError = null;
-                $scope.captchaError = null;
-                $scope.regData.username = null;
-                $scope.regData.password = null;
-                $scope.regData.callsign = null;
-                $scope.regData.email = null;
+                self.reset();
+                self.registerForm.minimize();
             }
 
             this.validateForm = function() {
                 var rtn = true;
 
-                $scope.usernameError = null;
-                $scope.callsignError = null;
-                $scope.passwordError = null;
-                $scope.passwordCheckError = null;
-                $scope.emailAddressError = null;
-                $scope.emailAddressCheckError = null;
-                $scope.captchaError = null;
-
+                self.resetError();
 
                 // TODO: for all of these strings, an i18n service maybe?
 
@@ -349,11 +229,11 @@
 
             this.registrationFailed = function(data) {
                 // tell the user what the problems were
-                if (data.data.message.includes('[username]')) {
+                if (data.message.includes('[username]')) {
                     $scope.usernameError = 'Username already taken!';
-                } else if (data.data.message.includes('[callsign]')) {
+                } else if (data.message.includes('[callsign]')) {
                     $scope.callsignError = 'Callsign already taken!';
-                } else if (data.data.message.includes('[email]')) {
+                } else if (data.message.includes('[email]')) {
                     $scope.emailAddressError = 'Email address already used!';
                 }
 
@@ -363,39 +243,12 @@
 
             this.onSubmitRegistration = function() {
                 if (self.validateForm()) {
-                    $scope.errorMessage = null;
-
-                    // submit the new-user registration
-                    $http({
-                        method: 'POST', // TODO: get from links!
-                        url: nbt.rootLinks().signup.href,
-                        data: $scope.regData,
-                        headers: {
-                            'X-NBT-Captcha-Token': grecaptcha.getResponse()
-                        }
-                    }).then(self.registrationSucceeded, self.registrationFailed);
-                } else {
-                    // tell the user there were errors and to fix them first
-                    // TODO: i18n?
-                    $scope.errorMessage = "Registration form contains errors, please correct these and re-submit";
-                }
-            };
-
-            this.changeProfileInfo = function() {
-                // figure out the proper profile to fetch for the user display information
-                for (var i=0; i<self.leagues.length; ++i) {
-                    var l = self.leagues[i];
-                    if (l._links.self.href !== self.selectedLeague)
-                        continue;
-
-                    // otherwise, fetch the user's profile for this league
-                    $http({
-                        method: 'GET', // TODO: get from links!
-                        url: l._links.profile.href,
-                        headers: {
-                            'X-NBT-Token': self.mToken
-                        }
-                    }).then(self.populateProfileInfo);
+                    nbtUser.register(
+                        $scope.regData,
+                        grecaptcha.getResponse(),
+                        self.registrationSucceeded,
+                        self.registrationFailed
+                    );
                 }
             };
 
@@ -415,11 +268,22 @@
             };
 
             this.onLeagueChanged = function() {
-                self.selectedLeague = $scope.selectedLeague;
-                localStorage.selectedLeague = self.selectedLeague;
-                onLeagueChangedCb(self.selectedLeague);
-                self.changeProfileInfo();
+                nbtLeague.setCurrent(parseInt($scope.selectedLeague));
             };
+
+            var cb = $scope.$on('nbtLeagueChanged', function(aEvent, aLeague) {
+                if (aLeague) {
+                    $scope.selectedLeague = aLeague.id.toString();
+                } else {
+                    $scope.selectedLeague = "0";
+                }
+            });
+            $scope.$on('destroy', cb);
+
+            cb = $scope.$on('nbtProfileChanged', function(event, aData) {
+                $scope.callsign = aData.callsign;
+            });
+            $scope.$on('destroy', cb);
 
             this.setRegisterForm = function(elem) {
                 self.registerForm = elem;
@@ -461,39 +325,8 @@
                 this.className = arr.join(' ') + ' fullscreen onTop';
             };
 
-            // check for any existing login data, and if it exists, set our initial
-            // data to it
-            if (this.loginData) {
-                this.mToken = this.loginData.login.value;
-                self.mLogoutLink = this.loginData.logout;
-                $scope.displayName = this.loginData.login.callsign;
-                $scope.passwordIncorrect = false;
-                $scope.twitter = null;
-                $scope.isLoggedIn = true;
-                $scope.username = null;
-                $scope.password = null;
-
-                // fetch league list to populate the dropdown
-                this.fetchLeagueList();
-            } else {
-                this.mToken = null;
-                $scope.displayName = null;
-                $scope.twitter = null;
-                $scope.isLoggedIn = false;
-                $scope.passwordIncorrect = false;
-                $scope.username = null;
-                $scope.password = null;
-            }
-
+            reset();
             $scope.initialized = 0;
-
-            $scope.regData = {
-                username: null,
-                callsign: null,
-                password: null,
-                email: null,
-                activationUrl: null
-            };
 
             // extremely hacky...
             window.addEventListener("transitionend", function(event) {
