@@ -25,7 +25,7 @@
 
     mod.directive('starmap', function($compile) {
 
-        this.controller = function($scope, $attrs, $http, $rootScope) {
+        this.controller = function($scope, $attrs, $http, $rootScope, nbtLeague, nbtToken) {
             var mStarmapDebug;
             try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
 
@@ -496,7 +496,25 @@
                 self.token = aToken;
                 self.fetchPlanets();
                 self.updateOverlay();
-            }
+            };
+
+            var cb = $scope.$on('nbtTokenChanged', function(event, aTokenService) {
+                var l = nbtLeague.current();
+
+                if (l) {
+                    self.reload(l._links.planets.href, aTokenService.current());
+                }
+            });
+            $scope.$on('destroy', cb);
+
+            cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
+                var t = nbtToken.current();
+
+                if (aLeague) {
+                    self.reload(aLeague._links.planets.href, t);
+                }
+            });
+            $scope.$on('destroy', cb);
         };
 
         return {
