@@ -23,7 +23,9 @@
 (function() {
     var mod = angular.module('nbt.app');
 
-    mod.service('nbtLeague', ['$http', '$rootScope', 'nbtRoot', 'nbtToken', 'nbtUser', function($http, $rootScope, nbtRoot, nbtToken, nbtUser) {
+    mod.service('nbtLeague', ['$http', '$rootScope', 'nbtRoot', 'nbtIdentity', function($http, $rootScope, nbtRoot, nbtIdentity) {
+        var self = this;
+
         // current league object
         var mCurrentLeague = null;
 
@@ -37,26 +39,27 @@
             localStorage.removeItem('league');
         };
 
+        var save = function() {
+            if (mCurrentLeague)
+                localStorage.setItem('league', mCurrentLeague.id);
+            else
+                clear();
+        };
+
         var fetchLeagues = function() {
+            var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
             $http({
                 method: 'GET', // TODO: get from links!
                 url: nbtRoot.links().leagues.href,
-                headers: {
-                    'X-NBT-Token': nbtToken.current()
-                }
+                headers: hdrs.get()
             }).then(function(resp) {
-                var currentId = localStorage.league;
+                var currentId = parseInt(localStorage.league);
                 mLeagues = resp.data._embedded.leagues;
 
-                // go through the leagues and pick the one that is 'current', if any
-                for (var i=0; i<mLeagues.length; ++i) {
-                    var l = mLeagues[i];
+                $rootScope.$broadcast('nbtLeaguesChanged', mLeagues);
 
-                    if (l.id === currentId) {
-                        mCurrentLeague = l;
-                        break;
-                    }
-                }
+                self.setCurrent(currentId);
             });
         };
 
@@ -78,44 +81,69 @@
                 }
 
                 if (mCurrentLeague) {
+                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
                     $http({
                         method: 'GET',
                         url: mCurrentLeague._links.self.href,
-                        headers: {
-                            'X-NBT-Token': nbtToken.current()
-                        }
+                        headers: hdrs.get()
                     }).then(function(resp) {
                         mCurrentLeague = resp.data;
-                        nbtUser.onLeagueChanged(mCurrentLeague);
+                        nbtIdentity.onLeagueChanged(mCurrentLeague);
                         $rootScope.$broadcast('nbtLeagueChanged', mCurrentLeague);
                     });
                 }
             }
+
+            save();
         };
 
         this.current = function() {
+            // if we have a league list, but not a current league,
+            // try to identify one from the localStorage.league
+            // value (if present)
+            if (!mCurrentLeague) {
+                if (mLeagues) {
+                    for (var i=0; i<mLeagues.length; ++i) {
+                        var l = mLeagues[i];
+                        if (l.id === parseInt(localStorage.league)) {
+                            mCurrentLeague = l;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (mCurrentLeague) {
                 return {
                     name: mCurrentLeague.name,
-                    id: mCurrentLeague.id
+                    id: mCurrentLeague.id,
+                    planets: mCurrentLeague._links.planets
                 };
             }
 
-            return null;
+            return {
+                name: null,
+                id: -1,
+                planets: null
+            };
         };
 
         this.leagues = function() {
             var rtn = [];
 
-            for (var i=0; i<mLeagues.length; ++i) {
-                var l = mLeagues[i];
+            if (mLeagues) {
+                for (var i = 0; i < mLeagues.length; ++i) {
+                    var l = mLeagues[i];
 
-                var _l = {
-                    name: l.name,
-                    id: l.id
-                };
+                    var _l = {
+                        name: l.name,
+                        id: l.id,
+                        planets: l._links.planets
+                    };
 
-                rtn.push(_l);
+                    rtn.push(_l);
+                }
             }
 
             return rtn;
@@ -149,12 +177,12 @@
             if (mCurrentLeague) {
                 if (mCurrentLeague._links.delete) {
                     // remove the league from the database
+                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
                     $http({
                         method: 'DELETE', // TODO: get this from the links!
                         url: mCurrentLeague._links.delete.href,
-                        headers: {
-                            'X-NBT-Token': nbtToken.current()
-                        }
+                        headers: hdrs.get()
                     });
 
                     clear();
@@ -168,6 +196,11 @@
 
         this.update = function(aSuccess, aFailure) {
             // not implemented yet
+        };
+
+        this.reset = function() {
+            clear();
+            fetchLeagues();
         };
 
         fetchLeagues();

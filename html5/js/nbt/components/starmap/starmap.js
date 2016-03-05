@@ -25,7 +25,7 @@
 
     mod.directive('starmap', function($compile) {
 
-        this.controller = function($scope, $attrs, $http, $rootScope, nbtLeague, nbtToken) {
+        this.controller = function($scope, $attrs, $http, $rootScope, nbtLeague, nbtIdentity, nbtPlanet) {
             var mStarmapDebug;
             try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
 
@@ -50,7 +50,6 @@
             this.height = 0;
 
             this.onMapColorData = function(data) {
-
                 // convert the returned object to a hashtable
                 self.mapColors = {};
                 for (var i=0; i<data.data._embedded.mapColors.length; ++i) {
@@ -63,7 +62,6 @@
             }
 
             this.succeed = function(data) {
-                self.text = data;
                 self.planets = data.data;
 
                 // get the "bounding area" of all of the planets
@@ -91,23 +89,26 @@
 
                 // fetch map color data
                 $http({
-                    method: 'GET',
-                    url: self.planets._links.mapColors.href
-                })
-                    .then(self.onMapColorData, self.fail);
-            };
-
-            this.fail = function(msg) {
-                self.text = "Failed: " + msg.statusText;
+                    method: 'GET', // TODO: GET FROM LINKS!
+                    url: data.data._links.mapColors.href
+                }).then(self.onMapColorData);
             };
 
             this.fetchPlanets = function() {
-                $http({
-                        url: self.planetsUrl,
-                        method: "GET",
-                        headers: {'X-NBT-Token': self.token}
-                })
-                .then(self.succeed, self.fail);
+                var league = nbtLeague.current();
+
+                if (league.planets) {
+                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
+                    $http({
+                        url: league.planets.href,
+                        method: "GET", // TODO: GET FROM LINKS!
+                        headers: hdrs.get()
+                    }).then(self.succeed);
+                } else {
+                    // wait a second and try again
+                    setTimeout(self.fetchPlanets, 1000);
+                }
             };
 
             this.setSize = function(w, h) {
@@ -491,27 +492,25 @@
                 }
             };
 
-            this.reload = function(aPlanetsUrl, aToken) {
-                self.planetsUrl = aPlanetsUrl;
-                self.token = aToken;
+            this.reload = function() {
                 self.fetchPlanets();
                 self.updateOverlay();
             };
 
-            var cb = $scope.$on('nbtTokenChanged', function(event, aTokenService) {
+            var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
                 var l = nbtLeague.current();
 
                 if (l) {
-                    self.reload(l._links.planets.href, aTokenService.current());
+                    self.reload();
                 }
             });
             $scope.$on('destroy', cb);
 
             cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
-                var t = nbtToken.current();
+                var ident = nbtIdentity.get();
 
                 if (aLeague) {
-                    self.reload(aLeague._links.planets.href, t);
+                    nbtPlanet.load(aLeague._links.planets.href, ident.token);
                 }
             });
             $scope.$on('destroy', cb);
@@ -524,10 +523,6 @@
             controller: controller,
             controllerAs: 'starmap',
             link: function(scope, element, attrs, controller) {
-                element[0].reload = function(aPlanetsUrl, aToken) {
-                    controller.reload(aPlanetsUrl, aToken);
-                };
-
                 var w = element.parent()[0].offsetWidth;
                 var h = element.parent()[0].offsetHeight;
                 controller.setSize(w, h);
@@ -549,16 +544,14 @@
                 // init 2D Canvas and WebGL (three.js) systems
                 controller.initializeGraphics(element);
 
-                if (attrs.url) {
-                    controller.reload(attrs.url, attrs.token);
-                }
+                controller.reload();
             }
         };
     });
 
     mod.directive('planetBrief', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce) {
+        this.controller = function($scope, $attrs, $http, $sce, nbtIdentity) {
             var self = this;
             var token = null;
             $scope.posX = 0;
@@ -589,13 +582,12 @@
 
                 // if there is an active battle on the planet, follow the link and get the details
                 if (p.battleId) {
+                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
                     $http({
                         url: p._links.battle.href,
                         method: 'GET',
-                        headers: {
-                            'X-NBT-Token': self.token === null ? '' : self.token,
-                            'X-NBT-Activation-Form': window.location + "/activation.html"
-                        }
+                        headers: hdrs.get()
                     }).then(self.updatePlanetBattleDetail);
                     $scope.isBattle = true;
                 }
@@ -614,13 +606,12 @@
                 $scope.recharge = '(fetching)';
 
                 self.token = aToken;
+                var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
 
                 $http({
                     url: aPlanet._links.self.href,
                     method: 'GET',
-                    headers: {
-                        'X-NBT-Token': aToken === null ? '' : aToken
-                    }
+                    headers: hdrs.get()
                 }).then(self.updatePlanet);
             };
 

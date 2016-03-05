@@ -25,7 +25,7 @@
 
     mod.directive('profile', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce, nbtUser, nbtRoot, nbtToken, nbtLeague) {
+        this.controller = function($scope, $attrs, $http, $sce, nbtIdentity, nbtRoot, nbtLeague) {
             var self = this;
 
             var resetRegistration = function() {
@@ -75,7 +75,7 @@
 
             this.signInSuccess = function(userData) {
                 // update the UI to reflect
-                $scope.displayName = userData.callsign;
+                $scope.callsign = userData.callsign;
                 $scope.twitter = null;
                 $scope.isLoggedIn = true;
                 $scope.password = null;
@@ -95,12 +95,12 @@
                 $scope.passwordIncorrect = false;
 
                 // attempt to get a token based on the provided login credentials
-                nbtUser.login($scope.username, $scope.password, self.signInSuccess, self.signInFailed);
+                nbtIdentity.login($scope.username, $scope.password, self.signInSuccess, self.signInFailed);
             };
 
             this.onSignOut = function() {
-                nbtUser.logout();
-                self.reset();
+                nbtIdentity.logout();
+                reset();
             };
 
             this.onRegister = function() {
@@ -243,7 +243,7 @@
 
             this.onSubmitRegistration = function() {
                 if (self.validateForm()) {
-                    nbtUser.register(
+                    nbtIdentity.register(
                         $scope.regData,
                         grecaptcha.getResponse(),
                         self.registrationSucceeded,
@@ -275,22 +275,28 @@
 
             // if the selected league changes in the league service, update the
             // profile widget to reflect the new selection
-            var cb = $scope.$on('nbtLeagueChanged', function(aEvent, aLeague) {
-                if (aLeague) {
-                    $scope.selectedLeague = aLeague.id.toString();
-                } else {
-                    $scope.selectedLeague = "0";
-                }
-            });
-            $scope.$on('destroy', cb);
-
-            // when the user's profile changes (login or logout, for example), update
-            // the profile display to match
-            cb = $scope.$on('nbtProfileChanged', function(event, aData) {
+            var cb = $scope.$on('nbtProfileChanged', function(event, aData) {
                 if (aData)
                     $scope.callsign = aData.callsign;
                 else
                     $scope.callsign = null;
+            });
+            $scope.$on('destroy', cb);
+
+            // when the user identity changes (login or logout, for example), update
+            // the scope to reflect this
+            cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
+                if (aIdent.token)
+                    $scope.isLoggedIn = true;
+                else
+                    $scope.isLoggedIn = false;
+            });
+            $scope.$on('destroy', cb);
+
+            // when the list of leagues changed, we want to update our droplist
+            cb = $scope.$on('nbtLeaguesChanged', function(event, aLeagues) {
+                $scope.leagues = aLeagues;
+                $scope.selectedLeague = nbtLeague.current().id.toString();
             });
             $scope.$on('destroy', cb);
 
@@ -337,6 +343,13 @@
 
             reset();
             $scope.initialized = 0;
+
+            // if the identity service already has a valid identity,
+            // init the profile as such
+            var ident = nbtIdentity.get();
+            if (ident.token) {
+                $scope.isLoggedIn = true;
+            }
 
             // extremely hacky...
             window.addEventListener("transitionend", function(event) {

@@ -25,7 +25,7 @@
 
     mod.directive('starmapDetail', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce, $rootScope) {
+        this.controller = function($scope, $attrs, $http, $sce, $rootScope, nbtIdentity) {
             var self = this;
             var token = null;
 
@@ -95,10 +95,12 @@
                     self.clear();
                     $scope.$apply();
                 } else {
+                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
                     $http({
                         url: aPlanet._links.self.href,
                         method: 'GET',
-                        headers: {'X-NBT-Token': aToken === null ? '' : aToken}
+                        headers: hdrs.get()
                     }).then(self.updatePlanet);
                 }
 
