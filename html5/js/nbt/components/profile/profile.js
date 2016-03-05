@@ -267,10 +267,14 @@
                 );
             };
 
+            // when user makes a new selection in the league dropdown, let the league
+            // service know
             this.onLeagueChanged = function() {
                 nbtLeague.setCurrent(parseInt($scope.selectedLeague));
             };
 
+            // if the selected league changes in the league service, update the
+            // profile widget to reflect the new selection
             var cb = $scope.$on('nbtLeagueChanged', function(aEvent, aLeague) {
                 if (aLeague) {
                     $scope.selectedLeague = aLeague.id.toString();
@@ -280,11 +284,17 @@
             });
             $scope.$on('destroy', cb);
 
+            // when the user's profile changes (login or logout, for example), update
+            // the profile display to match
             cb = $scope.$on('nbtProfileChanged', function(event, aData) {
-                $scope.callsign = aData.callsign;
+                if (aData)
+                    $scope.callsign = aData.callsign;
+                else
+                    $scope.callsign = null;
             });
             $scope.$on('destroy', cb);
 
+            // called by directive link function once we know what our elements are
             this.setRegisterForm = function(elem) {
                 self.registerForm = elem;
                 elem.maximize = maximize;

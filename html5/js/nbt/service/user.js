@@ -31,17 +31,16 @@
             localStorage.removeItem('login');
         };
 
-        var reset = function() {
+        var reset = function(aUserId) {
             // clear out any current user data object
             mUserData = null;
 
             // clear out any existing cached login data (local storage)
             clearLocalStorage();
-        };
 
-        this.token = function() {
-            if (mUserData) return mUserData.value;
-            return null;
+            if (aUserId) {
+                
+            }
         };
 
         this.profile = function() {
@@ -136,5 +135,7 @@
                 // fetch default profile?
             }
         };
+
+        var t = nbtToken.current();
     }]);
 })();

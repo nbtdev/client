@@ -28,6 +28,8 @@
 
         // token string value
         var mToken = null;
+        // token user ID
+        var mUserId = null;
         // link to logout rel (DELETE token)
         var mLogout = null;
         // link to refresh rel (PUT token, to reset expiry and also to test validity)
@@ -35,6 +37,7 @@
 
         var clear = function() {
             mToken = null;
+            mUserId = null;
             mLogout = null;
             mRefresh = null;
 
@@ -44,19 +47,25 @@
 
         this.current = function() {
             if (mToken) return mToken;
-        }
+        };
+
+        this.userId = function() {
+            if (mUserId) return mUserId;
+        };
 
         this.set = function(aData) {
             clear();
 
             if (aData) {
                 mToken = aData.value;
+                mUserId = aData.userId;
                 mLogout = aData._links.logout;
                 mRefresh = aData._links.refresh;
 
                 // save ourselves to local storage
                 localStorage.setItem('token', JSON.stringify({
                     value: mToken,
+                    userId: mUserId,
                     logout: JSON.stringify(mLogout),
                     refresh: JSON.stringify(mRefresh)
                 }))
@@ -102,6 +111,7 @@
                 var data = JSON.parse(localStorage.token);
 
                 mToken = data.value;
+                mUserId = data.userId;
                 mLogout = JSON.parse(data.logout);
                 mRefresh = JSON.parse(data.refresh);
 
