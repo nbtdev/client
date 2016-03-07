@@ -104,7 +104,7 @@
             };
 
             this.onRegister = function() {
-                self.resetRegistration();
+                resetRegistration();
                 $scope.initialized = 1;
                 $scope.isRegistering = true;
 
@@ -135,14 +135,14 @@
             };
 
             this.closeForm = function() {
-                self.reset();
+                reset();
                 self.registerForm.minimize();
             }
 
             this.validateForm = function() {
                 var rtn = true;
 
-                self.resetError();
+                resetError();
 
                 // TODO: for all of these strings, an i18n service maybe?
 
