@@ -12,7 +12,7 @@
         <h4 class="m-0">{{callsign}}</h4>
         {{twitter}}
         <select ng-model="selectedLeague" ng-change="profile.onLeagueChanged()">
-            <option ng-repeat="league in leagues" value="{{league.id}}">{{league.name}}</option>
+            <option ng-repeat="league in leagues" value="{{league.id()}}">{{league.name()}}</option>
         </select>
     </div>
     <div ng-hide="isLoggedIn">

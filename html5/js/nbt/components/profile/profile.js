@@ -270,7 +270,7 @@
             // when user makes a new selection in the league dropdown, let the league
             // service know
             this.onLeagueChanged = function() {
-                nbtLeague.setCurrent(parseInt($scope.selectedLeague));
+                nbtLeague.setCurrent(parseInt($scope.selectedLeague), nbtIdentity.get().token);
             };
 
             // if the selected league changes in the league service, update the
@@ -286,17 +286,23 @@
             // when the user identity changes (login or logout, for example), update
             // the scope to reflect this
             cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
-                if (aIdent.token)
+                if (aIdent.token) {
                     $scope.isLoggedIn = true;
-                else
+                    nbtLeague.fetchLeagues(aIdent.token);
+                } else {
                     $scope.isLoggedIn = false;
+                    $scope.leagues = null;
+                }
             });
             $scope.$on('destroy', cb);
 
             // when the list of leagues changed, we want to update our droplist
             cb = $scope.$on('nbtLeaguesChanged', function(event, aLeagues) {
                 $scope.leagues = aLeagues;
-                $scope.selectedLeague = nbtLeague.current().id.toString();
+
+                var currentLeague = nbtLeague.current();
+                if (currentLeague)
+                    $scope.selectedLeague = currentLeague.id().toString();
             });
             $scope.$on('destroy', cb);
 
@@ -344,11 +350,15 @@
             reset();
             $scope.initialized = 0;
 
+            // ask the identity service to restore from local storage
+            nbtIdentity.restore();
+
             // if the identity service already has a valid identity,
             // init the profile as such
             var ident = nbtIdentity.get();
             if (ident.token) {
                 $scope.isLoggedIn = true;
+                nbtLeague.fetchLeagues(ident.token);
             }
 
             // extremely hacky...

@@ -19,190 +19,219 @@
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+var _League = (function() {
+    var mId = -1;
+    var mName = null;
+    var mSelfLink = null;
+    var mProfileLink = null;
+    var mPlanetsLink = null;
 
-(function() {
-    var mod = angular.module('nbt.app');
+    function League(aInit) {
+        if (aInit) {
+            mId = aInit.id ? aInit.id : -1;
+            mName = aInit.name ? aInit.name : null;
+            mSelfLink = aInit.self ? aInit.self : null;
+            mProfileLink = aInit.profile ? aInit.profile : null;
+            mPlanetsLink = aInit.planets ? aInit.planets : null;
+        }
+    }
 
-    mod.service('nbtLeague', ['$http', '$rootScope', 'nbtRoot', 'nbtIdentity', function($http, $rootScope, nbtRoot, nbtIdentity) {
-        var self = this;
+    League.prototype = {
+        isValid: function () {
+            return mId > 0;
+        },
 
-        // current league object
-        var mCurrentLeague = null;
+        name: function () {
+            return mName;
+        },
 
-        // list of leagues from the automation
-        var mLeagues = null;
+        selfLink: function () {
+            return mSelfLink;
+        },
 
-        var clear = function() {
+        profileLink: function () {
+            return mProfileLink;
+        },
+
+        planetsLink: function () {
+            return mPlanetsLink;
+        },
+
+        id: function () {
+            return mId;
+        },
+
+        update : function(aDetails) {
+            if (aDetails) {
+                mId = aDetails.id ? aDetails.id : mId;
+                mName = aDetails.name ? aDetails.name : mName;
+                mSelfLink = aDetails.self ? aDetails.self : mSelfLink;
+                mProfileLink = aDetails.profile ? aInit.profile : mProfileLink;
+                mPlanetsLink = aDetails.planets ? aInit.planets : mPlanetsLink;
+            }
+        },
+    };
+
+    return League;
+})();
+
+var _LeagueService = (function() {
+    var self = null;
+    var http = null;
+    var rootScope = null;
+    var nbtRoot = null;
+
+    // current league object
+    var mCurrentLeague = null;
+
+    // list of leagues from the automation
+    var mLeagues = null;
+
+    // actual c'tor
+    function LeagueService(aHttp, aRootScope, aNbtRoot) {
+        self = this;
+        http = aHttp;
+        rootScope = aRootScope;
+        nbtRoot = aNbtRoot;
+    }
+
+    var clear = function () {
+        mCurrentLeague = null;
+
+        // clear local storage too
+        localStorage.removeItem('league');
+    };
+
+    var save = function () {
+        if (mCurrentLeague)
+            localStorage.setItem('league', mCurrentLeague.id());
+        else
+            clear();
+    };
+
+    var setLeagues = function (aLeagues) {
+        mLeagues = [];
+
+        for (var i = 0; i < aLeagues.length; ++i) {
+            var l = aLeagues[i];
+
+            mLeagues.push(new _League({
+                id: l.id,
+                name: l.name,
+                planets: l._links.planets,
+                profile: l._links.profile,
+                this: l._links.this
+            }));
+        }
+    };
+
+    var updateCurrentLeagueDetails = function(aDetails) {
+        mCurrentLeague.update(aDetails);
+    };
+
+    LeagueService.prototype.fetchLeagues = function (aToken) {
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: get from links!
+            url: nbtRoot.links().leagues.href,
+            headers: hdrs.get()
+        }).then(function (resp) {
+            var currentId = parseInt(localStorage.league);
+            setLeagues(resp.data._embedded.leagues);
+            self.setCurrent(currentId);
+
+            rootScope.$broadcast('nbtLeaguesChanged', mLeagues);
+        });
+    };
+
+    LeagueService.prototype.setCurrent = function (aLeagueId, aToken) {
+        // prevent infinite recursion
+        if (mCurrentLeague && mCurrentLeague.id() === aLeagueId)
+            return;
+
+        if (mLeagues) {
             mCurrentLeague = null;
 
-            // clear local storage too
-            localStorage.removeItem('league');
-        };
+            // change the current league by ID
+            for (var i = 0; i < mLeagues.length; ++i) {
+                var l = mLeagues[i];
+                if (l.id() === aLeagueId) {
+                    mCurrentLeague = l;
+                    break;
+                }
+            }
 
-        var save = function() {
-            if (mCurrentLeague)
-                localStorage.setItem('league', mCurrentLeague.id);
-            else
-                clear();
-        };
+            // only call out if the league does not already have the extra details
+            if (mCurrentLeague && mCurrentLeague.profile === null) {
+                var hdrs = new Headers(Header.TOKEN, aToken);
 
-        var fetchLeagues = function() {
-            var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+                http({
+                    method: 'GET',
+                    url: mCurrentLeague.self.href,
+                    headers: hdrs.get()
+                }).then(function (resp) {
+                    var leagueDetails = resp.data;
 
-            $http({
-                method: 'GET', // TODO: get from links!
-                url: nbtRoot.links().leagues.href,
-                headers: hdrs.get()
-            }).then(function(resp) {
-                var currentId = parseInt(localStorage.league);
-                mLeagues = resp.data._embedded.leagues;
+                    // update the current league with additional detail
+                    updateCurrentLeagueDetails(leagueDetails);
 
-                $rootScope.$broadcast('nbtLeaguesChanged', mLeagues);
+                    rootScope.$broadcast('nbtLeagueChanged', self.current());
+                });
+            }
+        }
 
-                self.setCurrent(currentId);
-            });
-        };
+        save();
+    };
 
-        this.setCurrent = function(aLeagueId) {
-            // prevent infinite recursion
-            if (mCurrentLeague && mCurrentLeague.id === aLeagueId)
-                return;
-
+    LeagueService.prototype.current = function () {
+        // if we have a league list, but not a current league,
+        // try to identify one from the localStorage.league
+        // value (if present)
+        if (!mCurrentLeague) {
             if (mLeagues) {
-                mCurrentLeague = null;
-
-                // change the current league by ID
                 for (var i = 0; i < mLeagues.length; ++i) {
                     var l = mLeagues[i];
-                    if (l.id === aLeagueId) {
+                    if (l.id() === parseInt(localStorage.league)) {
                         mCurrentLeague = l;
                         break;
                     }
                 }
-
-                if (mCurrentLeague) {
-                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                    $http({
-                        method: 'GET',
-                        url: mCurrentLeague._links.self.href,
-                        headers: hdrs.get()
-                    }).then(function(resp) {
-                        mCurrentLeague = resp.data;
-                        nbtIdentity.onLeagueChanged(mCurrentLeague);
-                        $rootScope.$broadcast('nbtLeagueChanged', mCurrentLeague);
-                    });
-                }
             }
+        }
 
-            save();
-        };
+        return mCurrentLeague;
+    };
 
-        this.current = function() {
-            // if we have a league list, but not a current league,
-            // try to identify one from the localStorage.league
-            // value (if present)
-            if (!mCurrentLeague) {
-                if (mLeagues) {
-                    for (var i=0; i<mLeagues.length; ++i) {
-                        var l = mLeagues[i];
-                        if (l.id === parseInt(localStorage.league)) {
-                            mCurrentLeague = l;
-                            break;
-                        }
-                    }
-                }
-            }
+    LeagueService.prototype.leagues = function () {
+        return mLeagues;
+    };
 
-            if (mCurrentLeague) {
-                return {
-                    name: mCurrentLeague.name,
-                    id: mCurrentLeague.id,
-                    planets: mCurrentLeague._links.planets
-                };
-            }
+    LeagueService.prototype.delete = function () {
+        // not implemented yet
+    };
 
-            return {
-                name: null,
-                id: -1,
-                planets: null
-            };
-        };
+    LeagueService.prototype.add = function (aLeagueDef, aSuccess, aFailure) {
+        // not implemented yet
+    };
 
-        this.leagues = function() {
-            var rtn = [];
+    LeagueService.prototype.update = function (aSuccess, aFailure) {
+        // not implemented yet
+    };
 
-            if (mLeagues) {
-                for (var i = 0; i < mLeagues.length; ++i) {
-                    var l = mLeagues[i];
-
-                    var _l = {
-                        name: l.name,
-                        id: l.id,
-                        planets: l._links.planets
-                    };
-
-                    rtn.push(_l);
-                }
-            }
-
-            return rtn;
-        };
-
-        this.name = function() {
-            if (mCurrentLeague) {
-                return mCurrentLeague.name;
-            }
-
-            return null;
-        };
-
-        this.description = function() {
-            if (mCurrentLeague) {
-                return '';
-            }
-
-            return null;
-        };
-
-        this.setName = function(aName) {
-            // not implemented yet
-        };
-
-        this.setDescription = function(aDesc) {
-            // not implemented yet
-        };
-
-        this.delete = function() {
-            if (mCurrentLeague) {
-                if (mCurrentLeague._links.delete) {
-                    // remove the league from the database
-                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                    $http({
-                        method: 'DELETE', // TODO: get this from the links!
-                        url: mCurrentLeague._links.delete.href,
-                        headers: hdrs.get()
-                    });
-
-                    clear();
-                }
-            }
-        };
-
-        this.add = function(aLeagueDef, aSuccess, aFailure) {
-            // not implemented yet
-        };
-
-        this.update = function(aSuccess, aFailure) {
-            // not implemented yet
-        };
-
-        this.reset = function() {
-            clear();
-            fetchLeagues();
-        };
-
+    LeagueService.prototype.reset = function () {
+        clear();
         fetchLeagues();
+    };
+
+    return LeagueService;
+})();
+
+(function() {
+    var mod = angular.module('nbt.app');
+
+    mod.service('nbtLeague', ['$http', '$rootScope', 'nbtRoot', function($http, $rootScope, nbtRoot) {
+        var ls = new _LeagueService($http, $rootScope, nbtRoot);
+        return ls;
     }]);
 })();

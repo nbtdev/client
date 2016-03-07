@@ -25,14 +25,11 @@
 
     mod.directive('starmap', function($compile) {
 
-        this.controller = function($scope, $attrs, $http, $rootScope, nbtLeague, nbtIdentity, nbtPlanet) {
+        this.controller = function($scope, $attrs, $rootScope, nbtLeague, nbtIdentity, nbtPlanet) {
             var mStarmapDebug;
             try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
 
             var self = this;
-            this.text = "(not set)";
-            this.token = null;
-            this.planetsUrl = null;
 
             $scope.showPlanetBrief = false;
 
@@ -49,20 +46,19 @@
             this.width = 0;
             this.height = 0;
 
-            this.onMapColorData = function(data) {
+            var updateMapColors = function(aMapColorData) {
+                self.mapColors = aMapColorData;
+
                 // convert the returned object to a hashtable
                 self.mapColors = {};
-                for (var i=0; i<data.data._embedded.mapColors.length; ++i) {
-                    var mc = data.data._embedded.mapColors[i];
+                for (var i=0; i<aMapColorData.length; ++i) {
+                    var mc = aMapColorData[i];
                     self.mapColors[mc.factionName] = mc;
                 }
-
-                // finally, reset the map
-                self.reloadStarmapData();
             }
 
-            this.succeed = function(data) {
-                self.planets = data.data;
+            var updatePlanets = function(aPlanets) {
+                self.planets = aPlanets;
 
                 // get the "bounding area" of all of the planets
                 var minX = Infinity;
@@ -70,8 +66,8 @@
                 var maxX = -Infinity;
                 var maxY = -Infinity;
 
-                for (var i=0; i<self.planets._embedded.planets.length; ++i) {
-                    var p = self.planets._embedded.planets[i];
+                for (var i=0; i<self.planets.length; ++i) {
+                    var p = self.planets[i];
                     if (p.x < minX) minX = p.x;
                     if (p.x > maxX) maxX = p.x;
                     if (p.y < minY) minY = p.y;
@@ -82,32 +78,9 @@
                 self.quadtree = new QuadTree({left: minX, right: maxX, top: maxY, bottom: minY});
 
                 // ...aaaaaaand now go through planets again to insert them into the quadtree
-                for (var i=0; i<self.planets._embedded.planets.length; ++i) {
-                    var p = self.planets._embedded.planets[i];
+                for (var i=0; i<self.planets.length; ++i) {
+                    var p = self.planets[i];
                     self.quadtree.insert(p);
-                }
-
-                // fetch map color data
-                $http({
-                    method: 'GET', // TODO: GET FROM LINKS!
-                    url: data.data._links.mapColors.href
-                }).then(self.onMapColorData);
-            };
-
-            this.fetchPlanets = function() {
-                var league = nbtLeague.current();
-
-                if (league.planets) {
-                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                    $http({
-                        url: league.planets.href,
-                        method: "GET", // TODO: GET FROM LINKS!
-                        headers: hdrs.get()
-                    }).then(self.succeed);
-                } else {
-                    // wait a second and try again
-                    setTimeout(self.fetchPlanets, 1000);
                 }
             };
 
@@ -246,8 +219,8 @@
                 self.scene3D.add(self.camera3D);
 
                 // plow through the planets, making objects, geometries and meshes along the way
-                for (var i = 0; i < self.planets._embedded.planets.length; ++i) {
-                    var p = self.planets._embedded.planets[i];
+                for (var i = 0; i < self.planets.length; ++i) {
+                    var p = self.planets[i];
                     var x = p.x;
                     var y = p.y;
                     var name = p.name;
@@ -493,8 +466,16 @@
             };
 
             this.reload = function() {
-                self.fetchPlanets();
-                self.updateOverlay();
+                var league = nbtLeague.current();
+
+                if (league) {
+                    nbtPlanet.load(
+                        nbtLeague.current(),
+                        nbtIdentity.get()
+                    );
+                } else {
+                    setTimeout(self.reload, 1000);
+                }
             };
 
             var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
@@ -510,8 +491,19 @@
                 var ident = nbtIdentity.get();
 
                 if (aLeague) {
-                    nbtPlanet.load(aLeague._links.planets.href, ident.token);
+                    nbtPlanet.load(aLeague, ident.token);
                 }
+            });
+            $scope.$on('destroy', cb);
+
+            cb = $scope.$on('nbtPlanetsLoaded', function(event, aLeagueId, aPlanets, aMapColors) {
+                // update the internal data structures
+                updatePlanets(aPlanets);
+                updateMapColors(aMapColors);
+
+                // reset the map and overlay(s)
+                self.reloadStarmapData();
+                self.updateOverlay();
             });
             $scope.$on('destroy', cb);
         };
@@ -551,22 +543,20 @@
 
     mod.directive('planetBrief', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce, nbtIdentity) {
+        this.controller = function($scope, $attrs, $sce, nbtIdentity, nbtPlanet, nbtBattle) {
             var self = this;
             var token = null;
             $scope.posX = 0;
             $scope.posY = 0;
 
-            this.updatePlanetBattleDetail = function(data) {
-                var battleData = data.data;
+            this.updatePlanetBattleDetail = function(battleData) {
                 $scope.battleId = battleData.id;
                 $scope.battleAttacker = battleData.primaryAttacker;
                 $scope.battleType = battleData.type;
                 $scope.battleLaunched = battleData.attackDate;
             }
 
-            this.updatePlanet = function(data) {
-                var p = data.data;
+            this.updatePlanet = function(p) {
                 $scope.name = p.name;
 
                 //if (p.description.length > 0)
@@ -582,13 +572,7 @@
 
                 // if there is an active battle on the planet, follow the link and get the details
                 if (p.battleId) {
-                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                    $http({
-                        url: p._links.battle.href,
-                        method: 'GET',
-                        headers: hdrs.get()
-                    }).then(self.updatePlanetBattleDetail);
+                    nbtBattle.fetchBattleForPlanet(p, nbtIdentity.get().token, self.updatePlanetBattleDetail);
                     $scope.isBattle = true;
                 }
 
@@ -607,12 +591,7 @@
 
                 self.token = aToken;
                 var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                $http({
-                    url: aPlanet._links.self.href,
-                    method: 'GET',
-                    headers: hdrs.get()
-                }).then(self.updatePlanet);
+                nbtPlanet.fetchPlanetDetail(aPlanet, aToken, self.updatePlanet);
             };
 
             this.clear = function() {

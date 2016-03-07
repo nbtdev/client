@@ -25,7 +25,7 @@
 
     mod.directive('starmapDetail', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce, $rootScope, nbtIdentity) {
+        this.controller = function($scope, $attrs, $sce, $rootScope, nbtIdentity, nbtPlanet) {
             var self = this;
             var token = null;
 
@@ -39,8 +39,7 @@
                 $scope.battleLaunched = battleData.attackDate;
             }
 
-            this.updatePlanet = function(data) {
-                var p = data.data;
+            this.updatePlanet = function(p) {
                 $scope.name = p.name;
                 $scope.owner = p.ownerName;
                 $scope.chargeStation = p.chargeStation;
@@ -95,13 +94,7 @@
                     self.clear();
                     $scope.$apply();
                 } else {
-                    var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
-
-                    $http({
-                        url: aPlanet._links.self.href,
-                        method: 'GET',
-                        headers: hdrs.get()
-                    }).then(self.updatePlanet);
+                    nbtPlanet.fetchPlanetDetail(aPlanet, nbtIdentity.get().token, self.updatePlanet);
                 }
 
                 // go through aPlanets and list the nearest for each faction

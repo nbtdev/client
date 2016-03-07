@@ -20,85 +20,42 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var _PlanetService = (function() {
+var _BattleService = (function() {
     var self = null;
     var http = null;
     var rootScope = null;
-    var mPlanets = {};
-    var mColors = {};
 
-    function PlanetService(aHttp, aRootScope) {
+    function BattleService(aHttp, aRootScope) {
         self = this;
         http = aHttp;
         rootScope = aRootScope;
     }
 
-    var loadMapColors = function (aLeagueId, aPlanets, aTokenHdr) {
-        http({
-            method: 'GET', // TODO: GET FROM LINKS!
-            url: aPlanets._links.mapColors.href,
-            headers: aTokenHdr.get()
-        }).then(
-            function (aResp) {
-                mColors[aLeagueId] = aResp.data._embedded;
-                rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId.toString()].planets, mColors[aLeagueId.toString()].mapColors);
-            },
-            function (aResp) {
-                console.log(aResp);
-            }
-        );
-    };
-
-    // load a league's planet listing into the service
-    PlanetService.prototype.load = function (aLeague, aToken) {
-        var hdr = new Headers(Header.TOKEN, aToken);
-
-        http({
-            method: 'GET', // TODO: GET FROM LINKS!
-            url: aLeague.planetsLink().href,
-            headers: hdr.get()
-        }).then(
-            function (aResp) {
-                mPlanets[aLeague.id()] = aResp.data._embedded;
-                loadMapColors(aLeague.id(), aResp.data, hdr);
-            },
-            function (aResp) {
-                console.log(aResp);
-            }
-        );
-    };
-
-    PlanetService.prototype.get = function (aLeague) {
-        if (aLeague)
-            return mPlanets[aLeague.id()];
-
-        return null;
-    };
-
-    PlanetService.prototype.fetchPlanetDetail = function (aPlanet, aToken, aCallback) {
-        if (aPlanet) {
+    // load the detail for a battle on a particular planet
+    BattleService.prototype.loadBattleForPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet._links.battle) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aPlanet._links.self.href,
+                url: aPlanet._links.battle.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
                     if (aCallback)
-                        aCallback(aResp.data);
+                    aCallback(aResp.data);
                 }
             );
         }
     };
 
-    return PlanetService;
+    return BattleService;
 })();
 
 (function() {
     var mod = angular.module('nbt.app');
 
-    mod.service('nbtPlanet', ['$http', '$rootScope', function($http, $rootScope) {
-        return new _PlanetService($http, $rootScope);
+    mod.service('nbtBattle', ['$http', '$rootScope', function($http, $rootScope) {
+        return new _BattleService($http, $rootScope);
     }]);
 })();
