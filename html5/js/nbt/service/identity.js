@@ -101,12 +101,18 @@ var _IdentityService = (function() {
 
         if (mIdentity) {
             return {
-                token: mIdentity.value
+                token: mIdentity.value,
+                isSiteAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='SITE_ADMIN' : false; },
+                isLeagueAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
+                isTeamAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='TEAM_ADMIN' : false;  }
             };
         }
 
         return {
-            token: null
+            token: null,
+            isSiteAdmin: function() { return false; },
+            isLeagueAdmin: function() { return false;  },
+            isTeamAdmin: function() { return false;  }
         };
     };
 
