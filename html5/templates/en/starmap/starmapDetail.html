@@ -1,7 +1,7 @@
-<div style="margin: 5px">
+<div style="padding: 5px">
     <div style="font-weight: bolder; font-size: larger" ng-show="planet">
         <span style="padding-right: 10px">{{name}}</span>
-        <span ng-show="owner">({{owner}})</span>
+        <span ng-show="owner">(<a href="#">{{owner}}</a>)</span>
     </div>
     <div ng-show="planet">
         <span ng-class="{'planetDetailEnabled': factory, 'planetDetailDisabled': !factory}">Factory</span>
@@ -10,18 +10,37 @@
         &nbsp; | &nbsp;
         <span ng-class="{'planetDetailEnabled': capital, 'planetDetailDisabled': !capital}">Capital Planet</span>
     </div>
-    <div style="overflow: auto; max-height: 800px; background-color: rgba(0,0,0,0.5)">
-        <div ng-show="detail.hasPlanets()" style="display: table">
-            <div style="display: table-row; font-weight: bold; background-color: rgba(0,0,0,0.5)">
-                <span style="display: table-cell; margin-right: 5px">Planet</span>
-                <span style="display: table-cell; margin-right: 5px">Distance</span>
-                <span style="display: table-cell">Owner</span>
-            </div>
-            <div ng-repeat="planet in planets" style="display: table-row" ng-class="{'planetDetailCanJump': detail.canJump(planet)}">
-                <span style="display: table-cell">{{planet.planet.name}}</span>
-                <span style="display: table-cell">{{planet.radius.toFixed(2)}}</span>
-                <span style="display: table-cell">{{planet.planet.ownerName}}</span>
-            </div>
-        </div>
+    <div class="planetDetail listing">
+        <table ng-show="detail.hasPlanets()">
+            <tr class="planetDetail headerRow">
+                <th class="planetDetail cell"></th>
+                <th class="planetDetail cell">Planet</th>
+                <th class="planetDetail cell">Distance</th>
+                <th class="planetDetail cell">Owner</th>
+            </tr>
+            <tbody ng-repeat="planet in planets" ng-class="{'planetDetailCanJump': detail.canJump(planet), 'planetDetailActiveBattle': planet.planet.battleId}">
+                <tr class="planetDetail row" ng-click="detail.onDetailRowClick(planet)" ng-class="{'clickable': detail.canExpand(planet)}">
+                    <td class="planetDetail cell">{{planet.planet.name}}</td>
+                    <td class="planetDetail cell">{{planet.radius.toFixed(2)}}</td>
+                    <td class="planetDetail cell">{{planet.planet.ownerName}}</td>
+                </tr>
+
+                <!-- optional detail inset -->
+                <tr class="planetDetail row insetContainer" ng-show="detail.shouldShowDetailInset(planet.planet.id)">
+                    <td colspan="3" class="planetDetail cell insetSection">
+                        <!-- shows battle details only when planet has a battle on it -->
+                        <div ng-show="planet.planet.battleId">
+                            <div class="bold">
+                                Battle {{planet.planet.battleId}} ({{details[planet.planet.id].battle.type}})
+                            </div>
+                            <div class="indent">
+                                <div class="bold inline">Attacker:</div>
+                                <div class="inline"><a href="#"  ng-click="detail.onDetailRowClick(planet)">{{details[planet.planet.id].battle.attacker.name}}</a></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

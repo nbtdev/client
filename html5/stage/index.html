@@ -22,10 +22,10 @@
 
         <!-- BEGIN NBT style and script links -->
         <meta charset="UTF-8">
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>-->
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/threejs/r73/three.js"></script>-->
-        <script src="/js/angular.min.js"></script>
-        <script src="/js/three.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/threejs/r73/three.js"></script>
+        <!--<script src="/js/angular.min.js"></script>-->
+        <!--<script src="/js/three.js"></script>-->
 
         <script src='https://www.google.com/recaptcha/api.js' async defer></script>
 
@@ -33,10 +33,20 @@
         <script src="/js/gl-matrix/mat4.js"></script>
         <script src="/js/gl-matrix/vec3.js"></script>
         <script src="/js/nbt/util/quadtree.js"></script>
+        <script src="/js/nbt/app.js"></script>
+        <script src="/js/nbt/util/headers.js"></script>
         <script src="/js/nbt/components/profile/profile.js"></script>
         <script src="/js/nbt/components/starmap/starmap.js"></script>
         <script src="/js/nbt/components/starmap/detail.js"></script>
-        <script src="/js/nbt/app.js"></script>
+        <script src="/js/nbt/model/battle.js"></script>
+        <script src="/js/nbt/model/faction.js"></script>
+        <script src="/js/nbt/model/league.js"></script>
+        <script src="/js/nbt/model/planet.js"></script>
+        <script src="/js/nbt/model/user.js"></script>
+        <script src="/js/nbt/service/battle.js"></script>
+        <script src="/js/nbt/service/identity.js"></script>
+        <script src="/js/nbt/service/league.js"></script>
+        <script src="/js/nbt/service/planet.js"></script>
         <link rel="stylesheet" href="/css/nbt.css">
 
         <!-- END NBT style and script links -->
@@ -165,6 +175,16 @@
                     <li class="active">
                         <a class="sa-side-home" href="index.html">
                             <span class="menu-item">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="sa-side-settings" href="#">
+                            <span class="menu-item">Automation Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="sa-side-users" href="#">
+                            <span class="menu-item">Manage Users</span>
                         </a>
                     </li>
                     <li>

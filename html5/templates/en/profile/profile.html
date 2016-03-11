@@ -9,10 +9,10 @@
             <li><a href="#">Settings</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
             <li><a href="#" ng-click="profile.onSignOut()">Sign Out</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
         </ul>
-        <h4 class="m-0">{{displayName}}</h4>
+        <h4 class="m-0">{{callsign}}</h4>
         {{twitter}}
         <select ng-model="selectedLeague" ng-change="profile.onLeagueChanged()">
-            <option ng-repeat="league in leagues" value="{{league._links.self.href}}">{{league.name}}</option>
+            <option ng-repeat="league in leagues" value="{{league.id()}}">{{league.name()}}</option>
         </select>
     </div>
     <div ng-hide="isLoggedIn">

@@ -25,22 +25,21 @@
 
     mod.directive('starmapDetail', function($templateRequest, $compile) {
 
-        this.controller = function($scope, $attrs, $http, $sce, $rootScope) {
+        this.controller = function($scope, $attrs, $sce, $rootScope, nbtIdentity, nbtPlanet, nbtBattle) {
             var self = this;
             var token = null;
+            var mShowingDetails = [];
 
             $scope.planet = null;
 
-            this.updatePlanetBattleDetail = function(data) {
-                var battleData = data.data;
+            this.updatePlanetBattleDetail = function(battleData) {
                 $scope.battleId = battleData.id;
                 $scope.battleAttacker = battleData.primaryAttacker;
                 $scope.battleType = battleData.type;
                 $scope.battleLaunched = battleData.attackDate;
             }
 
-            this.updatePlanet = function(data) {
-                var p = data.data;
+            this.updatePlanet = function(p) {
                 $scope.name = p.name;
                 $scope.owner = p.ownerName;
                 $scope.chargeStation = p.chargeStation;
@@ -75,6 +74,7 @@
             this.setPlanet = function(aPlanet, aPlanets, aToken) {
                 $scope.planet = aPlanet;
                 $scope.planets = aPlanets;
+                $scope.details = {};
                 $scope.name = null;
                 $scope.owner = null;
                 $scope.factory = false;
@@ -95,11 +95,7 @@
                     self.clear();
                     $scope.$apply();
                 } else {
-                    $http({
-                        url: aPlanet._links.self.href,
-                        method: 'GET',
-                        headers: {'X-NBT-Token': aToken === null ? '' : aToken}
-                    }).then(self.updatePlanet);
+                    nbtPlanet.fetchPlanetDetail(aPlanet, nbtIdentity.get().token, self.updatePlanet);
                 }
 
                 // go through aPlanets and list the nearest for each faction
@@ -137,6 +133,47 @@
                 $scope.factory = false;
                 $scope.chargeStation = false;
                 $scope.capital = false;
+            };
+
+            this.onDetailRowClick = function(planet) {
+                // add or remove this planet from the "show details" list
+                var idx = mShowingDetails.indexOf(planet.planet.id);
+                if (idx >= 0) {
+                    // remove it from the list
+                    mShowingDetails.splice(idx, 1);
+                } else {
+                    mShowingDetails.push(planet.planet.id);
+
+                    var details = {};
+                    $scope.details[planet.planet.id] = details;
+
+                    // fetch details for this planet
+                    if (planet.planet.battleId) {
+                        // fetch battle data
+                        nbtBattle.fetchBattleForPlanet(planet.planet, nbtIdentity.get().token, function(resp) {
+                            // stick the battle data into the $scope.planetDetails hash for this planet
+                            details.battle = {
+                                attacker: resp.getAttacker(),
+                                type: resp.getType(),
+                                status: resp.getStatus(),
+                                ref: resp.getRef()
+                            };
+                        });
+                    }
+                }
+            };
+
+            this.shouldShowDetailInset = function(planetId) {
+                var idx = mShowingDetails.indexOf(planetId);
+                return idx >= 0;
+            };
+
+            this.canExpand = function(planet) {
+                if (planet) {
+                    if (planet.planet.battleId) return true;
+                }
+
+                return false;
             };
 
             this.canJump = function(planet) {

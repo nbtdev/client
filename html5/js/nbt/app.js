@@ -25,26 +25,19 @@ function NBT() {
 
     // root API url
     var API_URL = 'http://api.home.lan';
+    //var API_URL = 'http://localhost:8080';
     //var API_URL = 'http://api-dev.netbattletech.com';
 
     var mRootLinks = null;
-    var mToken = null;
-    var mLeagueUrl = null;
-    var mInitializing = false;
-
-    // controller references
-    var profileController = null;
-
-    this.rootLinks = function() {
-        return self.mRootLinks;
-    }
-
-    this.addRootLink = function(aName, aLink) {
-        self.mRootLinks[aName] = aLink;
-    }
 
     // allow external code to do something after bootstrap
     this.onbootstrap = null;
+
+    app.service('nbtRoot', [function() {
+        this.links = function() {
+            return self.mRootLinks;
+        };
+    }]);
 
     // thanks for this bootstrap code goes out to https://blog.mariusschulz.com/2014/10/22/asynchronously-bootstrapping-angularjs-applications-with-server-side-data
     this.init = function() {
@@ -74,65 +67,8 @@ function NBT() {
                 self.mInitializing = false;
 
                 if (self.onbootstrap) self.onbootstrap();
-
-                // HACKY!!!! don't do this...
-                //var starmap = document.getElementById('starmap');
-                //var starmapDetails = document.getElementById('map-details');
-                //starmap.setPlanetChangedListener(starmapDetails.onplanetchanged);
             });
         }
-    };
-
-    function reloadStarmap(aUrl, aToken) {
-        // HACKY!!!! don't do this...
-        var starmap = document.getElementById('starmap');
-
-        starmap.reload(aUrl, aToken);
-    }
-
-    function reloadComponents() {
-        // 1. reload starmap
-
-        var leagueLinks = null;
-
-        // get a handle to the Angular $http object
-        var initInjector = angular.injector(['ng']);
-        var $http = initInjector.get('$http');
-
-        // call to the API to get the links for this league
-        if (self.mLeagueUrl && self.mLeagueUrl !== null) {
-            return $http.get(self.mLeagueUrl).then(
-                function (response) {
-                    leagueLinks = response.data._links;
-
-                    // reload the starmap
-                    reloadStarmap(leagueLinks.planets.href, self.mToken);
-                },
-                function (err) {
-                    console.log(err.data);
-                }
-            );
-        }
-    }
-
-    this.onLoginChanged = function(aToken) {
-        if (self.mToken === aToken)
-            return;
-
-        self.mToken = aToken;
-
-        if (self.mInitializing === false)
-            reloadComponents();
-    }
-
-    this.onLeagueChanged = function(aNewLeagueUrl) {
-        if (self.mLeagueUrl === aNewLeagueUrl)
-            return;
-
-        self.mLeagueUrl = aNewLeagueUrl;
-
-        if (self.mInitializing === false)
-            reloadComponents();
     };
 }
 
