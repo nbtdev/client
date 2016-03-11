@@ -471,7 +471,7 @@
                 if (league) {
                     nbtPlanet.load(
                         nbtLeague.current(),
-                        nbtIdentity.get()
+                        nbtIdentity.get().token
                     );
                 } else {
                     setTimeout(self.reload, 1000);

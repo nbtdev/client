@@ -20,42 +20,13 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var _BattleService = (function() {
-    var self = null;
-    var http = null;
-    var rootScope = null;
+var _User = (function() {
+    var mLogin = null;
+    var mCallsign = null;
 
-    function BattleService(aHttp, aRootScope) {
-        self = this;
-        http = aHttp;
-        rootScope = aRootScope;
+    function User() {
+
     }
 
-    // load the detail for a battle on a particular planet
-    BattleService.prototype.fetchBattleForPlanet = function (aPlanet, aToken, aCallback) {
-        if (aPlanet._links.battle) {
-            var hdr = new Headers(Header.TOKEN, aToken);
-
-            http({
-                method: 'GET', // TODO: GET FROM LINKS!
-                url: aPlanet._links.battle.href,
-                headers: hdr.get()
-            }).then(
-                function (aResp) {
-                    if (aCallback)
-                    aCallback(new _Battle(aResp.data));
-                }
-            );
-        }
-    };
-
-    return BattleService;
-})();
-
-(function() {
-    var mod = angular.module('nbt.app');
-
-    mod.service('nbtBattle', ['$http', '$rootScope', function($http, $rootScope) {
-        return new _BattleService($http, $rootScope);
-    }]);
+    return User;
 })();

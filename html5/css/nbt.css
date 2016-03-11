@@ -81,6 +81,10 @@ input[type=password] {
     color: rgb(176, 255, 123);
 }
 
+.planetDetailActiveBattle {
+    background-color: rgb(138, 23, 23) !important;
+}
+
 @keyframes pwdIncorrect {
     0%  {color: red}
     50% {color: white}
@@ -147,4 +151,59 @@ input[type=password] {
 
 .g-recaptcha {
     display: inline-block;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.planetDetail.listing {
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    max-height: 760px;
+}
+
+.planetDetail.listing table {
+    width: 100%;
+}
+
+.planetDetail.headerRow {
+    display: table-row;
+    font-weight: bold;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.planetDetail.row {
+    display: table-row;
+    width: 100%;
+}
+
+.planetDetail.cell {
+    display: table-cell;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.planetDetail.insetContainer {
+    background-color: gray;
+    color: white;
+    width: 100%;;
+}
+
+.planetDetail.insetSection {
+    padding-left: 5px;
+    width: 100%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.indent {
+    margin-left: 25px;
 }

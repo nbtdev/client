@@ -20,42 +20,60 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var _BattleService = (function() {
+var _FactionService = (function() {
     var self = null;
     var http = null;
     var rootScope = null;
+    var mFactions = {};
 
-    function BattleService(aHttp, aRootScope) {
+    function FactionService(aHttp, aRootScope) {
         self = this;
         http = aHttp;
         rootScope = aRootScope;
     }
 
-    // load the detail for a battle on a particular planet
-    BattleService.prototype.fetchBattleForPlanet = function (aPlanet, aToken, aCallback) {
-        if (aPlanet._links.battle) {
+    FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken) {
+        if (aLeague._links.factions) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aPlanet._links.battle.href,
+                url: aLeague._links.factions.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aCallback)
-                    aCallback(new _Battle(aResp.data));
+                    // populate faction database with response
+                    var factions = {};
+                    var resp = aResp.data;
+
+                    for (var i=0; i<resp._embedded.length; ++i) {
+                        var f = resp._embedded[i];
+                        factions[f.id] = new Faction(f);
+                    }
+
+                    mFactions[aLeague.id()] = factions;
                 }
             );
         }
     };
 
-    return BattleService;
+    FactionService.prototype.findFactionInLeague = function(aLeague) {
+        if (aLeague) {
+            if (mFactions[aLeague.id()]) {
+                return mFactions[aLeague.id()];
+            }
+        }
+
+        return null;
+    };
+
+    return FactionService;
 })();
 
 (function() {
     var mod = angular.module('nbt.app');
 
-    mod.service('nbtBattle', ['$http', '$rootScope', function($http, $rootScope) {
-        return new _BattleService($http, $rootScope);
+    mod.service('nbtFaction', ['$http', '$rootScope', function($http, $rootScope) {
+        return new _FactionService($http, $rootScope);
     }]);
 })();
