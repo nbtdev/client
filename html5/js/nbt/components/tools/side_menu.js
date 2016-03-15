@@ -58,14 +58,8 @@
             mIdentity = nbtIdentity.get();
             update();
 
-            this.toggleSettings = function () {
-                var toolName = 'settings';
-                toggleDrawer(toolName);
-            };
-
-            this.toggleUserMgmt = function () {
-                var toolName = 'user-mgmt';
-                toggleDrawer(toolName);
+            this.toggle = function (aToolName) {
+                toggleDrawer(aToolName);
             };
 
             function toggleDrawer(requestingTool) {
