@@ -24,17 +24,29 @@ var _UserService = (function() {
     var self = null;
     var http = null;
     var rootScope = null;
+    var nbtRoot = null;
 
-    function UserService(aHttp, aRootScope) {
+    function UserService(aHttp, aRootScope, aNbtRoot) {
         self = this;
         http = aHttp;
         rootScope = aRootScope;
+        nbtRoot = aNbtRoot;
     }
 
     // load the detail for a battle on a particular planet
     UserService.prototype.fetchUsers = function (aFilter, aToken, aCallback) {
+        var hdr = new Headers(Header.TOKEN, aToken);
 
-    };
+        http({
+            method: 'GET', // TODO: GET FROM LINKS!
+            url: nbtRoot.links().self.href + '/system/users',
+            headers: hdr.get()
+        }).then(
+            function (aResp) {
+                if (aCallback)
+                    aCallback(aResp.data._embedded.users);
+            }
+        );    };
 
     return UserService;
 })();
@@ -42,7 +54,7 @@ var _UserService = (function() {
 (function() {
     var mod = angular.module('nbt.app');
 
-    mod.service('nbtUser', ['$http', '$rootScope', function($http, $rootScope) {
-        return new _UserService($http, $rootScope);
+    mod.service('nbtUser', ['$http', '$rootScope', 'nbtRoot', function($http, $rootScope, nbtRoot) {
+        return new _UserService($http, $rootScope, nbtRoot);
     }]);
 })();

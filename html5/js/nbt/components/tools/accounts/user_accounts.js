@@ -24,7 +24,9 @@
     var app = angular.module('nbt.app');
 
     // controller for user-account-management template
-    app.controller('ControllerUserAccounts', ['$scope', 'nbtUser', function($scope, nbtUser) {
-
+    app.controller('ControllerUserAccounts', ['$scope', 'nbtIdentity', 'nbtUser', function($scope, nbtIdentity, nbtUser) {
+        nbtUser.fetchUsers({}, nbtIdentity.get().token, function(aResp) {
+           $scope.users = aResp;
+        });
     }]);
 })();

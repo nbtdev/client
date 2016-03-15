@@ -1,3 +1,36 @@
 <div ng-controller="ControllerUserAccounts as accounts">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Login</th>
+            <th>Callsign</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+        <tbody ng-repeat="user in users">
+        <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.callsign}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.status}}</td>
+        </tr>
+
+        <!-- optional detail inset -->
+        <!--<tr class="planetDetail row insetContainer" ng-show="detail.shouldShowDetailInset(planet.planet.id)">-->
+            <!--<td colspan="3" class="planetDetail cell insetSection">-->
+                <!--<div ng-show="planet.planet.battleId">-->
+                    <!--<div class="bold">-->
+                        <!--Battle {{planet.planet.battleId}} ({{details[planet.planet.id].battle.type}})-->
+                    <!--</div>-->
+                    <!--<div class="indent">-->
+                        <!--<div class="bold inline">Attacker:</div>-->
+                        <!--<div class="inline"><a href="#"  ng-click="detail.onDetailRowClick(planet)">{{details[planet.planet.id].battle.attacker.name}}</a></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</td>-->
+        <!--</tr>-->
+        </tbody>
+    </table>
 
 </div>

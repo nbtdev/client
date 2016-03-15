@@ -25,7 +25,7 @@
 
     app.directive('sideMenu', function($templateRequest, $compile) {
 
-        this.controller = function($scope, nbtIdentity, nbtTools) {
+        this.controller = function($scope, nbtIdentity, nbtRoot, nbtTools) {
             var self = this;
             var mIdentity = null;
             var mDrawer = null;
@@ -68,6 +68,7 @@
                 if (mTool === requestingTool) {
                     $scope.drawerOpened = false;
                     mTool = null;
+                    clearTool();
                     return;
                 }
 
@@ -78,8 +79,25 @@
                 setupTool();
             }
 
-            function setupTool() {
+            // remove the tool elements from the DOM
+            function clearTool() {
+                angular.element(self.mDrawer).empty();
+            }
 
+            function setupTool() {
+                // first clear any accidental leftovers...
+                clearTool();
+
+                var toolObj = $scope.tools[mTool];
+                if (toolObj) {
+                    // construct the tool UI elements from the template referenced
+                    // in the tool definition
+                    $templateRequest('/templates/' + nbtRoot.locale() + '/' + toolObj.template).then(function (html) {
+                        var templ = angular.element(html);
+                        angular.element(self.mDrawer).append(templ);
+                        $compile(templ)($scope);
+                    });
+                }
             }
 
             this.setDrawer = function(drawer) {

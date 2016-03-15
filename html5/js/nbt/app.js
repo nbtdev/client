@@ -19,6 +19,23 @@
  TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+var UserRole = {
+    SITE_ADMIN: 0,
+    DEVELOPER: 1,
+    PRECENTOR: 2,
+    DEMI_PRECENTOR: 3,
+    TEAM_LEADER: 4,
+    TEAM_MEMBER: 5,
+    GUEST: 6,
+    ANONYMOUS: 7
+};
+
+// supported locales
+var Locale = {
+    EN: 'en'
+};
+
 function NBT() {
     var self = this;
     var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile', 'nbt.starmapDetail']);
@@ -34,8 +51,19 @@ function NBT() {
     this.onbootstrap = null;
 
     app.service('nbtRoot', [function() {
+        var mLocale = Locale.EN;
+
         this.links = function() {
             return self.mRootLinks;
+        };
+
+        this.setLocale = function(aLocale) {
+            // TODO: verify that it's a supported one
+            mLocale = aLocale;
+        };
+
+        this.locale = function() {
+            return mLocale;
         };
     }]);
 
@@ -71,18 +99,6 @@ function NBT() {
         }
     };
 }
-
-
-var UserRole = {
-    SITE_ADMIN: 0,
-    DEVELOPER: 1,
-    PRECENTOR: 2,
-    DEMI_PRECENTOR: 3,
-    TEAM_LEADER: 4,
-    TEAM_MEMBER: 5,
-    GUEST: 6,
-    ANONYMOUS: 7
-};
 
 var nbt = new NBT();
 nbt.init();
