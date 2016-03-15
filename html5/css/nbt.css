@@ -179,7 +179,9 @@ input[type=password] {
     width: 100%;
 }
 
-.planetDetail.headerRow {
+.planetDetail.headerRow {    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
     display: table-row;
     font-weight: bold;
     width: 100%;
@@ -214,4 +216,22 @@ input[type=password] {
 
 .indent {
     margin-left: 25px;
+}
+
+.nbt-left-drawer {
+    position: absolute;
+    height:100%;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 10010;
+    transition-property: width;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out;
+}
+
+.closed {
+    width: 0%;
+}
+
+.opened {
+    width: 200%;
 }

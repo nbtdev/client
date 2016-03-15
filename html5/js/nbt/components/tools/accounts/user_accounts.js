@@ -23,35 +23,8 @@
 (function() {
     var app = angular.module('nbt.app');
 
-    app.controller('SideMenuController', ['$scope', 'nbtIdentity', function($scope, nbtIdentity) {
-        var mIdentity = null;
+    // controller for user-account-management template
+    app.controller('ControllerUserAccounts', ['$scope', 'nbtUser', function($scope, nbtUser) {
 
-        // TODO: GET FROM i18N SERVICE
-        $scope.strings = {
-            SETTINGS: 'Site Control Panel',
-            USER_MANAGEMENT: 'Manage Users'
-        };
-
-        function update() {
-            $scope.isSiteAdmin = mIdentity ? mIdentity.isSiteAdmin() : false;
-            $scope.isLeagueAdmin = mIdentity ? mIdentity.isLeagueAdmin() : false;
-            $scope.isTeamAdmin = mIdentity ? mIdentity.isTeamAdmin() : false;
-            $scope.isLoggedIn = mIdentity ? mIdentity.token : false;
-
-            if ($scope.isSiteAdmin) $scope.strings.SETTINGS = 'Site Control Panel';
-            else if ($scope.isLeagueAdmin) $scope.strings.SETTINGS = 'League Control Panel';
-            else if ($scope.isTeamAdmin) $scope.strings.SETTINGS = 'Faction Control Panel';
-            else $scope.strings.SETTINGS = 'Preferences';
-        }
-
-        var cb = $scope.$on('nbtIdentityChanged', function(event, identity) {
-            mIdentity = identity;
-            update();
-        });
-        $scope.$on('destroy', cb);
-
-        mIdentity = nbtIdentity.get();
-        update();
     }]);
 })();
-

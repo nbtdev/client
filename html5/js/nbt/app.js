@@ -72,5 +72,17 @@ function NBT() {
     };
 }
 
+
+var UserRole = {
+    SITE_ADMIN: 0,
+    DEVELOPER: 1,
+    PRECENTOR: 2,
+    DEMI_PRECENTOR: 3,
+    TEAM_LEADER: 4,
+    TEAM_MEMBER: 5,
+    GUEST: 6,
+    ANONYMOUS: 7
+};
+
 var nbt = new NBT();
 nbt.init();
