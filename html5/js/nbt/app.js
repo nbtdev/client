@@ -35,59 +35,28 @@ var UserRole = {
 var Locale = {
     EN: 'en'
 };
+// root API url
+var API_URL = 'http://api.home.lan';
+//var API_URL = 'http://localhost:8080';
+//var API_URL = 'http://api-dev.netbattletech.com';
 
 function NBT() {
     var self = this;
+    //var app = angular.module('nbt.app', []);
     var app = angular.module('nbt.app', ['nbt.starmap', 'nbt.profile', 'nbt.starmapDetail']);
-
-    // root API url
-    var API_URL = 'http://api.home.lan';
-    //var API_URL = 'http://localhost:8080';
-    //var API_URL = 'http://api-dev.netbattletech.com';
-
-    var mRootLinks = null;
 
     // allow external code to do something after bootstrap
     this.onbootstrap = null;
 
-    app.service('nbtRoot', [function() {
-        var mLocale = Locale.EN;
-
-        this.links = function() {
-            return self.mRootLinks;
-        };
-
-        this.setLocale = function(aLocale) {
-            // TODO: verify that it's a supported one
-            mLocale = aLocale;
-        };
-
-        this.locale = function() {
-            return mLocale;
-        };
-    }]);
+    this.app = function() {
+        return app;
+    };
 
     // thanks for this bootstrap code goes out to https://blog.mariusschulz.com/2014/10/22/asynchronously-bootstrapping-angularjs-applications-with-server-side-data
-    this.init = function() {
+    this.init = function(nbtRoot) {
         self.mInitializing = true;
 
-        fetchRootLinks().then(doBootstrap);
-
-        function fetchRootLinks() {
-            // get a handle to the Angular $http object
-            var initInjector = angular.injector(['ng']);
-            var $http = initInjector.get('$http');
-
-            // call to the API to get the root links
-            return $http.get(API_URL).then(
-                function (response) {
-                    self.mRootLinks = response.data._links;
-                },
-                function (err) {
-                    console.log(err.data);
-                }
-            );
-        }
+        nbtRoot.init(doBootstrap);
 
         function doBootstrap() {
             angular.element(document).ready(function () {
@@ -100,5 +69,162 @@ function NBT() {
     };
 }
 
-var nbt = new NBT();
-nbt.init();
+var _NbtRootService = (function() {
+    var mLocale = Locale.EN;
+
+    var mRootLinks = null;
+
+    var mSystemLinks = null;
+    var mFactionClass = null;
+    var mFactionStatus = null;
+    var mUserStatus = null;
+    var mStar = null;
+    var mTerrainClass = null;
+
+    var http = null;
+
+    function NbtRoot(aHttp) {
+        http = aHttp;
+    }
+
+    NbtRoot.prototype = {
+        links: function () {
+            return mRootLinks;
+        },
+
+        systemLinks: function () {
+            return mSystemLinks;
+        },
+
+        factionClass: function () {
+            return mFactionClass;
+        },
+
+        factionStatus: function () {
+            return mFactionStatus;
+        },
+
+        userStatus: function () {
+            return mUserStatus;
+        },
+
+        star: function () {
+            return mStar;
+        },
+
+        terrainClass: function () {
+            return mTerrainClass;
+        },
+
+        setLocale: function (aLocale) {
+            // TODO: verify that it's a supported one
+            mLocale = aLocale;
+        },
+
+        locale: function () {
+            return mLocale;
+        },
+
+        init: function (cb) {
+            function ifInitalizedThenCb() {
+                if (mRootLinks &&
+                    mSystemLinks &&
+                    mFactionClass &&
+                    mFactionStatus &&
+                    mUserStatus &&
+                    mStar &&
+                    mTerrainClass
+                ) {
+                    cb();
+                }
+            }
+
+            // call to the API to get the root links
+            http.get(API_URL).then(
+                function (response) {
+                    mRootLinks = response.data._links;
+
+                    // call to the API to get the system links
+                    http.get(mRootLinks.system.href).then(
+                        function (response) {
+                            mSystemLinks = response.data._links;
+
+                            // collect the rest of the info
+                            http.get(mSystemLinks.factionStatus.href).then(
+                                function (response) {
+                                    mFactionStatus = response.data._embedded.factionStatuses;
+                                    ifInitalizedThenCb();
+                                },
+                                function (err) {
+                                    console.log(err.data);
+                                }
+                            );
+
+                            http.get(mSystemLinks.factionClass.href).then(
+                                function (response) {
+                                    mFactionClass = response.data._embedded.factionClasses;
+                                    ifInitalizedThenCb();
+                                },
+                                function (err) {
+                                    console.log(err.data);
+                                }
+                            );
+
+                            http.get(mSystemLinks.userStatus.href).then(
+                                function (response) {
+                                    mUserStatus = response.data._embedded.userStatuses;
+                                    ifInitalizedThenCb();
+                                },
+                                function (err) {
+                                    console.log(err.data);
+                                }
+                            );
+
+                            http.get(mSystemLinks.stars.href).then(
+                                function (response) {
+                                    mStar = response.data._embedded.stars;
+                                    ifInitalizedThenCb();
+                                },
+                                function (err) {
+                                    console.log(err.data);
+                                }
+                            );
+
+                            http.get(mSystemLinks.terrainClass.href).then(
+                                function (response) {
+                                    mTerrainClass = response.data._embedded.terrainClasses;
+                                    ifInitalizedThenCb();
+                                },
+                                function (err) {
+                                    console.log(err.data);
+                                }
+                            );
+                        },
+                        function (err) {
+                            console.log(err.data);
+                        }
+                    );
+                },
+                function (err) {
+                    console.log(err.data);
+                }
+            );
+        }
+    };
+
+    return NbtRoot;
+})();
+
+(function() {
+    var nbt = new NBT();
+    var app = angular.module('nbt.app');
+
+    app.service('nbtRoot', ['$http', function($http) {
+        return new _NbtRootService($http);
+    }]);
+
+    var ij = angular.injector(['ng', 'nbt.app']);
+    var nbtRoot = ij.get('nbtRoot');
+
+    nbt.init(nbtRoot);
+})();
