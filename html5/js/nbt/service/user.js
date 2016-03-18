@@ -25,6 +25,7 @@ var _UserService = (function() {
     var http = null;
     var rootScope = null;
     var nbtRoot = null;
+    var mUsersCache = [];
 
     function UserService(aHttp, aRootScope, aNbtRoot) {
         self = this;
@@ -39,14 +40,98 @@ var _UserService = (function() {
 
         http({
             method: 'GET', // TODO: GET FROM LINKS!
-            url: nbtRoot.links().self.href + '/system/users',
+            url: nbtRoot.systemLinks().users.href,
             headers: hdr.get()
         }).then(
             function (aResp) {
-                if (aCallback)
-                    aCallback(aResp.data._embedded.users);
+                mUsersCache = aResp.data._embedded.users;
+                if (aCallback) {
+                    var users = [];
+
+                    var data = mUsersCache;
+                    for (var i=0; i<data.length; ++i) {
+                        var u = data[i];
+                        users.push({
+                            id: u.id,
+                            login: u.username,
+                            status: u.status
+                        });
+                    }
+
+                    aCallback(users);
+                }
             }
-        );    };
+        );
+    };
+
+    UserService.prototype.delete = function(aUser, aToken, aSuccessCb, aFailCb) {
+        if (!aUser) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        // find the user record
+        var user = null;
+        for (var i=0; i<mUsersCache.length; ++i) {
+            if (mUsersCache[i].id === aUser.id) {
+                user = mUsersCache[i];
+                break;
+            }
+        }
+
+        if (user) {
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: user._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    this.fetchUsers(null, aToken, aSuccessCb);
+                },
+                function(aResp) {
+                    aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                }
+            );
+        } else {
+            if (aFailCb) {
+                aFailCb("User account not found");
+            }
+        }
+    };
+
+    UserService.prototype.update = function(aUser, aToken, aSuccessCb, aFailCb) {
+        if (!aUser) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        // find the user record
+        var user = null;
+        for (var i=0; i<mUsersCache.length; ++i) {
+            if (mUsersCache[i].id === aUser.id) {
+                user = mUsersCache[i];
+                break;
+            }
+        }
+
+        if (user) {
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: user._links.self.href,
+                headers: hdr.get(),
+                data: aUser
+            }).then(
+                function (aResp) {
+                    aSuccessCb();
+                },
+                function(aResp) {
+                    aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                }
+            );
+        } else {
+            if (aFailCb) {
+                aFailCb("User account not found");
+            }
+        }
+    };
 
     return UserService;
 })();

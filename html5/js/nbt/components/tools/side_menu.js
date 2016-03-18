@@ -50,6 +50,7 @@
             }
 
             var cb = $scope.$on('nbtIdentityChanged', function (event, identity) {
+                $scope.drawerOpened = false;
                 mIdentity = identity;
                 update();
             });
@@ -81,7 +82,8 @@
 
             // remove the tool elements from the DOM
             function clearTool() {
-                angular.element(self.mDrawer).empty();
+                angular.element(self.mDrawer.children[1]).empty();
+                $scope.currentToolName = null;
             }
 
             function setupTool() {
@@ -94,9 +96,11 @@
                     // in the tool definition
                     $templateRequest('/templates/' + nbtRoot.locale() + '/' + toolObj.template).then(function (html) {
                         var templ = angular.element(html);
-                        angular.element(self.mDrawer).append(templ);
+                        angular.element(self.mDrawer.children[1]).append(templ);
                         $compile(templ)($scope);
                     });
+
+                    $scope.currentToolName = toolObj.tooltip;
                 }
             }
 

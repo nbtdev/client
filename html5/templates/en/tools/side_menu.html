@@ -9,6 +9,9 @@
 
     <!-- slide-out drawer -->
     <div class="nbt-left-drawer" ng-class="{'opened': drawerOpened, 'closed': !drawerOpened}">
+        <div class="tool-panel-label" ng-class="{'padded': drawerOpened}">{{currentToolName}}</div>
 
+        <!-- tool UI container -->
+        <div class="tool-panel-contents" ng-class="{'padded': drawerOpened}"></div>
     </div>
 </div>
