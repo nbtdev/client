@@ -246,6 +246,7 @@ input[type=password] {
 
 .tool-panel-contents {
     width: 100%;
+    height: 100%;
 }
 
 .padded {
@@ -256,4 +257,16 @@ input[type=password] {
     padding-left: 2px;
     padding-right: 2px;
     cursor: pointer;
+}
+
+.error-message {
+    color: red;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.waiting {
+    cursor: progress;
 }

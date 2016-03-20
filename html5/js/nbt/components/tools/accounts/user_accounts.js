@@ -25,13 +25,9 @@
 
     // controller for user-account-management template
     app.controller('ControllerUserAccounts', ['$scope', 'nbtIdentity', 'nbtUser', 'nbtRoot', function($scope, nbtIdentity, nbtUser, nbtRoot) {
+        var self = this;
         var mEditingUsers = [];
-
-        nbtUser.fetchUsers({}, nbtIdentity.get().token, function(aResp) {
-           $scope.users = aResp;
-        });
-
-        $scope.userStatuses = nbtRoot.userStatus();
+        var mNewUser = null;
 
         function save(aUser) {
             aUser._orig = {
@@ -48,6 +44,47 @@
                 aUser.status = aUser._orig.status;
                 aUser._orig = null;
             }
+        }
+
+        function updateEditingUsers(aNewUserList) {
+            // update the editing-users list (the object instances
+            // will have changed)
+            var newList = [];
+            for (var i=0; i<aNewUserList.length; ++i) {
+                if (mEditingUsers.findIndex(function(elem, idx, arr) {
+                        return aNewUserList[i].id === elem.id;
+                    }) >= 0)
+                {
+                    newList.push(aNewUserList[i]);
+                }
+            }
+
+            mEditingUsers = newList;
+        }
+
+        this.reload = function() {
+            $scope.busy = true;
+            nbtUser.fetchUsers({}, nbtIdentity.get().token,
+                function(aResp) {
+                    $scope.users = aResp;
+                },
+                null,
+                function() {
+                    $scope.busy = false;
+                }
+            );
+        };
+
+        this.showAddNewUser = function() {
+            var token = nbtIdentity.get();
+
+            return (token.isSiteAdmin());
+        };
+
+        this.showNewUserForm = function() {
+            var token = nbtIdentity.get();
+
+            return (token.isSiteAdmin() && mNewUser);
         }
 
         this.showEditIcon = function(aUser) {
@@ -79,29 +116,69 @@
             return idx >= 0;
         };
 
+        this.beginAdd = function() {
+            mNewUser = {};
+        };
+
+        this.applyAdd = function() {
+            mNewUser = $scope.newUser;
+            $scope.busy = true;
+
+            var token = nbtIdentity.get();
+
+            var path = window.location.pathname.replace('index.html', '');
+
+            mNewUser.activationUrl = window.location.origin + path + 'activate.html';
+            mNewUser.privacyUrl = window.location.origin + path + "privacy.html";
+
+            nbtUser.add(mNewUser, token.token,
+                function(aData) {
+                    $scope.users = aData;
+                    updateEditingUsers(aData);
+                    self.cancelAdd();
+                },
+                function(aErr) {
+                    $scope.errorMessage = aErr;
+                },
+                function() {
+                    $scope.busy = false;
+                }
+            );
+        };
+
+        this.cancelAdd = function() {
+            mNewUser = null;
+            $scope.newUser = {};
+            $scope.errorMessage = null;
+        };
+
         this.beginEdit = function(aUser) {
             save(aUser);
             mEditingUsers.push(aUser);
         };
 
-        this.cancelEdit = function(aUser) {
-            var idx = editingUsers.indexOf(aUser);
+        this.closeEdit = function(aUser) {
+            var idx = mEditingUsers.indexOf(aUser);
 
             if (idx >= 0) {
-                restore(aUser);
                 mEditingUsers.splice(idx, 1);
             }
+        };
+
+        this.cancelEdit = function(aUser) {
+            self.closeEdit(aUser);
+            restore(aUser);
         };
 
         this.applyEdit = function(aUser) {
             if (aUser) {
                 var token = nbtIdentity.get();
 
-                nbtUser.update(aUser, token.value,
+                nbtUser.update(aUser, token.token,
                     // success callback
                     function() {
                         // close the edit mode
-                        this.cancelEdit(aUser);
+                        self.closeEdit(aUser);
                     },
                     // failure callback
                     function(err) {
@@ -116,34 +193,32 @@
             if (aUser) {
                 if (confirm("Are you sure you wish to delete user '" + aUser.login + "'?")) {
                     var token = nbtIdentity.get();
+                    $scope.busy = true;
 
-                    nbtUser.delete(aUser, token.value,
+                    nbtUser.delete(aUser, token.token,
                         // success callback
                         function(userList) {
                             // refresh the $scope users collection
                             $scope.users = userList;
 
-                            // update the editing-users list (the object instances
-                            // will have changed)
-                            var newList = [];
-                            for (var i=0; i<userList.length; ++i) {
-                                if (mEditingUsers.findIndex(function(elem, idx, arr) {
-                                        return userList[i].id === elem.id;
-                                    }))
-                                {
-                                    newList.push(userList[i]);
-                                }
-                            }
-
-                            mEditingUsers = newList;
+                            updateEditingUsers(userList);
                         },
                         // failure callback
                         function(err) {
                             alert("Failed to delete user '" + aUser.login + "': " + err);
+                        },
+                        function() {
+                            $scope.busy = false;
                         }
                     );
                 }
             }
-        }
+        };
+
+        $scope.userStatuses = nbtRoot.userStatus();
+        $scope.newUser = {};
+        $scope.errorMessage = null;
+
+        this.reload();
     }]);
 })();

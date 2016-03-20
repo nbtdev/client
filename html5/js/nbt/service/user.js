@@ -35,7 +35,7 @@ var _UserService = (function() {
     }
 
     // load the detail for a battle on a particular planet
-    UserService.prototype.fetchUsers = function (aFilter, aToken, aCallback) {
+    UserService.prototype.fetchUsers = function (aFilter, aToken, aCallback, aFailCb, aFinallyCb) {
         var hdr = new Headers(Header.TOKEN, aToken);
 
         http({
@@ -60,11 +60,42 @@ var _UserService = (function() {
 
                     aCallback(users);
                 }
+            },
+            function(aResp) {
+                //aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
             }
-        );
+        ).finally(aFinallyCb);
     };
 
-    UserService.prototype.delete = function(aUser, aToken, aSuccessCb, aFailCb) {
+    UserService.prototype.add = function(aUser, aToken, aSuccessCb, aFailCb, aFinallyCb) {
+        if (!aUser) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'POST', // TODO: GET FROM LINKS!
+            url: nbtRoot.systemLinks().users.href,
+            headers: hdr.get(),
+            data: {
+                username: aUser.login,
+                callsign: aUser.callsign,
+                email: aUser.email,
+                activationUrl: aUser.activationUrl,
+                privacyUrl: aUser.privacyUrl
+            }
+        }).then(
+            function (aResp) {
+                self.fetchUsers(null, aToken, aSuccessCb);
+            },
+            function(aResp) {
+                //aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
+            }
+        ).finally(aFinallyCb);
+    };
+
+    UserService.prototype.delete = function(aUser, aToken, aSuccessCb, aFailCb, aFinallyCb) {
         if (!aUser) return;
 
         var hdr = new Headers(Header.TOKEN, aToken);
@@ -85,12 +116,13 @@ var _UserService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    this.fetchUsers(null, aToken, aSuccessCb);
+                    self.fetchUsers(null, aToken, aSuccessCb);
                 },
                 function(aResp) {
-                    aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                    //aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                    aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
                 }
-            );
+            ).finally(aFinallyCb);
         } else {
             if (aFailCb) {
                 aFailCb("User account not found");
@@ -98,7 +130,7 @@ var _UserService = (function() {
         }
     };
 
-    UserService.prototype.update = function(aUser, aToken, aSuccessCb, aFailCb) {
+    UserService.prototype.update = function(aUser, aToken, aSuccessCb, aFailCb, aFinallyCb) {
         if (!aUser) return;
 
         var hdr = new Headers(Header.TOKEN, aToken);
@@ -114,18 +146,22 @@ var _UserService = (function() {
 
         if (user) {
             http({
-                method: 'DELETE', // TODO: GET FROM LINKS!
+                method: 'PUT', // TODO: GET FROM LINKS!
                 url: user._links.self.href,
                 headers: hdr.get(),
-                data: aUser
+                data: {
+                    username: aUser.login,
+                    userStatus: aUser.status
+                }
             }).then(
                 function (aResp) {
                     aSuccessCb();
                 },
                 function(aResp) {
-                    aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                    //aFailCb(aResp.data.error + " (code: " + aResp.data.status + ")");
+                    aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
                 }
-            );
+            ).finally(aFinallyCb);
         } else {
             if (aFailCb) {
                 aFailCb("User account not found");
