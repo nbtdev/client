@@ -49,6 +49,24 @@ var _BattleService = (function() {
         }
     };
 
+    // load the list of sector assaults for a faction
+    BattleService.prototype.fetchSectorAssaultsForFaction = function (aFaction, aToken, aCallback) {
+        if (aFaction._links.battle) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.battles.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(new _Battle(aResp.data));
+                }
+            );
+        }
+    };
+
     return BattleService;
 })();
 

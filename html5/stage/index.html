@@ -33,6 +33,7 @@
         <script src="/js/gl-matrix/mat4.js"></script>
         <script src="/js/gl-matrix/vec3.js"></script>
         <script src="/js/nbt/util/quadtree.js"></script>
+        <script src="/js/nbt/components/action_items/action_items.js"></script>
         <script src="/js/nbt/components/profile/profile.js"></script>
         <script src="/js/nbt/components/starmap/starmap.js"></script>
         <script src="/js/nbt/components/starmap/detail.js"></script>
@@ -51,6 +52,8 @@
         <script src="/js/nbt/model/faction.js"></script>
         <script src="/js/nbt/model/league.js"></script>
         <script src="/js/nbt/model/planet.js"></script>
+        <script src="/js/nbt/model/sector.js"></script>
+        <script src="/js/nbt/model/sector_assault.js"></script>
         <script src="/js/nbt/model/user.js"></script>
         <script src="/js/nbt/service/battle.js"></script>
         <script src="/js/nbt/service/identity.js"></script>
@@ -117,68 +120,79 @@
                     <div class="s-widget m-b-25">
                         <div id="sidebar-calendar"></div>
                     </div>
-                    
+
+                    <!-- Pending Battles/Action-Items -->
+                    <div class="s-widget m-b-25">
+                        <h2 class="tile-title">
+                            Action Items
+                        </h2>
+
+                        <div class="s-widget-body">
+                            <nbt-action-items></nbt-action-items>
+                        </div>
+                    </div>
+
                     <!-- Feeds -->
                     <div class="s-widget m-b-25">
                         <h2 class="tile-title">
-                           News Feeds
+                            News Feeds
                         </h2>
-                        
+
                         <div class="s-widget-body">
                             <div id="news-feed"></div>
                         </div>
                     </div>
-                    
+
                     <!-- Projects -->
-                    <div class="s-widget m-b-25">
-                        <h2 class="tile-title">
-                            Projects on going
-                        </h2>
-                        
-                        <div class="s-widget-body">
-                            <div class="side-border">
-                                <small>Joomla Website</small>
-                                <div class="progress progress-small">
-                                     <a href="#" data-toggle="tooltip" title="" class="progress-bar tooltips progress-bar-danger" style="width: 60%;" data-original-title="60%">
-                                          <span class="sr-only">60% Complete</span>
-                                     </a>
-                                </div>
-                            </div>
-                            <div class="side-border">
-                                <small>Opencart E-Commerce Website</small>
-                                <div class="progress progress-small">
-                                     <a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-info" style="width: 43%;" data-original-title="43%">
-                                          <span class="sr-only">43% Complete</span>
-                                     </a>
-                                </div>
-                            </div>
-                            <div class="side-border">
-                                <small>Social Media API</small>
-                                <div class="progress progress-small">
-                                     <a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-warning" style="width: 81%;" data-original-title="81%">
-                                          <span class="sr-only">81% Complete</span>
-                                     </a>
-                                </div>
-                            </div>
-                            <div class="side-border">
-                                <small>VB.Net Software Package</small>
-                                <div class="progress progress-small">
-                                     <a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-success" style="width: 10%;" data-original-title="10%">
-                                          <span class="sr-only">10% Complete</span>
-                                     </a>
-                                </div>
-                            </div>
-                            <div class="side-border">
-                                <small>Chrome Extension</small>
-                                <div class="progress progress-small">
-                                     <a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-success" style="width: 95%;" data-original-title="95%">
-                                          <span class="sr-only">95% Complete</span>
-                                     </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <!--<div class="s-widget m-b-25">-->
+                        <!--<h2 class="tile-title">-->
+                            <!--Projects on going-->
+                        <!--</h2>-->
+                        <!---->
+                        <!--<div class="s-widget-body">-->
+                            <!--<div class="side-border">-->
+                                <!--<small>Joomla Website</small>-->
+                                <!--<div class="progress progress-small">-->
+                                     <!--<a href="#" data-toggle="tooltip" title="" class="progress-bar tooltips progress-bar-danger" style="width: 60%;" data-original-title="60%">-->
+                                          <!--<span class="sr-only">60% Complete</span>-->
+                                     <!--</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="side-border">-->
+                                <!--<small>Opencart E-Commerce Website</small>-->
+                                <!--<div class="progress progress-small">-->
+                                     <!--<a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-info" style="width: 43%;" data-original-title="43%">-->
+                                          <!--<span class="sr-only">43% Complete</span>-->
+                                     <!--</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="side-border">-->
+                                <!--<small>Social Media API</small>-->
+                                <!--<div class="progress progress-small">-->
+                                     <!--<a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-warning" style="width: 81%;" data-original-title="81%">-->
+                                          <!--<span class="sr-only">81% Complete</span>-->
+                                     <!--</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="side-border">-->
+                                <!--<small>VB.Net Software Package</small>-->
+                                <!--<div class="progress progress-small">-->
+                                     <!--<a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-success" style="width: 10%;" data-original-title="10%">-->
+                                          <!--<span class="sr-only">10% Complete</span>-->
+                                     <!--</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="side-border">-->
+                                <!--<small>Chrome Extension</small>-->
+                                <!--<div class="progress progress-small">-->
+                                     <!--<a href="#" data-toggle="tooltip" title="" class="tooltips progress-bar progress-bar-success" style="width: 95%;" data-original-title="95%">-->
+                                          <!--<span class="sr-only">95% Complete</span>-->
+                                     <!--</a>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 
                 <!-- Side Menu -->
                 <side-menu></side-menu>

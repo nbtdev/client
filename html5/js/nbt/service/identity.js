@@ -79,7 +79,10 @@ var _IdentityService = (function() {
     IdentityService.prototype.profile = function() {
         if (mCurrentProfile) {
             return {
-                callsign: mCurrentProfile.callsign
+                callsign: mCurrentProfile.callsign,
+                links: {
+                    faction: mCurrentProfile._links.faction
+                }
             };
         }
 

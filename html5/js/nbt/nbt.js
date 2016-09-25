@@ -35,6 +35,7 @@ var UserRole = {
 var Locale = {
     EN: 'en'
 };
+
 // root API url
 //var API_URL = 'http://api.home.lan';
 var API_URL = 'http://tsunami:8080';
@@ -43,7 +44,7 @@ var API_URL = 'http://tsunami:8080';
 function NBT() {
     var self = this;
     //var app = angular.module('nbt.app', []);
-    var app = angular.module('nbt.app', ['nbt.actionItems', 'nbt.starmap', 'nbt.profile', 'nbt.starmapDetail']);
+    var app = angular.module('nbt.app', []);
 
     // allow external code to do something after bootstrap
     this.onbootstrap = null;
@@ -222,6 +223,7 @@ var _NbtRootService = (function() {
     app.service('nbtRoot', ['$http', function($http) {
         return new _NbtRootService($http);
     }]);
+
 
     var ij = angular.injector(['ng', 'nbt.app']);
     var nbtRoot = ij.get('nbtRoot');

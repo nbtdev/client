@@ -25,6 +25,7 @@ var _UserService = (function() {
     var http = null;
     var rootScope = null;
     var nbtRoot = null;
+    var nbtLeague = null;
     var mUsersCache = [];
 
     function UserService(aHttp, aRootScope, aNbtRoot) {
@@ -167,6 +168,63 @@ var _UserService = (function() {
                 aFailCb("User account not found");
             }
         }
+    };
+
+    UserService.prototype.checkUsername = function(aUsername, aToken, aSuccessCb, aFailCb, aFinallyCb) {
+        if (!aUsername) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: GET FROM LINKS!
+            url: nbtRoot.systemLinks().users.href + "?existsCheck=1&username=" + encodeURIComponent(aUsername),
+            headers: hdr.get()
+        }).then(
+            function (aResp) {
+                aSuccessCb(aResp.data);
+            },
+            function(aResp) {
+                aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
+            }
+        ).finally(aFinallyCb);
+    };
+
+    UserService.prototype.checkCallsign = function(aCallsign, aLeagueId, aToken, aSuccessCb, aFailCb, aFinallyCb) {
+        if (!aCallsign) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: GET FROM LINKS!
+            url: nbtRoot.systemLinks().users.href + "?existsCheck=1&leagueId=" + aLeagueId + "&callsign=" + encodeURIComponent(aCallsign),
+            headers: hdr.get()
+        }).then(
+            function (aResp) {
+                aSuccessCb(aResp.data);
+            },
+            function(aResp) {
+                if (aFailCb) aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
+            }
+        ).finally(aFinallyCb);
+    };
+
+    UserService.prototype.checkEmailAddress = function(aEmail, aToken, aSuccessCb, aFailCb, aFinallyCb) {
+        if (!aEmail) return;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: GET FROM LINKS!
+            url: nbtRoot.systemLinks().users.href + "?existsCheck=1&email=" + encodeURIComponent(aEmail),
+            headers: hdr.get()
+        }).then(
+            function (aResp) {
+                aSuccessCb(aResp.data);
+            },
+            function(aResp) {
+                aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
+            }
+        ).finally(aFinallyCb);
     };
 
     return UserService;

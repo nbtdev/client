@@ -1,52 +1,169 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-<link href="css/nbt.old.css" rel="stylesheet" />
-<link rel="shortcut icon" href="favicon.ico">
-<title>Welcome To NetBattleTech</title>
+    <head>
+        <meta charset="ISO-8859-1">
+        <link rel="shortcut icon" href="favicon.ico">
+        <title>Welcome To NetBattleTech</title>
 
-<script src='https://www.google.com/recaptcha/api.js' async defer></script>
+        <!-- CSS -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href="/css/nbt.old.css" rel="stylesheet" />
 
-</head>
-<body>
-<noscript>JavaScript must be enabled in your browser to use this site!</noscript>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+        <script src='/js/nbt/nbt.js'></script>
+        <script src='/js/nbt/util/headers.js'></script>
+        <script src='/js/nbt/model/league.js'></script>
+        <script src='/js/nbt/model/user.js'></script>
+        <script src='/js/nbt/service/league.js'></script>
+        <script src='/js/nbt/service/identity.js'></script>
+        <script src='/js/nbt/service/user.js'></script>
+        <script src='/js/nbt/controller/page.js'></script>
+        <script src='/js/nbt/controller/registration.js'></script>
 
-<div class="g-recaptcha" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+    </head>
+    <body ng-controller="MainPageController as page">
+        <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
 
+        <nav class="navbar navbar-default navbar-fixed-top nbt-base">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">NetBattleTech</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="#">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">About</a>
+                        </li>
+                    </ul>
 
-<div class="login" id="loginBox">
-</div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li ng-hide="isLoggedIn()">
+                            <a href="#">Sign In</a>
+                        </li>
 
-<div class="title">
-Welcome To Netbattletech
-</div>
+                        <li ng-hide="isLoggedIn()">
+                            <a href="#" data-toggle="modal" data-target="#registerModal">Register</a>
+                        </li>
 
+                        <li ng-show="isLoggedIn()">
+                            <a href="#">Username</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-<div class="paragraph">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris in justo malesuada, ultrices libero vel, vehicula orci. Suspendisse accumsan ante vitae faucibus varius. Aliquam erat volutpat. Phasellus volutpat fermentum consectetur. Aliquam facilisis consectetur nisi, id laoreet diam venenatis non. Vestibulum id vulputate elit, at rhoncus turpis. Nulla sollicitudin magna quis tristique congue. Proin ornare eros lectus, ac blandit sapien efficitur vitae. Nunc at nisi feugiat, accumsan justo sit amet, sagittis ex. Maecenas vitae tincidunt ante. Sed tincidunt tortor eget nibh bibendum, tempus mattis ante bibendum. Suspendisse dapibus lectus eget metus placerat, nec aliquet lectus molestie. Cras sit amet neque dapibus, blandit leo eget, semper felis.
-</div>
-<img style="float: right; margin: 20px" src="images/vulturefiring1.jpg" />
-<div class="paragraph">
-In porttitor sem est, at faucibus nisl accumsan a. Sed imperdiet, nulla vel tristique condimentum, mi tortor tempor turpis, vel convallis nulla est et est. Sed cursus efficitur nisi, a facilisis turpis vehicula consectetur. Curabitur vitae mauris sed quam bibendum placerat. Cras hendrerit ligula sit amet nunc accumsan laoreet. Aenean ornare rutrum metus in malesuada. Quisque ut lacus velit. Maecenas placerat iaculis aliquam. Suspendisse potenti. Nulla id porta sem, ac facilisis felis. Suspendisse semper egestas tincidunt. Praesent eu consequat magna. Nunc sed velit molestie, dignissim ex ac, pellentesque ante.
-</div>
-<div class="paragraph">
-Duis tellus magna, tempor at efficitur imperdiet, venenatis a metus. Aliquam vitae finibus magna, id ultrices lectus. Duis ultricies euismod nulla, eget tempor ipsum auctor vulputate. Maecenas id massa placerat est ultrices gravida. Curabitur facilisis tristique sapien, at mollis ex tincidunt in. Morbi quis lectus suscipit, porta massa bibendum, porta felis. Curabitur a lacinia tellus. Curabitur iaculis sit amet velit id tempus. Aliquam faucibus molestie iaculis.
-</div>
-<img style="float: left; margin: 20px" src="images/sunset3.jpg" />
-<div class="paragraph">
-Fusce ut condimentum sapien, vehicula euismod risus. Morbi egestas imperdiet fringilla. Aliquam lacinia maximus velit at scelerisque. Nunc porttitor turpis eu fermentum ornare. Morbi ipsum est, sagittis nec ex non, bibendum feugiat massa. Vestibulum quis rhoncus mi. Phasellus mi odio, ultrices quis libero et, laoreet convallis nunc. Etiam ac rhoncus erat. In hac habitasse platea dictumst.
-</div>
-<div class="paragraph">
-Ut lobortis orci eu nulla pellentesque, in venenatis orci dignissim. Fusce gravida felis quis eros rhoncus convallis. Pellentesque fermentum risus ut dui facilisis pharetra a non sapien. Ut turpis diam, venenatis eu fringilla nec, suscipit at erat. Proin elementum viverra leo, et porta velit convallis et. Vestibulum hendrerit arcu eu lacus porttitor tincidunt. Curabitur gravida nulla justo, vel venenatis felis convallis quis. Quisque eget enim sit amet enim faucibus pretium. Proin consequat lobortis lectus quis rhoncus. Donec odio risus, lacinia vel lorem ut, vestibulum viverra nunc. Donec iaculis mattis posuere. Aliquam tincidunt ex ac nulla egestas faucibus. Donec molestie ut nulla at sagittis. Etiam quis justo faucibus, ornare urna vitae, porta leo.
-</div>
-<div class="paragraph">
-Nulla facilisi. Etiam faucibus ante vel nulla eleifend euismod. Fusce consectetur ex vel dolor efficitur rutrum. Nam rhoncus urna ante, eu aliquet nunc maximus a. Donec blandit a est nec pellentesque. Phasellus in libero eu est lacinia porttitor egestas ut dui. Nulla facilisi. Nam eget lectus tincidunt, elementum eros laoreet, ullamcorper nunc. Sed quis dolor scelerisque, egestas neque id, volutpat enim. Integer maximus eget augue ut tempus. Integer sagittis dui vitae mollis
-</div>
+        <div id="registerModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="RegistrationFormController as regForm">
+            <div class="modal-dialog modal-lg with-border">
+                <div class="modal-content">
+                    <div class="modal-header nbt-base nbt-modal-header">
+                        <h4 class="modal-title text-center">Account Registration</h4>
+                    </div>
+                    <div class="modal-body nbt-base">
+                        <div style="display: table; margin: auto" name="regForm" ng-form>
+                            <div style="display: table-row">
+                                <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
+                                <div style="display: table-cell"><input class="nbt-text-input" type="text" name="username" ng-model="username" required></div>
+                                <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="usernameError">{{usernameError}}</span></div>
+                            </div>
 
-<div id="leagues">
-<div class="title">Current NBT Leagues</div>
-</div>
+                            <!--<div style="display: table-row">-->
+                                <!--<div style="display: table-cell; text-align: right; padding-right: 5px;">Callsign:&nbsp;</div>-->
+                                <!--<div style="display: table-cell"><input class="nbt-text-input" type="text" name="callsign" ng-model="callsign" required></div>-->
+                                <!--<div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="callsignError">{{callsignError}}</span></div>-->
+                            <!--</div>-->
 
-</body>
+                            <div style="display: table-row">
+                                <div style="display: table-cell; text-align: right; padding-right: 5px;">Password:&nbsp;</div>
+                                <div style="display: table-cell"><input class="nbt-text-input" type="password" name="password" ng-model="password" required ng-minlength="8"></div>
+                                <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="passwordError">{{passwordError}}</span></div>
+                            </div>
+
+                            <div style="display: table-row">
+                                <div style="display: table-cell; text-align: right; padding-right: 5px;">Verify Password:&nbsp;</div>
+                                <div style="display: table-cell"><input class="nbt-text-input" type="password" name="passwordCheck" ng-model="passwordCheck" required ng-minlength="8"></div>
+                                <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="passwordCheckError">{{passwordCheckError}}</span></div>
+                            </div>
+
+                            <div style="display: table-row">
+                                <div style="display: table-cell; text-align: right; padding-right: 5px;">Email Address:&nbsp;</div>
+                                <div style="display: table-cell"><input class="nbt-text-input" type="email" name="emailAddress" ng-model="email" required></div>
+                                <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="emailAddressError">{{emailAddressError}}</span></div>
+                            </div>
+
+                            <div style="display: table-row">
+                                <div style="display: table-cell; text-align: right; padding-right: 5px;">Verify Email Address:&nbsp;</div>
+                                <div style="display: table-cell"><input class="nbt-text-input" type="email" name="emailAddressCheck" ng-model="emailAddressCheck" required></div>
+                                <div style="display: table-cell; text-align: left; padding-left: 10px;"><span ng-show="emailAddressCheckError">{{emailAddressCheckError}}</span></div>
+                            </div>
+                        </div>
+
+                        <div ng-hide="registrationSucceeded" style="text-align: center">
+                            <div style="padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha centered" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+                            <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;">
+                                <div ng-show="captchaError">{{captchaError}}</div>
+                            </div>
+                        </div>
+
+                        <div ng-hide="registrationSucceeded" style="text-align: center; margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
+                            <div class="centered">
+                                <span style="margin-right: 25px;"><a href="#" ng-click="onSubmitRegistration()" class="btn btn-info nbt-button" role="button">Submit</a></span>
+                                <span style="display: inline;"><a href="#" ng-click="onCancelRegistration()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
+                            </div>
+                        </div>
+
+                        <div ng-show="registrationSucceeded" style="margin: auto; width: 60%; padding-top: 4px; padding-bottom: 4px;">
+                            <div>
+                                Account registration was successful. An account activation email has been sent to {{regData.email}},
+                                containing further account setup instructions. Please make sure any
+                                spam-blocking features are set to allow emails from netbattletech.com.
+                            </div>
+                            <div style="margin: auto; text-align: center; padding-top: 4px;">
+                                <span style="margin-right: 25px;"><a href="#" ng-click="closeForm()">Close Form</a></span>
+                            </div>
+                        </div>
+
+                        <div ng-hide="registrationSucceeded" style="text-align: center; font-size: small; width: 60%; margin: auto">
+                            Notes: All fields are required. Please provide a valid email address, as
+                            you will be sent a verification email containing a link to complete the signup process.
+                        </div>
+                        <div style="margin: auto; text-align: center; font-size: small; padding-top: 10px;"><a href="#" ng-click="onPrivacy()">NBT Privacy Policy</a></div>
+                        <div class="privacyPolicy" style="margin: auto; width: 60%" ng-show="privacyPolicy" ng-bind-html="privacyPolicy"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="paragraph">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris in justo malesuada, ultrices libero vel, vehicula orci. Suspendisse accumsan ante vitae faucibus varius. Aliquam erat volutpat. Phasellus volutpat fermentum consectetur. Aliquam facilisis consectetur nisi, id laoreet diam venenatis non. Vestibulum id vulputate elit, at rhoncus turpis. Nulla sollicitudin magna quis tristique congue. Proin ornare eros lectus, ac blandit sapien efficitur vitae. Nunc at nisi feugiat, accumsan justo sit amet, sagittis ex. Maecenas vitae tincidunt ante. Sed tincidunt tortor eget nibh bibendum, tempus mattis ante bibendum. Suspendisse dapibus lectus eget metus placerat, nec aliquet lectus molestie. Cras sit amet neque dapibus, blandit leo eget, semper felis.
+        </div>
+        <img style="float: right; margin: 20px" src="images/vulturefiring1.jpg" />
+        <div class="paragraph">
+        In porttitor sem est, at faucibus nisl accumsan a. Sed imperdiet, nulla vel tristique condimentum, mi tortor tempor turpis, vel convallis nulla est et est. Sed cursus efficitur nisi, a facilisis turpis vehicula consectetur. Curabitur vitae mauris sed quam bibendum placerat. Cras hendrerit ligula sit amet nunc accumsan laoreet. Aenean ornare rutrum metus in malesuada. Quisque ut lacus velit. Maecenas placerat iaculis aliquam. Suspendisse potenti. Nulla id porta sem, ac facilisis felis. Suspendisse semper egestas tincidunt. Praesent eu consequat magna. Nunc sed velit molestie, dignissim ex ac, pellentesque ante.
+        </div>
+        <div class="paragraph">
+        Duis tellus magna, tempor at efficitur imperdiet, venenatis a metus. Aliquam vitae finibus magna, id ultrices lectus. Duis ultricies euismod nulla, eget tempor ipsum auctor vulputate. Maecenas id massa placerat est ultrices gravida. Curabitur facilisis tristique sapien, at mollis ex tincidunt in. Morbi quis lectus suscipit, porta massa bibendum, porta felis. Curabitur a lacinia tellus. Curabitur iaculis sit amet velit id tempus. Aliquam faucibus molestie iaculis.
+        </div>
+        <img style="float: left; margin: 20px" src="images/sunset3.jpg" />
+        <div class="paragraph">
+        Fusce ut condimentum sapien, vehicula euismod risus. Morbi egestas imperdiet fringilla. Aliquam lacinia maximus velit at scelerisque. Nunc porttitor turpis eu fermentum ornare. Morbi ipsum est, sagittis nec ex non, bibendum feugiat massa. Vestibulum quis rhoncus mi. Phasellus mi odio, ultrices quis libero et, laoreet convallis nunc. Etiam ac rhoncus erat. In hac habitasse platea dictumst.
+        </div>
+        <div class="paragraph">
+        Ut lobortis orci eu nulla pellentesque, in venenatis orci dignissim. Fusce gravida felis quis eros rhoncus convallis. Pellentesque fermentum risus ut dui facilisis pharetra a non sapien. Ut turpis diam, venenatis eu fringilla nec, suscipit at erat. Proin elementum viverra leo, et porta velit convallis et. Vestibulum hendrerit arcu eu lacus porttitor tincidunt. Curabitur gravida nulla justo, vel venenatis felis convallis quis. Quisque eget enim sit amet enim faucibus pretium. Proin consequat lobortis lectus quis rhoncus. Donec odio risus, lacinia vel lorem ut, vestibulum viverra nunc. Donec iaculis mattis posuere. Aliquam tincidunt ex ac nulla egestas faucibus. Donec molestie ut nulla at sagittis. Etiam quis justo faucibus, ornare urna vitae, porta leo.
+        </div>
+        <div class="paragraph">
+        Nulla facilisi. Etiam faucibus ante vel nulla eleifend euismod. Fusce consectetur ex vel dolor efficitur rutrum. Nam rhoncus urna ante, eu aliquet nunc maximus a. Donec blandit a est nec pellentesque. Phasellus in libero eu est lacinia porttitor egestas ut dui. Nulla facilisi. Nam eget lectus tincidunt, elementum eros laoreet, ullamcorper nunc. Sed quis dolor scelerisque, egestas neque id, volutpat enim. Integer maximus eget augue ut tempus. Integer sagittis dui vitae mollis
+        </div>
+
+        <div id="leagues">
+        <div class="title">Current NBT Leagues</div>
+        </div>
+
+    </body>
 </html>

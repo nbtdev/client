@@ -6,6 +6,7 @@ body {
 	height: 95%;
 }
 
+/*
 input[type=text] {
 	background-color: black;
 	color: #f06060;
@@ -17,6 +18,7 @@ input[type=password] {
 	color: #f06060;
 	border-color: #c04040;
 }
+*/
 
 input[type=button] {
 	background-color: black;
@@ -344,4 +346,41 @@ th.sortable {
     color: lightblue;
     cursor: pointer;
     text-decoration: underline;
+}
+
+.nbt-base {
+	background-color: black;
+	color: white;
+}
+
+.nbt-text-input {
+	color: black;
+}
+
+.nbt-modal-header {
+	background-color: #444444;
+}
+
+.nbt-button {
+	background-color: goldenrod;
+	border-color: goldenrod;
+}
+
+.navbar-default .navbar-brand {
+	color: goldenrod;
+}
+
+.navbar-default .navbar-nav > li > a {
+	color: goldenrod;
+}
+
+.centered {
+	margin: auto;
+	float: none;
+	display: inline-block;
+	text-align: center;
+}
+
+.with-border {
+	border: solid 1px goldenrod;
 }
