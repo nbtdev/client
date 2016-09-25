@@ -22,12 +22,11 @@
         <script src='/js/nbt/service/user.js'></script>
         <script src='/js/nbt/controller/page.js'></script>
         <script src='/js/nbt/controller/registration.js'></script>
-
     </head>
-    <body ng-controller="MainPageController as page">
+    <body ng-controller="PageController as pageController">
         <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
 
-
+        <input type="hidden" ng-init="page='index';" />
         <div ng-include="'/fragment/navbar.html'"></div>
         <div ng-include="'/fragment/registration.html'"></div>
 

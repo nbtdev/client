@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('MainPageController', ['$scope', function($scope) {
+        .controller('PageController', ['$scope', function($scope) {
             $scope.isLoggedIn = function() {
                 return false;
             };
