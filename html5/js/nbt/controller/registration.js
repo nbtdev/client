@@ -197,6 +197,10 @@
                 reset();
             };
 
+            this.closeForm = function() {
+                reset();
+            };
+
             $scope.$watch(
                 'username',
                 function(newValue, oldValue) {
