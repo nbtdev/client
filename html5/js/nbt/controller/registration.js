@@ -52,6 +52,19 @@
                 $scope.emailAddressCheck = null;
 
                 resetError();
+
+                var recaptcha = $('.g-recaptcha')[0];
+                if (recaptcha) {
+                    var recaptchaKey = recaptcha.dataset.sitekey;
+
+                    grecaptcha.render(
+                        recaptcha,
+                        {
+                            sitekey: recaptchaKey,
+                            size: 'normal'
+                        }
+                    );
+                }
             }
 
             reset();
