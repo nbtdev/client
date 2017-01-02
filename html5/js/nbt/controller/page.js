@@ -23,9 +23,19 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PageController', ['$scope', function($scope) {
+        .controller('PageController', ['$scope', 'nbtIdentity', function($scope, nbtIdentity) {
+            $scope.getUsername = function() {
+                if (localStorage.nbtIdentity)
+                    return JSON.parse(localStorage.nbtIdentity).username;
+            };
+
             $scope.isLoggedIn = function() {
-                return false;
+                return localStorage.getItem("nbtIdentity") !== null;
+            };
+
+            $scope.signOut = function() {
+                nbtIdentity.logout();
+                localStorage.removeItem("nbtIdentity");
             };
         }]);
 })();
