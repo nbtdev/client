@@ -18,7 +18,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li ng-hide="isLoggedIn()">
-                    <a href="#">Sign In</a>
+                    <a href="#" data-toggle="modal" data-target="#signinModal">Sign In</a>
                 </li>
 
                 <li ng-hide="isLoggedIn()">
@@ -26,7 +26,7 @@
                 </li>
 
                 <li ng-show="isLoggedIn()">
-                    <a href="#">Username</a>
+                    Logged in as: {{getUsername()}}&nbsp;<a href="#" ng-click="signOut()">(Sign Out)</a>
                 </li>
             </ul>
         </div>
