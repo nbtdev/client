@@ -64,6 +64,7 @@
 
             this.signinFailed = function(data) {
                 $scope.signinSucceeded = false;
+                $scope.signinError = "Username or password do not match our records, please try again";
                 grecaptcha.reset();
             };
 
