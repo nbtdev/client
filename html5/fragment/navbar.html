@@ -26,7 +26,11 @@
                 </li>
 
                 <li ng-show="isLoggedIn()">
-                    Logged in as: {{getUsername()}}&nbsp;<a href="#" ng-click="signOut()">(Sign Out)</a>
+                    <a onmouseover="" style="color: white">Logged in as: {{getUsername()}}</a>
+                </li>
+
+                <li ng-show="isLoggedIn()">
+                    <a href="#" ng-click="signOut()">(Sign Out)</a>
                 </li>
             </ul>
         </div>
