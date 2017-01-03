@@ -55,6 +55,9 @@
 
         <div id="leagues">
         <div class="title">Current NBT Leagues</div>
+            <div ng-repeat="league in leagues">
+                <a href="#" ng-click="onLeagueClicked(league)"><img data-ng-src="{{getLogo(league)}}"></a>
+            </div>
         </div>
 
     </body>

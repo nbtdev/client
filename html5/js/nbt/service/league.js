@@ -45,6 +45,7 @@ var _LeagueService = (function() {
 
         // clear local storage too
         localStorage.removeItem('league');
+        localStorage.removeItem('nbtLeagues');
     };
 
     var save = function () {
@@ -54,40 +55,75 @@ var _LeagueService = (function() {
             clear();
     };
 
-    var setLeagues = function (aLeagues) {
-        mLeagues = [];
-
-        for (var i = 0; i < aLeagues.length; ++i) {
-            var l = aLeagues[i];
-
-            mLeagues.push(new _League({
-                id: l.id,
-                name: l.name,
-                planets: l._links.planets,
-                profile: l._links.profile,
-                this: l._links.this
-            }));
-        }
-    };
-
     var updateCurrentLeagueDetails = function(aDetails) {
         mCurrentLeague.update(aDetails);
     };
 
+    var init = function(aLeaguesData) {
+        mLeagues = [];
+
+        for (var i = 0; i < aLeaguesData.length; ++i) {
+            var newLeague = new _League(aLeaguesData[i]);
+            mLeagues.push(newLeague);
+        }
+    };
+
+    var readLocalCache = function() {
+        if (!localStorage.nbtLeagues)
+            return null;
+
+        return JSON.parse(localStorage.nbtLeagues);
+    };
+
+    var setLeagues = function (aLeagues) {
+        mLeagues = [];
+        localCache = [];
+
+        for (var i = 0; i < aLeagues.length; ++i) {
+            var l = aLeagues[i];
+
+            var league = {
+                id: l.id,
+                name: l.name,
+                logo: l.logo,
+                logoSmall: l.logoSmall,
+                planets: l._links.planets,
+                profile: l._links.profile,
+                userProfile: l._links.userProfile,
+                this: l._links.this
+            };
+
+            localCache.push(league);
+
+            var newLeague = new _League(league);
+            mLeagues.push(newLeague);
+        }
+
+        // save off the list in the local cache
+        localStorage.setItem('nbtLeagues', JSON.stringify(localCache));
+    };
+
     LeagueService.prototype.fetchLeagues = function (aToken) {
-        var hdrs = new Headers(Header.TOKEN, aToken);
-
-        http({
-            method: 'GET', // TODO: get from links!
-            url: nbtRoot.links().leagues.href,
-            headers: hdrs.get()
-        }).then(function (resp) {
-            var currentId = parseInt(localStorage.league);
-            setLeagues(resp.data._embedded.leagues);
-            self.setCurrent(currentId);
-
+        // check to see if we have a cached list first
+        if (localStorage.nbtLeagues) {
+            init(readLocalCache());
             rootScope.$broadcast('nbtLeaguesChanged', mLeagues);
-        });
+        } else {
+            // fetch the leagues from the service
+            var hdrs = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: get from links!
+                url: nbtRoot.links().leagues.href,
+                headers: hdrs.get()
+            }).then(function (resp) {
+                var currentId = parseInt(localStorage.league);
+                setLeagues(resp.data._embedded.leagues);
+                self.setCurrent(currentId);
+
+                rootScope.$broadcast('nbtLeaguesChanged', mLeagues);
+            });
+        }
     };
 
     LeagueService.prototype.setCurrent = function (aLeagueId, aToken) {
@@ -146,6 +182,27 @@ var _LeagueService = (function() {
         }
 
         return mCurrentLeague;
+    };
+
+    LeagueService.prototype.get = function(id) {
+        if (mLeagues) {
+            for (var i = 0; i < mLeagues.length; ++i) {
+                var l = mLeagues[i];
+                if (l.id() === id) {
+                    return l;
+                }
+            }
+        }
+
+        return null;
+    };
+
+    LeagueService.prototype.first = function() {
+        if (mLeagues && mLeagues.length > 0) {
+            return mLeagues[0];
+        }
+
+        return null;
     };
 
     LeagueService.prototype.leagues = function () {

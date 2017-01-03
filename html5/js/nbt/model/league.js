@@ -23,16 +23,22 @@
 var _League = (function() {
     var mId = -1;
     var mName = null;
+    var mLogo = null;
+    var mLogoSmall = null;
     var mSelfLink = null;
     var mProfileLink = null;
+    var mUserProfileLink = null;
     var mPlanetsLink = null;
 
     function League(aInit) {
         if (aInit) {
             mId = aInit.id ? aInit.id : -1;
             mName = aInit.name ? aInit.name : null;
+            mLogo = aInit.logo ? aInit.logo : null;
+            mLogoSmall = aInit.logoSmall ? aInit.logoSmall : null;
             mSelfLink = aInit.self ? aInit.self : null;
             mProfileLink = aInit.profile ? aInit.profile : null;
+            mUserProfileLink = aInit.userProfile ? aInit.userProfile : null;
             mPlanetsLink = aInit.planets ? aInit.planets : null;
         }
     }
@@ -46,8 +52,20 @@ var _League = (function() {
             return mName;
         },
 
+        logo: function () {
+            return mLogo;
+        },
+
+        logoSmall: function () {
+            return mLogoSmall;
+        },
+
         selfLink: function () {
             return mSelfLink;
+        },
+
+        userProfileLink: function () {
+            return mUserProfileLink;
         },
 
         profileLink: function () {
@@ -62,12 +80,28 @@ var _League = (function() {
             return mId;
         },
 
+        serialize: function() {
+            return JSON.stringify({
+                id: mId,
+                name: mName,
+                logo: mLogo,
+                logoSmall: mLogoSmall,
+                self: mSelfLink,
+                profile: mProfileLink,
+                userProfile: mUserProfileLink,
+                planets: mPlanetsLink
+            });
+        },
+
         update : function(aDetails) {
             if (aDetails) {
                 mId = aDetails.id ? aDetails.id : mId;
                 mName = aDetails.name ? aDetails.name : mName;
+                mLogo = aDetails.logo ? aDetails.logo : mLogo;
+                mLogoSmall = aDetails.logoSmall ? aDetails.logoSmall : mLogoSmall;
                 mSelfLink = aDetails.self ? aDetails.self : mSelfLink;
                 mProfileLink = aDetails.profile ? aInit.profile : mProfileLink;
+                mUserProfileLink = aDetails.userProfile ? aInit.userProfile : mUserProfileLink;
                 mPlanetsLink = aDetails.planets ? aInit.planets : mPlanetsLink;
             }
         },

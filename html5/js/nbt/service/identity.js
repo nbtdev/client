@@ -218,7 +218,7 @@ var _IdentityService = (function() {
                 // fetch the user's profile for this league
                 http({
                     method: 'GET', // TODO: get from links!
-                    url: aLeague._links.profile.href,
+                    url: aLeague._links.userProfile.href,
                     headers: hdrs.get()
                 }).then(function (resp) {
                     mCurrentProfile = resp.data;

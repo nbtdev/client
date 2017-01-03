@@ -23,7 +23,41 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PageController', ['$scope', 'nbtIdentity', function($scope, nbtIdentity) {
+        .controller('PageController', ['$scope', 'nbtIdentity', 'nbtLeague', function($scope, nbtIdentity, nbtLeague) {
+            $scope.getLogo = function(data) {
+                var rtn = 'data:image/jpeg;base64,' + data.logo();
+                return rtn;
+            };
+
+            $scope.getCurrentLeagueLogo = function() {
+                // if there are leagues...
+                var leagues = nbtLeague.leagues();
+                var league = null;
+
+                if (leagues) {
+                    // ... and if there is one selected already, choose it...
+                    if (localStorage.nbtLeague) {
+                        var leagueId = parseInt(localStorage.nbtLeague);
+                        league = nbtLeague.get(leagueId);
+                    } else {
+                        // ... just pick the first one in the list
+                        league = nbtLeague.first();
+                    }
+                }
+
+                if (league) {
+                    var rtn = 'data:image/jpeg;base64,' + league.logo();
+                    return rtn;
+                }
+
+                return null;
+            };
+
+            $scope.getLogoSmall = function(data) {
+                var rtn = 'data:image/jpeg;base64,' + data.logoSmall();
+                return rtn;
+            };
+
             $scope.getUsername = function() {
                 if (localStorage.nbtIdentity)
                     return JSON.parse(localStorage.nbtIdentity).username;
@@ -37,5 +71,21 @@
                 nbtIdentity.logout();
                 localStorage.removeItem("nbtIdentity");
             };
+
+            $scope.onLeagueClicked = function(league) {
+                localStorage.setItem('currentLeague', league.serialize());
+
+                // navigate to League interface page
+                window.location.href = '/league.html';
+            };
+
+            // when the list of leagues changed, we want to update our list display
+            cb = $scope.$on('nbtLeaguesChanged', function(event, aLeagues) {
+                $scope.leagues = aLeagues;
+            });
+            $scope.$on('destroy', cb);
+
+            $scope.leagues = null;
+            nbtLeague.fetchLeagues(nbtIdentity.get().token);
         }]);
 })();
