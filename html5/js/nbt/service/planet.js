@@ -51,6 +51,11 @@ var _PlanetService = (function() {
 
     // load a league's planet listing into the service
     PlanetService.prototype.load = function (aLeague, aToken) {
+        if (aLeague) {
+            if (!aLeague.planetsLink())
+                return;
+        }
+
         var hdr = new Headers(Header.TOKEN, aToken);
 
         http({

@@ -21,9 +21,9 @@
  */
 
 (function() {
-    var mod = angular.module('nbt.starmap', []);
+    var app = angular.module('nbt.app');
 
-    mod.directive('starmap', function($compile) {
+    app.directive('starmap', function($compile) {
 
         this.controller = function($scope, $attrs, $rootScope, nbtLeague, nbtIdentity, nbtPlanet) {
             var mStarmapDebug;
@@ -541,7 +541,7 @@
         };
     });
 
-    mod.directive('planetBrief', function($templateRequest, $compile) {
+    app.directive('planetBrief', function($templateRequest, $compile) {
 
         this.controller = function($scope, $attrs, $sce, nbtIdentity, nbtPlanet, nbtBattle) {
             var self = this;

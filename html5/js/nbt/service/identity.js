@@ -41,6 +41,7 @@ var _IdentityService = (function() {
 
         // post initial state to any subscribers
         //$rootScope.$broadcast('nbtIdentityChanged', self.get());
+        restore();
     }
 
     var clearLocalStorage = function() {
@@ -51,7 +52,7 @@ var _IdentityService = (function() {
         localStorage.setItem('nbtIdentity', JSON.stringify(mIdentity));
     };
 
-    IdentityService.prototype.restore = function() {
+    var restore = function() {
         try {
             var currentIdent = mIdentity;
 
@@ -59,7 +60,7 @@ var _IdentityService = (function() {
                 mIdentity = JSON.parse(localStorage.nbtIdentity);
 
             if (mIdentity !== currentIdent)
-                rootScope.$broadcast('nbtIdentityChanged', this.get());
+                rootScope.$broadcast('nbtIdentityChanged', self.get());
         } catch (e) {
             console.log(e);
         }
