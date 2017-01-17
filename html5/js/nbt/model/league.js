@@ -36,10 +36,10 @@ var _League = (function() {
             mName = aInit.name ? aInit.name : null;
             mLogo = aInit.logo ? aInit.logo : null;
             mLogoSmall = aInit.logoSmall ? aInit.logoSmall : null;
-            mSelfLink = aInit.self ? aInit.self : null;
-            mProfileLink = aInit.profile ? aInit.profile : null;
-            mUserProfileLink = aInit.userProfile ? aInit.userProfile : null;
-            mPlanetsLink = aInit.planets ? aInit.planets : null;
+            mSelfLink = aInit._links.self ? aInit._links.self : null;
+            mProfileLink = aInit._links.profile ? aInit._links.profile : null;
+            mUserProfileLink = aInit._links.userProfile ? aInit._links.userProfile : null;
+            mPlanetsLink = aInit._links.planets ? aInit._links.planets : null;
         }
     }
 
@@ -86,10 +86,12 @@ var _League = (function() {
                 name: mName,
                 logo: mLogo,
                 logoSmall: mLogoSmall,
-                self: mSelfLink,
-                profile: mProfileLink,
-                userProfile: mUserProfileLink,
-                planets: mPlanetsLink
+                _links: {
+                    self: mSelfLink,
+                    profile: mProfileLink,
+                    userProfile: mUserProfileLink,
+                    planets: mPlanetsLink
+                }
             });
         },
 
@@ -99,10 +101,10 @@ var _League = (function() {
                 mName = aDetails.name ? aDetails.name : mName;
                 mLogo = aDetails.logo ? aDetails.logo : mLogo;
                 mLogoSmall = aDetails.logoSmall ? aDetails.logoSmall : mLogoSmall;
-                mSelfLink = aDetails.self ? aDetails.self : mSelfLink;
-                mProfileLink = aDetails.profile ? aInit.profile : mProfileLink;
-                mUserProfileLink = aDetails.userProfile ? aInit.userProfile : mUserProfileLink;
-                mPlanetsLink = aDetails.planets ? aInit.planets : mPlanetsLink;
+                mSelfLink = aDetails._links.self ? aDetails._links.self : mSelfLink;
+                mProfileLink = aDetails._links.profile ? aDetails._links.profile : mProfileLink;
+                mUserProfileLink = aDetails._links.userProfile ? aDetails._links.userProfile : mUserProfileLink;
+                mPlanetsLink = aDetails._links.planets ? aDetails._links.planets : mPlanetsLink;
             }
         },
     };

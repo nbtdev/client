@@ -21,8 +21,9 @@
 
 .starmapContainer {
     position: relative;
-    padding: 0px;
-    height: 800px;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 100%;
 }
 
 .starmap {
@@ -269,4 +270,29 @@ input[type=password] {
 
 .waiting {
     cursor: progress;
+}
+
+.header-logo {
+    height: 50px;
+}
+
+
+.nbt-base {
+    background-color: black;
+    color: white;
+}
+
+.nbt-base > li > a {
+    color: goldenrod;
+}
+
+.nbt-nav-bar {
+    margin-bottom: 0px; /* Bootstrap nav bar has a 20-px bottom margin */
+}
+
+.nbt-side-bar {
+    background-color: black;
+    height: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
 }

@@ -29,7 +29,7 @@
                 return rtn;
             };
 
-            $scope.getCurrentLeagueLogo = function() {
+            var getCurrentLeague = function() {
                 // if there are leagues...
                 var leagues = nbtLeague.leagues();
                 var league = null;
@@ -45,8 +45,25 @@
                     }
                 }
 
+                return league;
+            };
+
+            $scope.getCurrentLeagueLogo = function() {
+                var league = getCurrentLeague();
+
                 if (league) {
                     var rtn = 'data:image/jpeg;base64,' + league.logo();
+                    return rtn;
+                }
+
+                return null;
+            };
+
+            $scope.getCurrentLeagueLogoSmall = function() {
+                var league = getCurrentLeague();
+
+                if (league) {
+                    var rtn = 'data:image/jpeg;base64,' + league.logoSmall();
                     return rtn;
                 }
 

@@ -65,10 +65,12 @@ var _LeagueService = (function() {
                     name: l.name(),
                     logo: l.logo(),
                     logoSmall: l.logoSmall(),
-                    planets: l.planetsLink(),
-                    profile: l.profileLink(),
-                    userProfile: l.userProfileLink(),
-                    this: l.selfLink()
+                    _links : {
+                        planets: l.planetsLink(),
+                        profile: l.profileLink(),
+                        userProfile: l.userProfileLink(),
+                        self: l.selfLink()
+                    }
                 });
             }
 
@@ -124,10 +126,12 @@ var _LeagueService = (function() {
                 name: l.name,
                 logo: l.logo,
                 logoSmall: l.logoSmall,
-                planets: l._links.planets,
-                profile: l._links.profile,
-                userProfile: l._links.userProfile,
-                this: l._links.this
+                _links: {
+                    planets: l._links.planetsBySector,
+                    profile: l._links.profile,
+                    userProfile: l._links.userProfile,
+                    self: l._links.self
+                }
             };
 
             var newLeague = new _League(league);
