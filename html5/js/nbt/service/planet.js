@@ -41,7 +41,7 @@ var _PlanetService = (function() {
         }).then(
             function (aResp) {
                 mColors[aLeagueId] = aResp.data._embedded;
-                rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId.toString()].planets, mColors[aLeagueId.toString()].mapColors);
+                rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId.toString()].planetGroups, mColors[aLeagueId.toString()].mapColors);
             },
             function (aResp) {
                 console.log(aResp);

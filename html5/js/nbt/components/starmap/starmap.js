@@ -66,21 +66,30 @@
                 var maxX = -Infinity;
                 var maxY = -Infinity;
 
-                for (var i=0; i<self.planets.length; ++i) {
-                    var p = self.planets[i];
-                    if (p.x < minX) minX = p.x;
-                    if (p.x > maxX) maxX = p.x;
-                    if (p.y < minY) minY = p.y;
-                    if (p.y > maxY) maxY = p.y;
+                for (var g=0; g < aPlanets.length; ++g) {
+                    var group = aPlanets[g];
+
+                    for (var i = 0; i < group.planets.length; ++i) {
+                        var p = group.planets[i];
+                        if (p.x < minX) minX = p.x;
+                        if (p.x > maxX) maxX = p.x;
+                        if (p.y < minY) minY = p.y;
+                        if (p.y > maxY) maxY = p.y;
+                    }
                 }
 
                 // create quadtree with dimensions specified in the data
                 self.quadtree = new QuadTree({left: minX, right: maxX, top: maxY, bottom: minY});
 
                 // ...aaaaaaand now go through planets again to insert them into the quadtree
-                for (var i=0; i<self.planets.length; ++i) {
-                    var p = self.planets[i];
-                    self.quadtree.insert(p);
+                for (var g=0; g < aPlanets.length; ++g) {
+                    var group = aPlanets[g];
+
+                    for (var i = 0; i < group.planets.length; ++i) {
+                        var p = group.planets[i];
+                        p.parentGroup = group;
+                        self.quadtree.insert(p);
+                    }
                 }
             };
 
@@ -219,32 +228,36 @@
                 self.scene3D.add(self.camera3D);
 
                 // plow through the planets, making objects, geometries and meshes along the way
-                for (var i = 0; i < self.planets.length; ++i) {
-                    var p = self.planets[i];
-                    var x = p.x;
-                    var y = p.y;
-                    var name = p.name;
+                for (var g=0; g<self.planets.length; ++g) {
+                    var group = self.planets[g];
 
-                    var geom = new THREE.CircleGeometry(1, 18);
-                    var mtl = new THREE.MeshBasicMaterial();
-                    var mc = self.mapColors[p.ownerName];
-                    var color = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
-                    mtl.color.set(color);
+                    for (var i = 0; i < group.planets.length; ++i) {
+                        var p = group.planets[i];
+                        var x = p.x;
+                        var y = p.y;
+                        var name = p.name;
 
-                    var mesh = new THREE.Mesh(geom, mtl);
-                    var obj = new THREE.Object3D();
-                    obj.add(mesh);
-                    obj.userData = p;
+                        var geom = new THREE.CircleGeometry(1, 18);
+                        var mtl = new THREE.MeshBasicMaterial();
+                        var mc = self.mapColors[group.owner.displayName];
+                        var color = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
+                        mtl.color.set(color);
 
-                    obj.position.set(x, y, 0);
+                        var mesh = new THREE.Mesh(geom, mtl);
+                        var obj = new THREE.Object3D();
+                        obj.add(mesh);
+                        obj.userData = p;
 
-                    self.scene3D.add(obj);
+                        obj.position.set(x, y, 0);
 
-                    // add rings for various other properties
-                    if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
-                    if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
-                    if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
-                    if (p.battleId) addRing(p, 2.4, 2.6, redMtl);
+                        self.scene3D.add(obj);
+
+                        // add rings for various other properties
+                        if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
+                        if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
+                        if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
+                        if (p.battleId) addRing(p, 2.4, 2.6, redMtl);
+                    }
                 }
 
                 self.gl.render(self.scene3D, self.camera3D);
@@ -453,7 +466,7 @@
                     var vpX = nx * vpW + p.xtextOffset;
                     var vpY = (1.0 - ny) * vpH + p.ytextOffset;
 
-                    var mc = self.mapColors[p.ownerName];
+                    var mc = self.mapColors[p.parentGroup.owner.displayName];
                     var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0)
 
                     text.css({
