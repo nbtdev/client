@@ -256,7 +256,7 @@
                         if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
                         if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
                         if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
-                        if (p.battleId) addRing(p, 2.4, 2.6, redMtl);
+                        if (group._links.battle) addRing(p, 2.4, 2.6, redMtl);
                     }
                 }
 
