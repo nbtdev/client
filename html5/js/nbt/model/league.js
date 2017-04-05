@@ -52,12 +52,18 @@ var _League = (function() {
             return mName;
         },
 
-        logo: function () {
-            return mLogo;
+        logo: function (directUrl) {
+            if (directUrl)
+                return mLogo._links.raw.href;
+            else
+                return mLogo;
         },
 
-        logoSmall: function () {
-            return mLogoSmall;
+        logoSmall: function (directUrl) {
+            if (directUrl)
+                return mLogoSmall._links.raw.href;
+            else
+                return mLogoSmall;
         },
 
         selfLink: function () {

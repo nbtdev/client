@@ -25,7 +25,8 @@
         .module('nbt.app')
         .controller('LeaguePageController', ['$scope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, nbtIdentity, nbtLeague, nbtPlanet) {
             $scope.getLogo = function(data) {
-                var rtn = 'data:image/jpeg;base64,' + data.logo();
+                // we want the link directly to the logo
+                var rtn = data.logo(true);
                 return rtn;
             };
 
@@ -52,7 +53,8 @@
                 var league = getCurrentLeague();
 
                 if (league) {
-                    var rtn = 'data:image/jpeg;base64,' + league.logo();
+                    // we want the URL directly to the logo
+                    var rtn = league.logo(true);
                     return rtn;
                 }
 
@@ -63,7 +65,8 @@
                 var league = getCurrentLeague();
 
                 if (league) {
-                    var rtn = 'data:image/jpeg;base64,' + league.logoSmall();
+                    // we want the URL directly to the logo
+                    var rtn = league.logoSmall(true);
                     return rtn;
                 }
 
@@ -71,7 +74,8 @@
             };
 
             $scope.getLogoSmall = function(data) {
-                var rtn = 'data:image/jpeg;base64,' + data.logoSmall();
+                // we want the URL directly to the logo
+                var rtn = data.logoSmall(true);
                 return rtn;
             };
 
