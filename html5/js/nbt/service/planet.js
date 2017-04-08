@@ -26,6 +26,7 @@ var _PlanetService = (function() {
     var rootScope = null;
     var mPlanets = {};
     var mColors = {};
+    var mLoading = false;
 
     function PlanetService(aHttp, aRootScope) {
         self = this;
@@ -56,7 +57,12 @@ var _PlanetService = (function() {
                 return;
         }
 
+        if (mLoading)
+            return;
+
         var hdr = new Headers(Header.TOKEN, aToken);
+
+        mLoading = true;
 
         http({
             method: 'GET', // TODO: GET FROM LINKS!
@@ -66,9 +72,11 @@ var _PlanetService = (function() {
             function (aResp) {
                 mPlanets[aLeague.id()] = aResp.data._embedded;
                 loadMapColors(aLeague.id(), aResp.data, hdr);
+                mLoading = false;
             },
             function (aResp) {
                 console.log(aResp);
+                mLoading = false;
             }
         );
     };
