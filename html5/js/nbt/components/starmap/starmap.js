@@ -199,7 +199,7 @@
                 var w = self.gl.domElement.parentElement.offsetWidth;
                 var h = self.gl.domElement.parentElement.offsetHeight;
                 self.setSize(w, h);
-            }
+            };
 
             var addRing = function(planet, innerRadius, outerRadius, material) {
                 var ringGeom = new THREE.RingGeometry(innerRadius, outerRadius, 36);
@@ -213,16 +213,20 @@
             this.reloadStarmapData = function() {
                 var whiteMtl = new THREE.MeshBasicMaterial();
                 whiteMtl.color.setRGB(1,1,1);
-                var yellowMtl = new THREE.MeshBasicMaterial();
-                yellowMtl.color.setRGB(1,1,0);
+
                 var redMtl = new THREE.MeshBasicMaterial();
                 redMtl.color.setRGB(1,0,0);
                 var greenMtl = new THREE.MeshBasicMaterial();
                 greenMtl.color.setRGB(0,1,0);
                 var blueMtl = new THREE.MeshBasicMaterial();
                 blueMtl.color.setRGB(0,0,1);
+
                 var magentaMtl = new THREE.MeshBasicMaterial();
                 magentaMtl.color.setRGB(1,0,1);
+                var yellowMtl = new THREE.MeshBasicMaterial();
+                yellowMtl.color.setRGB(1,1,0);
+                var cyanMtl = new THREE.MeshBasicMaterial();
+                cyanMtl.color.setRGB(0,1,1);
 
                 self.scene3D = new THREE.Scene();
                 self.scene3D.add(self.camera3D);
@@ -257,6 +261,12 @@
                         if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
                         if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
                         if (group._links.battle) addRing(p, 2.4, 2.6, redMtl);
+                        if (p.combatUnitCount)
+                            addRing(p, 2.7, 2.9, greenMtl);
+                        if (p.dropshipCount)
+                            addRing(p, 3.0, 3.2, cyanMtl);
+                        if (p.jumpshipCount)
+                            addRing(p, 3.3, 3.5, blueMtl);
                     }
                 }
 
@@ -348,7 +358,32 @@
                 self.state = 0;
 
                 return false;
-            }
+            };
+
+            var findObjectUnderMouse = function() {
+                // see what's under the mouse, if anything. If it's a planet
+                // then set a timeout to hover; if it's the same planet as
+                // before, do nothing; if it's nothing, clear any existing timeout
+                var vpW = self.camera3D.right - self.camera3D.left;
+                var vpH = self.camera3D.top - self.camera3D.bottom;
+                var w = vpW / self.camera3D.zoom;
+                var h = vpH / self.camera3D.zoom;
+                var l = self.offsetX - w/2;
+                var t = self.offsetY + h/2;
+
+                // normalized position in overlay viewport
+                var nx = event.offsetX / vpW;
+                var ny = event.offsetY / vpH;
+
+                var mouseX = nx * w + l;
+                var mouseY = t - ny * h;
+
+                var obj = null;
+                if (self.quadtree)
+                    obj = self.quadtree.find(mouseX, mouseY);
+
+                return obj;
+            };
 
             this.onMouseMove = function(event) {
                 if (self.state === 1) {
@@ -375,26 +410,7 @@
 
                     return true;
                 } else {
-                    // see what's under the mouse, if anything. If it's a planet
-                    // then set a timeout to hover; if it's the same planet as
-                    // before, do nothing; if it's nothing, clear any existing timeout
-                    var vpW = self.camera3D.right - self.camera3D.left;
-                    var vpH = self.camera3D.top - self.camera3D.bottom;
-                    var w = vpW / self.camera3D.zoom;
-                    var h = vpH / self.camera3D.zoom;
-                    var l = self.offsetX - w/2;
-                    var t = self.offsetY + h/2;
-
-                    // normalized position in overlay viewport
-                    var nx = event.offsetX / vpW;
-                    var ny = event.offsetY / vpH;
-
-                    var mouseX = nx * w + l;
-                    var mouseY = t - ny * h;
-
-                    var obj = null;
-                    if (self.quadtree)
-                        obj = self.quadtree.find(mouseX, mouseY);
+                    var obj = findObjectUnderMouse();
 
                     if (obj) {
                         if (obj !== self.hoverPlanet) {
@@ -417,6 +433,17 @@
                 }
 
                 return false;
+            };
+
+            this.onContextMenuClicked = function(e) {
+                var obj = findObjectUnderMouse();
+
+                if (obj) {
+                    console.log("RMB");
+                    return false;
+                }
+
+                return true;
             };
 
             this.showPlanetBrief = function() {
@@ -533,6 +560,8 @@
                 controller.setSize(w, h);
 
                 element.addClass('starmap');
+
+                element[0].oncontextmenu = controller.onContextMenuClicked;
 
                 // create text overlay
                 var overlay = angular.element('<div/>');
