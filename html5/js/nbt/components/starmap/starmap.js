@@ -23,7 +23,7 @@
 (function() {
     var app = angular.module('nbt.app');
 
-    app.directive('starmap', function($compile) {
+    app.directive('starmap', function($templateRequest, $compile) {
 
         this.controller = function($scope, $attrs, $rootScope, nbtLeague, nbtIdentity, nbtPlanet) {
             var mStarmapDebug;
@@ -32,6 +32,7 @@
             var self = this;
 
             $scope.showPlanetBrief = false;
+            $scope.planetNames = [];
 
             // planet data from service
             this.planets = null;
@@ -66,17 +67,22 @@
                 var maxX = -Infinity;
                 var maxY = -Infinity;
 
+                var planetNames = [];
                 for (var g=0; g < aPlanets.length; ++g) {
                     var group = aPlanets[g];
 
                     for (var i = 0; i < group.planets.length; ++i) {
                         var p = group.planets[i];
+                        planetNames.push(p.name);
+
                         if (p.x < minX) minX = p.x;
                         if (p.x > maxX) maxX = p.x;
                         if (p.y < minY) minY = p.y;
                         if (p.y > maxY) maxY = p.y;
                     }
                 }
+
+                $scope.planetNames = planetNames;
 
                 // create quadtree with dimensions specified in the data
                 self.quadtree = new QuadTree({left: minX, right: maxX, top: maxY, bottom: minY});
@@ -566,14 +572,24 @@
                 // create text overlay
                 var overlay = angular.element('<div/>');
                 overlay.addClass('starmapOverlay');
+                overlay.attr('onwheel', 'console.log(\'overlay wheel\')');
                 element.append(overlay);
 
                 // create UI overlay
-                var ui = angular.element('<div><div/>');
+                var l10n = 'en';
+
+                if (attrs.lang) l10n = attrs.lang;
+
+                var ui = angular.element('<div/>');
                 ui.addClass('starmapUI');
                 element.append(ui);
-
                 controller.setOverlays(overlay, ui);
+
+                $templateRequest('/templates/' + l10n + '/starmap/ui.html').then(function(html) {
+                    var content = angular.element(html);
+                    $compile(content)(scope);
+                    ui.append(content);
+                });
 
                 // init 2D Canvas and WebGL (three.js) systems
                 controller.initializeGraphics(element);
@@ -667,11 +683,11 @@
                     controller.clear();
                 }
 
-                var i18n = 'en';
+                var l10n = 'en';
 
-                if (attrs.lang) i18n = attrs.lang;
+                if (attrs.lang) l10n = attrs.lang;
 
-                $templateRequest('/templates/' + i18n + '/starmap/planetBrief.html').then(function(html) {
+                $templateRequest('/templates/' + l10n + '/starmap/planetBrief.html').then(function(html) {
                     var templ = angular.element(html);
                     element.append(templ);
                     $compile(templ)(scope);

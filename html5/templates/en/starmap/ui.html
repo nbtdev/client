@@ -1,0 +1,20 @@
+<div class="ui-content ui-interactive">
+    <datalist id="ui-planet-search-data">
+        <option ng-repeat="name in planetNames track by $index" value="{{name}}"></option>
+    </datalist>
+    <div class="ui-contentItem">
+        <input list="ui-planet-search-data" type="search" autocomplete="on" placeholder="Find a planet...">
+    </div>
+    <br>
+    <div class="ui-contentItem">
+        <input type="checkbox">Jumpships
+    </div>
+    <br>
+    <div class="ui-contentItem">
+        <input type="checkbox">Dropships
+    </div>
+    <br>
+    <div class="ui-contentItem">
+        <input type="checkbox">Mechs
+    </div>
+</div>

@@ -5,8 +5,8 @@
     height: 100%;
     width: 100%;
     z-index: 10;
-    pointer-events: none;
     overflow: hidden;
+    pointer-events: none;
 }
 
 .starmapUI {
@@ -17,6 +17,23 @@
     width: 100%;
     z-index: 20;
     pointer-events: none;
+}
+
+.ui-interactive {
+    pointer-events: all;
+}
+
+.ui-content {
+    display: inline-block;
+}
+
+.ui-contentItem {
+    display: inline-block;
+}
+
+.starmapUI input[type=search] {
+    color: black;
+    opacity: 0.9;
 }
 
 .starmapContainer {

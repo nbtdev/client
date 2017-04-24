@@ -187,6 +187,11 @@ th.sortable {
 	left: 0;
 }
 
+.starmapUI input[type~="search"][type~="checkbox"] {
+	color: black;
+	opacity: 0.5;
+}
+
 .planet_detail_editor_template {
 	background-color: black;
 	border: solid 1px gray;
