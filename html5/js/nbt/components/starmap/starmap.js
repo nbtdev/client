@@ -70,10 +70,11 @@
                 var planetNames = [];
                 for (var g=0; g < aPlanets.length; ++g) {
                     var group = aPlanets[g];
+                    var ownerName = group.owner.displayName;
 
                     for (var i = 0; i < group.planets.length; ++i) {
                         var p = group.planets[i];
-                        planetNames.push(p.name);
+                        planetNames.push({name: p.name, id: p.id, owner: ownerName, position: {x: p.x, y: p.y}});
 
                         if (p.x < minX) minX = p.x;
                         if (p.x > maxX) maxX = p.x;
@@ -97,6 +98,10 @@
                         self.quadtree.insert(p);
                     }
                 }
+            };
+
+            this.onPlanetSearch = function(position) {
+                // center the camera at the position provided
             };
 
             this.setSize = function(w, h) {
@@ -288,7 +293,7 @@
                 }
 
                 self.gl.render(self.scene3D, self.camera3D);
-            }
+            };
 
             this.onMouseWheel = function(event) {
                 // calculate new zoom factor
@@ -391,29 +396,44 @@
                 return obj;
             };
 
+            this.onPlanetSearch = function(position) {
+                console.log(position);
+                self.camera3D.position.x = self.offsetX = position.x;
+                self.camera3D.position.y = self.offsetY = position.y;
+
+                // draw the planet graphics
+                self.gl.render(self.scene3D, self.camera3D);
+
+                // update the text overlay
+                self.updateOverlay();
+            };
+
+            var moveCamera = function(newPosition) {
+                var dX = self.lastX - newPosition.x;
+                var dY = self.lastY - newPosition.y;
+
+                dX /= self.mapZoom;
+                dY /= self.mapZoom;
+
+                self.lastX = newPosition.x;
+                self.lastY = newPosition.y;
+
+                self.camera3D.position.x += dX;
+                self.camera3D.position.y -= dY;
+
+                self.offsetX += dX;
+                self.offsetY -= dY;
+
+                // draw the planet graphics
+                self.gl.render(self.scene3D, self.camera3D);
+
+                // update the text overlay
+                self.updateOverlay();
+            };
+
             this.onMouseMove = function(event) {
                 if (self.state === 1) {
-                    var dX = self.lastX - event.offsetX;
-                    var dY = self.lastY - event.offsetY;
-
-                    dX /= self.mapZoom;
-                    dY /= self.mapZoom;
-
-                    self.lastX = event.offsetX;
-                    self.lastY = event.offsetY;
-
-                    self.camera3D.position.x += dX;
-                    self.camera3D.position.y -= dY;
-
-                    self.offsetX += dX;
-                    self.offsetY -= dY;
-
-                    // draw the planet graphics
-                    self.gl.render(self.scene3D, self.camera3D);
-
-                    // update the text overlay
-                    self.updateOverlay();
-
+                    moveCamera({x: event.offsetX, y: event.offsetY});
                     return true;
                 } else {
                     var obj = findObjectUnderMouse();
