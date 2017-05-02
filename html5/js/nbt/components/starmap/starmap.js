@@ -47,6 +47,10 @@
             this.width = 0;
             this.height = 0;
 
+            $scope.showJumpships = true;
+            $scope.showCombatUnits = true;
+            $scope.showDropships = true;
+
             var updateMapColors = function(aMapColorData) {
                 self.mapColors = aMapColorData;
 
@@ -98,10 +102,6 @@
                         self.quadtree.insert(p);
                     }
                 }
-            };
-
-            this.onPlanetSearch = function(position) {
-                // center the camera at the position provided
             };
 
             this.setSize = function(w, h) {
@@ -221,6 +221,14 @@
                 self.scene3D.add(ringObj);
             };
 
+            var redraw = function() {
+                // draw the planet graphics
+                self.gl.render(self.scene3D, self.camera3D);
+
+                // update the text overlay
+                self.updateOverlay();
+            };
+
             this.reloadStarmapData = function() {
                 var whiteMtl = new THREE.MeshBasicMaterial();
                 whiteMtl.color.setRGB(1,1,1);
@@ -272,16 +280,19 @@
                         if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
                         if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
                         if (group._links.battle) addRing(p, 2.4, 2.6, redMtl);
-                        if (p.combatUnitCount)
+
+                        if (p.combatUnitCount && $scope.showCombatUnits)
                             addRing(p, 2.7, 2.9, greenMtl);
-                        if (p.dropshipCount)
+
+                        if (p.dropshipCount && $scope.showDropships)
                             addRing(p, 3.0, 3.2, cyanMtl);
-                        if (p.jumpshipCount)
+
+                        if (p.jumpshipCount && $scope.showJumpships)
                             addRing(p, 3.3, 3.5, blueMtl);
                     }
                 }
 
-                self.gl.render(self.scene3D, self.camera3D);
+                redraw();
             };
 
             this.onPlanetSelected = function(planet) {
@@ -292,7 +303,7 @@
                     self.scene3D.remove(self.rings3060);
                 }
 
-                self.gl.render(self.scene3D, self.camera3D);
+                redraw();
             };
 
             this.onMouseWheel = function(event) {
@@ -305,9 +316,7 @@
                     self.mapZoom = zoom;
                     self.camera3D.updateProjectionMatrix();
 
-                    self.gl.render(self.scene3D, self.camera3D);
-
-                    self.updateOverlay();
+                    redraw();
 
                     event.preventDefault();
                 }
@@ -396,16 +405,16 @@
                 return obj;
             };
 
+            $scope.$watch('showDropships', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
+            $scope.$watch('showJumpships', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
+            $scope.$watch('showCombatUnits', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
+
             this.onPlanetSearch = function(position) {
                 console.log(position);
                 self.camera3D.position.x = self.offsetX = position.x;
                 self.camera3D.position.y = self.offsetY = position.y;
 
-                // draw the planet graphics
-                self.gl.render(self.scene3D, self.camera3D);
-
-                // update the text overlay
-                self.updateOverlay();
+                redraw();
             };
 
             var moveCamera = function(newPosition) {
@@ -424,11 +433,7 @@
                 self.offsetX += dX;
                 self.offsetY -= dY;
 
-                // draw the planet graphics
-                self.gl.render(self.scene3D, self.camera3D);
-
-                // update the text overlay
-                self.updateOverlay();
+                redraw();
             };
 
             this.onMouseMove = function(event) {
