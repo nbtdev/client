@@ -47,6 +47,10 @@
             this.width = 0;
             this.height = 0;
 
+            $scope.showCapitalPlanets = true;
+            $scope.showChargeStations = true;
+            $scope.showFactories = true;
+            $scope.showBattles = true;
             $scope.showJumpships = true;
             $scope.showCombatUnits = true;
             $scope.showDropships = true;
@@ -128,6 +132,15 @@
             this.gl = null;
             this.scene3D = null;
             this.camera3D = null;
+
+            // scene for each marker layer
+            this.combatUnitRings = [];
+            this.dropshipRings = [];
+            this.jumpshipRings = [];
+            this.factoryRings = [];
+            this.battleRings = [];
+            this.chargeStationRings = [];
+            this.capitalPlanetRings = [];
 
             // 30- and 60-LY rings
             this.rings3060 = null
@@ -212,13 +225,15 @@
                 self.setSize(w, h);
             };
 
-            var addRing = function(planet, innerRadius, outerRadius, material) {
+            var addRing = function(ringList, planet, innerRadius, outerRadius, material) {
                 var ringGeom = new THREE.RingGeometry(innerRadius, outerRadius, 36);
                 var ringMesh = new THREE.Mesh(ringGeom, material);
                 var ringObj = new THREE.Object3D();
                 ringObj.add(ringMesh);
                 ringObj.position.set(planet.x, planet.y, 0);
-                self.scene3D.add(ringObj);
+                ringList.push(ringObj);
+
+                return ringObj;
             };
 
             var redraw = function() {
@@ -227,6 +242,15 @@
 
                 // update the text overlay
                 self.updateOverlay();
+            };
+
+            var showRings = function(rings, show) {
+                for (var i=0; i<rings.length; ++i) {
+                    var ring = rings[i];
+
+                    if (show) self.scene3D.add(ring);
+                    else self.scene3D.remove(ring);
+                }
             };
 
             this.reloadStarmapData = function() {
@@ -276,19 +300,54 @@
                         self.scene3D.add(obj);
 
                         // add rings for various other properties
-                        if (p.capitalPlanet) addRing(p, 1.5, 1.7, magentaMtl);
-                        if (p.chargeStation) addRing(p, 1.8, 2.0, yellowMtl);
-                        if (p.factory) addRing(p, 2.1, 2.3, whiteMtl);
-                        if (group._links.battle) addRing(p, 2.4, 2.6, redMtl);
+                        if (p.capitalPlanet) {
+                            var ring = addRing(self.capitalPlanetRings, p, 1.5, 1.7, magentaMtl);
 
-                        if (p.combatUnitCount && $scope.showCombatUnits)
-                            addRing(p, 2.7, 2.9, greenMtl);
+                            if ($scope.showCapitalPlanets)
+                                self.scene3D.add(ring);
+                        }
 
-                        if (p.dropshipCount && $scope.showDropships)
-                            addRing(p, 3.0, 3.2, cyanMtl);
+                        if (p.chargeStation) {
+                            var ring = addRing(self.chargeStationRings, p, 1.8, 2.0, yellowMtl);
 
-                        if (p.jumpshipCount && $scope.showJumpships)
-                            addRing(p, 3.3, 3.5, blueMtl);
+                            if ($scope.showChargeStations)
+                                self.scene3D.add(ring);
+                        }
+
+                        if (p.factory) {
+                            var ring = addRing(self.factoryRings, p, 2.1, 2.3, whiteMtl);
+
+                            if ($scope.showFactories)
+                                self.scene3D.add(ring);
+                        }
+
+                        if (group._links.battle) {
+                            var ring = addRing(self.battleRings, p, 2.4, 2.6, redMtl);
+
+                            if ($scope.showBattles)
+                                self.scene3D.add(ring);
+                        }
+
+                        if (p.combatUnitCount) {
+                            var ring = addRing(self.combatUnitRings, p, 2.7, 2.9, greenMtl);
+
+                            if ($scope.showCombatUnits)
+                                self.scene3D.add(ring);
+                        }
+
+                        if (p.dropshipCount) {
+                            ring = addRing(self.dropshipRings, p, 3.0, 3.2, cyanMtl);
+
+                            if ($scope.showDropships)
+                                self.scene3D.add(ring);
+                        }
+
+                        if (p.jumpshipCount) {
+                            ring = addRing(self.jumpshipRings, p, 3.3, 3.5, blueMtl);
+
+                            if ($scope.showJumpships)
+                                self.scene3D.add(ring);
+                        }
                     }
                 }
 
@@ -405,9 +464,40 @@
                 return obj;
             };
 
-            $scope.$watch('showDropships', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
-            $scope.$watch('showJumpships', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
-            $scope.$watch('showCombatUnits', function(newValue, oldValue) { self.reloadStarmapData(); redraw(); });
+            $scope.$watch('showCapitalPlanets', function(newValue, oldValue) {
+                showRings(self.capitalPlanetRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showChargeStations', function(newValue, oldValue) {
+                showRings(self.chargeStationRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showFactories', function(newValue, oldValue) {
+                showRings(self.factoryRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showBattles', function(newValue, oldValue) {
+                showRings(self.battleRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showDropships', function(newValue, oldValue) {
+                showRings(self.dropshipRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showJumpships', function(newValue, oldValue) {
+                showRings(self.jumpshipRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showCombatUnits', function(newValue, oldValue) {
+                showRings(self.combatUnitRings, newValue);
+                redraw();
+            });
 
             this.onPlanetSearch = function(position) {
                 console.log(position);
