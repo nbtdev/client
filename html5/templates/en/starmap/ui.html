@@ -1,37 +1,40 @@
 <div class="ui-content ui-interactive" ng-controller="StarmapUiController as uiController">
-    <datalist id="ui-planet-search-data">
-        <option ng-repeat="planet in planetNames" data-planet-position="{{planet.position}}" value="{{planet.name}}">{{planet.owner}}</option>
-    </datalist>
-    <div class="ui-contentItem">
-        <input id="ui-planet-search" list="ui-planet-search-data" ng-model="searchText" type="search" autocomplete="on" placeholder="Find a planet...">
-        <input type="button" ng-click="onFindPlanet()" value="Find">
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showCapitalPlanets">Capital Planets
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showChargeStations">Charge Stations
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showFactories">Factories
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showBattles">Battles
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showJumpships">Jumpships
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showDropships">Dropships
-    </div>
-    <br>
-    <div class="ui-contentItem">
-        <input type="checkbox" ng-model="$parent.showCombatUnits">Mechs
+    <div><a href="#" data-toggle="collapse" data-target="#tools">Map Tools</a></div>
+    <div id="tools" class="collapse map-tools">
+        <datalist id="ui-planet-search-data">
+            <option ng-repeat="planet in planetNames" data-planet-position="{{planet.position}}" value="{{planet.name}}">{{planet.owner}}</option>
+        </datalist>
+        <div class="ui-contentItem">
+            <input id="ui-planet-search" list="ui-planet-search-data" ng-model="searchText" type="search" autocomplete="on" placeholder="Find a planet...">
+            <input type="button" ng-click="onFindPlanet()" value="Find">
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showCapitalPlanets">Capital Planets
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showChargeStations">Charge Stations
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showFactories">Factories
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showBattles">Battles
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showJumpships">Jumpships
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showDropships">Dropships
+        </div>
+        <br>
+        <div class="ui-contentItem">
+            <input type="checkbox" ng-model="$parent.showCombatUnits">Mechs
+        </div>
     </div>
 </div>

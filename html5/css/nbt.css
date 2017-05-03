@@ -313,3 +313,9 @@ input[type=password] {
     padding-left: 0px;
     padding-right: 0px;
 }
+
+.map-tools {
+    background-color: black;
+    padding: 3px;
+    border: solid 1px goldenrod;
+}
