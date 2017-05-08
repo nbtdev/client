@@ -49,6 +49,14 @@ var _Battle = (function() {
         return 'N/A';
     };
 
+    Battle.prototype.getId = function() {
+        if (mBattleObj) {
+            return mBattleObj.id;
+        }
+
+        return 'N/A';
+    };
+
     Battle.prototype.getStatus = function() {
         if (mBattleObj) {
             return mBattleObj.status;
@@ -67,10 +75,17 @@ var _Battle = (function() {
 
     Battle.prototype.getAttacker = function() {
         if (mBattleObj) {
-            return {
-                name: mBattleObj.attacker.name,
-                ref: mBattleObj.attacker._links.self
+            var rtn = {
+                name: mBattleObj.attacker.displayName
             };
+
+            if (mBattleObj.attacker._links) {
+                rtn.ref = mBattleObj.attacker._links.self;
+            }
+
+            rtn.attackDate = new Date(mBattleObj.attackDate);
+
+            return rtn;
         }
 
         return null;
@@ -79,6 +94,14 @@ var _Battle = (function() {
     Battle.prototype.getRef = function() {
         if (mBattleObj && mBattleObj._links) {
             return mBattleObj._links.self;
+        }
+
+        return null;
+    };
+
+    Battle.prototype.getAttackDate = function() {
+        if (mBattleObj) {
+            return new Date(mBattleObj.attackDate);
         }
 
         return null;

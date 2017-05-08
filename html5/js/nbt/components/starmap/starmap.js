@@ -723,10 +723,13 @@
             $scope.posY = 0;
 
             this.updatePlanetBattleDetail = function(battleData) {
-                $scope.battleId = battleData.id;
-                $scope.battleAttacker = battleData.primaryAttacker;
-                $scope.battleType = battleData.type;
-                $scope.battleLaunched = battleData.attackDate;
+                $scope.battleId = battleData.getId();
+
+                var attacker = battleData.getAttacker();
+                $scope.battleAttacker = attacker.name;
+
+                $scope.battleType = 'Sector Assault';
+                $scope.battleLaunched = battleData.getAttackDate().toString();
             }
 
             this.updatePlanet = function(p) {
