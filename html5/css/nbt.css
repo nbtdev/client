@@ -314,6 +314,14 @@ input[type=password] {
     padding-right: 0px;
 }
 
+.nbt-side-menu {
+    padding: 4px;
+}
+
+.nbt-side-menu-label {
+    color: goldenrod;
+}
+
 .map-tools {
     background-color: black;
     padding: 3px;

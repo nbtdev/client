@@ -105,6 +105,23 @@ var _PlanetService = (function() {
         }
     };
 
+    PlanetService.prototype.fetchCombatUnitsOnPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.unitInstances.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data._embedded.combatUnitInstances);
+                }
+            );
+        }
+    };
+
     return PlanetService;
 })();
 

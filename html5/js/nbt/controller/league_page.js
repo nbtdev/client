@@ -24,6 +24,9 @@
     angular
         .module('nbt.app')
         .controller('LeaguePageController', ['$scope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, nbtIdentity, nbtLeague, nbtPlanet) {
+            $scope.showTransfer = false;
+            $scope.showTransferCombatUnits = false;
+
             $scope.getLogo = function(data) {
                 // we want the link directly to the logo
                 var rtn = data.logo(true);
@@ -95,6 +98,12 @@
 
             var user = nbtIdentity.get();
             var league = nbtLeague.current();
+            var selectedPlanet = null;
+
+            $scope.onTransferCombatUnits = function() {
+                if (selectedPlanet === null)
+                    return;
+            };
 
             var loadStarmap = function(league, user) {
                 if (!league || !user)
@@ -114,6 +123,30 @@
                 loadStarmap(league, user);
             });
             $scope.$on('destroy', cbLeague);
+
+            var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
+                if (selectedPlanet === aPlanet) {
+                    return;
+                }
+
+                selectedPlanet = aPlanet;
+
+                var localShowTransfer = false;
+                var localShowTransferCombatUnits = false;
+
+                if (selectedPlanet) {
+                    // currently, dropships are required in order to be able to transfer something...
+                    if (selectedPlanet.dropshipCount && selectedPlanet.dropshipCount > 0) {
+                        localShowTransfer = true;
+                        localShowTransferCombatUnits = true;
+                    }
+                }
+
+                $scope.showTransfer = localShowTransfer;
+                $scope.showTransferCombatUnits = localShowTransferCombatUnits;
+                $scope.$digest();
+            });
+            $scope.$on('destroy', cbSelectedPlanetChanged);
 
             $scope.leagues = null;
 
