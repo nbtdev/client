@@ -322,6 +322,17 @@ input[type=password] {
     color: goldenrod;
 }
 
+.nbt-combat-unit-list {
+    min-width: 150px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.nbt-combat-unit-transfer {
+    display: inline-block;
+    color: black;
+}
+
 .map-tools {
     background-color: black;
     padding: 3px;
