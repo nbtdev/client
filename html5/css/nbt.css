@@ -338,3 +338,26 @@ input[type=password] {
     padding: 3px;
     border: solid 1px goldenrod;
 }
+
+.nbt-info {
+    color: green;
+    opacity: 1;
+}
+
+.nbt-error {
+    color: red;
+    opacity: 1;
+}
+
+.nbt-invisible {
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+.nbt-status {
+    display: inline-block;
+}
+
+.nbt-centered {
+    text-align: center;
+}
