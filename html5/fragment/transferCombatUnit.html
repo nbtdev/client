@@ -1,0 +1,41 @@
+<div id="transferCombatUnits" class="modal fade" tabindex="-1" role="dialog" ng-controller="TransferCombatUnitController as transferCombatUnitController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Transfer Combat Units To/From Dropship</h4>
+            </div>
+            <div class="modal-body nbt-base">
+                <div class="container-fluid">
+                    <div class="row nbt-centered">
+                        <div class="nbt-status" ng-class="{ 'nbt-info': !msgIsError, 'nbt-error': msgIsError, 'nbt-invisible': !message}">&nbsp;{{message}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div>{{planet.name}}</div>
+                            <div>
+                                <select multiple class="nbt-combat-unit-list" ng-model="selectedPlanetCombatUnits">
+                                    <option ng-repeat="unit in combatUnits" value="{{unit}}">{{unit.template.name}} ({{unit.ownerAbbr}})</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div ng-repeat="dropship in dropships">
+                                <div>{{dropship.name}} ({{dropship.owner.displayName}})</div>
+                                <div>
+                                    <div class="nbt-combat-unit-transfer">
+                                        <input type="button" value="<<" ng-click="onTransferDropshipToPlanet(dropship)">
+                                        <br>
+                                        <input type="button" value=">>" ng-click="onTransferPlanetToDropship(dropship)">
+                                    </div>
+                                    <select multiple class="nbt-combat-unit-list" ng-model="selectedDropshipCombatUnits[dropship.id]">
+                                        <option ng-repeat="unit in dropshipCombatUnits[dropship.id]" value="{{unit}}">{{unit.template.name}} ({{unit.owner.shortName}})</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
