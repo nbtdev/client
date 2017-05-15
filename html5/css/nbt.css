@@ -322,13 +322,13 @@ input[type=password] {
     color: goldenrod;
 }
 
-.nbt-combat-unit-list {
+.nbt-multi-select {
     min-width: 150px;
     display: inline-block;
     vertical-align: top;
 }
 
-.nbt-combat-unit-transfer {
+.nbt-perform-transfer {
     display: inline-block;
     color: black;
 }

@@ -26,6 +26,7 @@
         .controller('LeaguePageController', ['$scope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, nbtIdentity, nbtLeague, nbtPlanet) {
             $scope.showTransfer = false;
             $scope.showTransferCombatUnits = false;
+            $scope.showDockUndockDropships = false;
 
             $scope.getLogo = function(data) {
                 // we want the link directly to the logo
@@ -131,19 +132,23 @@
 
                 selectedPlanet = aPlanet;
 
-                var localShowTransfer = false;
                 var localShowTransferCombatUnits = false;
+                var localShowDockUndockDropships = false;
 
                 if (selectedPlanet) {
                     // currently, dropships are required in order to be able to transfer something...
                     if (selectedPlanet.dropshipCount && selectedPlanet.dropshipCount > 0) {
-                        localShowTransfer = true;
                         localShowTransferCombatUnits = true;
+                    }
+
+                    if (selectedPlanet.jumpshipCount && selectedPlanet.jumpshipCount > 0) {
+                        localShowDockUndockDropships = true;
                     }
                 }
 
-                $scope.showTransfer = localShowTransfer;
+                $scope.showTransfer = localShowDockUndockDropships || localShowTransferCombatUnits;
                 $scope.showTransferCombatUnits = localShowTransferCombatUnits;
+                $scope.showDockUndockDropships = localShowDockUndockDropships;
                 $scope.$digest();
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);

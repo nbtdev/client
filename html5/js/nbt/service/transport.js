@@ -42,8 +42,26 @@ var _TransportService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aCallback)
+                    if (aCallback && aResp.data._embedded)
                         aCallback(aResp.data._embedded.dropships);
+                }
+            );
+        }
+    };
+
+    // fetch the jumpship(s) present at a particular planet
+    TransportService.prototype.fetchJumpshipsForPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet._links.jumpships) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.jumpships.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback && aResp.data._embedded)
+                        aCallback(aResp.data._embedded.jumpships);
                 }
             );
         }
@@ -64,7 +82,7 @@ var _TransportService = (function() {
                 data: data
             }).then(
                 function (aResp) {
-                    if (aCallback)
+                    if (aCallback && aResp.data._embedded)
                         aCallback(aResp.data);
                 },
                 function (aError) {
@@ -81,6 +99,43 @@ var _TransportService = (function() {
 
     TransportService.prototype.transferCombatUnitsDropshipToPlanet = function(aPlanet, aCombatUnits, aDropship, aToken, aCallback, aFail) {
         transferUnitInstances(aPlanet, aCombatUnits, aDropship, -1, aToken, aCallback, aFail);
+    };
+
+    var performDropshipOperation = function(aDirection, aPlanet, aDropships, aJumpship, aToken, aCallback, aFail) {
+        // the jumpships resource tree will use DELETE to drop dropships, and POST to dock them
+        var rel = aJumpship._links.dropships;
+
+        if (!rel) {
+            aFail({data: {message: "Missing link to jumpship's 'dropships' resource"}});
+            return;
+        }
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+        var data = { direction: aDirection, dropships: aDropships };
+
+        http({
+            method: 'PUT',
+            url: rel.href,
+            headers: hdr.get(),
+            data: data
+        }).then(
+            function (aResp) {
+                if (aCallback)
+                    aCallback(aResp.data);
+            },
+            function (aError) {
+                if (aFail)
+                    aFail(aError);
+            }
+        );
+    };
+
+    TransportService.prototype.dockDropships = function(aPlanet, aDropships, aJumpship, aToken, aCallback, aFail) {
+        performDropshipOperation(1, aPlanet, aDropships, aJumpship, aToken, aCallback, aFail);
+    };
+
+    TransportService.prototype.undockDropships = function(aPlanet, aDropships, aJumpship, aToken, aCallback, aFail) {
+        performDropshipOperation(-1, aPlanet, aDropships, aJumpship, aToken, aCallback, aFail);
     };
 
     return TransportService;
