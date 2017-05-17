@@ -49,6 +49,42 @@ var _TransportService = (function() {
         }
     };
 
+    // fetch the jump types allowed with aPlanet as the origin
+    TransportService.prototype.fetchJumpTypesFromPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet._links.jumpTypes) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.jumpTypes.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback && aResp.data._embedded)
+                        aCallback(aResp.data._embedded.jumpTypes);
+                }
+            );
+        }
+    };
+
+    // fetch the jump actions allowed with aPlanet as the origin
+    TransportService.prototype.fetchJumpActionsFromPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet._links.jumpActions) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.jumpActions.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback && aResp.data._embedded)
+                        aCallback(aResp.data._embedded.jumpActions);
+                }
+            );
+        }
+    };
+
     // fetch the jumpship(s) present at a particular planet
     TransportService.prototype.fetchJumpshipsForPlanet = function (aPlanet, aToken, aCallback) {
         if (aPlanet._links.jumpships) {
@@ -136,6 +172,44 @@ var _TransportService = (function() {
 
     TransportService.prototype.undockDropships = function(aPlanet, aDropships, aJumpship, aToken, aCallback, aFail) {
         performDropshipOperation(-1, aPlanet, aDropships, aJumpship, aToken, aCallback, aFail);
+    };
+
+    TransportService.prototype.jumpJumpships = function(aPath, aJumpships, aType, aAction, aToken, aCallback, aFail) {
+        if (!aPath || !aJumpships || !aType || !aAction) {
+            aFail({data: {message: "Invalid or missing jump parameters"}});
+            return;
+        }
+
+        if (aJumpships.length == 0) {
+            aFail({data: {message: "No jumpships in operation, aborting"}});
+            return;
+        }
+
+        var link = aJumpships[0]._links.up;
+
+        var hdr = new Headers(Header.TOKEN, aToken);
+        var data = {
+            jumpships: aJumpships,
+            jumpPath: aPath,
+            type: aType,
+            action: aAction
+        };
+
+        http({
+            method: 'PUT',
+            url: link.href,
+            headers: hdr.get(),
+            data: data
+        }).then(
+            function (aResp) {
+                if (aCallback)
+                    aCallback(aResp.data);
+            },
+            function (aError) {
+                if (aFail)
+                    aFail(aError);
+            }
+        );
     };
 
     return TransportService;

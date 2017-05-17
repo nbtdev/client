@@ -27,6 +27,7 @@
             $scope.showTransfer = false;
             $scope.showTransferCombatUnits = false;
             $scope.showDockUndockDropships = false;
+            $scope.showRightBar = false;
 
             $scope.getLogo = function(data) {
                 // we want the link directly to the logo
@@ -126,6 +127,7 @@
             $scope.$on('destroy', cbLeague);
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
+                $scope.showRightBar = false;
                 if (selectedPlanet === aPlanet) {
                     return;
                 }
@@ -143,6 +145,7 @@
 
                     if (selectedPlanet.jumpshipCount && selectedPlanet.jumpshipCount > 0) {
                         localShowDockUndockDropships = true;
+                        $scope.showRightBar = true;
                     }
                 }
 

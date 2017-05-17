@@ -106,7 +106,7 @@ var _PlanetService = (function() {
     };
 
     PlanetService.prototype.fetchCombatUnitsOnPlanet = function (aPlanet, aToken, aCallback) {
-        if (aPlanet) {
+        if (aPlanet && aPlanet._links.unitInstances) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({

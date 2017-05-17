@@ -361,3 +361,7 @@ input[type=password] {
 .nbt-centered {
     text-align: center;
 }
+
+.nbt-label {
+    color: white;
+}
