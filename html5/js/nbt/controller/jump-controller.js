@@ -83,6 +83,10 @@
                 }
 
                 var path = [];
+                // TEMP: manufacture a path starting with the selected one
+                path.push({id: $scope.planet.id});
+                path.push({id:2686843});
+                path.push({id:3342000});
 
                 var jumpType = JSON.parse($scope.selectedJumpType);
                 var jumpAction = JSON.parse($scope.selectedJumpAction);
@@ -95,6 +99,10 @@
                     nbtIdentity.get().token,
 
                     function(data) {
+                        $scope.jumpships = [];
+                        if (data.origin.jumpships)
+                            $scope.jumpships = data.origin.jumpships;
+
                         updateStatus("Jump successful");
                     },
 

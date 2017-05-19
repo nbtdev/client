@@ -118,7 +118,7 @@ var _TransportService = (function() {
                 data: data
             }).then(
                 function (aResp) {
-                    if (aCallback && aResp.data._embedded)
+                    if (aCallback && aResp.data)
                         aCallback(aResp.data);
                 },
                 function (aError) {
