@@ -82,14 +82,19 @@
                     jumpships.push(JSON.parse($scope.selectedJumpships[i]));
                 }
 
-                var path = [];
-                // TEMP: manufacture a path starting with the selected one
-                path.push({id: $scope.planet.id});
-                path.push({id:2686843});
-                path.push({id:3342000});
+                if (jumpships.length === 0) {
+                    alert("No jumpships selected");
+                    return;
+                }
 
                 var jumpType = JSON.parse($scope.selectedJumpType);
                 var jumpAction = JSON.parse($scope.selectedJumpAction);
+
+                // strip out all but the planet IDs from the path
+                var path = [];
+                for (var i=0; i<$scope.jumpPath.length; ++i) {
+                    path.push({id: $scope.jumpPath[i].id});
+                }
 
                 nbtTransport.jumpJumpships(
                     path,

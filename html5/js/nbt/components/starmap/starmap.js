@@ -172,6 +172,16 @@
             this.hoverPlanetLoc = null;
             this.hoverPlanetBrief = null;
 
+            this.originPlanet = null;
+            this.destinationPlanet = null;
+            this.jumpPath = [];
+            this.chargeStationNetwork = null;
+            var csWorker = new Worker("/js/nbt/workers/create-cs-network.js");
+
+            csWorker.onmessage = function(results) {
+                self.chargeStationNetwork = results.data;
+            };
+
             // initialize the 2D (for text overlays and GUI) and 3D (for starmap itself) objects
             this.initializeGraphics = function(parent) {
                 // create WebGL renderer, scene and camera
@@ -242,6 +252,32 @@
 
                 // update the text overlay
                 self.updateOverlay();
+            };
+
+            var clearJumpPath = function() {
+                if (self.jumpPath) {
+                    self.scene3D.remove(self.jumpPath);
+                }
+
+                self.jumpPath = null;
+            };
+
+            var addJumpPath = function() {
+                clearJumpPath();
+
+                var gray = new THREE.MeshBasicMaterial();
+                gray.color.setRGB(0.5, 0.5, 0.5);
+
+                var geom = new THREE.Geometry();
+
+                for (var i=0; i<self.jumpPlan.length; ++i) {
+                    var planet = self.jumpPlan[i];
+                    geom.vertices.push(new THREE.Vector3(planet.x, planet.y, -1.0));
+                }
+
+                self.jumpPath = new THREE.Line(geom, gray);
+                self.scene3D.add(self.jumpPath);
+                redraw();
             };
 
             var showRings = function(rings, show) {
@@ -351,6 +387,9 @@
                     }
                 }
 
+                // kick off a worker task to create the charge station network
+                csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+
                 redraw();
             };
 
@@ -363,6 +402,31 @@
                 }
 
                 redraw();
+            };
+
+            var findObjectUnderMouse = function() {
+                // see what's under the mouse, if anything. If it's a planet
+                // then set a timeout to hover; if it's the same planet as
+                // before, do nothing; if it's nothing, clear any existing timeout
+                var vpW = self.camera3D.right - self.camera3D.left;
+                var vpH = self.camera3D.top - self.camera3D.bottom;
+                var w = vpW / self.camera3D.zoom;
+                var h = vpH / self.camera3D.zoom;
+                var l = self.offsetX - w/2;
+                var t = self.offsetY + h/2;
+
+                // normalized position in overlay viewport
+                var nx = event.offsetX / vpW;
+                var ny = event.offsetY / vpH;
+
+                var mouseX = nx * w + l;
+                var mouseY = t - ny * h;
+
+                var obj = null;
+                if (self.quadtree)
+                    obj = self.quadtree.find(mouseX, mouseY);
+
+                return obj;
             };
 
             this.onMouseWheel = function(event) {
@@ -389,6 +453,19 @@
                     self.lastX = event.offsetX;
                     self.lastY = event.offsetY;
                     self.state = 1;
+                } else if (event.button === 0) { // just the LMB by itself
+                    // if we are in pathfinding state, just exit the state and leave the path
+                    // in place; otherwise, treat it as a normal planet select
+                    if (self.isPathfinding) {
+                        self.isPathfinding = false;
+                    } else {
+                        var obj = findObjectUnderMouse();
+
+                        if (obj && event.shiftKey) {
+                            self.isPathfinding = true;
+                            self.originPlanet = obj;
+                        }
+                    }
                 }
 
                 return false;
@@ -423,11 +500,17 @@
                     // get the list of planets within 60LY
                     var planets = [];
 
-                    if (obj)
-                        planets = self.quadtree.findAllWithinRadius({x:mouseX, y:mouseY}, 60.0);
+                    if (obj) {
+                        planets = self.quadtree.findAllWithinRadius({x: mouseX, y: mouseY}, 60.0);
+                    } else {
+                        // remove any existing jump path
+                        clearJumpPath();
+                        redraw();
+                    }
 
                     // call out
                     $rootScope.$broadcast('planetChanged', obj, planets, self.token);
+
                 }
 
                 return false;
@@ -437,31 +520,6 @@
                 self.state = 0;
 
                 return false;
-            };
-
-            var findObjectUnderMouse = function() {
-                // see what's under the mouse, if anything. If it's a planet
-                // then set a timeout to hover; if it's the same planet as
-                // before, do nothing; if it's nothing, clear any existing timeout
-                var vpW = self.camera3D.right - self.camera3D.left;
-                var vpH = self.camera3D.top - self.camera3D.bottom;
-                var w = vpW / self.camera3D.zoom;
-                var h = vpH / self.camera3D.zoom;
-                var l = self.offsetX - w/2;
-                var t = self.offsetY + h/2;
-
-                // normalized position in overlay viewport
-                var nx = event.offsetX / vpW;
-                var ny = event.offsetY / vpH;
-
-                var mouseX = nx * w + l;
-                var mouseY = t - ny * h;
-
-                var obj = null;
-                if (self.quadtree)
-                    obj = self.quadtree.find(mouseX, mouseY);
-
-                return obj;
             };
 
             $scope.$watch('showCapitalPlanets', function(newValue, oldValue) {
@@ -526,6 +584,122 @@
                 redraw();
             };
 
+            var findJumpPath = function(origin, destination) {
+                var startTime = performance.now();
+
+                // first, determine if we need to use the CS network at all...
+                var planetInRangeList = self.quadtree.findAllWithinRadiusEx(origin, 60.0, function(planet) {
+                    // "OK" only for planets with charge station
+                    return (planet.id === destination.id);
+                });
+
+                if (planetInRangeList.length === 1) {
+                    // the path is two long -- origin and the destination; make that list and return it
+                    return [origin, destination];
+                }
+
+                // find the CS around the target planet -- termination condition is when the origin planet is in the
+                // set of CS near the destination
+                var destinationCS = self.quadtree.findAllWithinRadiusEx(destination, 60.0, function(planet) {
+                    // "OK" only for planets with charge station
+                    return (planet.chargeStation && planet.id !== destination.id);
+                });
+
+                //console.log('CS within range of destination:');
+                for (var i=0; i<destinationCS.length; ++i) {
+                    console.log('    ' + destinationCS[i].planet.name);
+                }
+
+                // get all CS planets within 60LY; once we are on the CS network, we can use the pre-computed
+                // adjacency lists from there
+                var originCS = self.quadtree.findAllWithinRadiusEx(origin, 60.0, function(planet) {
+                    // "OK" only for planets with charge station
+                    return (planet.chargeStation && planet.id !== origin.id);
+                });
+
+                // if there are no CS in range of the origin, exit early with null
+                if (originCS.length === 0) {
+                    return null;
+                }
+
+                var paths = [];
+                var visited = {};
+                var queue = [];
+
+                // initialize with items from the CS network graph
+                for (var i=0; i<originCS.length; ++i) {
+                    queue.push(self.chargeStationNetwork[originCS[i].planet.id]);
+                }
+
+                // breadth-first search -- put each adjacent CS planet in a queue, then visit the queue one at a time,
+                // putting each item's unvisited children in the queue. Mark each child with its parent CS so we can
+                // reconstruct the path once we discover a CS in the destination set (which is the termination condition)
+
+                while (queue.length > 0) {
+                    var csPlanet = queue.shift();
+                    visited[csPlanet.id] = csPlanet;
+
+                    var idx = destinationCS.findIndex(function(elem, idx, arr) {
+                        return elem.planet.id === csPlanet.id;
+                    });
+
+                    if (idx >= 0) {
+                        // then we found a path, construct the path backwards and stash it for later review
+                        var candidate = [];
+                        candidate.push(csPlanet);
+                        while (csPlanet.pathParent) {
+                            candidate.push(csPlanet.pathParent);
+                            csPlanet = csPlanet.pathParent;
+                        }
+
+                        paths.push(candidate);
+                    } else {
+                        // otherwise, put all of this CS planet's adjacent hops in the queue...if they have not yet
+                        // been visited
+                        for (var hopId in csPlanet.neighbors) {
+                            // is this planet already in the set to be checked?
+                            var idx = queue.findIndex(function(elem, idx, arr) {
+                                return elem.id === csPlanet.id;
+                            });
+
+                            if (!visited[hopId] && idx < 0) {
+                                var hop = csPlanet.neighbors[hopId];
+                                hop.pathParent = csPlanet;
+                                queue.push(hop);
+                            }
+                        }
+                    }
+                }
+
+                // find a/the shortest path
+                var path = null;
+                for (var i=0; i<paths.length; ++i) {
+                    if (path === null) {
+                        path = paths[i];
+                    } else {
+                        if (paths[i].length < path.length) {
+                            path = paths[i];
+                        }
+                    }
+                }
+
+                var rtn = [];
+                if (path) {
+                    rtn.push(origin);
+                    while (path.length > 0) {
+                        rtn.push(path.pop());
+                    }
+                    rtn.push(destination);
+                }
+
+                var elapsed = performance.now() - startTime;
+                console.log('Shortest path search took ' + elapsed.toFixed(2) + ' ms');
+                console.log('path is:');
+                rtn.forEach(function(elem, idx, arr) { console.log('    ' + elem.name); });
+
+                return rtn;
+            };
+
             this.onMouseMove = function(event) {
                 if (self.state === 1) {
                     moveCamera({x: event.offsetX, y: event.offsetY});
@@ -536,6 +710,13 @@
                     if (obj) {
                         if (obj !== self.hoverPlanet) {
                             self.hoverPlanet = obj;
+
+                            if (self.isPathfinding && event.shiftKey) { // the user is looking at jump paths
+                                self.destinationPlanet = obj;
+                                self.jumpPlan = findJumpPath(self.originPlanet, self.destinationPlanet);
+                                $rootScope.$broadcast('jumpPathChanged', self.jumpPlan);
+                                addJumpPath();
+                            }
 
                             if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
 

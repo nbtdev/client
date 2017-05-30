@@ -1,3 +1,25 @@
+/**
+ Copyright (c) 2017, Netbattletech
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification, are
+ permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 function QuadTreeNode(dims) {
 	this.mDimensions = dims;
 	this.mObjects = null;
@@ -200,29 +222,37 @@ QuadTreeNode.prototype.findAllWithinBox = function(l, r, b, t, objs) {
 			});
 		}
 	}
-}
+};
+
+QuadTreeNode.prototype.findAllWithinRadiusEx = function(center, radius, objs, filterCb) {
+    // first do a simple box collection...
+    var left = center.x - radius;
+    var right = center.x + radius;
+    var bottom = center.y - radius;
+    var top = center.y + radius;
+
+    var tmp = [];
+    this.findAllWithinBox(left, right, bottom, top, tmp);
+
+    // ... then prune those not within the specified radius; additionally, call the filter callback
+	// for each
+    var radSqr = radius * radius;
+    tmp.forEach(function(e,i,a) {
+        var x = center.x - e.x;
+        var y = center.y - e.y;
+        var distSqr = x*x + y*y;
+        if (distSqr < radSqr) {
+        	if (filterCb && filterCb(e))
+	            objs.push({planet: e, radius: Math.sqrt(distSqr)});
+        }
+    });
+
+    return objs;
+};
 
 QuadTreeNode.prototype.findAllWithinRadius = function(center, radius, objs) {
-	// first do a simple box collection...
-	var left = center.x - radius;
-	var right = center.x + radius;
-	var bottom = center.y - radius;
-	var top = center.y + radius;
-
-	var tmp = [];
-	this.findAllWithinBox(left, right, bottom, top, tmp);
-	
-	// ... then prune those not within the specified radius
-	var radSqr = radius * radius;
-	tmp.forEach(function(e,i,a) {
-		var x = center.x - e.x;
-		var y = center.y - e.y;
-		var distSqr = x*x + y*y;
-		if (distSqr < radSqr) {
-			objs.push({planet: e, radius: Math.sqrt(distSqr)});
-		}
-	});
-}
+	this.findAllWithinRadiusEx(center, radius, objs);
+};
 
 function QuadTree(dims) {
 	this.mDimensions = dims;
@@ -236,20 +266,26 @@ function QuadTree(dims) {
 
 QuadTree.prototype.insert = function(data) {
 	this.mRoot.insert(data);
-}
+};
 
 QuadTree.prototype.find = function(x, y) {
 	return this.mRoot.find(x, y);
-}
+};
 
 QuadTree.prototype.findAllWithinBox = function(left, right, bottom, top) {
 	var objs = [];
 	this.mRoot.findAllWithinBox(left, right, bottom, top, objs);
 	return objs;
-}
+};
+
+QuadTree.prototype.findAllWithinRadiusEx = function(center, radius, filterCb) {
+    var objs = [];
+    this.mRoot.findAllWithinRadiusEx(center, radius, objs, filterCb);
+    return objs;
+};
 
 QuadTree.prototype.findAllWithinRadius = function(center, radius) {
-	var objs = [];
-	this.mRoot.findAllWithinRadius(center, radius, objs);
-	return objs;
-}
+    var objs = [];
+    this.mRoot.findAllWithinRadius(center, radius, objs);
+    return objs;
+};
