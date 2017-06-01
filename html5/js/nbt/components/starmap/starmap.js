@@ -593,7 +593,7 @@
                     return (planet.id === destination.id);
                 });
 
-                if (planetInRangeList.length === 1) {
+                if (planetInRangeList.length > 0) {
                     // the path is two long -- origin and the destination; make that list and return it
                     return [origin, destination];
                 }
