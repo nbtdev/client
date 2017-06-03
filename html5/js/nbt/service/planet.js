@@ -28,11 +28,28 @@ var _PlanetService = (function() {
     var mColors = {};
     var mLoading = false;
 
+    // quick-lookup tables
+    var mPlanetsById = {};
+
     function PlanetService(aHttp, aRootScope) {
         self = this;
         http = aHttp;
         rootScope = aRootScope;
     }
+
+    var updateLookupTables = function(leagueId, planetListing) {
+        mPlanetsById[leagueId] = {};
+
+        for (var i=0; i<planetListing.planetGroups.length; ++i) {
+            var planetGroup = planetListing.planetGroups[i];
+
+            for (var j=0; j<planetGroup.planets.length; ++j) {
+                var planet = planetGroup.planets[j];
+
+                mPlanetsById[leagueId][planet.id] = planet;
+            }
+        }
+    };
 
     var loadMapColors = function (aLeagueId, aPlanets, aTokenHdr) {
         http({
@@ -72,6 +89,10 @@ var _PlanetService = (function() {
             function (aResp) {
                 mPlanets[aLeague.id()] = aResp.data._embedded;
                 loadMapColors(aLeague.id(), aResp.data, hdr);
+
+                // update quick-lookup tables
+                updateLookupTables(aLeague.id(), aResp.data._embedded);
+
                 mLoading = false;
             },
             function (aResp) {
@@ -86,6 +107,64 @@ var _PlanetService = (function() {
             return mPlanets[aLeague.id()];
 
         return null;
+    };
+
+    PlanetService.prototype.getMapColors = function (aLeague) {
+        if (aLeague)
+            return mColors[aLeague.id()];
+
+        return null;
+    };
+
+    PlanetService.prototype.batchUpdatePlanets = function(aLeagueId, aPlanets) {
+        for (var k=0; k<aPlanets.length; ++k) {
+            var aPlanet = aPlanets[k];
+
+            // update the planet in the primary listing
+            for (var i=0; i<mPlanets[aLeagueId].planetGroups.length; ++i) {
+                var planetGroup = mPlanets[aLeagueId].planetGroups[i];
+
+                for (var j = 0; j < planetGroup.planets.length; ++j) {
+                    var planet = planetGroup.planets[j];
+
+                    if (planet.id === aPlanet.id) {
+                        planetGroup.planets[j] = aPlanet;
+                        break;
+                    }
+                }
+            }
+
+            // update any additional lookup tables
+            mPlanetsById[aLeagueId][planet.id] = aPlanet;
+        }
+
+        // notify all listeners that their planet data changed
+        rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
+    };
+
+    PlanetService.prototype.editPlanets = function(aLeagueId, planetEdits, pushToRemote) {
+        if (!aLeagueId)
+            return;
+
+        var leaguePlanets = mPlanets[aLeagueId];
+        var editedPlanets = {};
+
+        // make the indicated edits...
+        for (var i=0; i<planetEdits.length; ++i) {
+            var planetEdit = planetEdits[i];
+
+            var planet = mPlanetsById[aLeagueId][planetEdit.planetId];
+            planet[planetEdit.property] = planetEdit.newValue;
+
+            editedPlanets[planet.id] = planet;
+        }
+
+        // ...and if the caller desires, push the changes to the API
+        if (pushToRemote) {
+        }
+
+        // regardless, notify all listeners that their planet data changed
+        rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
     };
 
     PlanetService.prototype.fetchPlanetDetail = function (aPlanet, aToken, aCallback) {

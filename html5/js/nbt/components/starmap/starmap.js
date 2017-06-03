@@ -64,7 +64,7 @@
                     var mc = aMapColorData[i];
                     self.mapColors[mc.factionName] = mc;
                 }
-            }
+            };
 
             var updatePlanets = function(aPlanets) {
                 self.planets = aPlanets;
@@ -121,12 +121,12 @@
                     self.camera3D.updateProjectionMatrix();
                     self.gl.render(self.scene3D, self.camera3D);
                 }
-            }
+            };
 
             this.setOverlays = function(aText, aUI) {
                 this.overlay = aText;
                 this.ui = aUI;
-            }
+            };
 
             // WebGL (3D, three.js) objects
             this.gl = null;
@@ -229,6 +229,15 @@
                 window.addEventListener('resize', self.onWindowResized);
             };
 
+            var updateSelectedPlanetRings = function(planet) {
+                if (planet) {
+                    self.rings3060.position.set(planet.x, planet.y, 0);
+                    self.scene3D.add(self.rings3060);
+                } else {
+                    self.scene3D.remove(self.rings3060);
+                }
+            };
+
             this.onWindowResized = function(event) {
                 var w = self.gl.domElement.parentElement.offsetWidth;
                 var h = self.gl.domElement.parentElement.offsetHeight;
@@ -264,6 +273,9 @@
 
             var addJumpPath = function() {
                 clearJumpPath();
+
+                if (!(self.jumpPlan && self.jumpPlan.length))
+                    return;
 
                 var gray = new THREE.MeshBasicMaterial();
                 gray.color.setRGB(0.5, 0.5, 0.5);
@@ -387,20 +399,14 @@
                     }
                 }
 
-                // kick off a worker task to create the charge station network
-                csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+                updateSelectedPlanetRings(self.selectedPlanet);
+                addJumpPath();
 
                 redraw();
             };
 
             this.onPlanetSelected = function(planet) {
-                if (planet) {
-                    self.rings3060.position.set(planet.x, planet.y, 0);
-                    self.scene3D.add(self.rings3060);
-                } else {
-                    self.scene3D.remove(self.rings3060);
-                }
-
+                updateSelectedPlanetRings(planet);
                 redraw();
             };
 
@@ -460,6 +466,7 @@
                         self.isPathfinding = false;
                     } else {
                         var obj = findObjectUnderMouse();
+                        self.selectedPlanet = obj;
 
                         if (obj && event.shiftKey) {
                             self.isPathfinding = true;
@@ -495,6 +502,7 @@
                     if (self.quadtree)
                         obj = self.quadtree.find(mouseX, mouseY);
 
+                    self.selectedPlanet = obj;
                     self.onPlanetSelected(obj);
 
                     // get the list of planets within 60LY
@@ -796,7 +804,7 @@
                     var vpY = (1.0 - ny) * vpH + p.ytextOffset;
 
                     var mc = self.mapColors[p.parentGroup.owner.displayName];
-                    var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0)
+                    var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0);
 
                     text.css({
                         top: vpY + 'px',
@@ -843,8 +851,14 @@
                 updatePlanets(aPlanets);
                 updateMapColors(aMapColors);
 
+                // kick off a worker task to create the charge station network
+                csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+
                 // reset the map and overlay(s)
+                var startTime = performance.now();
                 self.reloadStarmapData();
+                var elapsed = performance.now() - startTime;
+                console.log(elapsed + 'ms to rebuild starmap');
                 self.updateOverlay();
             });
             $scope.$on('destroy', cb);

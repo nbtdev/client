@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtTransport, nbtIdentity) {
+        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtLeague', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtLeague, nbtPlanet, nbtTransport, nbtIdentity) {
             var self = this;
 
             $scope.planet = null;
@@ -109,6 +109,9 @@
                             $scope.jumpships = data.origin.jumpships;
 
                         updateStatus("Jump successful");
+
+                        // update the origin and destination planet information (jumpships and battles)
+                        nbtPlanet.batchUpdatePlanets(nbtLeague.current().id(), [data.origin, data.destination]);
                     },
 
                     function(err) {
