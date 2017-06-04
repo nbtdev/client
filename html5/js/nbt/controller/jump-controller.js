@@ -67,6 +67,7 @@
                 $scope.jumpships = [];
                 $scope.jumpTypes = [];
                 $scope.jumpActions = [];
+                $scope.invalidJumpships = [];
 
                 $scope.selectedJumpships = [];
                 $scope.selectedJumpType = null;
@@ -154,5 +155,65 @@
                 $showJump = true;
             });
             $scope.$on('destroy', cbJumpPathChanged);
+
+            var jumpParamsChanged = function(newValue, oldValue, self) {
+                // go through the proposed path and count the number of CS hops
+                var csHops = 0;
+                if (self.jumpPath) {
+                    for (var i = 1; i < self.jumpPath.length; ++i) {
+                        var planet = self.jumpPath;
+                        if (planet.chargeStation)
+                            csHops++;
+                    }
+                }
+
+                // put any existing "invalid" ships back in the jumpships array
+                if (self.invalidJumpships) {
+                    for (var i = 0; i < self.invalidJumpships.length; ++i)
+                        self.jumpships.push(self.invalidJumpships[i]);
+                }
+
+                self.invalidJumpships = [];
+
+                // then, any JS that are still charging or don't have enough hops left, go back in the list
+                if (self.jumpships) {
+                    var jumpshipsToRemove = {};
+
+                    for (var i = 0; i < self.jumpships.length; ++i) {
+                        var js = self.jumpships[i];
+
+                        // exception -- if the origin planet is a CS planet AND the JS has CS hops left,
+                        // then the JS should still be available to jump
+                        if (self.jumpPath && self.jumpPath[0].chargeStation && js.csChargesRemaining > 0)
+                            continue;
+
+                        if (js.hoursToFullCharge > 0) {
+                            self.invalidJumpships.push({
+                                name: js.name,
+                                reason: js.hoursToFullCharge + ' hours to charge'
+                            });
+
+                            jumpshipsToRemove[js.id] = js;
+                        }
+
+                        if (js.csChargesRemaining < csHops) {
+                            self.invalidJumpships.push({
+                                name: js.name,
+                                reason: js.csChargesRemaining + ' jumps available'
+                            });
+
+                            jumpshipsToRemove[js.id] = js;
+                        }
+                    }
+
+                    // remove all invalid jumpships from the jumpships list
+                    self.jumpships = self.jumpships.filter(function(elem, idx, arr) {
+                        return !jumpshipsToRemove[elem.id];
+                    });
+                }
+            };
+
+            $scope.$watch('jumpPath', jumpParamsChanged);
+            $scope.$watch('selectedJumpships', jumpParamsChanged);
         }]);
 })();

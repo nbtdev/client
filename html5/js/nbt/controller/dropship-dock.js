@@ -26,14 +26,16 @@
         .controller('DropshipDockController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtTransport, nbtIdentity) {
             var self = this;
 
-            $scope.planet = null;
-            $scope.message = null;
-            $scope.msgIsError = false;
+            var clear = function() {
+                $scope.planet = null;
+                $scope.message = null;
+                $scope.msgIsError = false;
 
-            $scope.planetDropships = [];
-            $scope.jumpshipDropships = {};
-            $scope.selectedPlanetDropships = [];
-            $scope.selectedJumpshipDropships = {};
+                $scope.planetDropships = [];
+                $scope.jumpshipDropships = {};
+                $scope.selectedPlanetDropships = [];
+                $scope.selectedJumpshipDropships = {};
+            };
 
             var timeoutPromise = null;
 
@@ -135,6 +137,7 @@
             };
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
+                clear();
                 $scope.planet = aPlanet;
 
                 if (aPlanet === null)
@@ -163,6 +166,8 @@
                 });
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);
+
+            clear();
 
         }]);
 })();
