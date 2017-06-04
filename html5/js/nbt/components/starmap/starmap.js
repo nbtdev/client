@@ -990,11 +990,11 @@
             link: function(scope, element, attrs, controller) {
                 element[0].setPlanet = function(aPlanet, aToken, aScreenPos) {
                     controller.setPlanet(aPlanet, aToken, aScreenPos);
-                }
+                };
 
                 element[0].clear = function() {
                     controller.clear();
-                }
+                };
 
                 var l10n = 'en';
 
