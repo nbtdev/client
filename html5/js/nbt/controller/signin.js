@@ -38,22 +38,7 @@
                 $scope.password = null;
 
                 resetError();
-
-                var recaptcha = $('#signinCaptcha')[0];
-                if (recaptcha) {
-                    var recaptchaKey = recaptcha.dataset.sitekey;
-
-                    grecaptcha.render(
-                        recaptcha,
-                        {
-                            sitekey: recaptchaKey,
-                            size: 'normal'
-                        }
-                    );
-                }
             }
-
-            reset();
 
             this.signinSucceeded = function(data) {
                 console.log(data);

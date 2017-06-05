@@ -12,7 +12,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/threejs/r83/three.js"></script>
-    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <script src="/js/gl-matrix/common.js"></script>
     <script src="/js/gl-matrix/mat4.js"></script>
@@ -45,10 +45,11 @@
     <input type="hidden" ng-init="page='league';" />
 
     <!-- header bar -->
-    <div ng-include="'/fragment/navbar.html'"></div>
-    <div ng-include="'/fragment/signin.html'"></div>
-    <div ng-include="'/fragment/transferCombatUnit.html'"></div>
-    <div ng-include="'/fragment/dockUndockDropships.html'"></div>
+    <!--#include virtual="/fragment/navbar.html" -->
+    <!--#include virtual="/fragment/signin.html" -->
+    <!--#include virtual="/fragment/registration.html" -->
+    <!--#include virtual="/fragment/transferCombatUnit.html" -->
+    <!--#include virtual="/fragment/dockUndockDropships.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">
@@ -77,56 +78,7 @@
         <!-- right side menu -->
         <div class="col-md-1 nbt-side-bar">
             <div ng-show="showRightBar">
-                <div ng-show="showJump" ng-controller="JumpController as jumpCtl">
-                    <div class="nbt-side-menu-label">
-                        Jump
-                    </div>
-                    <div class="nbt-side-menu-item">
-                        <div class="nbt-label"><span class="bold">Step 1:</span> Set up jump path on starmap.</div>
-                    </div>
-                    <div class="nbt-side-menu-item">
-                        <div class="nbt-label"><span class="bold">Step 2:</span> Select jumpship(s) to jump.</div>
-                        <div>
-                            <select multiple class="nbt-multi-select" ng-model="selectedJumpships">
-                                <option ng-repeat="js in jumpships" value="{{js}}">{{js.name}} ({{js.owner.shortName}})</option>
-                            </select>
-                        </div>
-                        <div ng-show="invalidJumpships.length">
-                            <div class="nbt-label">The following jumpships cannot jump the selected path:</div>
-                            <table>
-                                <tr>
-                                    <th>Jumpship</th>
-                                    <th>Reason</th>
-                                </tr>
-                                <tr ng-repeat="js in invalidJumpships">
-                                    <td>{{js.name}}</td>
-                                    <td>{{js.reason}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="nbt-side-menu-item">
-                        <div class="nbt-label"><span class="bold">Step 3:</span> Select jump type and action.</div>
-                        <div class="nbt-label">Action</div>
-                        <div>
-                            <select ng-init="selectedJumpType=jumpTypes[0].id" ng-model="selectedJumpType" alt="This will populate automatically with valid types once the jump path and jumpships are selected">
-                                <option ng-repeat="type in jumpTypes" value="{{type}}">{{type.factionClass.shortName}}: {{type.name}}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="nbt-side-menu-item">
-                        <div class="nbt-label">Action</div>
-                        <div>
-                            <select ng-init="selectedJumpAction=jumpActions[0].id" ng-model="selectedJumpAction" alt="This will populate automatically with valid actions once the jump path and jumpships are selected">
-                                <option ng-repeat="action in jumpActions" value="{{action}}">{{action.name}}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="nbt-side-menu-item">
-                        <div class="nbt-label"><span class="bold">Step 4:</span> Execute the jump.</div>
-                        <input type="button" class="nbt-button" ng-click="onExecuteJump()" value="Execute Jump">
-                    </div>
-                </div>
+                <!--#include virtual="/fragment/jumpJumpships.html" -->
             </div>
         </div>
     </div>

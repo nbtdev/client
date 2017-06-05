@@ -79,7 +79,7 @@
                 localStorage.setItem('currentLeague', league.serialize());
 
                 // navigate to League interface page
-                window.location.href = '/league.html';
+                window.location.href = '/league.shtml';
             };
 
             // when the list of leagues changed, we want to update our list display

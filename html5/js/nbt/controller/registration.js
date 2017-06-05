@@ -67,8 +67,6 @@
                 }
             }
 
-            reset();
-
             this.validateForm = function() {
                 var rtn = true;
 
