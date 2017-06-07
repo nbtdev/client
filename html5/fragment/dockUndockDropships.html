@@ -11,7 +11,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div>{{planet.name}}</div>
+                            <div>{{planet.name}} ({{planet.parentGroup.owner.shortName}})</div>
                             <div>
                                 <select multiple class="nbt-multi-select" ng-model="selectedPlanetDropships">
                                     <option ng-repeat="ds in planetDropships" value="{{ds}}">{{ds.name}} ({{ds.owner.shortName}})</option>
