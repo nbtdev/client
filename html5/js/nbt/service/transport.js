@@ -98,6 +98,8 @@ var _TransportService = (function() {
                 function (aResp) {
                     if (aCallback && aResp.data._embedded)
                         aCallback(aResp.data._embedded.jumpships);
+
+                    rootScope.$broadcast('jumpshipsLoaded', aResp.data._embedded.jumpships);
                 }
             );
         }

@@ -37,6 +37,7 @@
     <script src='/js/nbt/controller/transfer-combat-unit.js'></script>
     <script src='/js/nbt/controller/dropship-dock.js'></script>
     <script src='/js/nbt/controller/jump-controller.js'></script>
+    <script src='/js/nbt/controller/jumpship-summary.js'></script>
     <script src='/js/nbt/components/starmap/starmap.js'></script>
 </head>
 <body ng-controller="LeaguePageController as pageController"style="background-color: black;">
@@ -50,20 +51,32 @@
     <!--#include virtual="/fragment/registration.html" -->
     <!--#include virtual="/fragment/transferCombatUnit.html" -->
     <!--#include virtual="/fragment/dockUndockDropships.html" -->
+    <!--#include virtual="/fragment/jumpshipSummary.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">
         <!-- left side menu -->
         <div class="col-md-1 nbt-side-bar">
             <div class="nbt-side-menu">
-                <div class="nbt-side-menu-label" ng-show="showTransfer">
-                    Transfer
+                <div ng-show="showTransfer">
+                    <div class="nbt-side-menu-label">
+                        Transfer
+                    </div>
+                    <div class="nbt-side-menu-item" ng-show="showTransferCombatUnits">
+                        <a href="#" data-toggle="modal" data-target="#transferCombatUnits">Combat Units</a>
+                    </div>
+                    <div class="nbt-side-menu-item"ng-show="showDockUndockDropships" >
+                        <a href="#" data-toggle="modal" data-target="#dockUndockDropships">Dropships</a>
+                    </div>
                 </div>
-                <div class="nbt-side-menu-item">
-                    <a href="#" ng-show="showTransferCombatUnits" data-toggle="modal" data-target="#transferCombatUnits">Combat Units</a>
-                </div>
-                <div class="nbt-side-menu-item">
-                    <a href="#" ng-show="showDockUndockDropships" data-toggle="modal" data-target="#dockUndockDropships">Dropships</a>
+
+                <div ng-show="showSummary">
+                    <div class="nbt-side-menu-label">
+                        Summary
+                    </div>
+                    <div class="nbt-side-menu-item" ng-show="showJumpshipSummary">
+                        <a href="#" ng-show="showJumpshipSummary" data-toggle="modal" data-target="#jumpshipSummary">Jumpship(s)</a>
+                    </div>
                 </div>
             </div>
         </div>

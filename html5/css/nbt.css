@@ -369,3 +369,11 @@ input[type=password] {
 .nbt-label {
     color: white;
 }
+
+.nbt-unordered-list-item {
+
+}
+
+.nbt-plain-item {
+    list-style-type: none;
+}

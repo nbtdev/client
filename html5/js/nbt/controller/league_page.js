@@ -28,6 +28,8 @@
             $scope.showTransferCombatUnits = false;
             $scope.showDockUndockDropships = false;
             $scope.showRightBar = false;
+            $scope.showSummary = false;
+            $scope.showJumpshipSummary = false;
 
             $scope.getLogo = function(data) {
                 // we want the link directly to the logo
@@ -128,6 +130,8 @@
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
                 $scope.showRightBar = false;
+                $scope.showSummary = false;
+
                 if (selectedPlanet === aPlanet) {
                     return;
                 }
@@ -136,6 +140,7 @@
 
                 var localShowTransferCombatUnits = false;
                 var localShowDockUndockDropships = false;
+                var localShowJumpshipSummary = false;
 
                 if (selectedPlanet) {
                     // currently, dropships are required in order to be able to transfer something...
@@ -145,6 +150,8 @@
 
                     if (selectedPlanet.jumpshipCount && selectedPlanet.jumpshipCount > 0) {
                         localShowDockUndockDropships = true;
+                        localShowJumpshipSummary = true;
+                        $scope.showSummary = true;
                         $scope.showRightBar = true;
                     }
                 }
@@ -152,6 +159,7 @@
                 $scope.showTransfer = localShowDockUndockDropships || localShowTransferCombatUnits;
                 $scope.showTransferCombatUnits = localShowTransferCombatUnits;
                 $scope.showDockUndockDropships = localShowDockUndockDropships;
+                $scope.showJumpshipSummary = true;
                 $scope.$digest();
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);
