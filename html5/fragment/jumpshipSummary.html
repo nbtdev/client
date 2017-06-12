@@ -1,0 +1,26 @@
+<div id="jumpshipSummary" class="modal fade" tabindex="-1" role="dialog" ng-controller="JumpshipSummaryController as summaryController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Jumpship Summary</h4>
+            </div>
+            <div class="modal-body nbt-base">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li class="nbt-unordered-list-item nbt-plain-item" ng-repeat="js in jumpships">{{js.name}}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div><span class="nbt-label bold">Assault:</span>&nbsp;<span>{{totalAssault}}</span></div>
+                            <div><span class="nbt-label bold">Heavy:</span>&nbsp;<span>{{totalHeavy}}</span></div>
+                            <div><span class="nbt-label bold">Medium:</span>&nbsp;<span>{{totalMedium}}</span></div>
+                            <div><span class="nbt-label bold">Light:</span>&nbsp;<span>{{totalLight}}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

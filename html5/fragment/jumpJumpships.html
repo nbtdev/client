@@ -1,0 +1,50 @@
+<div ng-show="showJump" ng-controller="JumpController as jumpCtl">
+    <div class="nbt-side-menu-label">
+        Jump
+    </div>
+    <div class="nbt-side-menu-item">
+        <div class="nbt-label"><span class="bold">Step 1:</span> Set up jump path on starmap.</div>
+    </div>
+    <div class="nbt-side-menu-item">
+        <div class="nbt-label"><span class="bold">Step 2:</span> Select jumpship(s) to jump.</div>
+        <div>
+            <select multiple class="nbt-multi-select" ng-model="selectedJumpships">
+                <option ng-repeat="js in jumpships" value="{{js}}">{{js.name}} ({{js.owner.shortName}})</option>
+            </select>
+        </div>
+        <div ng-show="invalidJumpships.length">
+            <div class="nbt-label">The following jumpships cannot jump the selected path:</div>
+            <table>
+                <tr>
+                    <th>Jumpship</th>
+                    <th>Reason</th>
+                </tr>
+                <tr ng-repeat="js in invalidJumpships">
+                    <td>{{js.name}}</td>
+                    <td>{{js.reason}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="nbt-side-menu-item">
+        <div class="nbt-label"><span class="bold">Step 3:</span> Select jump type and action.</div>
+        <div class="nbt-label">Action</div>
+        <div>
+            <select ng-init="selectedJumpType=jumpTypes[0].id" ng-model="selectedJumpType" alt="This will populate automatically with valid types once the jump path and jumpships are selected">
+                <option ng-repeat="type in jumpTypes" value="{{type}}">{{type.factionClass.shortName}}: {{type.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="nbt-side-menu-item">
+        <div class="nbt-label">Action</div>
+        <div>
+            <select ng-init="selectedJumpAction=jumpActions[0].id" ng-model="selectedJumpAction" alt="This will populate automatically with valid actions once the jump path and jumpships are selected">
+                <option ng-repeat="action in jumpActions" value="{{action}}">{{action.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="nbt-side-menu-item">
+        <div class="nbt-label"><span class="bold">Step 4:</span> Execute the jump.</div>
+        <input type="button" class="nbt-button" ng-click="onExecuteJump()" value="Execute Jump">
+    </div>
+</div>
