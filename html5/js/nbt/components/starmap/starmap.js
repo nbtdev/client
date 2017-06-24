@@ -195,8 +195,8 @@
                     self.width / 2,
                     self.height / 2,
                     self.height / -2,
-                    1,
-                    100
+                    0,
+                    10
                 );
 
                 self.camera3D.position.x = 0;
@@ -326,20 +326,24 @@
                 for (var g=0; g<self.planets.length; ++g) {
                     var group = self.planets[g];
                     var vertices = new Float32Array(group.planets.length * 3);
+                    var points = [];
                     var verts2D = [];
 
                     var mapColor = self.mapColors[group.owner.displayName];
                     var groupColor = (mapColor.planetColor.red << 16) | (mapColor.planetColor.green << 8) | (mapColor.planetColor.blue << 0);
 
+                    var disp = 1.0;
                     for (var i = 0; i < group.planets.length; ++i) {
                         var p = group.planets[i];
                         var x = p.x;
                         var y = p.y;
                         var name = p.name;
 
-                        vertices[i * 3 + 0] = x;
-                        vertices[i * 3 + 1] = y;
-                        vertices[i * 3 + 2] = 0.0;
+                        //vertices[i * 3 + 0] = x;
+                        //vertices[i * 3 + 1] = y;
+                        //vertices[i * 3 + 2] = 0.0;
+                        points.push(new THREE.Vector3(x, y, disp));
+                        disp = 1.0 - disp;
                         verts2D.push([x, y]);
 
                         var geom = new THREE.CircleGeometry(1, 18);
@@ -408,28 +412,30 @@
                         }
                     }
 
-                    if (group.owner.displayName !== 'Unassigned') {
+                    if (group.owner.displayName !== 'Unassigned' && points.length > 3) {
                         // make a trimesh of the group's verts
-                        console.time("triangulate");
-                        var triangles = Delaunay.triangulate(verts2D);
-                        console.timeEnd("triangulate");
+                        // console.time("triangulate");
+                        // var triangles = Delaunay.triangulate(verts2D);
+                        // console.timeEnd("triangulate");
+                        //
+                        // var indices = new Int32Array(triangles.length);
+                        // for (var ii=0; ii<triangles.length; ii+=3) {
+                        //     indices[ii*3 + 0] = triangles[ii*3 + 2];
+                        //     indices[ii*3 + 1] = triangles[ii*3 + 1];
+                        //     indices[ii*3 + 2] = triangles[ii*3 + 0];
+                        // }
+                        //
+                        // var sectorGeom = new THREE.BufferGeometry();
+                        // sectorGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                        // sectorGeom.setIndex(new THREE.BufferAttribute(indices, 1));
 
-                        var indices = new Int32Array(triangles.length);
-                        for (var ii=0; ii<triangles.length; ii+=3) {
-                            indices[ii*3 + 0] = triangles[ii*3 + 2];
-                            indices[ii*3 + 1] = triangles[ii*3 + 1];
-                            indices[ii*3 + 2] = triangles[ii*3 + 0];
-                        }
-
-                        var sectorGeom = new THREE.BufferGeometry();
-                        sectorGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                        sectorGeom.setIndex(new THREE.BufferAttribute(indices, 1));
+                        var sectorGeom = new THREE.ConvexBufferGeometry(points);
 
                         var sectorMtl = new THREE.MeshBasicMaterial();
                         sectorMtl.color.set(groupColor);
-                        //sectorMtl.transparent = true;
-                        //sectorMtl.opacity = 0.15;
-                        sectorMtl.wireframe = true;
+                        sectorMtl.transparent = true;
+                        sectorMtl.opacity = 0.25;
+                        //sectorMtl.wireframe = true;
                         //sectorMtl.side = THREE.DoubleSide;
 
                         var sectorMesh = new THREE.Mesh(sectorGeom, sectorMtl);
