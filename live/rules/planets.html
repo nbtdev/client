@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Planets And Sectors</title>
+</head>
+<body>
+
+    <div>
+        Combat Units are what you fight with; planets are what you fight over. Planets are your source of income, and
+        where your factories live. Your regular income is derived from the industry on your planets.
+    </div>
+
+    <div>
+        <h2>Sectors</h2>
+        <div>
+            Each faction's space is comprised of planets, which are further divided into "sectors". Combat in NBT happens
+            at the sector level; whether the action is a Sector Raid or Sector Assault, it happens for all planets in the
+            sector at once. For Sector Assaults, the victor gains (or retains) control of the entire sector.
+        </div>
+
+        <div>
+            The number of planets a faction controls determines the range of the number of planets per sector in their space.
+            This further impacts the scale of the battles involving those sectors.
+
+            <table>
+                <tr>
+                    <th>Total Planet Count</th>
+                    <th>Sector Planet Count Range</th>
+                    <th>Sector Raid Scale</th>
+                </tr>
+                <tr>
+                    <td>Fewer than 70</td>
+                    <td>4-8</td>
+                    <td>3 drops</td>
+                </tr>
+                <tr>
+                    <td>70 or more, fewer than 200</td>
+                    <td>6-10</td>
+                    <td>4 drops</td>
+                </tr>
+                <tr>
+                    <td>More than 200</td>
+                    <td>8-14</td>
+                    <td>5 drops</td>
+                </tr>
+            </table>
+
+            The reason that smaller factions have fewer drops per raid is to keep their activity levels within reasonable
+            limits for their size; it is assumed that smaller factions are controlled by smaller teams with a lower sustained
+            activity level.
+        </div>
+    </div>
+
+    <div>
+        <h2>Industry</h2>
+        <div>
+            Each planet in a faction's space can produce c-bills for the faction. During faction setup, a team will be
+            given a certain amount of industry it must place around the faction's space. To speed up faction setup, the
+            majority of that industry will be automatically placed for the faction when the team acquires the keys to
+            the faction; this industry cannot be reduced during setup. The remainder is placed manually by the team, and
+            can be used to augment the automatically-placed industry.
+        </div>
+        <div>
+            The maximum number of combat units allowed in a sector is governed by the amount of industry in the sector;
+            this is to keep defense levels commensurate with sector worth -- the greater the industry level, the greater
+            the number of combat units can be employed to defend that industry.
+        </div>
+        <div>
+            Additionally, for sectors containing factories, the level of industry affects the delivery time of combat assets
+            produced at those factories. This models the "network effect" in the economy -- if delivery time is to be
+            reduced for units in high demand, then investment must be made in the supply chain for those units. For example,
+            if a particular Battlemech is extremely popular, and only one supplier is making lower-leg actuator assemblies,
+            then production on that Battlemech will necessarily be slow, unless new suppliers are created or the existing
+            supplier's capacity is expanded. Both of these actions are modeled by aggregate investment in industry.
+        </div>
+        <div>
+            Industry may be increased on any planet, up to 500 million c-bills. The cost of industry increases will fluctuate
+            daily on as random basis, and will be in the range of 5-13 c-bills per c-bill of industrial output. Industry
+            is purchased on a planetary basis, and the investment cost will be debited to the faction's account at the time
+            of investment (not at the time of delivery). The additional industrial output will take effect at the next
+            income disbursement cycle, but no sooner than 3 days after the investment is made. Since "payday" in NBT is
+            Sunday 23:59:00 UTC, in order for industry investment to take effect with the next payday following the investment,
+            it must be purchased no later than Thursday, 23:58:59 UTC.
+        </div>
+        <div>
+            Each of your planets is a living, breathing thing. Occasionally they go through economy problems, or maybe
+            a diamond mine is discovered, boosting the economy.  As such, during the course of the league you will
+            notice that many of your planets industry levels will vary from month to month.  This variation will be
+            small in the grand scheme of things (up to a 25 million change, up or down) but taken together can cause a
+            modest impact upon the league and your strategies.
+        </div>
+    </div>
+
+    <div>
+        <h2>Political Instability</h2>
+        <div>
+            As detailed in the section on Sector Raids, one or more planets in a sector may go into what is known as
+            "political instability". In addition to Raid effects, PI may occur randomly due to governmental issues on the
+            planet or in the sector. Political Instability continues for 30 days after inception, and will clear up on its
+            own if left to its own devices. A faction may also choose to correct the situation by suitable infusion of
+            funds (defined as "50% of the planet's industry level") at the 20-day mark. This is performed on a per-planet
+            basis. The negative effects of Political Instability include:
+            <ul>
+                <li>No industrial output (this also affects factory outputs as described above).</li>
+                <li>Planet owner and allies may not reinforce the planet; dropships on the planet remain on the planet, and
+                    no dropships can land. Transfers from Mothball on the planet are permitted.</li>
+                <li>Attacks are still possible on the planet during this time.</li>
+                <li>Enemy jumpships can pass through the system without a battle being generated (the planet is treated as
+                    "Unassigned" for this purpose).</li>
+                <li>Planets with Charge Stations recharge ALL jumpships, friendly and enemy.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <h2>Sector Mech Limits</h2>
+        <div>
+            Each planetary sector can sustain military garrisons of a certain size. This size is directly proportional to the
+            industry present in the sector. The proportion of combat units relative to sector industry, is covered in the
+            league-specific rules.
+        </div>
+        <div>
+            The garrison for a sector is comprised of all combat units present in the sector, in "Active Duty" status.
+        </div>
+        <div>
+            <span class="highlight">Over-garrisoning</span> a sector will produce effects common to all NBT leagues.
+            <ul>
+                <li>
+                    <span class="bold">Battle Penalties</span> - Over-garrisoning a planet, as with over-attacking during a Sector Assault
+                    (i.e. sending in more attacking units than the defending sector's industry would support) will damage the sector's
+                    industry, and lower your salvage. The more units you have, the greater the damage (twice the # of
+                    units means 50% industry destruction, and only 5% salvage gained). Over-Garrisoning will result in
+                    a 10% industry destruction, no matter the level of over-garrison. Attackers that damage the industry on a
+                    successful SA will be auto-charged to repair the damaged industry at the industry prices current at the time
+                    the battle is fully logged.
+                </li>
+                <li>
+                    <span class="bold">Industry Penalty</span> - Each day that a sector is Over-Garrisoned, the faction will be charged
+                    a fee of 2% of the total sector industry.  This represents the additional cost of keeping such a large
+                    garrison in a sector that cannot support them.
+                </li>
+                <li>
+                    <span class="bold">Damage To Combat Units</span> - Each week that a sector is Over-Garrisoned, military equipment
+                    will begin to fall into disrepair, and eventually be disabled and unusable. In order to prevent this, a substantial
+                    sum must be paid each week, based upon the amount of over-garrison present. This sum also represents the costs incurred
+                    to prevent the sector falling into political instability as a result of the tensions between the populace and the
+                    heightened military presence. The amount that must be paid is a percentage of sector industry and the exact percentage
+                    is covered in the league-specific rules.
+                </li>
+                <li>
+                    <span class="bold">Allied Garrison</span> - While a faction is over-garrisoning their own sector, their allies can
+                    not bring combat units into the sector to help with its defense.
+                </li>
+                <li>
+                    <span class="bold">Political Instability</span> - When a Sector Assault is completed in a sector that was
+                    over-garrisoned or over-attacked, there is a scaled chance that the sector will fall into political instability.
+                    The greater the overage, the greater the chance that political instability will occur.
+                </li>
+            </ul>
+        </div>
+        <div>
+            <span class="highlight">Under-garrisoning</span> or <span class="highlight">under-attacking</span> a sector will produce
+            bonuses to the victor, up to 75% salvage bonus.
+        </div>
+    </div>
+
+    <div>
+        <h2>Allied Garrison</h2>
+        <div>
+            Every planet can support both owned and allied garrison forces. In order for an ally to place a garrison on one
+            of your planets, they must first be set to a positive alliance level (see <a href="/rules/diplomacy">Diplomacy</a>
+            for details). Allied Garrison is counted towards the combat unit count when considering over-garrison penalties. A
+            planet may have garrisons from one or more allies on any given planet. In order for an ally to participate in any
+            battle on the planet, or have Black Market mechs delivered to the planet, they must have at least ten (10) combat
+            units present in Active Duty status on the planet.
+        </div>
+        <div>
+            If the relationship between a faction and another with combat units in Allied Garrison on one or more of its planets
+            deteriorates to the point where the alliance level becomes neutral (zero), then all combat units owned by the allied
+            faction will be placed in "Mothball" status; these combat units will become unusable in battle until pulled off the planet
+            or the alliance is restored. If the alliance deteriorates further (becomes negative), then a Sector Raid will be launched
+            by the formerly allied faction (regardless of defend limits) and become immediately active (in "Forcedec" mode with no
+            chance for either side to reinforce).
+        </div>
+    </div>
+
+    <div>
+        <h2>Mothball Storage Area</h2>
+        <div>
+            Factory planets have an additional storage area that can be used to hold newly produced combat units awaiting pickup by the
+            purchaser. Combat units that are stored in this area are NOT usable in combat.  They may be transferred to allied garrison (Active Duty status),
+            but once the planet is locked, combat units in the mothball area are unusable in the planets defense. The mothball area is NOT
+            locked by a battle. Combat units may still be transferred to and from the area (Factory Purchases, transfers to Dropships).
+            Mothball units suffer from increased maintenance costs due to their being kept in a heightened state of readiness (generally
+            always recently purchased units).
+        </div>
+    </div>
+
+    <div>
+        <h2>Planet Lockdown</h2>
+        <div>
+            Once a battle has been launched, the Reinforcement begins.  Any combat units on planet in the sector under attack may NOT be
+            removed from the surface of any planet in the sector; they are there for the duration of the battle. During this time
+            period both the defender and attacker (including allies) may transfer combat units to the surface of planets in the sector,
+            at will via dropship.
+        </div>
+        <div>
+            The Reinforce period of a battle expires after an amount of time set per league; if a given NBT league does not set its own value
+            for this, the time period defaults to 18 hours after the battle is launched. Additionally, the two primary factions involved (attacker
+            and defender) may agree to close the reinforcement window (and generate a battle forcedec) at any time during this Reinforce
+            period. See the <a href="/rules/battles">Battles and Battle Management</a> section for details.
+        </div>
+
+        <div>
+            Once the Reinforcement period has expired, no additional forces may be transferred to planets within the sector. It is effectively isolated
+            until the battle is resolved.  Jumpships may still jump into the sector, but they may not continue further into enemy space.  They
+            must jump into allied space to continue jumping. This time window allows for the following to occur:
+            <ul>
+                <li>Gives the Attacker ample time to position all of his forces.</li>
+                <li>Gives an Allied Attacker time to jump in-system to join the fight.</li>
+                <li>Gives the Defender some time to reinforce the planet, if he can, either with his own forces, or with those of a nearby ally.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

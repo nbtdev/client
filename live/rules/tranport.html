@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jumpships, Dropships and Travel</title>
+</head>
+<body>
+
+    <div>
+        <span class="bold">Jumpships:</span> Movement around the galaxy (both peaceful and military) is made possible by vehicles known as "jumpships",
+        which are equipped with the faster-than-light "Kearny-Fuchida Drive". This enables them to jump between
+        star systems in a matter of seconds. All factions in NBT possess at least one jumpship, and some factions
+        possess the ability to manufacture additional jumpships.
+    </div>
+    <div>
+        <span class="bold">Dropships:</span> Jumpships themselves do not carry any cargo; instead, they have a number of "hardpoints" that
+        are used to dock a transport container vessel known as a "dropship"; the dropships jump with the jumpships. Dropships
+        in NBT are what move combat units to and from a planet's surface, both for peaceful as well as military purposes.
+        Dropships have various configurations and therefore can hold different numbers of different types of combat units.
+        The types of dropships available and their configurations are specified per league. Dropships are relatively cheap
+        compared to jumpships and all factions can produce dropships at their factories. Additionally, dropships can be
+        destroyed in combat (see league-specific rules covering cases where dropships can be destroyed).
+    </div>
+    <div>
+        <span class="bold">Jump Distance:</span> The maximum distance a jumpship can jump is 60 light-years (LY). Regardless of distance,
+        a jumpship will use the full charge to make the jump, whether jumping 1 LY or 60 LY. Some faction classes possess
+        "special" jump types; the distance limit on these "special" jumps is 500LY regardless of faction or jump type.
+    </div>
+    <div>
+        <span class="bold">Jump Costs:</span> Costs vary with the size and type of the jumpship, and are determined on a
+        per-league basis; consult the league-specific rules for jump costs for your league.
+    </div>
+    <div>
+        <span class="bold">Jumpship Charging:</span> All jump types are instantaneous.  After a jump is completed, the
+        solar sail will deploy and recharge the K-F Drive.  This takes an average of 3 days, depending on the Star Class
+        of the current system. Every system has a "Morgan-Keenan" Star Class assigned to it, based upon the strength of the system
+        star. The stronger the star, the faster your Jumpships recharge; the weaker the star, the longer it takes. The
+        following is a breakdown of the Star Classes and the number of hours difference that they make to recharge times
+        in NBT:
+        <table id="Table1" border="1" cellspacing="0" cellpadding="1" width="87%" bordercolordark="#660000" bordercolorlight="#660000" align="center">
+            <tbody>
+                <tr align="center">
+                    <td colspan="11" align="center" style="background-color: rgb(51,0,0);">
+                        <p style="text-align: center;"><b><span style="font-size: small; color: rgb(255,255,153);">Star
+                      Classes Table</span></b></p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td rowspan="2" align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b><span style="color: rgb(255,255,153);">Spectral
+                      Class</span></b></p>
+                    </td>
+                    <td colspan="10" align="center">
+                        <p style="text-align: center;"><b><span style="color: rgb(255,255,153);">Star
+                      Subtype</span></b></p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>0</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>1</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>2</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>3</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>4</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>5</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>6</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>7</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>8</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;"><b>9</b></p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b>B</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-22</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-20</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-18</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>F</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b>A</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-18</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>G</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>K</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+18</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b>M</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+18</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+20</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+22</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>F</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b>A</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-18</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>G</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%">
+                        <p style="text-align: center;"><b>K</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">-2</p>
+                    </td>
+                    <td>
+                        <p style="text-align: center;">&nbsp;</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+12</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+18</p>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td align="center" width="13%" height="16">
+                        <p style="text-align: center;"><b>M</b></p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+2</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+4</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+6</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+8</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+10</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+14</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+16</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+18</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+20</p>
+                    </td>
+                    <td align="center" width="8%">
+                        <p style="text-align: center;">+22</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            Hovering over a planet on the Starmap will display a informative brief on the planet; this includes the
+            calculated recharge time for the system.
+        </div>
+    </div>
+
+    <div>
+        <h2>Jumpship Classes</h2>
+        <div>
+            Jumpships are classified based on technology type (Inner Sphere or Clan) and combat worthiness (not all jumpships
+            possess the navigational accuracy required to perform combat jumps, which typically require jumping to points
+            in a system off of the standard navigation zenith or nadir). Jumpship types each have different numbers of
+            hardpoints which limits how many combat units they can move at once (which additionally depends on the type of
+            dropship docked to them).
+        </div>
+        <div>
+            <span class="highlight">Command Flagship:</span> Command Flagships: Flagships are Jumpships that have been
+            modified to handle the extreme Command and Control functions that are needed to handle Sector Assaults.
+            Only Flagships may launch the Sector Assault type battle. In every other respect, they are the same as any
+            other Jumpship. Each unit will receive a set number of starting Command Flagships as well as a FlagCap (maximum
+            number of flagships). The unit may not exceed their units FlagCap at ANY time. After an unsuccessful SA,
+            the Flagship used cannot assault the same planet for a period of 30 days. Another Flagship will need to be
+            used, or the same Flagship can assault another sector.
+        </div>
+        <div>
+            <span class="hightlight">Non-Combat Jumpships:</span> These are primarily responsible for moving combat units
+            within a faction's own space. They may only dock and undock dropships coming from or going to a non-battle-locked
+            planet (a planet in a sector with an active battle). These jumpships typically have more hardpoints than combat
+            jumpships, but may not be used in any combat situation (including garrison augmentation during the Reinforce
+            phase of a battle).
+        </div>
+    </div>
+
+    <div>
+        <h2>Types Of Jumps</h2>
+        <div>
+            Certain jump types require a "friendly" alliance level for them to work.
+        </div>
+
+        <h3>Combat Jumps</h3>
+        <div>
+            Only "Normal" jumps are used to launch battles intentionally. These are also the only jump types that may be
+            used to reinforce a sector under attack during the Reinforce phase of a battle. A Normal jump is limited to
+            60LY maximum to any planet. Jumps are allowed to any planet within 30LY. Jumps to planets beyond 30LY but less
+            than 60LY must be to a friendly (owned or allied) planet, or an unassigned planet. Jumps to hostile planets
+            beyond 30LY (but less than 60LY) are allowed if
+            <ol>
+                <li>The planet greater than 30LY away is the nearest owned by that faction, and</li>
+                <li>There are no planets within 30LY of the origin owned by that faction</li>
+            </ol>
+
+            Consider the example in the snippet from the below from the NBT starmap:
+            <div>
+                <img src="images/jump-example.png">
+            </div>
+            <div>
+                In this case, the white ring is the 30LY boundary and the green ring is the 60LY limit. The origin for the
+                jump is Jarett, owned by Draconis Combine, Alshain MD (DC-A).
+                <ul>
+                    <li>DC-A could attack the Clan Smoke Jaguar planet of Idlewind, but not Richmond, Rockland or Turtle
+                        Bay; even though those are within 60LY, the attack jump limit of 30LY takes precedence because
+                        Idlewind lies within 30LY of Jarett.
+                    </li>
+                    <li>
+                        DC-A could attack either of the Clan Ghost Bear worlds of Constance or Trondheim, because they
+                        are both inside 30LY, but not any of the others, which all lie outside 30LY (even though they
+                        are within 60LY).
+                    </li>
+                    <li>
+                        DC-A could attack the Free Rasalhague Republic world of Last Frontier, but not Susquehanna, Radlje
+                        or Jezersko, because Last Frontier is the closest FRR world to Jarett.
+                    </li>
+                    <li>
+                        DC-A could perform a friendly jump to any of its own planets within 60LY, or to the allied DC Pesht
+                        MD planet of Schuyler.
+                    </li>
+                    <li>
+                        DC-A could not jump to Luzerne as it lies beyond the 60LY limit.
+                    </li>
+                    <li>
+                        DC-A could not attack the Clan Wolf planet of Skallevoll as it lies beyond the 60LY limit.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Non-Combat Jumps</h3>
+        <div>
+            TBD
+        </div>
+    </div>
+
+    <div>
+        <h2>Miscellaneous</h2>
+        <div>
+            <ul>
+                <li>Jump movement to and from friendly planets (those owned by a faction or its allies) is unrestricted,
+                    regardless of battle status.
+                </li>
+                <li>Jump movement to a hostile planet (one not owned by a faction or its allies) under battle lockdown
+                    must be followed by a jump to a friendly planet; the planet may not be used as a staging point for
+                    jumps further into enemy space.
+                </li>
+                <li>
+                    Unassigned planets are treated as "friendly" for all, for the purposes of jumping; dropships may
+                    not be undocked at unassigned planets.
+                </li>
+                <li>
+                    Combat jumps are restricted to space immediately adjacent to (abutting) a faction's owned space. A
+                    faction may not jump through an ally's space and attack a faction with whom they do not share a border.
+                    This restriction does not apply to Mercenaries or Pirates. This restriction applies to both Sector Raids
+                    as well as Sector Assaults. Factions may, however, participate in any battle launched by an ally, just
+                    not as the primary attacker or defender.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

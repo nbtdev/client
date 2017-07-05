@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Battle Management And Sector Raids</title>
+</head>
+<body>
+
+    <div>
+        On this page you will find information, requirements and restrictions about the types of battles supported in
+        NBT. Specific information about <a href="/rules/assaults.html">Sector Assaults</a> is handled separately.
+    </div>
+
+    <div>
+        <h2>Battle Types</h2>
+        <div>
+            NBT supports two battle types -- Sector Raid and Sector Assault. Sector Raids are launched for many reasons
+            and can result in many different effects, but ownership of a sector does not change hands as a result. Sector
+            Assaults are launched in order to take ownership of a sector from the defending faction.
+        </div>
+    </div>
+
+    <div>
+        <h2>Battle Participants</h2>
+        <ul>
+            <li>
+                <span class="highlight">Primary Defender:</span> The faction that owns the sector being attacked. This faction
+                is a required participant in the battle.
+            </li>
+            <li>
+                <span class="highlight">Primary Attacker:</span> The owner of the first hostile jumpship to enter
+                the sector being attacked. This faction is a required participant in the battle.
+            </li>
+            <li>
+                <span class="highlight">Allied Defender:</span> One or more factions participating on the defending side
+                of a Sector Assault (allied operations are only valid in Sector Assaults). These factions are optional
+                participants in the battle.
+            </li>
+            <li>
+                <span class="highlight">Allied Attacker:</span> One or more factions participating on the attacking side
+                of a Sector Assault (allied operations are only valid in Sector Assaults). These factions are optional
+                participants in the battle.
+            </li>
+        </ul>
+
+        <div>
+            In all cases, factions are restricted to using only the combat units they bring to the battle; combat units
+            may not be "shared" among allied factions in a Sector Assault, nor can combat units in Allied Garrison be used
+            by the sector owner during a Sector Raid or Sector Assault. Allied attacks or defenses must involve actual
+            physical participation by the allied factions. In order to qualify for "allied faction" status in a given
+            battle, at least ten (10) combat units owned by the allied faction must be present in the battle (typically
+            provided during the Reinforce phase of the battle).
+        </div>
+
+        <div>
+            For the purposes of scheduling, logging and inter-faction communication, battles are controlled by the primary
+            defender and attacker for the duration of the battle; battles may not be "transferred" between allies in a
+            Sector Assault.
+        </div>
+    </div>
+
+    <div>
+        <h2>Basic Battle Mechanics</h2>
+        <div>
+            <span class="highlight">Launching A Battle:</span> Battles are launched as described on the <a href="/rules/transport.html">Jumpships, Dropships and Travel</a> page,
+            by performing a Normal jump into enemy space with the required equipment (i.e. Flagship for a Sector Assault, etc.).
+        </div>
+        <div>
+            <span class="highlight">Battle Reinforcement:</span> Once a battle has been launched, the battle enters the "Reinforce" phase, where defenders and attackers (including allies
+            in Sector Assaults) may augment the sector's defenses (or the attacking forces) by dropping additional dropships
+            from jumpships in the system. This process is one-way -- combat units may arrive via dropship, but may not
+            leave the planet on which they are present, once unloaded from their dropships. Dropships themselves may
+            come and go, and are not required to stay around for the duration of the battle. The Reinforce phase lasts
+            18 hours after the battle is launched, subject to per-league overrides. Additionally, the primary factions
+            in the battle may mutally agree to end the Reinforce period at any time during this phase and enter the
+            Forcedec phase. Otherwise, the two primary factions must agree on a mutually-acceptable time and date to
+            fight the battle in the league's game or simulator.
+        </div>
+        <div>
+            <span class="highlight">Battle Forcedec:</span> Once the Reinforce phase ends, the NBT automation will generate
+            a "force declaration", or "forcedec". This marks the beginning of the Forcedec phase of the battle, and no
+            more reinforcements will be allowed. The forcedec contains a list of the combat units initially available to
+            each faction involved in the battle (factions can only see their own combat units), as well as the conditions
+            of the battle (the list of maps, tonnage/battle-value restrictions, drop conditions, etc.) and publicly-
+            available battle data (the primary factions involved, the attack date, the sector involved, the battle ID, etc.).
+            This data is emailed to each member of the teams involved in the battle, who have been marked in the faction's
+            roster as interested in this data, assuming that those individuals have opted into such emails. The forcedec
+            is also available in the faction automation for view by anyone with access (see
+            <a href="/rules/sector-assault">Sector Assaults</a> for additional information about Sector Assault forcedecs).
+            If the primary factions agree to end the Reinforce phase early, the forcedec is generated and emailed at that time.
+        </div>
+        <div>
+            <span class="highlight">Battle Logging:</span> Once the battle has been completed (see
+            <a href="/rules/sector-assault">Sector Assaults</a> for additional information about Sector Assault logging and
+            tracking), the two primary factions must log the results in the automation.
+            <ol>
+                <li>The primary attacker will log their combat units used and lost (if any)</li>
+                <li>The primary defender will verify the attackers entries based on their records of the battle drops
+                    <ul>
+                        <li>If any discrepancies exist, the defender will reject the attacker's entries and the process will
+                            return to step (1). It is assumed that this will coincide with actual communication between the
+                            teams involved to clear up the issue.
+                        </li>
+                        <li>If the defender agrees with the attacker's entries, the defender will enter their own combat
+                            units used and lost (if any).
+                        </li>
+                    </ul>
+                    <div>
+                        If the defender was victorious (or the attacker retreated), the defender will be given the opportunity
+                        to claim any repairs or salvage to which they are due. If the battle was a Sector Assault and the
+                        defender lost control of the sector, they are given the opportunity to offload any remaining
+                        combat forces onto dropships; if no dropships are available and none can be jumped into the sector
+                        in a timely fashion, the defender will forfeit all remaining forces in the sector to the attacker.
+                    </div>
+                    <div>
+                        Any credits earned during a Sector Raid (see below) are also spent at this time.
+                    </div>
+                </li>
+                <li>The primary attacker will verify the defender's entries based on their records of the battle drops
+                    <ul>
+                        <li>If any discrepancies exist, the attacker will reject the defender's entries and the process will
+                            return to step (2). It is assumed that this will coincide with actual communication between the
+                            teams involved to clear up the issue.
+                        </li>
+                        <li>If the attacker agrees with the defender's entries, the attacker will mark the logging as
+                            "Confirmed".
+                        </li>
+                    </ul>
+                    <div>
+                        If the attacker was victorious (or the defender retreated), the attacker will be given the opportunity
+                        to claim any repairs or salvage to which they are due.
+                    </div>
+                    <div>
+                        Additionally, the attacker will be given the opportunity to load their combat units (including repairs
+                        or theft) onto their dropships. If dropships are not present, the attacker must jump a jumpship
+                        with dropships of sufficient capacity to load their combat units off planet; failure to do so in a
+                        timely manner will result in forfeit of all combat units on the planet to the defender. If the
+                        battle was a Sector Assault and ownership
+                    </div>
+                    <div>
+                        Any credits earned during a Sector Raid (see below) are also spent at this time.
+                    </div>
+                </li>
+                <li>Finally, the battle outcome and status are updated, and the sector is unlocked. Any effects from a
+                    Sector Raid take effect immediately at this time.
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div>
+        <h2>Battle Limits</h2>
+        <div>
+            Battle limits are based upon your faction's current Activity Status. This is set in the Faction Administration
+            section of your automation. As all battles in NBT are multi-drop affairs, no distinction is made between
+            Sector Assaults and Sector Raids; they both occupy one "slot" in your defend limits.
+        </div>
+
+        <div>
+            <ul>
+                <li>
+                    <span class="highlight">Inactive factions:</span> Inactive factions cannot be attacked, nor can they
+                    attack another faction. Inactive factions cannot jump to any planet that is not owned by that faction
+                    (including allies).
+                </li>
+                <li>
+                    <span class="highlight">Semi-Active Factions:</span> Semi-Active status is a level of activity that
+                    can be set by the League Admin if a faction is having attendance or burn-out problems.  It enables the
+                    faction in question to continue in the league, but carry on with some battles rather than going fully
+                    inactive.  Defensive Limits for Semi-Active status is 1 defensive slot.
+                    This is a temporary setting only, to give factions time to get their affairs in order, and then
+                    return to Active Status.
+                </li>
+                <li>
+                    <div>
+                        <span class="highlight">Active Factions:</span> Active factions, regardless of size, effectively have
+                        no offensive battle limits. They can attack without restriction, within their ability to schedule and
+                        fight all their offensive and defensive battles within league time limits.  Defensive battles for Active
+                        units are based on the size of the faction (in terms of number of planets controlled) and the number
+                        of pending offensive battles they have launched. The base defend limits are:
+                    </div>
+                    <ul>
+                        <li><span class="highlight">Factions with fewer than 70 planets:</span> 1 defend slot</li>
+                        <li><span class="highlight">Factions with 70 or more planets:</span> 2 defend slots</li>
+                    </ul>
+                    <div>
+                        A faction may control their own activity level, regardless of size, by managing their number of
+                        active attacking actions. The above numbers constitute the "base" defend limits; in practice, the
+                        actual number of active defends is equal to the number of active attacks a faction has launched,
+                        with the above numbers as a minimum. So a small faction with fewer than 70 planets can have two
+                        defend slots open if they have two attacks in progress at once.
+                    </div>
+                    <div>
+                        "Counter-attack" Sector Assault are not subject to these defend limits. Therefore, an attacking
+                        faction that finds themselves victorious in a Sector Assault, even if they are at their defend
+                        limits, is subject to a "counter-attack" assault by the faction from whom they just took the sector
+                        (but only on that sector).
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <h2>Sector Raids</h2>
+        <div>
+            Raids on an enemy sector are intended to model multiple simultaneous actions within the sector. As such, all
+            drops in a raid are played, as from a "lore" perspective, success is not known until the whole action is complete.
+            Additionally, once a combat unit is used, it is not available for subsequent drops in the raid. For example, if you
+            bring 8 of Unit X to the raid and use 5 Unit X on the first drop, you will only have 3 Unit X available to
+            subsequent drops. This is regardless of whether or not those units were destroyed. This models the fact that
+            the raid is happening all at the same time throughout the sector.
+        </div>
+        <div>
+            A faction may initiate a raid on a neighboring enemy sector for the purpose of inflicting various sorts of
+            damage on the enemy faction, steal funds or military hardware from the enemy, or to carry out "diplomatic
+            warfare" on the enemy. Raids do not result in the transfer of enemy planets or sectors, however.
+        </div>
+        <div>
+            A faction may launch only one successful raid on an enemy sector in a period of 30 days; the faction may launch
+            up to three consecutive unsuccessful raids on a sector, after which the 30-day waiting period applies.
+        </div>
+
+        <div>
+            <div>
+                Sector Raids in NBT are inherently multi-drop affairs, in that more than one drop is required to resolve the
+                battle. The number of drops involved depends on the size of the sector being attacked:
+            </div>
+            <table>
+                <tr>
+                    <th>Sector Planet Count Range</th>
+                    <th>Sector Raid Scale</th>
+                </tr>
+                <tr>
+                    <td>4-6</td>
+                    <td>3 drops</td>
+                </tr>
+                <tr>
+                    <td>8-10</td>
+                    <td>4 drops</td>
+                </tr>
+                <tr>
+                    <td>12-14</td>
+                    <td>5 drops</td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <div>
+                All drops are played; this is not a "best-of" scenario. Each drop is played for "effect credits", and
+                the number of credits awarded to the winner of each drop is scaled based on success on that drop:
+            </div>
+            <table>
+                <tr>
+                    <th>Win Differential (Combat Units Destroyed)</th>
+                    <th>Credits Awarded</th>
+                </tr>
+                <tr>
+                    <td>0 (tie)</td>
+                    <td>0 credits</td>
+                </tr>
+                <tr>
+                    <td>1-3</td>
+                    <td>1 credit</td>
+                </tr>
+                <tr>
+                    <td>4-6</td>
+                    <td>2 credits</td>
+                </tr>
+                <tr>
+                    <td>7-8</td>
+                    <td>3 credits</td>
+                </tr>
+            </table>
+            <div>
+                For game modes that involve objectives as an alternate win condition, winning the drop by objective qualifies
+                as a +8 differential and 3 credits will be awarded to the victor, regardless of combat units lost on the drop.
+            </div>
+            <div>
+                Each team may spend their credits on any combination of effects they wish (including none). Attacker
+                effects include:
+                <ul>
+                    <li>
+                        <span class="highlight">Combat Unit Theft:</span> The attacker will be able to steal combat units
+                        from the sector's garrisons. This is a scaled-success mechanic -- greater positive differential between
+                        the attacker's and the defender's number of credits earned in the raid will increase the detail
+                        available to the attacker about the combat units present:
+                        <ul>
+                            <li><span class="bold">Negative Differential:</span> Random selection</li>
+                            <li><span class="bold">Zero Differential:</span> Choice of combat unit type or class from those present</li>
+                            <li><span class="bold">Positive Differential:</span> Choice of actual combat unit from those present</li>
+                        </ul>
+                        Each credit is worth 250 tons of combat units stolen.
+                    </li>
+                    <li>
+                        <span class="highlight">Industry Theft:</span> The attacker will be able to steal industry from
+                        the total industrial production in the sector. This is a scaled-success mechanic -- greater
+                        positive differential between the attacker's and the defender's number of credits earned in the
+                        raid will increase the detail available to the attacker about the industrial output in the sector:
+                        <ul>
+                            <li><span class="bold">Negative Differential:</span> No details about sector industry</li>
+                            <li><span class="bold">Zero Differential:</span> Total industrial output in the sector</li>
+                            <li><span class="bold">Positive Differential:</span> Per-planet listing of industrial output</li>
+                        </ul>
+                        Each credit is worth 50,000,000 c-bills of industry stolen.
+                    </li>
+                    <li>
+                        <span class="highlight">Industry Destruction:</span> The attacker will be able to decrease
+                        the total industrial production in the sector. This is a scaled-success mechanic -- greater
+                        positive differential between the attacker's and the defender's number of credits earned in the
+                        raid will increase the detail available to the attacker about the industrial output in the sector:
+                        <ul>
+                            <li><span class="bold">Negative Differential:</span> No details about sector industry</li>
+                            <li><span class="bold">Zero Differential:</span> Total industrial output in the sector</li>
+                            <li><span class="bold">Positive Differential:</span> Per-planet listing of industrial output</li>
+                        </ul>
+                        Each credit is worth 50,000,000 c-bills of industry destroyed.
+                    </li>
+                    <li>
+                        <span class="highlight">Factory Disruption:</span> The attacker will be able to suspend factory
+                        output in the sector for a period of time. This is a scaled-success mechanic -- greater
+                        positive differential between the attacker's and the defender's number of credits earned in the
+                        raid will increase the detail available to the attacker about the factories present in the sector:
+                        <ul>
+                            <li><span class="bold">Negative Differential:</span> No details about factory production, disruption will choose a random (possibly inactive) factory slot</li>
+                            <li><span class="bold">Zero Differential:</span> Type or class of unit produced at factory; disruption will choose a random active factory slot</li>
+                            <li><span class="bold">Positive Differential:</span> Per-factory listing of combat units produced; attacker may choose which slot(s) is(are) disrupted</li>
+                        </ul>
+                        Each credit is worth 3 days of factory slot disruption.
+                    </li>
+                    <li>
+                        <span class="highlight">Factory Destruction:</span> The attacker will be able permanently to reduce
+                        factory output in the sector for a period of time. This is a scaled-success mechanic -- greater
+                        positive differential between the attacker's and the defender's number of credits earned in the
+                        raid will increase the detail available to the attacker about the factories present in the sector:
+                        <ul>
+                            <li><span class="bold">Negative Differential:</span> No details about factory production, destruction will choose a random (possibly inactive) factory slot</li>
+                            <li><span class="bold">Zero Differential:</span> Type or class of unit(s) produced at factory; destruction will choose a random active factory slot</li>
+                            <li><span class="bold">Positive Differential:</span> Per-factory listing of combat units produced; attacker may choose slot(s) for output reduction</li>
+                        </ul>
+                        Each credit is worth 1 combat unit worth of factory output reduction.
+                    </li>
+                    <li>
+                        <span class="highlight">Political Instability:</span> The attacker will be able to induce
+                        political instability in the sector for a period of time. This is NOT a scaled-success mechanic.
+                        Each credit is worth 10% chance of inducing political instability (cumulative) for 24 hours, or 3 days
+                        worth of political instability (on top of the base 24 hours). These can be used together; for
+                        instance, if an attacker has 10 credits to spend, they might spend 8 of them to increase the chance
+                        that political instabiltiy occurs, and the remaining 2 to extend the period to a week (7 days). Or
+                        they might spend all 10 to be certain that they induce 24 hours of political instability.
+                    </li>
+                    <li>
+                        <span class="highlight">Espionage:</span> The attacker will be able to place spies in the sector.
+                        See <a href="/rules/diplomacy.html">Diplomacy</a> for more specifics. Credits can be spent on any
+                        combination of spy count and effectiveness; for instance, the victor in a sector raid may spend
+                        5 credits on a single spy to watch military movements, and 3 on 3 different "novice" spies to
+                        watch other aspects of sector life. Or they may spend 8 credits on 4 2-credit spies and sift through
+                        the reported data themselves to correlate accuracy. Spy effectiveness is on a scale of 1-8, in terms of credits,
+                        and can only be set when the spy is placed in the sector.
+
+                        Spies can use the sector's communications networks and surveillance tactics to monitor military, economic
+                        and political activity in the sector, and report back to the sponsoring faction on activities in the
+                        sector such as troop/equipment movements, jumpship activity, industrial investment, and so on. The quality
+                        and effectiveness of the spy(s) placed depend on the amount of credits spent on them; a single spy
+                        worth ten credits will be able to provide detailed and accurate information on a single aspect of
+                        the sector's activity (for instance, military manuevers), but not other aspects such as economy and
+                        politics. More spies of lesser quality will be subject to greater chance of missing activity or
+                        possibly being fed misinformation; remember, the sector owner is likely spending funds on
+                        counter-espionage as well and those efforts will impact the effectiveness of your spies.
+                    </li>
+                </ul>
+                <div>
+                    Defender effects include:
+                    <ul>
+                        <li><span class="highlight">Dropship Destruction:</span> The defender may employ ground- and/or
+                            space-based defenses to destroy enemy dropships making their way back to their jumpship. This
+                            destroys the dropship and any combat units it is carrying. Combat units destroyed in this
+                            fashion are not subject to repair -- consider them vaporized. One credit per 5% chance of
+                            destroying one dropship.
+                        </li>
+                        <li><span class="highlight">Enhanced Security:</span> The defender may spend credits to reduce
+                            the detail available to the attacker for combat unit or industry theft, or industry or
+                            factory disruption or damage. 1 defender credit per attacker credit offset. For example, if
+                            the credit differential at the end of the raid is +3 in favor of the attacker, the defender
+                            can spend 4 credits to reduce the attacker's level of detail as if the differential were negative.
+                            This depends on the attacker choosing to perform a theft, disruption or destruction. This is
+                            "game theory" in action.
+                        </li>
+                        <li><span class="highlight">Counter-Intelligence:</span> Similar to how a defender can offset an
+                            attackers theft, disruption or destruction effectiveness with Enhanced Security, the defender
+                            can reduce the effectiveness of spies placed in their space by spending credits on counter-
+                            intelligence. The number of credits spent reduces the effectiveness of enemy spies, from the
+                            least effective to the most effective, by reducing their effective attacker credit spend by
+                            the number of credits the defender spends. For instance, if the attacker spends 8 credits to
+                            place one 5-credit, one 2-credit and one 1-credit spy, the defender can spend, say, 3 Counter-
+                            Intelligence credits to reduce the 2-credit spy to a 1-credit spy and the 5-credit spy to a
+                            3-credit spy. Again, this depends on the attacker spending credits on spies (game theory again),
+                            and if the attacker does not spend anything on spies, the Counter-Intelligence credits are lost.
+                        </li>
+                        <li><span class="highlight">Political Stability:</span> The defender can spend credits to offset
+                            the chance or the length of time that the sector will enter political instability, if the
+                            attacker chose to spend credits on Political Instability. The offset is 1 attacker credit
+                            per defender credit, and will offset attacker credits spent on duration (all the way to zero)
+                            before they offset attacker credits spendt on chance of instability (again, all the way to zero).
+                        </li>
+                        <li><span class="highlight">Heightened State Of Alert:</span> The defender can spend credits in an
+                            effort to prevent future raids on the sector for a period of time. This does not affect the
+                            ability for an opponent to launch a Sector Assault on the sector. Each credit is worth one (1)
+                            day worth of immunity from raids (from the date and time the current raid was logged). This
+                            allows factions the opportunity to prevent sectors from being in a permanent state of lockdown.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2>Miscellaneous</h2>
+        <div>
+            <span class="highlight">Counter-Attacks:</span> As mentioned above in the section on battle limits, a faction that
+            loses control of a sector in a Sector Assault retains the right to "counter-attack" with their own Sector
+            Assault, on the sector they just lost, for a period of 30 days after the logging of the battle is complete.
+            This MUST involve only the two primary factions from the Sector Assault (albeit now in reversed roles). These
+            counter-attacks are not subject to defend limits.
+        </div>
+        <div>
+            <span class="highlight">"No-Garrison" Victory:</span> If the defender in a raid chooses not to defend a sector
+            at all (no garrisons are present) or fails to do so by oversight, the attacker is awarded the maximum number
+            of credits per drop for the sector (3 per drop). Note that the typical play in this situation would be for the attacker to
+            ensure political instability for the sector, followed immediately by a Sector Assault (which would also be won in
+            No-Garrison fashion, since political instability eliminates the opportunity for the defender to reinforce), so
+            factions should be careful about leaving bits of their space undefended, especially if an enemy faction might
+            have introduced spies into their sector(s) who can alert their factions to such a situation.
+        </div>
+    </div>
+
+</body>
+</html>
