@@ -36,7 +36,7 @@
                 $scope.captchaError = null;
             };
 
-            function reset() {
+            var resetFields = function () {
                 $scope.registrationSucceeded = false;
                 $scope.usernameTaken = false;
                 $scope.callsignTaken = false;
@@ -50,7 +50,10 @@
                 $scope.passwordCheck = null;
                 $scope.email = null;
                 $scope.emailAddressCheck = null;
+            };
 
+            var reset = function() {
+                resetFields();
                 resetError();
 
                 grecaptcha.reset();
@@ -211,11 +214,13 @@
             };
 
             $scope.onCancelRegistration = function() {
-                reset();
+                resetFields();
+                resetError();
             };
 
             this.closeForm = function() {
-                reset();
+                resetFields();
+                resetError();
             };
 
             $scope.$watch(
