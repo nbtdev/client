@@ -53,6 +53,7 @@
 
                 resetError();
 
+                grecaptcha.reset();
                 var recaptchas = $('.g-recaptcha');
                 if (recaptchas) {
                     recaptchas.empty();
