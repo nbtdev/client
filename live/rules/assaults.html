@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sector Assaults</title>
-</head>
-<body>
-
-    <div>
-        This page deals with the specifics of the major type of battle in NBT, the Sector Assault. Sector Assaults are
+<div class="collapse nbt-rules-section" id="nbt-rules-sector-assaults">
+    <div class="nbt-rules-para">
+        This section deals with the specifics of the major type of battle in NBT, the Sector Assault. Sector Assaults are
         the battles fought to claim, or retain, control of a sector of planets.
     </div>
 
-    <div>
+    <div class="nbt-rules-para">
         Similar to Sector Raids, the Sector Assault uses a dedicated "tracker" to manage the state of the battle. The
         tracker generates all drop conditions (map, environment, tonnage, game mode, etc.) after the first drop (which
         is generated and distributed with the Sector Assault forcedec), and for that reason, it is required that teams
@@ -19,20 +12,20 @@
         state the battle will be in beyond the current drop.
     </div>
 
-    <div>
-        <div>
-            <h2>Overview</h2>
-            <div>
+    <div class="nbt-rules-para">
+        <div class="nbt-rules-para">
+            <h2 class="nbt-h2">Overview</h2>
+            <div class="nbt-rules-para">
                 The Sector Assault battle type in NBT is a multiple-drop battle, fought in different "phases". There are two
                 phases in an NBT Sector Assault: "Assault" and "Siege". The "Assault" phase models the attacker's push to
                 the sector capital, and the "Siege" phase models the attack on the sector capital itself.
             </div>
         </div>
 
-        <div>
-            <h2>Assault</h2>
-            <div>
-                <div>
+        <div class="nbt-rules-para">
+            <h2 class="nbt-h2">Assault</h2>
+            <div class="nbt-rules-para">
+                <div class="nbt-rules-para">
                     The number of drops in the primary "Assault" phase is determined by the number of planets in the sector
                     being contested, and the success of each contestant in the battle. As the Assault phase models the
                     march of the attacker towards the sector capital, this phase is considered to be fought on each
@@ -42,7 +35,7 @@
                     sector, they are repelled from the sector and the defender is considered victorious in the Sector
                     Assault, and retains control.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     As part of launching the battle, the Attacker will have chosen the order in which the member planets
                     will be contested; this models the "due diligence" the attacker would have exercised in preparing for
                     the battle (as it is expected they would have tailored their forces and strategy to the terrain
@@ -50,9 +43,9 @@
                     maps associated with the particular terrain classes of the planets when the drops for those planets
                     are generated.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     The "capture-and-hold" mechanic is implemented as follows:
-                    <ul>
+                    <ul class="nbt-unordered-list">
                         <li>When the battle moves to Member Planet "A", a single drop is played for the "capture" of the
                             planet by the attacker.
                         </li>
@@ -60,7 +53,7 @@
                             it from counter-attack by the defender (the roles are reversed for this drop, and the attacker
                             becomes the defender and the defender becomes the attacker, for that drop).
                         </li>
-                        <ul>
+                        <ul class="nbt-unordered-list">
                             <li>If the defender wins the "hold" drop for the planet, they are considered to regain control of
                                 the planet and the planet is no longer "in play" for the rest of the Assault phase of the battle.
                             </li>
@@ -82,11 +75,11 @@
                         </li>
                     </ul>
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     We will use the starmap image below to illustrate the Assault phase.
                 </div>
-                <div><img src="images/sector-assault.png"></div>
-                <div>
+                <div class="nbt-rules-para"><img src="images/sector-assault.png"></div>
+                <div class="nbt-rules-para">
                     In this example sector, there are ten planets, one of which is the sector capital (Saltillo). Therefore,
                     in order to proceed to the Siege phase, the attacker will need to capture, and hold, 5 of the 9
                     member planets in the sector. In this case, the minimum number of drops in the assault could be 5 --
@@ -95,9 +88,9 @@
                     the final "hold" drop (the 18th drop in the Assault phase) is to determine whether or not the assault
                     is over, or moves onto Siege phase.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     For example, lets say that the attacker chose the following order in which to play the Assault phase:
-                    <ol>
+                    <ol class="nbt-ordered-list">
                         <li>Tamarind</li>
                         <li>Millungera</li>
                         <li>Schererville</li>
@@ -108,35 +101,35 @@
                         <li>Griffith</li>
                         <li>Epsilon</li>
                     </ol>
-                    <div>
+                    <div class="nbt-rules-para">
                         The first drop of the Sector Assault will be a "capture" drop for Tamarind, and the conditions for this
                         drop will be included in the forcedec generated and email to the teams involved.
                     </div>
-                    <div>
+                    <div class="nbt-rules-para">
                         Since it is unknown whether or not the next drop will be a "hold" or the next "capture", conditions
                         for subsequent drops cannot be generated until this first drop is complete. This is true of all
                         drops in the Assault phase; the tracker can only generate drop conditions once the current drop
                         is completed (and logged, which makes it vital that teams log each drop as the battle is played).
                     </div>
-                    <div>
+                    <div class="nbt-rules-para">
                         Lets say that the attacker won the Tamarind "capture" drop; the tracker will generate the map,
                         tonnage/BV and conditions for the "hold" drop on Tamarind; the attacker will now play the role
                         of defender, and the defender will play the role of attacker, for this drop only.
                     </div>
-                    <div>
+                    <div class="nbt-rules-para">
                         Assume that the attacker wins the hold drop -- for the duration of this Assault phase, the planet
                         Tamarind is under their control, and they need only to capture and hold 4 more planets in the sector.
                         Even if the attacker lost the hold drop (and the defender maintains control of Tamarind for the
                         duration of this Assault phase), the tracker will move the battle to the next planet, Millungera,
                         for the "capture" drop, and the attacker and defender return to their original roles.
                     </div>
-                    <div>
+                    <div class="nbt-rules-para">
                         Lets say that the attacker loses the Millungera "capture" drop; the defender retains control of
                         Millungera and the attacker cannot try to attack it again this Assault phase. The attacker does,
                         however, need to capture and hold only 4 of the remaining 7 planets "in play" in the sector for this
                         Assault phase, if they wish to move the assault to Siege.
                     </div>
-                    <div>
+                    <div class="nbt-rules-para">
                         Finally, lets say that the attacker captured and held Schererville and Simpson Desert, failed to
                         capture and/or hold Promised Land and Nockatunga, and then captured and held Kosciusko and Griffith.
                         The Sector Assault then moves immediate to the Siege phase.
@@ -145,9 +138,9 @@
             </div>
         </div>
 
-        <div>
-            <h2>Siege</h2>
-            <div>
+        <div class="nbt-rules-para">
+            <h2 class="nbt-h2">Siege</h2>
+            <div class="nbt-rules-para">
                 The Siege phase of a Sector Assault models the final assault on the sector capital itself. Since the
                 capital of any sector is expected to have the toughest defenses, a single drop or two does not suffice
                 to determine control of the capital, and therefore the sector. The battle for the sector capital is
@@ -163,15 +156,15 @@
             </div>
         </div>
 
-        <div>
-            <h2>Miscellaneous</h2>
-            <div>
-                <h3>Inline Repairs</h3>
-                <div>
+        <div class="nbt-rules-para">
+            <h2 class="nbt-h2">Miscellaneous</h2>
+            <div class="nbt-rules-para">
+                <h3 class="nbt-h3">Inline Repairs</h3>
+                <div class="nbt-rules-para">
                     As the Sector Assault is considered to be a march through a sector, planet by planet, it is possible
                     to introduce the "repair" mechanic to the Sector Assault.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     After each drop, the winner of the drop will be offered the opportunity to repair one or more combat
                     units that were destroyed on the drop. The number of choices offered will be scaled in direct proportion
                     to the margin of success; an 8-0 win will provide more choices than an 8-7 win (even though there
@@ -184,33 +177,33 @@
                     is less. So if a drop is won on objectives with a 2-0 score, only 2 units can be repaired, even though
                     the victor technically would be eligible for 3.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     "Inline" repairs follow the normal rules for repairs in NBT, in terms of costs, cross-tech rules, and so on.
                 </div>
             </div>
 
-            <div>
-                <h3>Tonnage/Battle-Value (BV)</h3>
-                <div>
+            <div class="nbt-rules-para">
+                <h3 class="nbt-h3">Tonnage/Battle-Value (BV)</h3>
+                <div class="nbt-rules-para">
                     Different NBT leagues use different drop-limiting metrics, and the Sector Assault tracker will use
                     the metric chosen by that particular league.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     Additionally, tonnage and BV ranges and distribution curves are set on a per-league basis, so
                     please consult your league's specific rules for the current values in use for the league.
                 </div>
             </div>
 
-            <div>
-                <h3>Voluntary Retreats</h3>
-                <div>
+            <div class="nbt-rules-para">
+                <h3 class="nbt-h3">Voluntary Retreats</h3>
+                <div class="nbt-rules-para">
                     At any point during a Sector Assault, one side or the other may recognize that the battle cannot be
                     won (at least, not given the current conditions and military equipment available), and may elect to
                     retreat the battle. Additionally, attrition (in terms of combat units available) may force one side
                     or the other to retreat the battle, if they can no longer field a full legal drop from their available
                     combat forces. In these cases, the following rules apply:
                 </div>
-                <ul>
+                <ul class="nbt-unordered-list">
                     <li><span class="highlight">Defender Retreat From Siege:</span> The defender may retreat from Siege with
                         25% of their remaining forces intact (randomly chosen).
                     </li>
@@ -218,7 +211,7 @@
                         100% of their remaining forces intact.
                     </li>
                     <li><span class="highlight">Defender Retreat From Assault:</span>
-                        <ul>
+                        <ul class="nbt-unordered-list">
                             <li>If the defender has retained control of more than one (1) member planet contested in the
                                 Assault phase, they may retreat with 100% of their forces intact.
                             </li>
@@ -231,7 +224,7 @@
                         </ul>
                     </li>
                     <li><span class="highlight">Attacker Retreat From Assault:</span>
-                        <ul>
+                        <ul class="nbt-unordered-list">
                             <li>If the attacker has gained control of more than one (1) member planet contested in the
                                 Assault phase, they may retreat with 100% of their forces intact.
                             </li>
@@ -244,32 +237,32 @@
                         </ul>
                     </li>
                 </ul>
-                <div>
+                <div class="nbt-rules-para">
                     In all cases, retreats are logged as such in the Outcome for the battle ("Defender Retreat" or
                     "Attacker Retreat").
                 </div>
             </div>
 
-            <div>
-                <h3>Logging</h3>
-                <div>
+            <div class="nbt-rules-para">
+                <h3 class="nbt-h3">Logging</h3>
+                <div class="nbt-rules-para">
                     <span class="highlight">Log as you go:</span> All drops must be logged as they are played; as
                     described earlier, the Sector Assault tracker cannot generate conditions for subsequent drops until
                     the current drop is fully logged and confirmed.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     <span class="highlight">Allied Logging:</span> Only the primary attacker can log Sector Assault
                     battle drops. If allied combat units are to be used on drops, a representative of the primary
                     faction, with the proper permissions necessary to log Sector Assault battle drops, must be present
                     during those drops. The allies are not able to log drops in the Sector Assault on their own.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     <span class="highlight">Final Battle Logging:</span> Sector Assault battle logging and confirmation
                     are integrated into the Sector Assault tracker. All of the steps described below are found in the
                     Sector Assault tracker interface.
                     When victory conditions are met or a retreat has been performed by either side, the two primary factions
                     will log and confirm the battle in the following manner:
-                    <ol>
+                    <ol class="nbt-ordered-list">
                         <li>Attacker will confirm their combat units used and destroyed, and submit this with the outcome
                             (Attacker Victorious, Defender Victorious, Attacker Retreat, Defender Retreat) using the
                             Sector Assault tracker interface.
@@ -291,19 +284,19 @@
                         </li>
                     </ol>
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     <span class="highlight">Forfeits:</span> A forfeit of an entire PA will result in administrative
                     logging of a victory for the opponent (not a retreat by the forfeiter). League administration will
                     also determine if the forfeited combat units are destroyed, captured or retreated, depending on
                     circumstances. On a single drop of an active Sector Assault, the forfeit will be logged by league
                     administration in favor of the opponent as an 8-0 victory, at the current tonnage/BV, with full bonuses.
                 </div>
-                <div>
+                <div class="nbt-rules-para">
                     <span class="highlight">Ties and Draws:</span> For non-objective-based game modes, if not all combat
                     units on either side of a drop have been destroyed, then the team that destroyed the most enemy
                     tonnage or BV is declared the winner. At least 50% of the enemy tonnage must be destroyed in
                     non-objective-based game modes in order to qualify for a win.
-                    <div>
+                    <div class="nbt-rules-para">
                         In the event that both sides destroyed equivalent tonnage,
                         or not enough tonnage of BV was destroyed to qualify for a win, or an objective-based drop timed out
                         without sufficient objectives met by either contestant, the drop is to be replayed with the same
@@ -315,6 +308,4 @@
             </div>
         </div>
     </div>
-
-</body>
-</html>
+</div>

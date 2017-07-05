@@ -62,7 +62,7 @@
     <script src='/js/nbt/controller/jumpship-summary.js'></script>
     <script src='/js/nbt/components/starmap/starmap.js'></script>
 </head>
-<body ng-controller="LeaguePageController as pageController"style="background-color: black;">
+<body ng-controller="LeaguePageController as pageController" style="background-color: black;">
     <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
 
     <input type="hidden" ng-init="page='league';" />

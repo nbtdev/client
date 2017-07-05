@@ -378,3 +378,68 @@ input[type=password] {
 .nbt-plain-item {
     list-style-type: none;
 }
+
+.nbt-rules-body
+{
+    background: #101010 url(http://www.nbt-mwo.com/forum/Themes/zone99_20_1/images/custom/body_bg.jpg) 50% 0 no-repeat fixed;
+    font: 14px/140% Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+.nbt-rules {
+    width: 75%;
+    margin: auto;
+    min-width: 150px;
+    padding-top: 15px;
+}
+
+.nbt-rules-table {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+}
+
+.nbt-rules-table-cell {
+    text-align: left;
+}
+
+.nbt-rules-section {
+}
+
+.nbt-rules-para {
+    margin-bottom: 10px;
+}
+
+.nbt-ordered-list {
+    margin-bottom: 10px;
+}
+
+.nbt-unordered-list {
+    margin-bottom: 10px;
+}
+
+.nbt-h1 {
+    color: goldenrod;
+}
+
+.nbt-h2 {
+    color: goldenrod;
+}
+
+.nbt-h3 {
+    color: goldenrod;
+}
+
+.nbt-h4 {
+    color: goldenrod;
+}
+
+.nbt-h5 {
+    color: goldenrod;
+}
+
+.highlight {
+    color: goldenrod;
+}
