@@ -40,7 +40,7 @@
     <!--<script src="/lib/bootstrap/js/bootstrap.min.js"></script>-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>
 
     <script src='/js/nbt/nbt.js'></script>
     <script src='/js/nbt/util/headers.js'></script>
