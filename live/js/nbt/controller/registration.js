@@ -53,17 +53,20 @@
 
                 resetError();
 
-                var recaptcha = $('.g-recaptcha')[0];
-                if (recaptcha) {
-                    var recaptchaKey = recaptcha.dataset.sitekey;
+                var recaptchas = $('.g-recaptcha');
+                if (recaptchas) {
+                    for (var i=0; i<recaptchas.length; ++i) {
+                        var recaptcha = recaptchas[i];
+                        var recaptchaKey = recaptcha.dataset.sitekey;
 
-                    grecaptcha.render(
-                        recaptcha,
-                        {
-                            sitekey: recaptchaKey,
-                            size: 'normal'
-                        }
-                    );
+                        grecaptcha.render(
+                            recaptcha,
+                            {
+                                sitekey: recaptchaKey,
+                                size: 'normal'
+                            }
+                        );
+                    }
                 }
             }
 
@@ -263,5 +266,7 @@
                     );
                 }
             );
+
+            reset();
         }]);
 })();
