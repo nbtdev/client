@@ -55,6 +55,8 @@
 
                 var recaptchas = $('.g-recaptcha');
                 if (recaptchas) {
+                    recaptchas.empty();
+
                     for (var i=0; i<recaptchas.length; ++i) {
                         var recaptcha = recaptchas[i];
                         var recaptchaKey = recaptcha.dataset.sitekey;
