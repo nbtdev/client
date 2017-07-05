@@ -56,9 +56,9 @@
                 resetFields();
                 resetError();
 
-                grecaptcha.reset();
                 var recaptchas = $('.g-recaptcha');
                 if (recaptchas) {
+                    grecaptcha.reset();
                     recaptchas.empty();
 
                     for (var i=0; i<recaptchas.length; ++i) {
