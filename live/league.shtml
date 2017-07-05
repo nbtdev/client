@@ -1,0 +1,121 @@
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>Welcome To NetBattleTech</title>
+
+    <!-- CSS -->
+
+    <!-- online
+    -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- offline
+    <link href="/css/bootstrap/3.3.7/bootstrap.min.css" rel="stylesheet" />
+    -->
+
+    <link href="/css/nbt.css" rel="stylesheet" />
+
+    <!-- online
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
+    <!-- offline
+    <script src="/js/three/r84/three.min.js"></script>
+    <script src="/js/jquery/3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="/js/popper/popper.js"></script>
+    <script src="/js/bootstrap/3.3.7/bootstrap.min.js"></script>
+    <script src="/js/angular/1.6.x/angular.min.js"></script>
+    -->
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    <script src="/js/gl-matrix/common.js"></script>
+    <script src="/js/gl-matrix/mat4.js"></script>
+    <script src="/js/gl-matrix/vec3.js"></script>
+    <script src="/js/nbt/util/quadtree.js"></script>
+    <script src="/js/nbt/util/delaunay.js"></script>
+    <script src="/js/nbt/util/quickhull.js"></script>
+    <script src="/js/nbt/util/convex-geometry.js"></script>
+
+    <script src='/js/nbt/nbt.js'></script>
+    <script src='/js/nbt/util/headers.js'></script>
+    <script src='/js/nbt/model/battle.js'></script>
+    <script src='/js/nbt/model/league.js'></script>
+    <script src='/js/nbt/model/user.js'></script>
+    <script src='/js/nbt/service/league.js'></script>
+    <script src='/js/nbt/service/identity.js'></script>
+    <script src='/js/nbt/service/planet.js'></script>
+    <script src='/js/nbt/service/battle.js'></script>
+    <script src='/js/nbt/service/transport.js'></script>
+    <script src='/js/nbt/service/user.js'></script>
+    <script src='/js/nbt/controller/league_page.js'></script>
+    <script src='/js/nbt/controller/registration.js'></script>
+    <script src='/js/nbt/controller/signin.js'></script>
+    <script src='/js/nbt/controller/starmap-ui.js'></script>
+    <script src='/js/nbt/controller/transfer-combat-unit.js'></script>
+    <script src='/js/nbt/controller/dropship-dock.js'></script>
+    <script src='/js/nbt/controller/jump-controller.js'></script>
+    <script src='/js/nbt/controller/jumpship-summary.js'></script>
+    <script src='/js/nbt/components/starmap/starmap.js'></script>
+</head>
+<body ng-controller="LeaguePageController as pageController"style="background-color: black;">
+    <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
+
+    <input type="hidden" ng-init="page='league';" />
+
+    <!-- header bar -->
+    <!--#include virtual="/fragment/navbar.html" -->
+    <!--#include virtual="/fragment/signin.html" -->
+    <!--#include virtual="/fragment/registration.html" -->
+    <!--#include virtual="/fragment/transferCombatUnit.html" -->
+    <!--#include virtual="/fragment/dockUndockDropships.html" -->
+    <!--#include virtual="/fragment/jumpshipSummary.html" -->
+
+    <!-- content body with left and right menus -->
+    <div style="height: 92%">
+        <!-- left side menu -->
+        <div class="col-md-1 nbt-side-bar">
+            <div class="nbt-side-menu">
+                <div ng-show="showTransfer">
+                    <div class="nbt-side-menu-label">
+                        Transfer
+                    </div>
+                    <div class="nbt-side-menu-item" ng-show="showTransferCombatUnits">
+                        <a href="#" data-toggle="modal" data-target="#transferCombatUnits">Combat Units</a>
+                    </div>
+                    <div class="nbt-side-menu-item"ng-show="showDockUndockDropships" >
+                        <a href="#" data-toggle="modal" data-target="#dockUndockDropships">Dropships</a>
+                    </div>
+                </div>
+
+                <div ng-show="showSummary">
+                    <div class="nbt-side-menu-label">
+                        Summary
+                    </div>
+                    <div class="nbt-side-menu-item" ng-show="showJumpshipSummary">
+                        <a href="#" ng-show="showJumpshipSummary" data-toggle="modal" data-target="#jumpshipSummary">Jumpship(s)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- center content area-->
+        <div id="starmapContainer" class="col-md-10 starmapContainer">
+            <starmap id="starmap">
+                <planet_brief id="planetBrief" ng-show="showPlanetBrief"></planet_brief>
+            </starmap>
+        </div>
+
+        <!-- right side menu -->
+        <div class="col-md-1 nbt-side-bar">
+            <div ng-show="showRightBar">
+                <!--#include virtual="/fragment/jumpJumpships.html" -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

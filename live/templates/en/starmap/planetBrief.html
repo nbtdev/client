@@ -1,0 +1,23 @@
+<div class="planetBrief" ng-show="name" ng-style="{'left': posX+'px', 'top': posY+'px'}">
+    <div><b>Name:</b>&nbsp;{{name}}<div ng-show="capital">&nbsp;(Capital)</div></div>
+    <div><b>Owner:</b>&nbsp;{{owner}}</div>
+    <div ng-show="industry">
+        <div><b>Industry:</b>&nbsp;{{industry}}</div>
+    </div>
+    <div><b>Terrain:</b>&nbsp;{{terrain}}</div>
+    <div><b>Recharge Time:</b>&nbsp;{{recharge}}</div>
+    <div ng-show="isBattle">
+        <div><b>Active Battle:</b></div>
+        <div>ID: {{battleId}}</div>
+        <div>Attacker: {{battleAttacker}}</div>
+        <div>Type: {{battleType}}</div>
+        <div>Launched: {{battleLaunched}}</div>
+    </div>
+    <div ng-show="chargeStation">
+        <b>Has Charge Station</b>
+    </div>
+    <div ng-show="factory">
+        <div><b>Factory/Factories:</b></div>
+    </div>
+    <!--<div ng-show="description"><b>Description:</b>&nbsp;<span ng-bind-html="description"></span></div>-->
+</div>

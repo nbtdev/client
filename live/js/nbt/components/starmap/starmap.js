@@ -434,7 +434,7 @@
                         var sectorMtl = new THREE.MeshBasicMaterial();
                         sectorMtl.color.set(groupColor);
                         sectorMtl.transparent = true;
-                        sectorMtl.opacity = 0.25;
+                        sectorMtl.opacity = 0.15;
                         //sectorMtl.wireframe = true;
                         //sectorMtl.side = THREE.DoubleSide;
 
@@ -443,7 +443,7 @@
                         var obj = new THREE.Object3D();
                         obj.add(sectorMesh);
 
-                        //self.scene3D.add(obj);
+                        self.scene3D.add(obj);
                     }
                 }
 
