@@ -31,7 +31,7 @@
     <script src="/js/angular/1.6.x/angular.min.js"></script>
     -->
 
-    <script src='https://www.google.com/recaptcha/api.js?render=explicit' async defer></script>
+    <script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>
 
     <script src="/js/gl-matrix/common.js"></script>
     <script src="/js/gl-matrix/mat4.js"></script>
@@ -79,7 +79,7 @@
     <div style="height: 92%">
         <!-- left side menu -->
         <div class="col-md-1 nbt-side-bar">
-            <div class="nbt-side-menu">
+            <div class="nbt-side-menu" ng-cloak>
                 <div ng-show="showTransfer">
                     <div class="nbt-side-menu-label">
                         Transfer
@@ -111,7 +111,7 @@
         </div>
 
         <!-- right side menu -->
-        <div class="col-md-1 nbt-side-bar">
+        <div class="col-md-1 nbt-side-bar" ng-cloak>
             <div ng-show="showRightBar">
                 <!--#include virtual="/fragment/jumpJumpships.html" -->
             </div>
