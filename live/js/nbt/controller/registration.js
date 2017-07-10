@@ -25,6 +25,7 @@
         .module('nbt.app')
         .controller('RegistrationFormController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
             var self = this;
+            var captchaResponse = null;
 
             var resetError = function() {
                 $scope.usernameError = null;
@@ -68,7 +69,10 @@
                             recaptcha,
                             {
                                 sitekey: recaptchaKey,
-                                size: 'normal'
+                                size: 'normal',
+                                callback: function(response) {
+                                    captchaResponse = response;
+                                }
                             }
                         );
                     }
@@ -147,7 +151,10 @@
                 // 4. has the user solved the captcha?
                 try {
                     // failure to access any of these will throw, and we catch that into a 'false'
-                    if (grecaptcha.getResponse().length === 0)
+                    if (!captchaResponse)
+                        throw new Exception();
+
+                    if (captchaResponse.length === 0)
                         throw new Exception();
                 } catch(e) {
                     $scope.captchaError = "reCaptcha must be solved before submitting!";
@@ -205,7 +212,7 @@
                             activationUrl: window.location.origin + path + 'activate.html',
                             privacyUrl: window.location.origin + path + "privacy.html"
                         },
-                        grecaptcha.getResponse(),
+                        captchaResponse,
                         self.registrationSucceeded,
                         self.registrationFailed
                     );
