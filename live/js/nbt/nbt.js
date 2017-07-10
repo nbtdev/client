@@ -39,7 +39,7 @@ var Locale = {
 // root API url
 //var API_URL = 'http://api.home.lan';
 //var API_URL = 'http://tsunami:8080';
-var API_URL = 'http://api-dev.netbattletech.com';
+var API_URL = 'https://api-dev.netbattletech.com';
 
 
 function NBT() {
@@ -218,6 +218,7 @@ var _NbtRootService = (function() {
 })();
 
 (function() {
+    console.log('Initializing NBT');
     var nbt = new NBT();
     var app = angular.module('nbt.app');
 
@@ -230,4 +231,5 @@ var _NbtRootService = (function() {
     var nbtRoot = ij.get('nbtRoot');
 
     nbt.init(nbtRoot);
+    console.log('NBT initialization complete');
 })();

@@ -26,7 +26,7 @@
     app.directive('nbtLeagues', function($templateRequest, $compile) {
 
         this.controller = function ($scope, nbtLeague, nbtIdentity) {
-
+            $scope.leagues = nbtLeague.leagues();
         };
 
         return {
@@ -43,8 +43,7 @@
                 // load the leagues listing fragment
                 $templateRequest('/templates/' + l10n + '/nbt-leagues/body.html').then(function(html) {
                     var content = angular.element(html);
-                    $compile(content)(scope);
-                    element.append(content);
+                    element.append($compile(content)(scope));
                 });
             }
         };
