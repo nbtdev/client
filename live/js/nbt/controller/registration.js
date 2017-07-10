@@ -209,8 +209,8 @@
                             callsign: $scope.username,
                             password: $scope.password,
                             email: $scope.email,
-                            activationUrl: window.location.origin + path + 'activate.html',
-                            privacyUrl: window.location.origin + path + "privacy.html"
+                            activationUrl: window.location.origin  + '/activate.html',
+                            privacyUrl: window.location.origin  + '/privacy.html'
                         },
                         captchaResponse,
                         self.registrationSucceeded,
