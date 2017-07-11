@@ -5,7 +5,7 @@
                 <h4 class="modal-title text-center">Account Signin</h4>
             </div>
             <div class="modal-body nbt-base">
-                <div style="display: table; margin: auto" name="signinForm" ng-form>
+                <div style="display: table; margin: auto" name="signinForm" ng-form ng-keypress="checkEnterKey($event)">
                     <div style="display: table-row" ng-hide="isLoggedIn()">
                         <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
                         <div style="display: table-cell"><input class="nbt-text-input" type="text" name="username" ng-model="username"></div>

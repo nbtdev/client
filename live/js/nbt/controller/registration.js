@@ -199,7 +199,7 @@
                 grecaptcha.reset();
             };
 
-            $scope.onSubmitRegistration = function() {
+            var onSubmitRegistration = function() {
                 if (self.validateForm()) {
                     var path = window.location.pathname.replace('index.html', '');
 
@@ -219,6 +219,8 @@
                 }
             };
 
+            $scope.onSubmitRegistration = onSubmitRegistration;
+
             $scope.onCancelRegistration = function() {
                 resetFields();
                 resetError();
@@ -227,6 +229,13 @@
             this.closeForm = function() {
                 resetFields();
                 resetError();
+            };
+
+            $scope.checkEnterKey = function(event) {
+                var code = event.which || event.keyCode;
+                if (code === 13) {
+                    onSubmitRegistration();
+                }
             };
 
             $scope.$watch(

@@ -5,7 +5,7 @@
                 <h4 class="modal-title text-center">Account Registration</h4>
             </div>
             <div class="modal-body nbt-base">
-                <div style="display: table; margin: auto" name="regForm" ng-form>
+                <div style="display: table; margin: auto" name="regForm" ng-form ng-keypress="checkEnterKey($event)">
                     <div style="display: table-row">
                         <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
                         <div style="display: table-cell"><input class="nbt-text-input" type="text" name="username" ng-model="username" required></div>

@@ -53,7 +53,7 @@
                 grecaptcha.reset();
             };
 
-            $scope.onSignin = function() {
+            var onSignin = function() {
                 nbtIdentity.login(
                     $scope.username,
                     $scope.password,
@@ -62,12 +62,21 @@
                 );
             };
 
+            $scope.onSignin = onSignin;
+
             $scope.onCancel = function() {
                 reset();
             };
 
             this.closeForm = function() {
                 reset();
+            };
+
+            $scope.checkEnterKey = function(event) {
+                var code = event.which || event.keyCode;
+                if (code === 13) {
+                    onSignin();
+                }
             };
         }]);
 })();
