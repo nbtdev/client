@@ -92,16 +92,16 @@ var _IdentityService = (function() {
 
     IdentityService.prototype.get = function() {
         // first check to see if the token is expired
-        if (mIdentity) {
-            var ms = mIdentity.expires;
-            var d = new Date();
-            var now = d.getTime();
-
-            if (now > ms) {
-                // then token is expired, treat it as a normal logout
-                this.logout();
-            }
-        }
+        // if (mIdentity) {
+        //     var ms = mIdentity.expires;
+        //     var d = new Date();
+        //     var now = d.getTime();
+        //
+        //     if (now > ms) {
+        //         // then token is expired, treat it as a normal logout
+        //         this.logout();
+        //     }
+        // }
 
         if (mIdentity) {
             return {
