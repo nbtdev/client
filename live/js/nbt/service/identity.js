@@ -35,13 +35,12 @@ var _IdentityService = (function() {
         nbtRoot = aNbtRoot;
 
         // initialize the service
-        //restore();
-        //if (mIdentity)
-        //    self.refresh();
+        restore();
+        if (mIdentity)
+           self.refresh();
 
         // post initial state to any subscribers
         //$rootScope.$broadcast('nbtIdentityChanged', self.get());
-        restore();
     }
 
     var clearLocalStorage = function() {
@@ -92,16 +91,17 @@ var _IdentityService = (function() {
 
     IdentityService.prototype.get = function() {
         // first check to see if the token is expired
-        // if (mIdentity) {
-        //     var ms = mIdentity.expires;
-        //     var d = new Date();
-        //     var now = d.getTime();
-        //
-        //     if (now > ms) {
-        //         // then token is expired, treat it as a normal logout
-        //         this.logout();
-        //     }
-        // }
+        if (mIdentity) {
+            var ms = mIdentity.expires;
+            var d = new Date();
+            var now = d.getTime();
+
+            if (now > ms) {
+                // then token is expired, try to refresh it -- if this fails, it will
+                // basically perform a logout
+                self.refresh();
+            }
+        }
 
         if (mIdentity) {
             return {
