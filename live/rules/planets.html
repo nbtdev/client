@@ -11,6 +11,10 @@
             at the sector level; whether the action is a Sector Raid or Sector Assault, it happens for all planets in the
             sector at once. For Sector Assaults, the victor gains (or retains) control of the entire sector.
         </div>
+        <div class="nbt-rules-para">
+            Each sector is comprised of a capital planet, and 1 or more member planets. Beyond the roles played by each
+            in Sector Assaults and Sector Raids, no difference exists between the two types of planet in a sector.
+        </div>
 
         <div class="nbt-rules-para">
             The number of planets a faction controls determines the range of the number of planets per sector in their space.
@@ -41,7 +45,7 @@
 
             The reason that smaller factions have fewer drops per raid is to keep their activity levels within reasonable
             limits for their size; it is assumed that smaller factions are controlled by smaller teams with a lower sustained
-            activity level.
+            activity level. These drop counts are subject to change at any time by a league's administrator.
         </div>
     </div>
 
@@ -57,7 +61,8 @@
         <div class="nbt-rules-para">
             The maximum number of combat units allowed in a sector is governed by the amount of industry in the sector;
             this is to keep defense levels commensurate with sector worth -- the greater the industry level, the greater
-            the number of combat units can be employed to defend that industry.
+            the number of combat units can be employed to defend that industry. Since these limits are at the sector level,
+            no practical limits will exist on the number of combat units allowed per planet.
         </div>
         <div class="nbt-rules-para">
             Additionally, for sectors containing factories, the level of industry affects the delivery time of combat assets
@@ -68,7 +73,7 @@
             supplier's capacity is expanded. Both of these actions are modeled by aggregate investment in industry.
         </div>
         <div class="nbt-rules-para">
-            Industry may be increased on any planet, up to 500 million c-bills. The cost of industry increases will fluctuate
+            Industry may be increased on any planet, up to a per-league level. The cost of industry increases will fluctuate
             daily on as random basis, and will be in the range of 5-13 c-bills per c-bill of industrial output. Industry
             is purchased on a planetary basis, and the investment cost will be debited to the faction's account at the time
             of investment (not at the time of delivery). The additional industrial output will take effect at the next
@@ -114,13 +119,14 @@
             league-specific rules.
         </div>
         <div class="nbt-rules-para">
-            The garrison for a sector is comprised of all combat units present in the sector, in "Active Duty" status.
+            The <a href="javascript: void(0)" data-toggle="popover" data-contentref=".glossary-garrison">garrison</a>
+            for a sector is comprised of all combat units present in the sector, in "Active Duty" status.
         </div>
         <div class="nbt-rules-para">
             <span class="highlight">Over-garrisoning</span> a sector will produce effects common to all NBT leagues.
             <ul class="nbt-unordered-list">
                 <li>
-                    <span class="bold">Battle Penalties</span> - Over-garrisoning a planet, as with over-attacking during a Sector Assault
+                    <span class="bold">Battle Penalties</span> - Over-garrisoning a sector, as with over-attacking during a Sector Assault
                     (i.e. sending in more attacking units than the defending sector's industry would support) will damage the sector's
                     industry, and lower your salvage. The more units you have, the greater the damage (twice the # of
                     units means 50% industry destruction, and only 5% salvage gained). Over-Garrisoning will result in
@@ -162,7 +168,7 @@
         <h2 class="nbt-h2">Allied Garrison</h2>
         <div class="nbt-rules-para">
             Every planet can support both owned and allied garrison forces. In order for an ally to place a garrison on one
-            of your planets, they must first be set to a positive alliance level (see <a href="/rules/diplomacy">Diplomacy</a>
+            of your planets, they must first be set to a positive alliance level (see <a href="#nbt-diplomacy">Alliances, Diplomacy and Espionage</a>
             for details). Allied Garrison is counted towards the combat unit count when considering over-garrison penalties. A
             planet may have garrisons from one or more allies on any given planet. In order for an ally to participate in any
             battle on the planet, or have Black Market mechs delivered to the planet, they must have at least ten (10) combat
@@ -201,8 +207,9 @@
         <div class="nbt-rules-para">
             The Reinforce period of a battle expires after an amount of time set per league; if a given NBT league does not set its own value
             for this, the time period defaults to 18 hours after the battle is launched. Additionally, the two primary factions involved (attacker
-            and defender) may agree to close the reinforcement window (and generate a battle forcedec) at any time during this Reinforce
-            period. See the <a href="/rules/battles">Battles and Battle Management</a> section for details.
+            and defender) may agree to close the reinforcement window (and generate a battle
+            <a href="javascript: void(0)" data-toggle="popover" data-contentref=".glossary-forcedec">forcedec</a>) at any time during this Reinforce
+            period. See the <a href="#nbt-battles">Attacks And Battles</a> section for details.
         </div>
 
         <div class="nbt-rules-para">

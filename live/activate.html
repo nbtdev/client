@@ -1,0 +1,95 @@
+<DOCTYPE html>
+<html class="ie9" ng-app="nbt.activation">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8">
+
+    <meta name="description" content="Violate Responsive Admin Template">
+    <meta name="keywords" content="Super Admin, Admin, Template, Bootstrap">
+
+    <title>NBT - NetBattleTech League Automation System - Account Activation</title>
+
+    <!-- CSS -->
+    <!-- CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="css/nbt.old.css" rel="stylesheet" />
+
+    <!-- BEGIN NBT style and script links -->
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+
+    <script>
+        // AngularJS controller for submitting the account activation
+        var app = angular.module('nbt.activation', []);
+
+        app.controller('ActivationController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+            var self = this;
+
+            $scope.succeeded = false;
+            $scope.failed = false;
+
+            this.activateSuccess = function(data) {
+                $scope.succeeded = true;
+            };
+
+            this.activateFail = function(data) {
+                $scope.failed = true;
+                $scope.reason = data.data.error + ' (' + data.data.message + ')';
+            };
+
+            var key = null;
+            var url = null;
+
+            var search = $location.search();
+
+            if (search) {
+                if (search.activationKey) {
+                    key = search.activationKey;
+                }
+
+                if (search.activationUrl) {
+                    url = search.activationUrl;
+                }
+            }
+
+            var path = window.location.pathname.replace('activate.html', '');
+            $scope.siteUrl = window.location.origin + path;
+
+            if (key) {
+                if (url) {
+                    $http({
+                        method: "PUT",
+                        url: url,
+                        data: {
+                            action: 'activate',
+                            key: key,
+                            privacyPageUrl: window.location.origin + path + "privacy.html"
+                        }
+                    }).then(self.activateSuccess, self.activateFail);
+                } else {
+                    $scope.reason = "Missing activation URL";
+                    $scope.failed = true;
+                }
+            } else {
+                $scope.reason = "Missing activation key";
+                $scope.failed = true;
+            }
+        }]);
+    </script>
+</head>
+<body id="skin-blur-violate">
+
+<div ng-controller="ActivationController" style="margin-left: 100px; margin-top: 100px">
+    <div ng-show="succeeded">
+        <p>Your NetBattleTech Automation account is now activated. You may now <a href="{{siteUrl}}">log in</a> to the automation.</p>
+        <p>May your victories be many!</p>
+    </div>
+    <div ng-show="failed">
+        <p>Your NetBattleTech Automation account could not be activated: {{reason}}</p>
+        <p>Please <a href="mailto:support@netbattletech.com">email NetBattleTech support</a> if you believe this condition to be in error.</p>
+    </div>
+</div>
+
+</body>
+</html>

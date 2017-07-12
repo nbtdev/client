@@ -1,3 +1,4 @@
+<a name="nbt-sector-assault"></a>
 <div class="collapse nbt-rules-section" id="nbt-rules-sector-assaults">
     <div class="nbt-rules-para">
         This section deals with the specifics of the major type of battle in NBT, the Sector Assault. Sector Assaults are
@@ -52,22 +53,22 @@
                         <li>If the attacker wins the "capture" drop, they must immediately "hold" the planet by defending
                             it from counter-attack by the defender (the roles are reversed for this drop, and the attacker
                             becomes the defender and the defender becomes the attacker, for that drop).
+                            <ul class="nbt-unordered-list">
+                                <li>If the defender wins the "hold" drop for the planet, they are considered to regain control of
+                                    the planet and the planet is no longer "in play" for the rest of the Assault phase of the battle.
+                                </li>
+                                <li>If the attacker wins the "hold" drop for the planet, they are considered to maintain control
+                                    of the planet and the planet is no longer "in play" for the remainder of the Assault phase
+                                    of the battle.
+                                </li>
+                                <li>Regardless, when the "hold" drop has ended, if the Assault phase continues, then the next
+                                    drop will be a "capture" drop for the next planet in the list.
+                                </li>
+                            </ul>
                         </li>
-                        <ul class="nbt-unordered-list">
-                            <li>If the defender wins the "hold" drop for the planet, they are considered to regain control of
-                                the planet and the planet is no longer "in play" for the rest of the Assault phase of the battle.
-                            </li>
-                            <li>If the attacker wins the "hold" drop for the planet, they are considered to maintain control
-                                of the planet and the planet is no longer "in play" for the remainder of the Assault phase
-                                of the battle.
-                            </li>
-                            <li>Regardless, when the "hold" drop has ended, if the Assault phase continues, then the next
-                                drop will be a "capture" drop for the next planet in the list.
-                            </li>
-                        </ul>
                         <li>If, however, the attacker loses the "capture" drop, the defender maintains control of the
                             planet and the planet is no longer "in play" for the remainder of the Assault phase
-                            of the battle.
+                            of the battle. The Assault phase moves onto the next planet in the list.
                         </li>
                         <li>If, at any time during the Assault phase, the defender has maintained control of a majority
                             of contested member planets, the attacker is considered to have failed and the defender is
@@ -186,7 +187,7 @@
                 <h3 class="nbt-h3">Tonnage/Battle-Value (BV)</h3>
                 <div class="nbt-rules-para">
                     Different NBT leagues use different drop-limiting metrics, and the Sector Assault tracker will use
-                    the metric chosen by that particular league.
+                    the metric chosen by that particular league (either tonnage or battle value).
                 </div>
                 <div class="nbt-rules-para">
                     Additionally, tonnage and BV ranges and distribution curves are set on a per-league basis, so
@@ -285,7 +286,7 @@
                     </ol>
                 </div>
                 <div class="nbt-rules-para">
-                    <span class="highlight">Forfeits:</span> A forfeit of an entire PA will result in administrative
+                    <span class="highlight">Forfeits:</span> A forfeit of an entire Sector Assault will result in administrative
                     logging of a victory for the opponent (not a retreat by the forfeiter). League administration will
                     also determine if the forfeited combat units are destroyed, captured or retreated, depending on
                     circumstances. On a single drop of an active Sector Assault, the forfeit will be logged by league
@@ -297,8 +298,8 @@
                     tonnage or BV is declared the winner. At least 50% of the enemy tonnage must be destroyed in
                     non-objective-based game modes in order to qualify for a win.
                     <div class="nbt-rules-para">
-                        In the event that both sides destroyed equivalent tonnage,
-                        or not enough tonnage of BV was destroyed to qualify for a win, or an objective-based drop timed out
+                        In the event that both sides destroyed equivalent tonnage or BV,
+                        or not enough tonnage or BV was destroyed to qualify for a win, or an objective-based drop timed out
                         without sufficient objectives met by either contestant, the drop is to be replayed with the same
                         conditions (maps, game mode, environment, tonnage/BV, etc.). Combat units destroyed on the drop will
                         remain destroyed; all others may be reused. Spawn points/lances/drop-zones may be changed and teams

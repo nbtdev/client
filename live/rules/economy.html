@@ -17,8 +17,7 @@
 
     <div class="nbt-rules-para">
         The unit of currency used in all NBT leagues is the
-        <a href="/glossary/c-bill">c-bill</a>. While this may make for large numbers in some cases (especially when managing
-        larger factions such as Major Houses), it is the standard currency used in BTU.
+        <a href="javascript: void(0)" data-toggle="popover" data-contentref=".glossary-c-bill">c-bill</a>.
     </div>
 
     <div class="nbt-rules-para">
@@ -39,9 +38,10 @@
             Each planet on the starmap has an industry level assigned to it. These levels are partially set during faction setup;
             the majority of a faction's startup industry is automatically placed (and can't be reduced, only augmented, by the faction)
             to prevent teams from concentrating all of their industry in their interior, away from the danger of enemy aggression. The
-            amount of industry (monthly output) per planet can range from 0-500,000,000 c-bills. As mentioned, once a faction is live,
+            amount of industry (monthly output) per planet can range from 0-500,000,000 c-bills (different leagues may
+            impose different limits -- consult your league's rules for specifics). As mentioned, once a faction is live,
             the faction can invest in their planets' industry levels by purchasing additional output (on a per-planet basis) for
-            betwee 5 and 13 (inclusive) times the amount of increases. So, for example, to increase a planet's output by 100,000,000
+            between 5 and 13 (inclusive) times the amount of increases. So, for example, to increase a planet's output by 100,000,000
             c-bills, at an 8x multiplier, it would cost the faction 800,000,000 c-bills to perform the upgrade (this simulates, for
             example, the capital investment necessary to make a manufacturing firm more productive, etc.). The industry multiplier
             varies per day in the range prescribed above, on a random basis; whether this is a 1.0 probability curve or some other
@@ -50,13 +50,15 @@
         </div>
 
         <div class="nbt-rules-para">
-            <span class="bold">Maximum Income & Maximum Funds</span>. No unit may have more than 25,000,000,000 (25 billion) c-bills in
-            their account. If they exceed this amount when funds are issued, a "worker's holiday" is declared and no income is received (but
-            expenses are still paid). The goal of NBT is combat in the simulator/game, not hoarding cash. Funds are meant to enable
-            combat between factions in the league, and are not themselves part of "victory conditions" (no "extra points" are awarded
-            for having cash in the bank). Additionally, factions with 70+ planets may not exceed an amount of industry equal to 125,000,000
-            times the number of the faction's planets. These limits are at the discretion of the league administrator and once set for
-            a season, will not change. The limits for a given league will be publicly posted as part of that league's specific rules.
+            <span class="bold">Maximum Income & Maximum Funds</span>. No unit may have more than a certain league-specific
+            number of c-bills in their account. If they exceed this amount when funds are issued, a "worker's holiday"
+            is declared and no income is received (but expenses are still paid). The goal of NBT is combat in the
+            simulator/game, not hoarding cash. Funds are meant to enable combat between factions in the league, and are
+            not themselves part of "victory conditions" (no "extra points" are awarded for having cash in the bank).
+            Additionally, factions with more than X planets may not exceed an amount of industry equal to Y times the number
+            of the faction's planets (where X and Y are prescribed on a per-league basis). These limits are at the
+            discretion of the league administrator and once set for a season, will not change. The limits for a given
+            league will be publicly posted as part of that league's specific rules.
         </div>
 
         <div class="nbt-rules-para">
@@ -64,7 +66,9 @@
             the Black Market. Two forms of sale can occur -- direct sale, where the item(s) in question are typically sold at a discount
             ("need the cash now", in other words); and "consignment" sale, where it may be possible to realize a premium price for the
             item(s) but the time and date of sale may be in the future. This second option is the only way for units to sell to one
-            another, and is monitored closely by league administration for patterns of abuse.
+            another, and is monitored closely by league administration for patterns of abuse. This method ALWAYS will
+            be more expensive than buying the same item (if possible) on the open market (due to the involvement of the
+            broker as middleman).
         </div>
     </div>
 
@@ -117,8 +121,9 @@
         <div class="nbt-rules-para">
             <h2 class="nbt-h2">Purchasing Resources</h2>
             <div>
-                <a href="/glossary/resource">Resources</a> in NBT include anything that a faction may use to prosecute military
-                campaigns, including the means of combat-unit production (<a href="/glossary/factory">factories</a>) and the
+                Resources in NBT include anything that a faction may use to prosecute military
+                campaigns, including the means of combat-unit production
+                (<a href="javascript: void(0)" data-toggle="popover" data-contentref=".glossary-factory">factories</a>) and the
                 industrial base necessary to fund it all. The following may be purchased and delivered to various parts of your space.
                 Certain restrictions apply to each.
             </div>
@@ -127,11 +132,12 @@
                 <div>
                     <ul class="nbt-unordered-list">
                         <li><span class="highlight">Combat Units</span>. Cost and availability vary by item and type.
-                            <a href="/rules/factories.html">Factory production</a> and <a href="#black-market">Black Market</a>
-                            are the only avenues available for direct purchase of combat unit resources.
+                            <a href="#nbt-factory-section" data-toggle="collapse" data-target="#nbt-rules-factories">Factory Production</a>
+                            and <a href="#black-market">Black Market</a> are the only avenues available for direct
+                            purchase of combat unit resources.
                         </li>
                         <li><span class="highlight">Industry Upgrade</span>. 5-13 c-bills (inclusive, changes randomly per day) per c-bill
-                            of industry upgrade. Can be applied to any owned planet, to a maximum limit of 500,000,000 c-bills output per planet.
+                            of industry upgrade. Can be applied to any owned planet, to a league-specific maximum output per planet.
                         </li>
                         <li><span class="highlight">Jumpship Purchase</span>. The following factions have the ability to produce additional jumpships
                             at any of their factories (this list is based on canon):
@@ -148,13 +154,15 @@
                             </ul>
                             This ability belongs to the faction, not the factories, so taking a CSR factory, for example, does not transfer
                             the ability to manufacture jumpships to the capturing faction. Additionally, jumpships themselves may not
-                            be captured by enemy forces. The following table outlines the costs for jumpship purchases: (TBD)
+                            be captured by enemy forces. Costs for jumpship purchases are determined on a per-league basis.
                         </li>
-                        <li><span class="highlight">Dropship Purchase</span>. As dropships are not LosTech (as jumpships are), any faction
-                            may produce dropships at any of their factories. Costs are based on capacity and certification (combat dropships,
-                            for instance, will be more expensive than civilian merchant dropships) and will also fluctuate with the galactic
+                        <li><span class="highlight">Dropship Purchase</span>. As dropships are not "nearly LosTech"
+                            (as jumpships are), any faction may produce dropships at any of their factories. Costs are
+                            based on capacity and certification (combat dropships, for instance, will be more expensive
+                            than civilian merchant dropships) and will also fluctuate with the galactic
                             economy (as with everything else in NBT that has to be manufactured and can be purchased). Combat dropships can
-                            be captured during hostile actions. The cost for all dropships for both Clan and Inner Sphere is as follows:
+                            be captured during hostile actions. The base cost for all dropships for both Clan and Inner Sphere
+                            is determined on a per-league basis.
                         </li>
                         <li><span class="highlight">Flagship Upgrade</span>. All factions have the ability to upgrade a combat jumpship to a
                             flagship at will. In order to qualify for upgrade, the jumpship to be converted
@@ -163,15 +171,15 @@
                                 <li>must be present at the faction capital</li>
                                 <li>must not have any dropships docked to it.</li>
                             </ul>
-                            The cost for upgrade is N c-bills per jumpship for Inner Sphere factions, and M c-bills per jumpship
-                            for Clan factions.
-                       ` </li>
+                            The upgrade costs differ for Clan and IS factions, and are prescribed on a per-league basis.
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <div class="nbt-rules-para">
+            <a name="black-market"></a>
             <h2 class="nbt-h2">Black Market</h2>
             <div class="nbt-rules-para">
                 The Black Market in NBT is exactly what it sounds like -- an "alternate procurement channel" for obtaining military
@@ -186,12 +194,12 @@
                     <ul class="nbt-unordered-list">
                         <li>owned by the purchasing faction, or </li>
                         <li>where the purchasing faction has at least 10 combat units (of any type) in
-                            <a href="/glossary/allied-garrison">Allied Garrison</a></li>
+                            <a href="javascript: void(0)" data-toggle="popover" data-contentref=".glossary-allied-garrison">Allied Garrison</a></li>
 
                     </ul>
                 unless the planet is in full battle lockdown (Black Market purchases can be delivered to a planet under
                 attack prior to full battle lockdown, however). If a purchase is made to be delivered to a planet not
-                eligible for immmediate delivery, the purchaser may
+                eligible for immediate delivery, the purchaser may
                     <ul class="nbt-unordered-list">
                         <li>cancel the purchase, or</li>
                         <li>schedule immediate delivery to an eligible planet, or</li>
@@ -217,7 +225,7 @@
                 NBT Administration is notified of each of these transfers and if they are not on the up-and-up, may initiate an
                 investigation into the transfer (potentially reversing it if it is deemed unsuitable). A fee is charged for all
                 transfers, on a scale related directly to the alliance level between the two factions involved. See
-                <a href="/rules/alliances.html">Alliances, Diplomacy and Espionage</a> for more details on the mechanics of
+                <a href="#nbt-diplomacy">Alliances, Diplomacy and Espionage</a> for more details on the mechanics of
                 faction alliances.
             </div>
         </div>

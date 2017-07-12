@@ -1,0 +1,116 @@
+<style>
+    .popover {
+        background-color: black;
+        color: wheat;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: "hover",
+            content: function(){
+                return $($(this).data('contentref')).html();
+            }
+        });
+    })
+</script>
+
+<div class="glossary-combat-unit" style="display: none">
+    <h5 class="nbt-h5">Combat Unit</h5>
+    <div class="nbt-rules-para">
+        A Combat Unit is any item in an NBT league's associated game that can be played in the game. For instance, in a
+        Mechwarrior-based game, combat units typically are limited to Battlemechs. In a tabletop-based game such as MegaMek
+        or Battletech, the range of combat units playable in the game is much wider and deeper, and can include items such
+        as infantry, tanks, aerospace fighters, and so on.
+    </div>
+</div>
+
+<div class="glossary-industry" style="display: none">
+    <h5 class="nbt-h5">Industry</h5>
+    <div class="nbt-rules-para">
+        Industry is a per-planet quantity that models economic activity in the league, and represents the number of
+        c-bills a planet produces per month. This amount is paid out to the faction on a weekly basis, and is the source
+        of the faction's regular, ongoing income.
+    </div>
+</div>
+
+<div class="glossary-charge-station" style="display: none">
+    <h5 class="nbt-h5">Charge Station</h5>
+    <div class="nbt-rules-para">
+        A Charge Station in the BattleTech Universe is a celestial device capable of gathering energy from a star system's
+        star(s) and transferring it to the energy source for the Kearny-Fuchida faster-than-light (FTL) drive in a
+        jumpship. In NBT, a charge station allows a jumpship to recharge instantly and continue on its way without having
+        to wait for a full recharge (which typically is 2-4 days long).
+    </div>
+</div>
+
+<div class="glossary-jumpship" style="display: none">
+    <h5 class="nbt-h5">Jumpship</h5>
+    <div class="nbt-rules-para">
+        A Jumpship in the BattleTech Universe is a stellar vehicle that possesses a Kearny-Fuchida faster-than-light (FTL)
+        drive, and is capable of ferrying other space-faring vehicles along for the ride. In NBT, jumps between star
+        systems are instant, and jumpships can dock zero or more dropships (which in turn contain combat units).
+    </div>
+</div>
+
+<div class="glossary-dropship" style="display: none">
+    <h5 class="nbt-h5">Dropship</h5>
+    <div class="nbt-rules-para">
+        A Dropship in the BattleTech Universe is used to carry combat units and commercial goods to and from a planet's
+        surface. Dropships are moved between star systems by docking to a jumpship, and then jumping the jumpship. In NBT,
+        dropships are used to carry combat units, both into battle as well as for peacetime commercial movement of same.
+    </div>
+</div>
+
+<div class="glossary-c-bill" style="display: none">
+    <h5 class="nbt-h5">C-Bill</h5>
+    <div class="nbt-rules-para">
+        The primary unit of currency in BattleTech Universe. It is typically a low denomination, and this tends to lead to large
+        numbers in NBT, but it allows the bookkeeping to remain simple.
+    </div>
+</div>
+
+<div class="glossary-factory" style="display: none">
+    <h5 class="nbt-h5">Factory</h5>
+    <div class="nbt-rules-para">
+        Factories in BattleTech Universe, and in NBT, produce combat units. A planet may have more than one factory,
+        and a factory may produce more than one type or class of combat unit. Combat units are purchased directly
+        from factory production.
+    </div>
+</div>
+
+<div class="glossary-garrison" style="display: none">
+    <h5 class="nbt-h5">Garrison</h5>
+    <div class="nbt-rules-para">
+        A Garrison is an installment of combat-ready forces, typically for defense of a planet or sector.
+        The totality of the combat units present on a planet's surface comprise its garrison.
+    </div>
+</div>
+
+<div class="glossary-allied-garrison" style="display: none">
+    <h5 class="nbt-h5">Allied Garrison</h5>
+    <div class="nbt-rules-para">
+        Factions allied with a planet or sector owner may place a garrison of their own on that planet or in that sector.
+        This garrison may assist with a planet's or sector's defense, or optionally handle it entirely on their own.
+    </div>
+</div>
+
+<div class="glossary-cross-tech" style="display: none">
+    <h5 class="nbt-h5">Cross-Technology</h5>
+    <div class="nbt-rules-para">
+        Technology from the opposite faction class (i.e. Clan tech for I.S. factions, I.S. tech for Clan factions).
+    </div>
+</div>
+
+
+<div class="glossary-forcedec" style="display: none">
+    <h5 class="nbt-h5">Forces Declaration</h5>
+    <div class="nbt-rules-para">
+        Issued when a battle moves from Pending to Forcedec state, this is a listing of all known conditions for the
+        battle (as played in the game or simulator) as well as all combat units available to each faction for the battle.
+        Opponents are not provided each others' forcedec -- they only see their own.
+    </div>
+</div>
+
