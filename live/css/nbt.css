@@ -448,3 +448,17 @@ input[type=password] {
 .highlight {
     color: goldenrod;
 }
+
+.nbt-hover-highlight:hover {
+    background: #222;
+}
+
+.nbt-modal-body {
+    padding: 10px;
+    max-height: calc(100vh - 225px);
+    overflow-y: auto;
+}
+
+.nbt-vert-spacing-1 {
+    margin-bottom: 1px;
+}

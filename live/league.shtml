@@ -45,15 +45,19 @@
     <script src='/js/nbt/util/headers.js'></script>
     <script src='/js/nbt/model/battle.js'></script>
     <script src='/js/nbt/model/league.js'></script>
+    <script src='/js/nbt/model/faction.js'></script>
     <script src='/js/nbt/model/user.js'></script>
     <script src='/js/nbt/service/league.js'></script>
     <script src='/js/nbt/service/identity.js'></script>
     <script src='/js/nbt/service/planet.js'></script>
     <script src='/js/nbt/service/battle.js'></script>
     <script src='/js/nbt/service/transport.js'></script>
+    <script src='/js/nbt/service/faction.js'></script>
     <script src='/js/nbt/service/user.js'></script>
     <script src='/js/nbt/controller/league_page.js'></script>
     <script src='/js/nbt/controller/registration.js'></script>
+    <script src='/js/nbt/controller/about.js'></script>
+    <script src='/js/nbt/controller/faction-listing.js'></script>
     <script src='/js/nbt/controller/signin.js'></script>
     <script src='/js/nbt/controller/starmap-ui.js'></script>
     <script src='/js/nbt/controller/transfer-combat-unit.js'></script>
@@ -69,6 +73,8 @@
 
     <!-- header bar -->
     <!--#include virtual="/fragment/navbar.html" -->
+    <!--#include virtual="/fragment/about.html" -->
+    <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/signin.html" -->
     <!--#include virtual="/fragment/registration.html" -->
     <!--#include virtual="/fragment/transferCombatUnit.html" -->

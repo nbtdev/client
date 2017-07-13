@@ -29,6 +29,7 @@ var _League = (function() {
     var mProfileLink = null;
     var mUserProfileLink = null;
     var mPlanetsLink = null;
+    var mFactionsLink = null;
 
     function League(aInit) {
         if (aInit) {
@@ -40,6 +41,7 @@ var _League = (function() {
             mProfileLink = aInit._links.profile ? aInit._links.profile : null;
             mUserProfileLink = aInit._links.userProfile ? aInit._links.userProfile : null;
             mPlanetsLink = aInit._links.planets ? aInit._links.planets : null;
+            mFactionsLink = aInit._links.factions ? aInit._links.factions : null;
         }
     }
 
@@ -82,6 +84,10 @@ var _League = (function() {
             return mPlanetsLink;
         },
 
+        factionsLink: function () {
+            return mFactionsLink;
+        },
+
         id: function () {
             return mId;
         },
@@ -112,7 +118,7 @@ var _League = (function() {
                 mUserProfileLink = aDetails._links.userProfile ? aDetails._links.userProfile : mUserProfileLink;
                 mPlanetsLink = aDetails._links.planets ? aDetails._links.planets : mPlanetsLink;
             }
-        },
+        }
     };
 
     return League;

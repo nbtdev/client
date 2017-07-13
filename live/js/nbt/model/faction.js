@@ -27,6 +27,10 @@ var _Faction = (function() {
         mFactionObj = aFactionObj;
     }
 
+    Faction.prototype.get = function() {
+        return mFactionObj;
+    };
+
     Faction.prototype.name = function() {
         if (mFactionObj) {
             return mFactionObj.name;

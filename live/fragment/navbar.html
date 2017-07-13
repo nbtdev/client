@@ -14,11 +14,20 @@
                         <li><a href="#" data-toggle="">Combat Units</a></li>
                     </ul>
                 </li>
+                <li ng-show="isAdmin() || isTeamAdmin()"  class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Faction Tools<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-toggle="">Combat Units</a></li>
+                    </ul>
+                </li>
                 <li ng-class="{active: page==='rules'}">
                     <a href="/rules">Rules</a>
                 </li>
+                <li ng-hide="isAdmin() || isTeamAdmin()" ng-class="{active: page==='factions'}">
+                    <a href="#" data-toggle="modal" data-target="#factionsModal">Join!</a>
+                </li>
                 <li ng-class="{active: page==='about'}">
-                    <a href="/about.html">About</a>
+                    <a href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

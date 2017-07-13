@@ -1,0 +1,26 @@
+<div id="factionsModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="FactionListingController as factionListingController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">{{league.name()}} Factions</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <div class="row">
+                        <div class="col-md-5 nbt-base bold">Name</div>
+                        <div class="col-md-3 nbt-base bold">Type</div>
+                        <div class="col-md-2 nbt-base bold">Status</div>
+                        <div class="col-md-2">&nbsp;</div>
+                    </div>
+
+                    <div class="row nbt-base nbt-hover-highlight" ng-repeat="faction in factions">
+                        <div class="col-md-5">{{faction.displayName}}</div>
+                        <div class="col-md-3">{{faction.class}}</div>
+                        <div class="col-md-2">{{faction.status}}</div>
+                        <div class="col-md-2"><button type="button" class="btn btn-primary btn-xs" ng-show="faction.status==='Vacant'">Apply</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

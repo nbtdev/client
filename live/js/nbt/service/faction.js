@@ -32,39 +32,25 @@ var _FactionService = (function() {
         rootScope = aRootScope;
     }
 
-    FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken) {
-        if (aLeague._links.factions) {
+    FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken, aSuccessCb) {
+        if (aLeague.factionsLink()) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aLeague._links.factions.href,
+                url: aLeague.factionsLink().href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
                     // populate faction database with response
-                    var factions = {};
-                    var resp = aResp.data;
-
-                    for (var i=0; i<resp._embedded.length; ++i) {
-                        var f = resp._embedded[i];
-                        factions[f.id] = new Faction(f);
-                    }
-
+                    var factions = aResp.data._embedded.factions;
                     mFactions[aLeague.id()] = factions;
+
+                    if (aSuccessCb)
+                        aSuccessCb(factions);
                 }
             );
         }
-    };
-
-    FactionService.prototype.findFactionInLeague = function(aLeague) {
-        if (aLeague) {
-            if (mFactions[aLeague.id()]) {
-                return mFactions[aLeague.id()];
-            }
-        }
-
-        return null;
     };
 
     return FactionService;

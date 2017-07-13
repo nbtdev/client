@@ -37,6 +37,22 @@
                 return rtn;
             };
 
+            $scope.isAdmin = function() {
+                var token = nbtIdentity.get();
+                if (token)
+                    return token.isSiteAdmin() || token.isLeagueAdmin();
+
+                return false;
+            };
+
+            $scope.isTeamAdmin = function() {
+                var token = nbtIdentity.get();
+                if (token)
+                    return token.isTeamAdmin();
+
+                return false;
+            };
+
             var getCurrentLeague = function() {
                 // if there are leagues...
                 var leagues = nbtLeague.leagues();

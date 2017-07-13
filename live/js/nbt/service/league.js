@@ -67,6 +67,7 @@ var _LeagueService = (function() {
                     logoSmall: l.logoSmall(),
                     _links : {
                         planets: l.planetsLink(),
+                        factions: l.factionsLink(),
                         profile: l.profileLink(),
                         userProfile: l.userProfileLink(),
                         self: l.selfLink()
@@ -129,6 +130,7 @@ var _LeagueService = (function() {
                 _links: {
                     planets: l._links.planetsBySector,
                     profile: l._links.profile,
+                    factions: l._links.factions,
                     userProfile: l._links.userProfile,
                     self: l._links.self
                 }
@@ -254,7 +256,7 @@ var _LeagueService = (function() {
         return mLeagues;
     };
 
-    LeagueService.prototype.delete = function () {
+    LeagueService.prototype.remove = function () {
         // not implemented yet
     };
 
@@ -269,6 +271,10 @@ var _LeagueService = (function() {
     LeagueService.prototype.reset = function () {
         clear();
         fetchLeagues();
+    };
+
+    LeagueService.fetchLeagueData = function(league) {
+
     };
 
     return LeagueService;

@@ -78,6 +78,9 @@
                 var planetNames = [];
                 for (var g=0; g < aPlanets.length; ++g) {
                     var group = aPlanets[g];
+                    if (!group.owner) {
+                        console.log('error');
+                    }
                     var ownerName = group.owner.displayName;
 
                     for (var i = 0; i < group.planets.length; ++i) {
