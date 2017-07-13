@@ -53,6 +53,24 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.apply = function(aFaction, aData, aToken, aSuccessCb, aFailCb) {
+        if (aFaction._links.apply) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFaction._links.apply.href,
+                data: aData,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp);
+                }
+            );
+        }
+    };
+
     return FactionService;
 })();
 

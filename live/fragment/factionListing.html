@@ -1,23 +1,77 @@
 <div id="factionsModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="FactionListingController as factionListingController">
     <div class="modal-dialog modal-lg with-border">
-        <div class="modal-content">
-            <div class="modal-header nbt-base nbt-modal-header">
+        <div class="modal-content nbt-base">
+            <div class="modal-header nbt-modal-header">
                 <h4 class="modal-title text-center">{{league.name()}} Factions</h4>
             </div>
-            <div class="modal-body nbt-base nbt-modal-body">
+            <div class="modal-body nbt-modal-body">
+                <div ng-show="canApply()"><input type="checkbox" ng-model="showApplyButtons">&nbsp; I wish to apply for a faction (Vacant factions only)</div>
+
+                <div ng-show="showApplyButtons" style="padding: 15px;" class="container col-md-12">
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': nameError}">Your Team's Name</div>
+                        <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.name" placeholder="(required) Your team's name"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Your Team's In-Game Tags</div>
+                        <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.tags" placeholder="(optional) Your team's in-game tags"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': pilotCountError}">Team Active Pilot Count</div>
+                        <div class="col-md-8"><input style="color: black" type="number" min="{{league.minPilotCount}}" ng-model="applicationData.pilotCount"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': geoError}">Team Geographic Area(s) (at least one required)</div>
+                        <div class="col-md-8">
+                            <div><input type="checkbox" value="NA" ng-model="geoNA">North American</div>
+                            <div><input type="checkbox" value="EU" ng-model="geoEU">European</div>
+                            <div><input type="checkbox" value="AP" ng-model="geoAP">Oceanic/Asia-Pacific</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Additional Comments</div>
+                        <div class="col-md-8">
+                            <textarea
+                                    cols="40"
+                                    rows="6"
+                                    ng-model="applicationData.comments"
+                                    style="color: black"
+                                    placeholder="(optional) Any additional comments you have about your team or your application">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">&nbsp;</div>
+                        <div class="col-md-6">
+                            <input type="checkbox" ng-model="applicationData.acceptedToS">&nbsp; I have read and
+                            understand the rules and requirements to join the {{league.name()}} league and agree to
+                            abide by them at all times while participating in league activities.
+                        </div>
+                        <div class="col-md-3">&nbsp;</div>
+                    </div>
+                </div>
+
                 <div class="container col-md-12">
                     <div class="row">
-                        <div class="col-md-5 nbt-base bold">Name</div>
-                        <div class="col-md-3 nbt-base bold">Type</div>
-                        <div class="col-md-2 nbt-base bold">Status</div>
+                        <div class="col-md-5 bold">Name</div>
+                        <div class="col-md-3 bold">Type</div>
+                        <div class="col-md-2 bold">Status</div>
                         <div class="col-md-2">&nbsp;</div>
                     </div>
 
-                    <div class="row nbt-base nbt-hover-highlight" ng-repeat="faction in factions">
+                    <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
                         <div class="col-md-5">{{faction.displayName}}</div>
                         <div class="col-md-3">{{faction.class}}</div>
                         <div class="col-md-2">{{faction.status}}</div>
-                        <div class="col-md-2"><button type="button" class="btn btn-primary btn-xs" ng-show="faction.status==='Vacant'">Apply</button></div>
+                        <div class="col-md-2">
+                            <button type="button"
+                                    class="btn btn-primary btn-xs"
+                                    ng-show="!faction.applicationSubmitted && faction.status==='Vacant' && showApplyButtons && applicationData.acceptedToS && canApplyToFaction(faction)"
+                                    ng-click="apply(faction)">
+                                Apply
+                            </button>
+                            <div ng-show="faction.applicationSubmitted" class="nbt-info">Pending</div>
+                        </div>
                     </div>
                 </div>
             </div>

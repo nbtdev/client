@@ -108,7 +108,8 @@ var _IdentityService = (function() {
                 token: mIdentity.value,
                 isSiteAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='SITE_ADMIN' : false; },
                 isLeagueAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
-                isTeamAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='TEAM_ADMIN' : false;  }
+                isTeamAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='TEAM_ADMIN' : false;  },
+                isValid: function() { return true; }
             };
         }
 
@@ -116,7 +117,8 @@ var _IdentityService = (function() {
             token: null,
             isSiteAdmin: function() { return false; },
             isLeagueAdmin: function() { return false;  },
-            isTeamAdmin: function() { return false;  }
+            isTeamAdmin: function() { return false;  },
+            isValid: function() { return false; }
         };
     };
 
