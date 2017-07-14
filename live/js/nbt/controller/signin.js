@@ -45,6 +45,7 @@
                 $scope.signinSucceeded = true;
                 grecaptcha.reset();
                 $('#signinModal').modal('hide');
+                reset();
             };
 
             this.signinFailed = function(data) {

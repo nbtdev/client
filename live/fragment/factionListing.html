@@ -5,9 +5,9 @@
                 <h4 class="modal-title text-center">{{league.name()}} Factions</h4>
             </div>
             <div class="modal-body nbt-modal-body">
-                <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyButtons">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
+                <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
 
-                <div ng-show="showApplyButtons" style="padding: 15px;" class="container col-md-12">
+                <div ng-show="showApplyForm" style="padding: 15px;" class="container col-md-12">
                     <div class="row">
                         <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': nameError}">Your Team's Name</div>
                         <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.name" placeholder="(required) Your team's name"></div>
@@ -56,7 +56,7 @@
                         <div class="col-md-5 bold">Name</div>
                         <div class="col-md-3 bold">Type</div>
                         <div class="col-md-2 bold">Status</div>
-                        <div class="col-md-2">Application</div>
+                        <div class="col-md-2 bold">Application</div>
                     </div>
 
                     <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
@@ -66,7 +66,7 @@
                         <div class="col-md-2">
                             <button type="button"
                                     class="btn btn-primary btn-xs"
-                                    ng-show="!faction.appStatus && faction.status==='Vacant' && showApplyButtons && applicationData.acceptedToS && canApplyToFaction(faction)"
+                                    ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && canApplyToFaction(faction)"
                                     ng-click="apply(faction)">
                                 Apply
                             </button>

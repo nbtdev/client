@@ -39,7 +39,7 @@
 
             $scope.isAdmin = function() {
                 var token = nbtIdentity.get();
-                if (token)
+                if (token.isValid())
                     return token.isSiteAdmin() || token.isLeagueAdmin();
 
                 return false;
@@ -47,8 +47,20 @@
 
             $scope.isTeamAdmin = function() {
                 var token = nbtIdentity.get();
-                if (token)
+                if (token.isValid())
                     return token.isTeamAdmin();
+
+                return false;
+            };
+
+            $scope.canJoin = function() {
+                var token = nbtIdentity.get();
+                if (token.isValid())
+                    return !(
+                        token.isSiteAdmin() ||
+                        token.isTeamAdmin() ||
+                        token.isLeagueAdmin()
+                    );
 
                 return false;
             };

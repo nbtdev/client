@@ -24,41 +24,50 @@
     angular
         .module('nbt.app')
         .controller('FactionListingController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
-            $scope.league = nbtLeague.current();
-            $scope.league.minPilotCount = 12;
-            $scope.showApplyButtons = false;
-            $scope.showApplyToggle = true;
+            function reset() {
+                $scope.league = nbtLeague.current();
+                $scope.league.minPilotCount = 12;
+                $scope.showApplyButtons = true;
+                $scope.showApplyToggle = true;
+                $scope.showApplyForm = false;
 
-            $scope.applicationData = {
-                name: null,
-                tags: null,
-                geo: null,
-                pilotCount: 12,
-                comments: null,
-                acceptedToS: null
-            };
-            $scope.geoNA = null;
-            $scope.geoEU = null;
-            $scope.geoAP = null;
+                $scope.applicationData = {
+                    name: null,
+                    tags: null,
+                    geo: null,
+                    pilotCount: 12,
+                    comments: null,
+                    acceptedToS: null
+                };
+                $scope.geoNA = null;
+                $scope.geoEU = null;
+                $scope.geoAP = null;
 
-            $scope.nameError = false;
-            $scope.pilotCountError = false;
-            $scope.geoError = false;
+                $scope.nameError = false;
+                $scope.pilotCountError = false;
+                $scope.geoError = false;
+            }
 
-            nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function(factions) {
-                $scope.factions = factions;
+            reset();
 
-                for (var i=0; i<factions.length; ++i) {
-                    var faction = factions[i];
-                    if (faction.appStatus) {
-                        $scope.showApplyToggle = false;
-                        break;
+            var reloadFactions = function() {
+                nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function (factions) {
+                    $scope.factions = factions;
+
+                    for (var i = 0; i < factions.length; ++i) {
+                        var faction = factions[i];
+                        if (faction.appStatus) {
+                            $scope.showApplyToggle = false;
+                            break;
+                        }
                     }
-                }
-            });
+                });
+            };
+
+            reloadFactions();
 
             $scope.canApplyToFaction = function(faction) {
-                return faction && faction._links && faction._links.apply;
+                return faction && faction._links && faction._links.apply && !faction.appStatus && faction.status==='Vacant';
             };
 
             $scope.canApply = function() {
@@ -104,5 +113,11 @@
                     $scope.showApplyToggle = false;
                 });
             };
+
+            var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
+                reset();
+                reloadFactions();
+            });
+            $scope.$on('destroy', cb);
         }]);
 })();
