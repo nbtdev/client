@@ -24,11 +24,11 @@
     angular
         .module('nbt.app')
         .controller('FactionListingController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
-            var self = this;
-
             $scope.league = nbtLeague.current();
             $scope.league.minPilotCount = 12;
             $scope.showApplyButtons = false;
+            $scope.showApplyToggle = true;
+
             $scope.applicationData = {
                 name: null,
                 tags: null,
@@ -47,6 +47,14 @@
 
             nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function(factions) {
                 $scope.factions = factions;
+
+                for (var i=0; i<factions.length; ++i) {
+                    var faction = factions[i];
+                    if (faction.appStatus) {
+                        $scope.showApplyToggle = false;
+                        break;
+                    }
+                }
             });
 
             $scope.canApplyToFaction = function(faction) {
@@ -91,6 +99,9 @@
                 nbtFaction.apply(faction, $scope.applicationData, nbtIdentity.get().token, function(resp) {
                     // remove the Apply button
                     faction.applicationSubmitted = true;
+                    faction.appStatus = "Submitted"
+                    $scope.showApplyButtons = false;
+                    $scope.showApplyToggle = false;
                 });
             };
         }]);
