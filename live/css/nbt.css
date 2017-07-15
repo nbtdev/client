@@ -354,6 +354,11 @@ input[type=password] {
     opacity: 1;
 }
 
+.nbt-para {
+    display: block;
+    margin-bottom: 10px;
+}
+
 .nbt-invisible {
     opacity: 0;
     transition: opacity 1s linear;

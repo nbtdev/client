@@ -354,11 +354,13 @@
                         //var mc = self.mapColors[group.owner.displayName];
                         //var gc = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
                         mtl.color.set(groupColor);
+                        mtl.origColor = groupColor;
 
                         var mesh = new THREE.Mesh(geom, mtl);
                         var obj = new THREE.Object3D();
                         obj.add(mesh);
                         obj.userData = p;
+                        p.graphics = obj;
 
                         obj.position.set(x, y, 0);
 
@@ -504,24 +506,66 @@
                 return false;
             };
 
+            // can be called from child scopes if the map needs updating in part or in full
+            $scope.onPlanetsUpdated = function(planets) {
+
+            };
+
+            $scope.selectedPlanets = [];
+
+            var addToSelectedSet = function(planet) {
+                $scope.selectedPlanets.push(planet);
+                $scope.$apply();
+            };
+            
+            var clearSelectedPlanets = function() {
+                for (var i=0; i<$scope.selectedPlanets.length; ++i) {
+                    var planet = $scope.selectedPlanets[i];
+                    var origColor = planet.graphics.children[0].material.origColor;
+                    planet.graphics.children[0].material.color.set(origColor);
+                }
+                redraw();
+
+                $scope.selectedPlanets.length = 0;
+                $scope.$apply();
+            };
+
             this.onMouseDown = function(event) {
                 // move the camera on middle-mouse down
-                if (event.button === 1 || (event.button === 0 && event.ctrlKey)) {
+                if (event.button === 1 || (event.button === 0 && event.shiftKey)) {
                     self.lastX = event.offsetX;
                     self.lastY = event.offsetY;
                     self.state = 1;
                 } else if (event.button === 0) { // just the LMB by itself
-                    // if we are in pathfinding state, just exit the state and leave the path
-                    // in place; otherwise, treat it as a normal planet select
-                    if (self.isPathfinding) {
-                        self.isPathfinding = false;
-                    } else {
-                        var obj = findObjectUnderMouse();
-                        self.selectedPlanet = obj;
+                    // first, are we in editing state?
+                    if ($scope.editMode) {
+                        // start a planet rubberband-select operation
+                        self.selectCornerA = { x: event.offsetX, y: event.offsetY };
 
-                        if (obj && event.shiftKey) {
-                            self.isPathfinding = true;
-                            self.originPlanet = obj;
+                        if (event.ctrlKey) {
+                            var obj = findObjectUnderMouse();
+                            if (obj) {
+                                obj.graphics.children[0].material.color.setRGB(1,1,1);
+                                addToSelectedSet(obj);
+                                redraw();
+                            } else {
+                                // clear selection set
+                                clearSelectedPlanets();
+                            }
+                        }
+                    } else {
+                        // if we are in pathfinding state, just exit the state and leave the path
+                        // in place; otherwise, treat it as a normal planet select
+                        if (self.isPathfinding) {
+                            self.isPathfinding = false;
+                        } else {
+                            var obj = findObjectUnderMouse();
+                            self.selectedPlanet = obj;
+
+                            if (obj && event.shiftKey) {
+                                self.isPathfinding = true;
+                                self.originPlanet = obj;
+                            }
                         }
                     }
                 }
@@ -530,46 +574,49 @@
             };
 
             this.onMouseUp = function(event) {
-                if (event.button === 1 || (event.button === 0 && event.ctrlKey)) {
+                if (event.button === 1 || (event.button === 0 && event.shiftKey)) {
                     self.state = 0;
                 } else if (event.button === 0) {
-                    // then user wants to select something, find out what it is (if anything) and
-                    // have something handle it
-                    var vpW = self.camera3D.right - self.camera3D.left;
-                    var vpH = self.camera3D.top - self.camera3D.bottom;
-                    var w = vpW / self.camera3D.zoom;
-                    var h = vpH / self.camera3D.zoom;
-                    var l = self.offsetX - w/2;
-                    var t = self.offsetY + h/2;
-
-                    // normalized position in overlay viewport
-                    var nx = event.offsetX / vpW;
-                    var ny = event.offsetY / vpH;
-
-                    var mouseX = nx * w + l;
-                    var mouseY = t - ny * h;
-
-                    var obj = null;
-                    if (self.quadtree)
-                        obj = self.quadtree.find(mouseX, mouseY);
-
-                    self.selectedPlanet = obj;
-                    self.onPlanetSelected(obj);
-
-                    // get the list of planets within 60LY
-                    var planets = [];
-
-                    if (obj) {
-                        planets = self.quadtree.findAllWithinRadius({x: mouseX, y: mouseY}, 60.0);
+                    if ($scope.editMode) {
+                        self.selectCornerA = null;
                     } else {
-                        // remove any existing jump path
-                        clearJumpPath();
-                        redraw();
+                        // then user wants to select something, find out what it is (if anything) and
+                        // have something handle it
+                        var vpW = self.camera3D.right - self.camera3D.left;
+                        var vpH = self.camera3D.top - self.camera3D.bottom;
+                        var w = vpW / self.camera3D.zoom;
+                        var h = vpH / self.camera3D.zoom;
+                        var l = self.offsetX - w / 2;
+                        var t = self.offsetY + h / 2;
+
+                        // normalized position in overlay viewport
+                        var nx = event.offsetX / vpW;
+                        var ny = event.offsetY / vpH;
+
+                        var mouseX = nx * w + l;
+                        var mouseY = t - ny * h;
+
+                        var obj = null;
+                        if (self.quadtree)
+                            obj = self.quadtree.find(mouseX, mouseY);
+
+                        self.selectedPlanet = obj;
+                        self.onPlanetSelected(obj);
+
+                        // get the list of planets within 60LY
+                        var planets = [];
+
+                        if (obj) {
+                            planets = self.quadtree.findAllWithinRadius({x: mouseX, y: mouseY}, 60.0);
+                        } else {
+                            // remove any existing jump path
+                            clearJumpPath();
+                            redraw();
+                        }
+
+                        // call out
+                        $rootScope.$broadcast('planetChanged', obj, planets, self.token);
                     }
-
-                    // call out
-                    $rootScope.$broadcast('planetChanged', obj, planets, self.token);
-
                 }
 
                 return false;
@@ -622,6 +669,50 @@
                 self.camera3D.position.y = self.offsetY = position.y;
 
                 redraw();
+            };
+
+            this.drawSelectRect = function(cornerB) {
+                if (!self.selectCornerA)
+                    return;
+
+                if (!self.selectRect) {
+                    var plane = new THREE.PlaneGeometry(100,100);
+
+                    var mtl = new THREE.MeshBasicMaterial({
+                        color: 0x303030,
+                        transparent: true,
+                        opacity: 0.15
+                    });
+
+                    var mesh = new THREE.Mesh(plane, mtl);
+                    self.selectRect = new THREE.Object3D();
+                    self.selectRect.add(mesh);
+                    self.selectRect.rotation.set(0, Math.PI/2, 0);
+                    self.scene3D.add(self.selectRect);
+                }
+
+                // scale and reposition the rect as needed
+                var dx = self.selectCornerA.x - cornerB.x;
+                var dy = self.selectCornerA.y - cornerB.y;
+
+                dx /= self.mapZoom;
+                dy /= self.mapZoom;
+
+                var sx = Math.abs(dx);
+                var sy = Math.abs(dy);
+                self.selectRect.scale.set(sx, sy, 1);
+
+                var x = self.selectCornerA.x - dx / 2;
+                var y = self.selectCornerA.y - dy / 2;
+                self.selectRect.position.set(x, y, 0);
+
+                console.log ("scale: %f, %f        pos: %f, %f", sx, sy, x, y);
+
+                redraw();
+            };
+
+            this.hideSelectRect = function() {
+                self.scene3D.remove(self.selectRect);
             };
 
             var moveCamera = function(newPosition) {
@@ -760,36 +851,41 @@
             };
 
             this.onMouseMove = function(event) {
+                var pos = {x: event.offsetX, y: event.offsetY};
                 if (self.state === 1) {
-                    moveCamera({x: event.offsetX, y: event.offsetY});
+                    moveCamera(pos);
                     return true;
                 } else {
-                    var obj = findObjectUnderMouse();
+                    if (self.selectCornerA) {
+                        self.drawSelectRect(pos);
+                    } else {
+                        var obj = findObjectUnderMouse();
 
-                    if (obj) {
-                        if (obj !== self.hoverPlanet) {
-                            self.hoverPlanet = obj;
+                        if (obj) {
+                            if (obj !== self.hoverPlanet) {
+                                self.hoverPlanet = obj;
 
-                            if (self.isPathfinding && event.shiftKey) { // the user is looking at jump paths
-                                self.destinationPlanet = obj;
-                                self.jumpPlan = findJumpPath(self.originPlanet, self.destinationPlanet);
-                                $rootScope.$broadcast('jumpPathChanged', self.jumpPlan);
-                                addJumpPath();
+                                if (self.isPathfinding && event.shiftKey) { // the user is looking at jump paths
+                                    self.destinationPlanet = obj;
+                                    self.jumpPlan = findJumpPath(self.originPlanet, self.destinationPlanet);
+                                    $rootScope.$broadcast('jumpPathChanged', self.jumpPlan);
+                                    addJumpPath();
+                                }
+
+                                if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
+
+                                self.hoverPlanetLoc = {x: event.offsetX, y: event.offsetY};
+                                self.hoverPlanetTimeout = setTimeout(self.showPlanetBrief, 500);
                             }
+                        } else {
+                            self.removePlanetBrief();
+                            self.hoverPlanet = null;
 
                             if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
+                            self.hoverPlanetTimeout = null;
 
-                            self.hoverPlanetLoc = {x: event.offsetX, y: event.offsetY};
-                            self.hoverPlanetTimeout = setTimeout(self.showPlanetBrief, 500);
+                            self.hoverPlanetLoc = null;
                         }
-                    } else {
-                        self.removePlanetBrief();
-                        self.hoverPlanet = null;
-
-                        if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
-                        self.hoverPlanetTimeout = null;
-
-                        self.hoverPlanetLoc = null;
                     }
                 }
 

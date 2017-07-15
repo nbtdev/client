@@ -23,8 +23,23 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('StarmapUiController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
-            var self = this;
+        .controller('StarmapUiController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
+            $scope.factions = [];
+
+            nbtFaction.fetchFactionsForLeague(nbtLeague.current(), nbtIdentity.get().token, function(factions) {
+                $scope.factions = [];
+
+                for (var i=0; i<factions.length; ++i) {
+                    var f = factions[i];
+                    $scope.factions.push({
+                        id: f.id,
+                        name: f.displayName,
+                        _links: {
+                            planets: f._links.planets
+                        }
+                    });
+                }
+            });
 
             $scope.onFindPlanet = function() {
                 var element = $("#ui-planet-search")[0];
@@ -41,6 +56,31 @@
 
                 var position = JSON.parse(selected.attributes['data-planet-position'].value);
                 $scope.$parent.starmap.onPlanetSearch(position);
+            };
+
+            $scope.showAdminTools = function() {
+                var token = nbtIdentity.get();
+                return (token.isValid() && (token.isSiteAdmin() || token.isLeagueAdmin()));
+            };
+
+            $scope.onCreateSector = function() {
+
+            };
+
+            $scope.onChangeOwner = function() {
+                var owner = JSON.parse($scope.selectedOwner);
+
+                var planetIds = [];
+                for (var i=0; i<$scope.$parent.selectedPlanets.length; ++i) {
+                    var p = $scope.$parent.selectedPlanets[i];
+                    planetIds.push(p.id);
+                }
+
+                nbtFaction.transferPlanetsToFaction(owner, planetIds, nbtIdentity.get().token, function(resp) {
+                    // the service will send the post-update state of the planets (a list of Planet objects)
+                    // so we need to let the parent know about this and deal with it as it may
+                    $scope.$parent.onPlanetsUpdated(resp);
+                });
             };
         }]);
 })();

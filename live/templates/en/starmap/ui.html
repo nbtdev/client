@@ -34,7 +34,29 @@
         </div>
         <br>
         <div class="ui-contentItem">
-            <input type="checkbox" ng-model="$parent.showCombatUnits">Mechs
+            <input type="checkbox" ng-model="$parent.showCombatUnits">Combat Units
+        </div>
+
+        <div ng-show="showAdminTools()" class="nbt-highlight">
+            <div class="ui-contentItem nbt-para">
+                <input type="checkbox" ng-model="$parent.editMode">Edit Map
+            </div>
+
+            <div class="ui-contentItem nbt-para" ng-show="$parent.selectedPlanets.length > 0">
+                <div>{{$parent.selectedPlanets.length}} Planet(s) Selected</div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-xs" ng-click="onCreateSector()">Create Sector</button>
+                    &nbsp;Capital:&nbsp;<select ng-model="selectedSectorCapital">
+                    <option ng-repeat="planet in $parent.selectedPlanets" value="{{planet.id}}">{{planet.name}}</option>
+                </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-xs" ng-click="onChangeOwner()">Transfer To: </button>
+                    &nbsp;<select ng-model="selectedOwner">
+                    <option ng-repeat="faction in factions" value="{{faction}}">{{faction.name}}</option>
+                </select>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -71,6 +71,28 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.transferPlanetsToFaction = function(aFaction, aPlanetIds, aToken, aSuccessCb, aFailCb) {
+        if (aFaction._links.planets) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFaction._links.planets.href,
+                data: aPlanetIds,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp);
+                },
+                function(aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
     return FactionService;
 })();
 
