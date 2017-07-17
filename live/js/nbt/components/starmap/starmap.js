@@ -54,6 +54,7 @@
             $scope.showJumpships = true;
             $scope.showCombatUnits = true;
             $scope.showDropships = true;
+            $scope.showSectorBounds = true;
 
             var updateMapColors = function(aMapColorData) {
                 self.mapColors = aMapColorData;
@@ -144,6 +145,7 @@
             this.battleRings = [];
             this.chargeStationRings = [];
             this.capitalPlanetRings = [];
+            this.sectorBounds = [];
 
             // 30- and 60-LY rings
             this.rings3060 = null
@@ -304,6 +306,15 @@
                 }
             };
 
+            var showSectorBounds = function(bounds, show) {
+                for (var i=0; i<bounds.length; ++i) {
+                    var bound = bounds[i];
+
+                    if (show) self.scene3D.add(bound);
+                    else self.scene3D.remove(bound);
+                }
+            };
+
             this.reloadStarmapData = function() {
                 var whiteMtl = new THREE.MeshBasicMaterial();
                 whiteMtl.color.setRGB(1,1,1);
@@ -324,6 +335,7 @@
 
                 self.scene3D = new THREE.Scene();
                 self.scene3D.add(self.camera3D);
+                self.sectorBounds = [];
 
                 // plow through the planets, making objects, geometries and meshes along the way
                 for (var g=0; g<self.planets.length; ++g) {
@@ -417,7 +429,8 @@
                         }
                     }
 
-                    if (group.owner.displayName !== 'Unassigned' && points.length > 3) {
+                    // 598? Don't draw sector bounds "north" of Antinisus, it just gets messy
+                    if (group.owner.displayName !== 'Unassigned' && points.length > 3 && p.y < 598) {
                         // make a trimesh of the group's verts
                         // console.time("triangulate");
                         // var triangles = Delaunay.triangulate(verts2D);
@@ -446,6 +459,7 @@
                         var sectorMesh = new THREE.Mesh(sectorGeom, sectorMtl);
 
                         var obj = new THREE.Object3D();
+                        self.sectorBounds.push(obj);
                         obj.add(sectorMesh);
 
                         self.scene3D.add(obj);
@@ -660,6 +674,11 @@
 
             $scope.$watch('showCombatUnits', function(newValue, oldValue) {
                 showRings(self.combatUnitRings, newValue);
+                redraw();
+            });
+
+            $scope.$watch('showSectorBounds', function(newValue, oldValue) {
+                showSectorBounds(self.sectorBounds, newValue);
                 redraw();
             });
 
@@ -975,6 +994,10 @@
                 }
             };
 
+            $scope.reloadData = function() {
+                self.reload();
+            };
+
             var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
                 var l = nbtLeague.current();
 
@@ -1088,6 +1111,9 @@
                 $scope.capital = p.capitalPlanet;
                 $scope.factory = p.factory;
 
+                if (p.parentGroup.sectorId > 0)
+                    $scope.sector = p.parentGroup.sectorCapital.name;
+
                 // if there is an active battle on the planet, follow the link and get the details
                 if (p.battleId) {
                     nbtBattle.fetchBattleForPlanet(p, nbtIdentity.get().token, self.updatePlanetBattleDetail);
@@ -1100,6 +1126,7 @@
             this.setPlanet = function(aPlanet, aToken, aScreenPos) {
                 $scope.posX = aScreenPos.x;
                 $scope.posY = aScreenPos.y;
+                $scope.sector = null;
 
                 $scope.name = '(fetching)';
                 $scope.description = null;
@@ -1117,6 +1144,7 @@
                 $scope.capital = null;
                 $scope.description = null;
                 $scope.owner = null;
+                $scope.sector = null;
                 $scope.terrain = null;
                 $scope.recharge = null;
                 $scope.battleId = null

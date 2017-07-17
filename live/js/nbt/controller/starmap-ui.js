@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('StarmapUiController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
+        .controller('StarmapUiController', ['$sce', '$scope', 'nbtFaction', 'nbtPlanet', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtPlanet, nbtLeague, nbtIdentity) {
             $scope.factions = [];
 
             nbtFaction.fetchFactionsForLeague(nbtLeague.current(), nbtIdentity.get().token, function(factions) {
@@ -35,7 +35,8 @@
                         id: f.id,
                         name: f.displayName,
                         _links: {
-                            planets: f._links.planets
+                            planets: f._links.planets,
+                            sectors: f._links.sectors
                         }
                     });
                 }
@@ -64,14 +65,54 @@
             };
 
             $scope.onCreateSector = function() {
+                var owner = JSON.parse($scope.selectedOwner);
 
+                var planetIds = [];
+                for (var i=0; i<$scope.$parent.selectedPlanets.length; ++i) {
+                    var p = $scope.$parent.selectedPlanets[i];
+                    planetIds.push(p.id);
+                }
+
+                var data = {
+                    capitalPlanetId: $scope.selectedSectorCapital,
+                    sectorPlanetIds: planetIds
+                };
+
+                nbtPlanet.createSector(owner, data, nbtIdentity.get().token, function(resp) {
+                    // the service will send the post-update state of the planets (a list of Planet objects)
+                    // so we need to let the parent know about this and deal with it as it may
+                    // $scope.$parent.onPlanetsUpdated(resp);
+                });
+            };
+
+            $scope.onEditSector = function() {
+            };
+
+            $scope.onDeleteSector = function() {
+                // from the selected planet(s), figure out which sector(s) we are deleting...
+                var sectors = {};
+                for (var i=0; i<$scope.$parent.selectedPlanets.length; ++i) {
+                    var planet = $scope.$parent.selectedPlanets[i];
+                    var group = planet.parentGroup;
+
+                    if (group.sectorId && group.sectorId > 0 && group._links.sector) {
+                        sectors[group.sectorId] = group;
+                    }
+                }
+
+                if (Object.keys(sectors).length > 0) {
+                    nbtPlanet.deleteSectors(sectors, nbtIdentity.get().token, function() {
+                        // remove sector from the parent starmap too
+                    });
+                }
             };
 
             $scope.onChangeOwner = function() {
                 var owner = JSON.parse($scope.selectedOwner);
 
                 var planetIds = [];
-                for (var i=0; i<$scope.$parent.selectedPlanets.length; ++i) {
+                var selectedPlanetCount = $scope.$parent.selectedPlanets.length;
+                for (var i=0; i<selectedPlanetCount; ++i) {
                     var p = $scope.$parent.selectedPlanets[i];
                     planetIds.push(p.id);
                 }
@@ -81,6 +122,11 @@
                     // so we need to let the parent know about this and deal with it as it may
                     $scope.$parent.onPlanetsUpdated(resp);
                 });
+            };
+
+            $scope.onReloadStarmap = function() {
+                console.log('Reloading starmap data...');
+                $scope.$parent.reloadData();
             };
         }]);
 })();

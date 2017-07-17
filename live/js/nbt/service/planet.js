@@ -177,8 +177,10 @@ var _PlanetService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aCallback)
+                    if (aCallback) {
+                        aResp.data.parentGroup = aPlanet.parentGroup;
                         aCallback(aResp.data);
+                    }
                 }
             );
         }
@@ -199,6 +201,51 @@ var _PlanetService = (function() {
                 }
             );
         }
+    };
+
+    PlanetService.prototype.createSector = function(aFaction, aPlanetIds, aToken, aSuccessCb, aFailCb) {
+        if (aFaction._links.sectors) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFaction._links.sectors.href,
+                data: aPlanetIds,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp);
+                },
+                function(aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.deleteSectors = function(aSectorsDict, aToken, aSuccessCb, aFailCb) {
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        Object.keys(aSectorsDict).forEach(function(key) {
+            var group = aSectorsDict[key];
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: group._links.sector.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(group.sectorId);
+                },
+                function(aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        });
     };
 
     return PlanetService;

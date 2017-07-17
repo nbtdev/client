@@ -344,6 +344,22 @@ input[type=password] {
     border: solid 1px goldenrod;
 }
 
+.nbt-upper-right {
+    float: right;
+}
+
+.nbt-reload {
+    opacity: 0.5;
+}
+
+.nbt-reload:hover {
+    opacity: 0.8;
+}
+
+.nbt-reload:active {
+    opacity: 1;
+}
+
 .nbt-info {
     color: green;
     opacity: 1;
