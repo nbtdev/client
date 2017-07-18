@@ -37,11 +37,7 @@ var Locale = {
 };
 
 // root API url
-//var API_URL = 'http://api.home.lan';
-//var API_URL = 'http://tsunami:8080';
 var API_URL = 'https://api-dev.netbattletech.com';
-//var API_URL = 'http://api-home.netbattletech.com';
-
 
 function NBT() {
     var self = this;
