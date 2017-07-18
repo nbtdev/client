@@ -296,6 +296,9 @@ var _LeagueService = (function() {
     };
 
     LeagueService.prototype.fetchLeagueProfile = function(aLeague, aToken, aSuccessCb, aFailCb) {
+        if (!aLeague.userProfileLink())
+            return;
+
         // fetch the leagues from the service
         var hdrs = new Headers(Header.TOKEN, aToken);
 

@@ -54,7 +54,7 @@
             $scope.showJumpships = true;
             $scope.showCombatUnits = true;
             $scope.showDropships = true;
-            $scope.showSectorBounds = true;
+            $scope.displaySectorBounds = false;
 
             var updateMapColors = function(aMapColorData) {
                 self.mapColors = aMapColorData;
@@ -462,7 +462,8 @@
                         self.sectorBounds.push(obj);
                         obj.add(sectorMesh);
 
-                        self.scene3D.add(obj);
+                        if ($scope.displaySectorBounds)
+                            self.scene3D.add(obj);
                     }
                 }
 
@@ -677,7 +678,7 @@
                 redraw();
             });
 
-            $scope.$watch('showSectorBounds', function(newValue, oldValue) {
+            $scope.$watch('displaySectorBounds', function(newValue, oldValue) {
                 showSectorBounds(self.sectorBounds, newValue);
                 redraw();
             });

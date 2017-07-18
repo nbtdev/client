@@ -21,6 +21,9 @@
     <!-- Theme CSS -->
     <link href="css/grayscale.css" rel="stylesheet">
 
+    <!-- NBT CSS -->
+    <link href="css/nbt.css" rel="stylesheet">
+
     <!-- Temporary navbar container fix until Bootstrap 4 is patched -->
     <style>
     .navbar-toggler {
@@ -51,10 +54,7 @@
                         <a class="nav-link page-scroll" href="#about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#leagues">Leagues</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#download">Forums</a>
+                        <a class="nav-link page-scroll" href="#join">Join</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link page-scroll" href="#contact">Social</a>
@@ -94,24 +94,22 @@
         </div>
     </section>
 
-    <!-- Leagues Section -->
-    <section id="leagues" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 offset-md-2">
-                <h2>NetBattletech Leagues</h2>
-                <nbt_leagues></nbt_leagues>
-            </div>
-        </div>
-    </section>
-
-    <!-- Forum Section -->
-    <section id="download" class="content-section text-center">
+    <!-- Join Section -->
+    <section id="join" class="content-section text-center">
         <div class="download-section">
             <div class="container">
                 <div class="col-lg-8 offset-md-2">
                     <h2>Want to get in on the action?</h2>
-                    <p>NBT isn't ready just yet, but visit our offical forums and you can help us with its development</p>
-                    <a href="http://hpguplink.netbattletech.com" class="btn btn-default btn-lg">Visit the Offical Forums</a>
+                    <p>NBT is currently accepting applications for the following leagues! The logo(s) below take you to
+                        the league automation interface, where you can submit an application for your team.</p>
+                    <nbt_leagues></nbt_leagues>
+                    <h3 class="nbt-h3 nbt-padding-above-35">Not sure if NBT is for you?</h3>
+                    <p>The NBT Rules provide an overview of the NBT experience.</p>
+                    <h3>Get Involved!</h3>
+                    <a href="http://hpguplink.netbattletech.com" target="_blank" class="btn btn-default btn-lg nbt-space-5">Visit the Official Forums</a>
+                    <br/>
+                    <a class="nbt-space-5" href="teamspeak://voice.netbattletech.com" target="_blank"><img src="images/teamspeak.png" height="125" width="274"/></a>
+                    <a class="nbt-space-5" href="https://discord.gg/tb6crk3" target="_blank"><img src="images/discord.png" height="125" width="389"/></a>
                 </div>
             </div>
         </div>
@@ -122,7 +120,7 @@
         <div class="row">
             <div class="col-lg-8 offset-md-2">
                 <h2>Social</h2>
-                <p>Feel free to support NBT via social media</p>
+                <p>Support NBT via social media</p>
                 <ul class="list-inline banner-social-buttons">
                     <li class="list-inline-item">
                         <a href="https://twitter.com/NetBattleTech" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>

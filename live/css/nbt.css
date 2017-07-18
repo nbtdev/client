@@ -483,3 +483,16 @@ input[type=password] {
 .nbt-vert-spacing-1 {
     margin-bottom: 1px;
 }
+
+.nbt-league-logos {
+    margin-bottom: 20px;
+}
+
+.nbt-padding-above-35 {
+    padding-top: 35px;
+    margin-bottom: 0px;
+}
+
+.nbt-space-5 {
+    margin: 5px;
+}
