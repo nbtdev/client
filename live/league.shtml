@@ -58,6 +58,7 @@
     <script src='/js/nbt/controller/registration.js'></script>
     <script src='/js/nbt/controller/about.js'></script>
     <script src='/js/nbt/controller/faction-listing.js'></script>
+    <script src='/js/nbt/controller/profile.js'></script>
     <script src='/js/nbt/controller/signin.js'></script>
     <script src='/js/nbt/controller/starmap-ui.js'></script>
     <script src='/js/nbt/controller/transfer-combat-unit.js'></script>
@@ -75,6 +76,7 @@
     <!--#include virtual="/fragment/navbar.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
+    <!--#include virtual="/fragment/profile.html" -->
     <!--#include virtual="/fragment/signin.html" -->
     <!--#include virtual="/fragment/registration.html" -->
     <!--#include virtual="/fragment/transferCombatUnit.html" -->

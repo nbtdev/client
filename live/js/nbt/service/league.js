@@ -231,6 +231,24 @@ var _LeagueService = (function() {
         return mCurrentLeague;
     };
 
+    LeagueService.prototype.reloadCurrentLeague = function(aToken) {
+        if (!mCurrentLeague)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: get from links!
+            url: nbtRoot.links().leagues.href,
+            headers: hdrs.get()
+        }).then(function (resp) {
+            var currentId = parseInt(localStorage.league);
+            setLeagues(resp.data._embedded.leagues);
+            self.setCurrent(currentId);
+        });
+    };
+
     LeagueService.prototype.get = function(id) {
         if (mLeagues) {
             for (var i = 0; i < mLeagues.length; ++i) {
@@ -273,8 +291,28 @@ var _LeagueService = (function() {
         fetchLeagues();
     };
 
-    LeagueService.fetchLeagueData = function(league) {
+    LeagueService.prototype.fetchLeagueData = function(league) {
 
+    };
+
+    LeagueService.prototype.fetchLeagueProfile = function(aLeague, aToken, aSuccessCb, aFailCb) {
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: get from links!
+            url: aLeague.userProfileLink().href,
+            headers: hdrs.get()
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
     };
 
     return LeagueService;

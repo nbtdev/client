@@ -348,15 +348,15 @@ input[type=password] {
     float: right;
 }
 
-.nbt-reload {
+.nbt-pseudo-button {
     opacity: 0.5;
 }
 
-.nbt-reload:hover {
+.nbt-pseudo-button:hover {
     opacity: 0.8;
 }
 
-.nbt-reload:active {
+.nbt-pseudo-button:active {
     opacity: 1;
 }
 

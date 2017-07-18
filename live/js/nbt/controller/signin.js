@@ -46,6 +46,9 @@
                 grecaptcha.reset();
                 $('#signinModal').modal('hide');
                 reset();
+
+                // trigger a reload of the profile for this user in this league
+                nbtLeague.reloadCurrentLeague(nbtIdentity.get().token);
             };
 
             this.signinFailed = function(data) {

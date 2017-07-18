@@ -227,6 +227,26 @@ var _UserService = (function() {
         ).finally(aFinallyCb);
     };
 
+    UserService.prototype.updateProfile = function(aProfile, aToken, aSuccessCb, aFailCb) {
+        var hdr = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'PUT', // TODO: GET FROM LINKS!
+            url: aProfile._links.self.href,
+            headers: hdr.get(),
+            data: aProfile
+        }).then(
+            function (aResp) {
+                if (aSuccessCb)
+                    aSuccessCb(aResp.data);
+            },
+            function(aResp) {
+                if (aFailCb)
+                    aFailCb(aResp.data.message + " (code: " + aResp.data.status + ")");
+            }
+        );
+    };
+
     return UserService;
 })();
 
