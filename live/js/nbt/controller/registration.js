@@ -26,6 +26,7 @@
         .controller('RegistrationFormController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
             var self = this;
             var captchaResponse = null;
+            $scope.emailCopy = null;
 
             var resetError = function() {
                 $scope.usernameError = null;
@@ -35,6 +36,7 @@
                 $scope.emailAddressError = null;
                 $scope.emailAddressCheckError = null;
                 $scope.captchaError = null;
+                $scope.generalError = null;
             };
 
             var resetFields = function () {
@@ -180,7 +182,9 @@
             };
 
             this.registrationSucceeded = function(data) {
-                console.log(data);
+                $scope.emailCopy = $scope.email;
+                resetFields();
+                resetError();
                 $scope.registrationSucceeded = true;
                 grecaptcha.reset();
             };
@@ -193,6 +197,8 @@
                     $scope.callsignError = 'Callsign already taken!';
                 } else if (data.message.includes('[email]')) {
                     $scope.emailAddressError = 'Email address already used!';
+                } else {
+                    $scope.generalError = data.message;
                 }
 
                 $scope.registrationSucceeded = false;

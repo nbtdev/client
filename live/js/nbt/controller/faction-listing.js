@@ -108,7 +108,8 @@
                 nbtFaction.apply(faction, $scope.applicationData, nbtIdentity.get().token, function(resp) {
                     // remove the Apply button
                     faction.applicationSubmitted = true;
-                    faction.appStatus = "Submitted"
+                    faction.appStatus = "Submitted";
+                    $scope.showApplyForm = false;
                     $scope.showApplyButtons = false;
                     $scope.showApplyToggle = false;
                 });

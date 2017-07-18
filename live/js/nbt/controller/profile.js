@@ -23,7 +23,23 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('ProfileController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
+        .controller('ProfileController', ['$sce', '$scope', '$timeout', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtUser, nbtLeague, nbtIdentity) {
+            var timeoutPromise = null;
+
+            var updateStatus = function(message, isError) {
+                $scope.status = message;
+                $scope.statusIsError = isError;
+
+                // cause the message to go away in 5 seconds
+                if (timeoutPromise)
+                    $timeout.cancel(timeoutPromise);
+
+                timeoutPromise = $timeout(function() {
+                    $scope.status = null;
+                    timeoutPromise = null;
+                }, 5000);
+            };
+
             function reset() {
                 $scope.league = nbtLeague.current();
                 $scope.profile = {};
@@ -39,9 +55,16 @@
             reset();
 
             $scope.onApply = function() {
-                nbtUser.updateProfile($scope.profile, nbtIdentity.get().token, function() {
-                    // TODO...what?
-                });
+                nbtUser.updateProfile($scope.profile, nbtIdentity.get().token,
+                    function(data) {
+                        // blip that the update succeeded
+                        updateStatus("Changes saved");
+                    },
+                    function(err) {
+                        // blip that the update failed
+                        updateStatus(err.data.message, true);
+                    }
+                );
             };
 
             $scope.onCancel = function() {

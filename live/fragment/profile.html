@@ -49,6 +49,9 @@
                 </div>
 
                 <div style="text-align: center; padding-top: 8px">
+                    <div class="nbt-centered">
+                        <div class="nbt-status" ng-class="{ 'nbt-info': !statusIsError, 'nbt-error': statusIsError, 'nbt-invisible': !status}">&nbsp;{{status}}</div>
+                    </div>
                     <div class="centered">
                         <span style="margin-right: 25px;"><a href="#" ng-click="onApply()" class="btn btn-info nbt-button" role="button">Apply</a></span>
                         <span style="display: inline;"><a href="#" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>

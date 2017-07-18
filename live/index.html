@@ -40,7 +40,6 @@
 </head>
 
 <body id="page-top" ng-controller="PageController as pageController">
-
     <!-- Navigation -->
     <nav id="mainNav" class="navbar fixed-top navbar-toggleable-md navbar-light">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarExample" aria-controls="navbarExample" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +53,7 @@
                         <a class="nav-link page-scroll" href="#about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link page-scroll" href="#join">Join</a>
+                        <a class="nav-link page-scroll" href="#play">Play!</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link page-scroll" href="#contact">Social</a>
@@ -95,7 +94,7 @@
     </section>
 
     <!-- Join Section -->
-    <section id="join" class="content-section text-center">
+    <section id="play" class="content-section text-center">
         <div class="download-section">
             <div class="container">
                 <div class="col-lg-8 offset-md-2">
@@ -168,6 +167,25 @@
 
     <!-- Theme JavaScript -->
     <script src="js/grayscale.min.js"></script>
+    <style>
+        .popover {
+            background-color: black;
+            color: wheat;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('[data-toggle="popover"]').popover({
+                html: true,
+                trigger: "hover",
+                content: function(){
+                    return $($(this).data('contentref')).html();
+                }
+            });
+        })
+    </script>
+
 </body>
 
 </html>

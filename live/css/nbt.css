@@ -496,3 +496,8 @@ input[type=password] {
 .nbt-space-5 {
     margin: 5px;
 }
+
+.nbt-important {
+    color: #fbd850;
+    font-weight: bolder;
+}

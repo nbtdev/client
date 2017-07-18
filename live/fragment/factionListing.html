@@ -1,8 +1,21 @@
+<div class="faction-signup-tip" style="display: none">
+    <h5 class="nbt-h5">Faction Signup</h5>
+    <div class="nbt-rules-para">
+        In order to sign up for a faction, you must first have registered an account with the NBT Automation (see Register
+        link above) and be logged into that account. Then you will be able to view the signup form in the Factions listing
+        and submit an application for a faction. <span class="nbt-bold">You may only have one application in progress at a time, so if you have
+        additional choices for faction, you should list those in the Comments field on the application form.</span>
+    </div>
+</div>
+
 <div id="factionsModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="FactionListingController as factionListingController">
     <div class="modal-dialog modal-lg with-border">
         <div class="modal-content nbt-base">
             <div class="modal-header nbt-modal-header">
                 <h4 class="modal-title text-center">{{league.name()}} Factions</h4>
+            </div>
+            <div ng-hide="showApplyToggle && canApply()">
+                <a href="javascript: void(0)" data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
             </div>
             <div class="modal-body nbt-modal-body">
                 <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
@@ -36,7 +49,7 @@
                                     rows="6"
                                     ng-model="applicationData.comments"
                                     style="color: black"
-                                    placeholder="(optional) Any additional comments you have about your team or your application">
+                                    placeholder="(optional) Any additional comments you have about your team or your application, including additional faction choices">
                             </textarea>
                         </div>
                     </div>
@@ -46,6 +59,8 @@
                             <input type="checkbox" ng-model="applicationData.acceptedToS">&nbsp; I have read and
                             understand the rules and requirements to join the {{league.name()}} league and agree to
                             abide by them at all times while participating in league activities.
+                            <span class="nbt-important">You must check this box to reveal the Apply buttons in the
+                            faction listing below.</span>
                         </div>
                         <div class="col-md-3">&nbsp;</div>
                     </div>

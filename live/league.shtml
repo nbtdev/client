@@ -70,6 +70,27 @@
 <body ng-controller="LeaguePageController as pageController" style="background-color: black;">
     <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
 
+    <style>
+        .popover {
+            background-color: black;
+            z-index: 10000;
+            color: wheat;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('[data-toggle="popover"]').popover({
+                html: true,
+                trigger: "hover",
+                content: function(){
+                    return $($(this).data('contentref')).html();
+                }
+            });
+        })
+    </script>
+
+
     <input type="hidden" ng-init="page='league';" />
 
     <!-- header bar -->
