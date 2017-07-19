@@ -143,12 +143,12 @@ var _LeagueService = (function() {
         save();
     };
 
-    LeagueService.prototype.fetchLeagues = function (aToken) {
+    LeagueService.prototype.fetchLeagues = function (aToken, aSuccessCb) {
         // first try to restore cached data from local storage
-        restore();
+        // restore();
 
         // a null mLeagues member indicates that
-        if (!mLeagues) {
+        //if (!mLeagues) {
             // fetch the leagues from the service
             var hdrs = new Headers(Header.TOKEN, aToken);
 
@@ -161,9 +161,13 @@ var _LeagueService = (function() {
                 setLeagues(resp.data._embedded.leagues);
                 self.setCurrent(currentId);
 
+                if (aSuccessCb) {
+                    aSuccessCb(mLeagues, mCurrentLeague);
+                }
+
                 rootScope.$broadcast('nbtLeaguesChanged', mLeagues, mCurrentLeague);
             });
-        }
+        //}
     };
 
     LeagueService.prototype.setCurrent = function (aLeagueId, aToken) {

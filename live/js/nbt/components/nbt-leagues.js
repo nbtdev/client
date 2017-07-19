@@ -24,9 +24,12 @@
     var app = angular.module('nbt.app');
 
     app.directive('nbtLeagues', function($templateRequest, $compile) {
+        var self = this;
 
         this.controller = function ($scope, nbtLeague, nbtIdentity) {
             $scope.leagues = nbtLeague.leagues();
+            self.leagueService = nbtLeague;
+            self.identityService = nbtIdentity;
         };
 
         return {
@@ -40,10 +43,15 @@
 
                 if (attrs.lang) l10n = attrs.lang;
 
+                var token = self.identityService.get().token;
+
                 // load the leagues listing fragment
                 $templateRequest('/templates/' + l10n + '/nbt-leagues/body.html').then(function(html) {
-                    var content = angular.element(html);
-                    element.append($compile(content)(scope));
+                    self.leagueService.fetchLeagues(token, function(leagues, currentLeague) {
+                        scope.leagues = leagues;
+                        var content = angular.element(html);
+                        element.append($compile(content)(scope));
+                    });
                 });
             }
         };
