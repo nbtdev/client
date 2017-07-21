@@ -36,9 +36,6 @@ var Locale = {
     EN: 'en'
 };
 
-// root API url
-var API_URL = 'http://api-home.netbattletech.com';
-
 function NBT() {
     var self = this;
     //var app = angular.module('nbt.app', []);

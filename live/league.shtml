@@ -41,6 +41,7 @@
     <script src="/js/nbt/util/quickhull.js"></script>
     <script src="/js/nbt/util/convex-geometry.js"></script>
 
+    <script src='/js/nbt/api.js'></script>
     <script src='/js/nbt/nbt.js'></script>
     <script src='/js/nbt/util/headers.js'></script>
     <script src='/js/nbt/model/battle.js'></script>

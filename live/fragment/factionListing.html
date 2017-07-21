@@ -26,8 +26,8 @@
                         <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.name" placeholder="(required) Your team's name"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 nbt-right-justified">Your Team's In-Game Tags</div>
-                        <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.tags" placeholder="(optional) Your team's in-game tags"></div>
+                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': tagsError}">Your Team's In-Game Tags</div>
+                        <div class="col-md-8"><input type="text" size="40" maxlength="8" ng-model="applicationData.tags" placeholder="(optional) Max length: 8 characters"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': pilotCountError}">Team Active Pilot Count</div>
@@ -36,10 +36,42 @@
                     <div class="row">
                         <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': geoError}">Team Geographic Area(s) (at least one required)</div>
                         <div class="col-md-8">
-                            <div><input type="checkbox" value="NA" ng-model="geoNA">North American</div>
-                            <div><input type="checkbox" value="EU" ng-model="geoEU">European</div>
-                            <div><input type="checkbox" value="AP" ng-model="geoAP">Oceanic/Asia-Pacific</div>
+                            <div><input type="checkbox" value="NA" ng-model="geoNA">&nbsp;North American</div>
+                            <div><input type="checkbox" value="EU" ng-model="geoEU">&nbsp;European</div>
+                            <div><input type="checkbox" value="AP" ng-model="geoAP">&nbsp;Oceanic/Asia-Pacific</div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <hr/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            We understand that not everyone who is interested in NBT is able to field a full team for a
+                            particular faction. Additionally, scheduling with teams in other geographic regions could be
+                            easier if a faction is populated by teams from different regions. If you are willing to share
+                            a faction with other interested teams, NBT can help facilitate that conversation.
+                        </div>
+                        <div class="col-md-8">
+                            <div><input type="checkbox" ng-model="applicationData.collaborate">&nbsp;I am willing to lead a shared faction, or
+                                participate in a faction led by another team</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr/>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            Whether or not you are interested in sharing a faction with another team, can we show your
+                            team tags in the faction listing, so that others know you have interest in a particular faction?
+                            If you decline, your application will show up, but masked as
+                            <span style="white-space: nowrap">&lt;?&gt;</span> in the listing.
+                        </div>
+                        <div class="col-md-8">
+                            <div><input type="checkbox" ng-model="applicationData.showPublic">&nbsp;Yes, you may show that we have applied</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr/>
                     </div>
                     <div class="row">
                         <div class="col-md-4 nbt-right-justified">Additional Comments</div>
@@ -68,24 +100,29 @@
 
                 <div class="container col-md-12">
                     <div class="row">
-                        <div class="col-md-5 bold">Name</div>
+                        <div class="col-md-3 bold">Name</div>
                         <div class="col-md-3 bold">Type</div>
-                        <div class="col-md-2 bold">Status</div>
-                        <div class="col-md-2 bold">Application</div>
+                        <div class="col-md-1 bold">Status</div>
+                        <div class="col-md-2 bold">Apply</div>
+                        <div class="col-md-3 bold">Applications</div>
                     </div>
 
                     <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
-                        <div class="col-md-5">{{faction.displayName}}</div>
+                        <div class="col-md-3">{{faction.displayName}}</div>
                         <div class="col-md-3">{{faction.class}}</div>
-                        <div class="col-md-2">{{faction.status}}</div>
+                        <div class="col-md-1">{{faction.status}}</div>
                         <div class="col-md-2">
                             <button type="button"
-                                    class="btn btn-primary btn-xs"
+                                    class="btn btn-xs"
+                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
                                     ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && canApplyToFaction(faction)"
                                     ng-click="apply(faction)">
                                 Apply
                             </button>
-                            <div ng-show="faction.appStatus" class="nbt-info">{{faction.appStatus}}</div>
+                            <div ng-show="faction.appStatus && !editing" class="nbt-info">{{faction.appStatus}}</div>
+                        </div>
+                        <div class="col-md-3">
+                            {{faction.pendingApplications.join(', ')}}
                         </div>
                     </div>
                 </div>

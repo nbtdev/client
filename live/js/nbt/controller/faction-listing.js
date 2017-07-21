@@ -26,7 +26,7 @@
         .controller('FactionListingController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
             function reset() {
                 $scope.league = nbtLeague.current();
-                $scope.league.minPilotCount = 12;
+                $scope.league.minPilotCount = 10;
                 $scope.showApplyButtons = true;
                 $scope.showApplyToggle = true;
                 $scope.showApplyForm = false;
@@ -35,17 +35,21 @@
                     name: null,
                     tags: null,
                     geo: null,
-                    pilotCount: 12,
+                    pilotCount: 10,
                     comments: null,
-                    acceptedToS: null
+                    acceptedToS: null,
+                    showPublic: true,
+                    collaborate: true
                 };
                 $scope.geoNA = null;
                 $scope.geoEU = null;
                 $scope.geoAP = null;
 
                 $scope.nameError = false;
+                $scope.tagsError = false;
                 $scope.pilotCountError = false;
                 $scope.geoError = false;
+                $scope.formError = false;
             }
 
             reset();
@@ -85,22 +89,35 @@
 
             $scope.apply = function(faction) {
                 $scope.nameError = false;
+                $scope.tagsError = false;
                 $scope.pilotCountError = false;
                 $scope.geoError = false;
+                $scope.formError = false;
 
                 $scope.applicationData.geo = [];
                 if ($scope.geoNA) $scope.applicationData.geo.push('NA');
                 if ($scope.geoEU) $scope.applicationData.geo.push('EU');
                 if ($scope.geoAP) $scope.applicationData.geo.push('AP');
 
-                if ($scope.applicationData.geo.length === 0)
+                if ($scope.applicationData.geo.length === 0) {
                     $scope.geoError = true;
+                    $scope.formError = true;
+                }
 
-                if (!$scope.applicationData.name || $scope.applicationData.name === '')
+                if (!$scope.applicationData.name || $scope.applicationData.name === '') {
                     $scope.nameError = true;
+                    $scope.formError = true;
+                }
 
-                if (!$scope.applicationData.pilotCount || $scope.applicationData.pilotCount < $scope.league.minPilotCount)
+                if ($scope.applicationData.tags && $scope.applicationData.tags.length > 8) {
+                    $scope.tagsError = true;
+                    $scope.formError = true;
+                }
+
+                if (!$scope.applicationData.pilotCount || $scope.applicationData.pilotCount < $scope.league.minPilotCount) {
                     $scope.pilotCountError = true;
+                    $scope.formError = true;
+                }
 
                 if ($scope.nameError || $scope.pilotCountError || $scope.geoError)
                     return;
