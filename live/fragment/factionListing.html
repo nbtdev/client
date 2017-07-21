@@ -115,11 +115,36 @@
                             <button type="button"
                                     class="btn btn-xs"
                                     ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
-                                    ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && canApplyToFaction(faction)"
+                                    ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && faction._links.apply"
                                     ng-click="apply(faction)">
                                 Apply
                             </button>
-                            <div ng-show="faction.appStatus && !editing" class="nbt-info">{{faction.appStatus}}</div>
+                            <span ng-show="showApplyForm && applicationData.acceptedToS && faction.application">
+                            <button type="button"
+                                    title="Save changes and close the application form"
+                                    class="btn btn-xs"
+                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                    ng-click="update(faction)">
+                                Update
+                            </button>
+                            <button type="button"
+                                    class="btn btn-xs"
+                                    title="Close the form without saving changes"
+                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                    ng-click="cancel(faction)">
+                                Cancel
+                            </button>
+                            <button type="button"
+                                    title="Withdraw your application from the league"
+                                    class="btn btn-xs"
+                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                    ng-click="cancelApplication(faction)">
+                                Cancel Application
+                            </button>
+                            </span>
+                            <div ng-show="faction.application && !showApplyForm" class="nbt-info">
+                                <a href="javascript: void(0)" title="Click to revise your application or submit for a different faction" ng-click="edit(faction)">{{faction.application.status}}</a>
+                            </div>
                         </div>
                         <div class="col-md-3">
                             {{faction.pendingApplications.join(', ')}}

@@ -53,25 +53,28 @@
             }
 
             reset();
+            var onFactions = function(factions) {
+                $scope.factions = factions;
+
+                for (var i = 0; i < factions.length; ++i) {
+                    var faction = factions[i];
+                    if (faction.application) {
+                        $scope.showApplyToggle = false;
+                        break;
+                    }
+                }
+            };
 
             var reloadFactions = function() {
                 nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function (factions) {
-                    $scope.factions = factions;
-
-                    for (var i = 0; i < factions.length; ++i) {
-                        var faction = factions[i];
-                        if (faction.appStatus) {
-                            $scope.showApplyToggle = false;
-                            break;
-                        }
-                    }
+                    onFactions(factions);
                 });
             };
 
             reloadFactions();
 
             $scope.canApplyToFaction = function(faction) {
-                return faction && faction._links && faction._links.apply && !faction.appStatus && faction.status==='Vacant';
+                return faction && faction._links && faction._links.apply && !faction.application && faction.status==='Vacant';
             };
 
             $scope.canApply = function() {
@@ -87,17 +90,12 @@
                 return false;
             };
 
-            $scope.apply = function(faction) {
+            var validateForm = function() {
                 $scope.nameError = false;
                 $scope.tagsError = false;
                 $scope.pilotCountError = false;
                 $scope.geoError = false;
                 $scope.formError = false;
-
-                $scope.applicationData.geo = [];
-                if ($scope.geoNA) $scope.applicationData.geo.push('NA');
-                if ($scope.geoEU) $scope.applicationData.geo.push('EU');
-                if ($scope.geoAP) $scope.applicationData.geo.push('AP');
 
                 if ($scope.applicationData.geo.length === 0) {
                     $scope.geoError = true;
@@ -119,17 +117,67 @@
                     $scope.formError = true;
                 }
 
-                if ($scope.nameError || $scope.pilotCountError || $scope.geoError)
+                return !$scope.formError;
+            };
+
+            $scope.apply = function(faction) {
+                $scope.applicationData.geo = [];
+                if ($scope.geoNA) $scope.applicationData.geo.push('NA');
+                if ($scope.geoEU) $scope.applicationData.geo.push('EU');
+                if ($scope.geoAP) $scope.applicationData.geo.push('AP');
+
+                if (!validateForm())
                     return;
 
                 nbtFaction.apply(faction, $scope.applicationData, nbtIdentity.get().token, function(resp) {
-                    // remove the Apply button
-                    faction.applicationSubmitted = true;
-                    faction.appStatus = "Submitted";
-                    $scope.showApplyForm = false;
-                    $scope.showApplyButtons = false;
-                    $scope.showApplyToggle = false;
+                    reset();
+                    reloadFactions();
                 });
+            };
+
+            $scope.update = function(faction) {
+                $scope.applicationData.geo = [];
+                if ($scope.geoNA) $scope.applicationData.geo.push('NA');
+                if ($scope.geoEU) $scope.applicationData.geo.push('EU');
+                if ($scope.geoAP) $scope.applicationData.geo.push('AP');
+
+                if (!validateForm())
+                    return;
+
+                nbtLeague.updateApplication(nbtLeague.current(), $scope.applicationData, nbtIdentity.get().token, function(resp) {
+                    reset();
+                    reloadFactions();
+                });
+            };
+
+            $scope.cancel = function(faction) {
+                reset();
+                $scope.showApplyToggle = false;
+            };
+
+            $scope.cancelApplication = function(faction) {
+                if (confirm("Click OK to withdraw your NBT faction application")) {
+                    nbtLeague.cancelApplication(nbtLeague.current(), faction.application, nbtIdentity.get().token, function (resp) {
+                        reset();
+                        reloadFactions();
+                    });
+                }
+            };
+
+            $scope.edit = function(faction) {
+                $scope.applicationData = faction.application;
+                $scope.showApplyForm = true;
+                $scope.showApplyButtons = true;
+                $scope.geoNA = false;
+                $scope.geoEU = false;
+                $scope.geoAP = false;
+
+                for (var i=0; i<faction.application.geo.length; ++i) {
+                    var geo = faction.application.geo[i];
+                    if (geo === 'NA') $scope.geoNA = true;
+                    if (geo === 'EU') $scope.geoEU = true;
+                    if (geo === 'AP') $scope.geoAP = true;
+                }
             };
 
             var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {

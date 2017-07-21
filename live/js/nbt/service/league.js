@@ -322,6 +322,53 @@ var _LeagueService = (function() {
         );
     };
 
+    LeagueService.prototype.updateApplication = function(aLeague, aApplicationData, aToken, aSuccessCb, aFailCb) {
+        if (!aApplicationData._links.self)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'PUT', // TODO: get from links!
+            url: aApplicationData._links.self.href,
+            headers: hdrs.get(),
+            data:aApplicationData
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
+    };
+
+    LeagueService.prototype.cancelApplication = function(aLeague, aApplicationData, aToken, aSuccessCb, aFailCb) {
+        if (!aApplicationData._links.self)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'DELETE', // TODO: get from links!
+            url: aApplicationData._links.self.href,
+            headers: hdrs.get()
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb();
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
+    };
+
     return LeagueService;
 })();
 
