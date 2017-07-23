@@ -23,9 +23,11 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('AboutController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
-            var self = this;
-
+        .controller('AboutController', ['$sce', '$scope', 'nbtAbout', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtAbout, nbtLeague, nbtIdentity) {
             $scope.league = nbtLeague.current();
+
+            nbtAbout.fetchReleaseNotes(function(aNotes) {
+                $scope.releaseNotes = aNotes;
+            });
         }]);
 })();

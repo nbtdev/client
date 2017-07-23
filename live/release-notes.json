@@ -1,0 +1,15 @@
+[
+  {
+    "date": null,
+    "changes": {
+      "Features": [
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "Left mouse button now used to move (pan) starmap, instead of middle mouse button",
+        "Re-enabled About dialog, and added release notes to About dialog"
+      ]
+    }
+  }
+]

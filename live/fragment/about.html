@@ -4,7 +4,20 @@
             <div class="modal-header nbt-base nbt-modal-header">
                 <h4 class="modal-title text-center">About {{league.name()}}</h4>
             </div>
-            <div class="modal-body nbt-base">
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div><a href="javascript: void(0)" data-toggle="collapse" data-target="#releaseNotes">Release Notes</a></div>
+                <div id="releaseNotes" class="collapse">
+                    <div ng-repeat="releaseNote in releaseNotes">
+                        <div style="background-color: #272727"><a href="javascript: void(0)" data-toggle="collapse" data-target="#releaseNotes{{$index}}">Release Date: {{releaseNote.date}}</a></div>
+                        <div id="releaseNotes{{$index}}" ng-class="{'collapse': $index>0}">
+                            <div ng-repeat="(key, value) in releaseNote.changes" class="highlight">{{key}}
+                                <ul class="nbt-base">
+                                    <li ng-repeat="note in value">{{note}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

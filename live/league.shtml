@@ -49,6 +49,7 @@
     <script src='/js/nbt/model/faction.js'></script>
     <script src='/js/nbt/model/user.js'></script>
     <script src='/js/nbt/service/league.js'></script>
+    <script src='/js/nbt/service/about.js'></script>
     <script src='/js/nbt/service/identity.js'></script>
     <script src='/js/nbt/service/planet.js'></script>
     <script src='/js/nbt/service/battle.js'></script>
