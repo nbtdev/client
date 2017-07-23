@@ -546,12 +546,12 @@
             };
 
             this.onMouseDown = function(event) {
-                // move the camera on middle-mouse down
-                if (event.button === 1 || (event.button === 0 && event.shiftKey)) {
+                if (event.button === 0) { // just the LMB by itself
+                    // move the camera on left-mouse down
+                    self.state = 1;
                     self.lastX = event.offsetX;
                     self.lastY = event.offsetY;
-                    self.state = 1;
-                } else if (event.button === 0) { // just the LMB by itself
+
                     // first, are we in editing state?
                     if ($scope.editMode) {
                         // start a planet rubberband-select operation
@@ -589,9 +589,9 @@
             };
 
             this.onMouseUp = function(event) {
-                if (event.button === 1 || (event.button === 0 && event.shiftKey)) {
+                if (event.button === 0) {
                     self.state = 0;
-                } else if (event.button === 0) {
+
                     if ($scope.editMode) {
                         self.selectCornerA = null;
                     } else {
