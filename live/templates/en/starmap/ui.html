@@ -13,6 +13,19 @@
                 <input type="button" ng-click="onFindPlanet()" value="Find">
             </div>
             <br>
+            <div class="ui-contentitem">
+                <div><a href="#" data-toggle="collapse" data-target="#legend">Map Legend</a></div>
+                <ul id="legend" class="collapse">
+                    <li style="list-style: none"><img src="/images/red-circle-64.png" width="10" height="10">&nbsp;Battle In Progress</li>
+                    <li style="list-style: none"><img src="/images/green-circle-64.png" width="10" height="10">&nbsp;Combat Units</li>
+                    <li style="list-style: none"><img src="/images/blue-circle-64.png" width="10" height="10">&nbsp;Jumpships</li>
+                    <li style="list-style: none"><img src="/images/magenta-circle-64.png" width="10" height="10">&nbsp;Faction Capital</li>
+                    <li style="list-style: none"><img src="/images/cyan-circle-64.png" width="10" height="10">&nbsp;Dropships</li>
+                    <li style="list-style: none"><img src="/images/yellow-circle-64.png" width="10" height="10">&nbsp;Charge Station</li>
+                    <li style="list-style: none"><img src="/images/white-circle-64.png" width="10" height="10">&nbsp;Factory</li>
+                </ul>
+            </div>
+            <br>
             <div class="ui-contentItem">
                 <input type="checkbox" ng-model="$parent.showCapitalPlanets">Capital Planets
             </div>
@@ -58,8 +71,8 @@
                         <button type="button" class="btn btn-primary btn-xs" ng-click="onEditSector()">Edit</button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="onDeleteSector()">Delete</button>
                         Capital:&nbsp;<select ng-model="selectedSectorCapital">
-                            <option ng-repeat="planet in $parent.selectedPlanets" value="{{planet.id}}">{{planet.name}}</option>
-                        </select>
+                        <option ng-repeat="planet in $parent.selectedPlanets" value="{{planet.id}}">{{planet.name}}</option>
+                    </select>
                     </div>
                     <div>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="onChangeOwner()">Transfer Selected To: </button>
