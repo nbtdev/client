@@ -70,7 +70,7 @@ var _PlanetService = (function() {
     // load a league's planet listing into the service
     PlanetService.prototype.load = function (aLeague, aToken) {
         if (aLeague) {
-            if (!aLeague.planetsLink())
+            if (!aLeague._links.planetsBySector)
                 return;
         }
 
@@ -83,15 +83,15 @@ var _PlanetService = (function() {
 
         http({
             method: 'GET', // TODO: GET FROM LINKS!
-            url: aLeague.planetsLink().href,
+            url: aLeague._links.planetsBySector.href,
             headers: hdr.get()
         }).then(
             function (aResp) {
-                mPlanets[aLeague.id()] = aResp.data._embedded;
-                loadMapColors(aLeague.id(), aResp.data, hdr);
+                mPlanets[aLeague.id] = aResp.data._embedded;
+                loadMapColors(aLeague.id, aResp.data, hdr);
 
                 // update quick-lookup tables
-                updateLookupTables(aLeague.id(), aResp.data._embedded);
+                updateLookupTables(aLeague.id, aResp.data._embedded);
 
                 mLoading = false;
             },
@@ -104,14 +104,14 @@ var _PlanetService = (function() {
 
     PlanetService.prototype.get = function (aLeague) {
         if (aLeague)
-            return mPlanets[aLeague.id()];
+            return mPlanets[aLeague.id];
 
         return null;
     };
 
     PlanetService.prototype.getMapColors = function (aLeague) {
         if (aLeague)
-            return mColors[aLeague.id()];
+            return mColors[aLeague.id];
 
         return null;
     };

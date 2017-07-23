@@ -25,22 +25,25 @@
         .module('nbt.app')
         .controller('StarmapUiController', ['$sce', '$scope', 'nbtFaction', 'nbtPlanet', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtPlanet, nbtLeague, nbtIdentity) {
             $scope.factions = [];
+            $scope.league = null;
 
-            nbtFaction.fetchFactionsForLeague(nbtLeague.current(), nbtIdentity.get().token, function(factions) {
-                $scope.factions = [];
+            var reloadFactions = function(league) {
+                nbtFaction.fetchFactionsForLeague(league, nbtIdentity.get().token, function (factions) {
+                    $scope.factions = [];
 
-                for (var i=0; i<factions.length; ++i) {
-                    var f = factions[i];
-                    $scope.factions.push({
-                        id: f.id,
-                        name: f.displayName,
-                        _links: {
-                            planets: f._links.planets,
-                            sectors: f._links.sectors
-                        }
-                    });
-                }
-            });
+                    for (var i = 0; i < factions.length; ++i) {
+                        var f = factions[i];
+                        $scope.factions.push({
+                            id: f.id,
+                            name: f.displayName,
+                            _links: {
+                                planets: f._links.planets,
+                                sectors: f._links.sectors
+                            }
+                        });
+                    }
+                });
+            };
 
             $scope.onFindPlanet = function() {
                 var element = $("#ui-planet-search")[0];
@@ -128,5 +131,11 @@
                 console.log('Reloading starmap data...');
                 $scope.$parent.reloadData();
             };
+
+            var cbLeagueChanged = $scope.$on('nbtLeagueChanged', function (event, league) {
+                $scope.league = league;
+                reloadFactions(league);
+            });
+            $scope.$on('destroy', cbLeagueChanged);
         }]);
 })();

@@ -25,6 +25,7 @@
         .module('nbt.app')
         .controller('ProfileController', ['$sce', '$scope', '$timeout', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtUser, nbtLeague, nbtIdentity) {
             var timeoutPromise = null;
+            $scope.league = null;
 
             var updateStatus = function(message, isError) {
                 $scope.status = message;
@@ -41,7 +42,6 @@
             };
 
             function reset() {
-                $scope.league = nbtLeague.current();
                 $scope.profile = {};
                 nbtLeague.fetchLeagueProfile($scope.league, nbtIdentity.get().token, function(data) {
                     $scope.profile = data.data;
@@ -70,5 +70,11 @@
             $scope.onCancel = function() {
                 $scope.profile = {};
             };
+
+            // when the user chooses a different league, we want to update out cached current-league
+            cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
+                $scope.league = aLeague;
+            });
+            $scope.$on('destroy', cb);
         }]);
 })();

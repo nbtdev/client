@@ -105,6 +105,7 @@ var _IdentityService = (function() {
 
         if (mIdentity) {
             return {
+                username: mIdentity.username,
                 token: mIdentity.value,
                 isSiteAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='SITE_ADMIN' : false; },
                 isLeagueAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
@@ -114,6 +115,7 @@ var _IdentityService = (function() {
         }
 
         return {
+            username: null,
             token: null,
             isSiteAdmin: function() { return false; },
             isLeagueAdmin: function() { return false;  },

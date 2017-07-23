@@ -129,7 +129,7 @@
             };
 
             var user = nbtIdentity.get();
-            var league = nbtLeague.current();
+            var league = null;
             var selectedPlanet = null;
 
             $scope.onTransferCombatUnits = function() {
@@ -150,9 +150,8 @@
             });
             $scope.$on('destroy', cbIdentity);
 
-            var cbLeague = $scope.$on('nbtLeagueChanged', function (event, aData) {
-                league = aData;
-                loadStarmap(league, user);
+            var cbLeague = $scope.$on('nbtLeagueChanged', function (event, aLeague) {
+                league = aLeague;
             });
             $scope.$on('destroy', cbLeague);
 
@@ -194,6 +193,6 @@
 
             $scope.leagues = null;
 
-            loadStarmap(nbtLeague.current(), nbtIdentity.get());
+            loadStarmap(league, nbtIdentity.get());
         }]);
 })();

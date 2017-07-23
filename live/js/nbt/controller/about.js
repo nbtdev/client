@@ -24,10 +24,16 @@
     angular
         .module('nbt.app')
         .controller('AboutController', ['$sce', '$scope', 'nbtAbout', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtAbout, nbtLeague, nbtIdentity) {
-            $scope.league = nbtLeague.current();
+            $scope.league = null;
 
             nbtAbout.fetchReleaseNotes(function(aNotes) {
                 $scope.releaseNotes = aNotes;
             });
+
+            // when the user chooses a different league, we want to update out cached league
+            cb = $scope.$on('nbtLeagueChanged', function(event, league) {
+                $scope.league = league;
+            });
+            $scope.$on('destroy', cb);
         }]);
 })();

@@ -297,8 +297,18 @@
             $scope.$on('destroy', cb);
 
             // when the list of leagues changed, we want to update our droplist
-            cb = $scope.$on('nbtLeaguesChanged', function(event, aLeagues) {
+            cb = $scope.$on('nbtLeaguesChanged', function(event, aLeagues, aLeaguesRaw) {
                 $scope.leagues = aLeagues;
+
+                var currentLeague = nbtLeague.current();
+                if (currentLeague)
+                    $scope.selectedLeague = currentLeague.id().toString();
+            });
+            $scope.$on('destroy', cb);
+
+            // when the user chooses a different league, we want to update out cached current-league
+            cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
+                $scope.league = aLeague;
 
                 var currentLeague = nbtLeague.current();
                 if (currentLeague)

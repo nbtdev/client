@@ -24,8 +24,6 @@
     angular
         .module('nbt.app')
         .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtLeague', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtLeague, nbtPlanet, nbtTransport, nbtIdentity) {
-            var self = this;
-
             $scope.planet = null;
 
             $scope.showJump = false;
@@ -112,7 +110,7 @@
                         updateStatus("Jump successful");
 
                         // update the origin and destination planet information (jumpships and battles)
-                        nbtPlanet.batchUpdatePlanets(nbtLeague.current().id(), [data.origin, data.destination]);
+                        nbtPlanet.batchUpdatePlanets($scope.league.id(), [data.origin, data.destination]);
                     },
 
                     function(err) {
@@ -212,6 +210,12 @@
                     });
                 }
             };
+
+            // when the user chooses a different league, we want to update out cached current-league
+            cb = $scope.$on('nbtLeagueChanged', function(event, league) {
+                $scope.league = league;
+            });
+            $scope.$on('destroy', cb);
 
             $scope.$watch('jumpPath', jumpParamsChanged);
             $scope.$watch('selectedJumpships', jumpParamsChanged);

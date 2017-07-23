@@ -24,9 +24,12 @@
     angular
         .module('nbt.app')
         .controller('FactionListingController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
+            $scope.league = null;
+
             function reset() {
-                $scope.league = nbtLeague.current();
-                $scope.league.minPilotCount = 10;
+                if ($scope.league)
+                    $scope.league.minPilotCount = 10;
+
                 $scope.showApplyButtons = true;
                 $scope.showApplyToggle = true;
                 $scope.showApplyForm = false;
@@ -66,9 +69,11 @@
             };
 
             var reloadFactions = function() {
-                nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function (factions) {
-                    onFactions(factions);
-                });
+                if ($scope.league) {
+                    nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function (factions) {
+                        onFactions(factions);
+                    });
+                }
             };
 
             reloadFactions();
@@ -144,7 +149,7 @@
                 if (!validateForm())
                     return;
 
-                nbtLeague.updateApplication(nbtLeague.current(), $scope.applicationData, nbtIdentity.get().token, function(resp) {
+                nbtLeague.updateApplication($scope.league, $scope.applicationData, nbtIdentity.get().token, function(resp) {
                     reset();
                     reloadFactions();
                 });
@@ -157,7 +162,7 @@
 
             $scope.cancelApplication = function(faction) {
                 if (confirm("Click OK to withdraw your NBT faction application")) {
-                    nbtLeague.cancelApplication(nbtLeague.current(), faction.application, nbtIdentity.get().token, function (resp) {
+                    nbtLeague.cancelApplication($scope.league, faction.application, nbtIdentity.get().token, function (resp) {
                         reset();
                         reloadFactions();
                     });
@@ -181,6 +186,13 @@
             };
 
             var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
+                reset();
+                reloadFactions();
+            });
+            $scope.$on('destroy', cb);
+
+            var cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
+                $scope.league = aLeague;
                 reset();
                 reloadFactions();
             });

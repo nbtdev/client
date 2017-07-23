@@ -1,35 +1,43 @@
-<nav class="navbar navbar-default nbt-base nbt-nav-bar" ng-cloak>
+<script src="/js/nbt/controller/navbar.js"></script>
+<nav class="navbar navbar-default nbt-base nbt-nav-bar" ng-controller="NavbarController as navbarController" ng-cloak>
     <div class="container">
         <div id="navbar" class="navbar-collapse collapse">
 
-            <a href="#" class="navbar-left"><img class="header-logo" data-ng-src="{{getCurrentLeagueLogoSmall()}}"></a>
+            <!-- League logo and league-select dropdown -->
+            <a href="#" data-toggle="dropdown" class="navbar-left dropdown-toggle" ng-cloak>
+                <img ng-show="league" class="header-logo" data-ng-src="{{league.logoSmall._links.raw.href}}">
+                <img ng-hide="league" class="header-logo" src="/images/select-league.png">
+            </a>
+            <ul class="dropdown-menu">
+                <li ng-repeat="league in leagues"><a href="#" ng-click="onLeagueClicked(league.id)"><img class="header-logo" data-ng-src="{{league.logoSmall._links.raw.href}}"></a></li>
+            </ul>
 
+            <!-- Main league tools -->
             <ul class="nav navbar-nav nbt-base">
-                <li ng-class="{active: page==='index'}">
-                    <a href="/">Home</a>
-                </li>
-                <li ng-show="isAdmin()" class="dropdown">
+                <li ng-show="isAdmin() && league" class="dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle">Admin Tools<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="#" data-toggle="">Combat Units</a></li>
                     </ul>
                 </li>
-                <li ng-show="isAdmin() || isTeamAdmin()"  class="dropdown">
+                <li ng-show="(isAdmin() || isTeamAdmin()) && league"  class="dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle">Faction Tools<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="#" data-toggle="">Combat Units</a></li>
                     </ul>
                 </li>
-                <li ng-class="{active: page==='rules'}">
+                <li ng-show="league">
                     <a href="/rules" target="_blank">Rules</a>
                 </li>
-                <li ng-class="{active: page==='factions'}">
+                <li ng-show="league">
                     <a href="#" data-toggle="modal" data-target="#factionsModal">Factions</a>
                 </li>
-                <li ng-class="{active: page==='about'}">
+                <li ng-show="league">
                     <a href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                 </li>
             </ul>
+
+            <!-- Automation signin/registration widgets -->
             <ul class="nav navbar-nav navbar-right">
                 <li ng-hide="isLoggedIn()">
                     <a href="#" data-toggle="modal" data-target="#signinModal">Sign In</a>

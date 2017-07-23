@@ -12,7 +12,7 @@
     <div class="modal-dialog modal-lg with-border">
         <div class="modal-content nbt-base">
             <div class="modal-header nbt-modal-header">
-                <h4 class="modal-title text-center">{{league.name()}} Factions</h4>
+                <h4 class="modal-title text-center">{{league.name}} Factions</h4>
             </div>
             <div ng-hide="showApplyToggle && canApply()">
                 <a href="javascript: void(0)" data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
@@ -89,7 +89,7 @@
                         <div class="col-md-3">&nbsp;</div>
                         <div class="col-md-6">
                             <input type="checkbox" ng-model="applicationData.acceptedToS">&nbsp; I have read and
-                            understand the rules and requirements to join the {{league.name()}} league and agree to
+                            understand the rules and requirements to join the {{league.name}} league and agree to
                             abide by them at all times while participating in league activities.
                             <span class="nbt-important">You must check this box to reveal the Apply buttons in the
                             faction listing below.</span>

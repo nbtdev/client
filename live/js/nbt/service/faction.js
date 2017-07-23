@@ -33,18 +33,18 @@ var _FactionService = (function() {
     }
 
     FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken, aSuccessCb) {
-        if (aLeague.factionsLink()) {
+        if (aLeague._links.factions) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aLeague.factionsLink().href,
+                url: aLeague._links.factions.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
                     // populate faction database with response
                     var factions = aResp.data._embedded.factions;
-                    mFactions[aLeague.id()] = factions;
+                    mFactions[aLeague.id] = factions;
 
                     if (aSuccessCb)
                         aSuccessCb(factions);

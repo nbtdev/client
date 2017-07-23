@@ -982,13 +982,13 @@
                 }
             };
 
-            this.reload = function() {
-                $scope.mapLoading = true;
-                var league = nbtLeague.current();
+            var currentLeague = null;
 
-                if (league) {
+            this.reload = function() {
+                if (currentLeague) {
+                    $scope.mapLoading = true;
                     nbtPlanet.load(
-                        nbtLeague.current(),
+                        currentLeague,
                         nbtIdentity.get().token
                     );
                 } else {
@@ -1001,19 +1001,16 @@
             };
 
             var cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
-                var l = nbtLeague.current();
-
-                if (l) {
+                if (currentLeague) {
                     self.reload();
                 }
             });
             $scope.$on('destroy', cb);
 
             cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
-                var ident = nbtIdentity.get();
-
                 if (aLeague) {
-                    nbtPlanet.load(aLeague, ident.token);
+                    currentLeague = aLeague;
+                    self.reload();
                 }
             });
             $scope.$on('destroy', cb);

@@ -47,7 +47,7 @@
 
                 // load the leagues listing fragment
                 $templateRequest('/templates/' + l10n + '/nbt-leagues/body.html').then(function(html) {
-                    self.leagueService.fetchLeagues(token, function(leagues, currentLeague) {
+                    self.leagueService.fetchLeagues(token, function(leagues, leagueRaw) {
                         scope.leagues = leagues;
                         var content = angular.element(html);
                         element.append($compile(content)(scope));
