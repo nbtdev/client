@@ -501,3 +501,14 @@ input[type=password] {
     color: #fbd850;
     font-weight: bolder;
 }
+
+.nbt-busy-spin {
+    opacity: 1;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(-360deg)
+    }
+}

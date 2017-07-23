@@ -9,6 +9,7 @@
       "Enhancements": [
         "Left mouse button now used to move (pan) starmap, instead of middle mouse button",
         "Added legend to Map Tools in starmap",
+        "Added 'loading' animation (spinning Reload icon) to starmap",
         "Re-enabled About dialog, and added release notes to About dialog"
       ]
     }

@@ -983,6 +983,7 @@
             };
 
             this.reload = function() {
+                $scope.mapLoading = true;
                 var league = nbtLeague.current();
 
                 if (league) {
@@ -1031,6 +1032,7 @@
                 var elapsed = performance.now() - startTime;
                 console.log(elapsed + 'ms to rebuild starmap');
                 self.updateOverlay();
+                $scope.mapLoading = false;
             });
             $scope.$on('destroy', cb);
         };
