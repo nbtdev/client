@@ -1,0 +1,71 @@
+<script src="/js/nbt/controller/navbar.js"></script>
+<nav class="navbar navbar-default nbt-base nbt-nav-bar" ng-controller="NavbarController as navbarController" ng-cloak>
+    <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+
+            <!-- League logo and league-select dropdown -->
+            <img ng-show="league" class="navbar-left header-logo" data-ng-src="{{league.logoSmall._links.raw.href}}">
+
+            <!-- Main league tools -->
+            <ul class="nav navbar-nav nbt-base">
+                <li class="dropdown">
+                    <a href="javascript: void(0)" data-toggle="dropdown" class="dropdown-toggle">League<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="league in leagues"><a href="javascript: void(0)" ng-click="onLeagueClicked(league.id)">
+                            <img class="header-logo" data-ng-src="{{league.logoSmall._links.raw.href}}"></a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li ng-show="isAdmin() && league" class="dropdown">
+                    <a href="javascript: void(0)" data-toggle="dropdown" class="dropdown-toggle">Admin Tools<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript: void(0)" data-toggle="">Combat Units</a></li>
+                    </ul>
+                </li>
+
+                <li ng-show="(isAdmin() || isTeamAdmin()) && league"  class="dropdown">
+                    <a href="javascript: void(0)" data-toggle="dropdown" class="dropdown-toggle">Faction Tools<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript: void(0)" data-toggle="">Combat Units</a></li>
+                    </ul>
+                </li>
+
+                <li ng-show="league">
+                    <a href="/rules" target="_blank">Rules</a>
+                </li>
+
+                <li ng-show="league">
+                    <a href="javascript: void(0)" data-toggle="modal" data-target="#factionsModal">Factions</a>
+                </li>
+
+                <li ng-show="league">
+                    <a href="javascript: void(0)" data-toggle="modal" data-target="#aboutModal">About</a>
+                </li>
+            </ul>
+
+            <!-- Automation signin/registration widgets -->
+            <ul class="nav navbar-nav navbar-right">
+                <li ng-hide="isLoggedIn()">
+                    <a href="javascript: void(0)" data-toggle="modal" data-target="#signinModal">Sign In</a>
+                </li>
+
+                <li ng-hide="isLoggedIn()">
+                    <a href="javascript: void(0)" data-toggle="modal" data-target="#registerModal">Register</a>
+                </li>
+
+                <li ng-show="isLoggedIn()">
+                    <a onmouseover="" style="color: white">Logged in as: <span ng-bind="getUsername()"></span></a>
+                </li>
+
+                <li ng-show="isLoggedIn()">
+                    <a href="javascript: void(0)" ng-click="signOut()">(Sign Out)</a>
+                </li>
+
+                <li ng-show="isLoggedIn()">
+                    <a href="javascript: void(0)" data-toggle="modal" data-target="#profileModal"><img class="nbt-pseudo-button" src="/images/profile-32.png" height="32" width="32"/></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

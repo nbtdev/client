@@ -1,35 +1,27 @@
-DOCKER=docker
 RM=rm -f 
-NAME=nbt-web
+NAMES=\
+	nbt-web \
+	nbt-automation
 
 LOGIN_CMD=$(shell aws ecr get-login)
 
-#EXITED=$(shell $(DOCKER) ps --filter status=exited -q 2>/dev/null)
-#DANGLING=$(shell $(DOCKER) images --filter dangling=true -q 2>/dev/null)
+LANDING_FILES=\
+	Dockerfile-LANDING \
+	$(wildcard landing/**)
 
-DOCKERFILE=Dockerfile
-REPO=$(shell aws ecr describe-repositories --repository-names $(NAME) | jq -r '.repositories[].repositoryUri')
+AUTOMATION_FILES=\
+	Dockerfile-AUTOMATION \
+	$(wildcard automation/**)
 
-VERSION_FILE=version
-VERSION=$(shell cat $(VERSION_FILE))
+.PHONY: cleanup login $(NAMES)
 
-ifeq ($(strip $(VERSION)),)
-	VERSION=0
-endif
+all: $(NAMES) 
 
-FILES=\
-        Dockerfile \
-        $(wildcard live/**) \
-	version
+nbt-web: $(wildcard landing/**)
+	./build.sh $@
 
-.PHONY: cleanup login
-
-web: $(FILES)
-	$(DOCKER) build -t $(NAME):$(VERSION) -f $(DOCKERFILE) .
-	$(DOCKER) tag $(NAME):$(VERSION) $(REPO):DEV
-	$(DOCKER) push $(REPO):DEV
-	@echo $$(($$(cat $(VERSION_FILE)) + 1)) > $(VERSION_FILE)
-	touch $@
+nbt-automation: $(wildcard automation/**)
+	./build.sh $@
 
 cleanup: 
 	$(DOCKER) rm -v $(EXITED) 2>/dev/null

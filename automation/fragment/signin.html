@@ -1,0 +1,46 @@
+<div id="signinModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="SigninFormController as signinForm">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Account Signin</h4>
+            </div>
+            <div class="modal-body nbt-base">
+                <div style="display: table; margin: auto" name="signinForm" ng-form ng-keypress="checkEnterKey($event)">
+                    <div style="display: table-row" ng-hide="isLoggedIn()">
+                        <div style="display: table-cell; text-align: right; padding-right: 5px;">Login:&nbsp;</div>
+                        <div style="display: table-cell"><input class="nbt-text-input" type="text" name="username" ng-model="username"></div>
+                    </div>
+
+                    <div style="display: table-row" ng-hide="isLoggedIn()">
+                        <div style="display: table-cell; text-align: right; padding-right: 5px;">Password:&nbsp;</div>
+                        <div style="display: table-cell"><input class="nbt-text-input" type="password" name="password" ng-model="password"></div>
+                    </div>
+                </div>
+
+                <div ng-show="doBotCheck" style="text-align: center; margin: auto; width: 60%; padding-top: 10px; padding-bottom: 10px;">
+                    <div id="signinCaptcha" style="padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha centered" data-sitekey="6LcBdg0TAAAAAA9VoVkLBP1BzTWlf6Nxx-WVcQLd"></div>
+                    <!--<div id="signinCaptcha" style="padding-top: 8px; padding-bottom: 8px;" class="g-recaptcha centered" data-sitekey="6LfuYQ0TAAAAAAWcrlwapY10LWB_7lWJrsId8Gb6"></div>-->
+                    <div style="margin: auto; padding-top: 8px; padding-bottom: 8px;">
+                        <div ng-show="captchaError">{{captchaError}}</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding-top: 8px">
+                    <div class="centered">
+                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="onSignin()" class="btn btn-info nbt-button" role="button">Sign In</a></span>
+                        <span style="display: inline;"><a href="javascript: void(0)" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
+                    </div>
+                </div>
+
+                <div ng-show="signinError" style="margin: auto; width: 60%; padding-top: 4px; padding-bottom: 4px;">
+                    <div class="nbt-centered">
+                        {{signinError}}
+                    </div>
+                    <div style="margin: auto; text-align: center; padding-top: 4px;">
+                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="closeForm()" data-dismiss="modal">Close Form</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

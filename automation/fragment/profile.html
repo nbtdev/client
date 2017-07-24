@@ -1,0 +1,64 @@
+<div id="profileModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="ProfileController as profileController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content nbt-base">
+            <div class="modal-header nbt-modal-header">
+                <h4 class="modal-title text-center">Account Profile ({{league.name}})</h4>
+            </div>
+            <div class="modal-body nbt-modal-body">
+                <div class="container col-md-12">
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Callsign:&nbsp;</div>
+                        <div class="col-md-3"><input class="nbt-text-input" type="text" ng-model="profile.callsign" required></div>
+                        <div class="col-md-5"><span ng-show="callsignError">{{callsignError}}</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Email:&nbsp;</div>
+                        <div class="col-md-3"><input class="nbt-text-input" type="text" ng-model="profile.email" required></div>
+                        <div class="col-md-5"><span ng-show="emailError">{{emailError}}</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">First Name:&nbsp;</div>
+                        <div class="col-md-8"><input class="nbt-text-input" type="text" ng-model="profile.firstName"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Last Name:&nbsp;</div>
+                        <div class="col-md-8"><input class="nbt-text-input" type="text" ng-model="profile.lastName"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">&nbsp;</div>
+                        <div class="col-md-10">
+                            <div>
+                                <hr/>
+                                <h3 class="nbt-h3">Notification Preferences</h3>
+                            </div>
+                            <table class="table nbt-base">
+                                <tr>
+                                    <th>Notification</th>
+                                    <th>Email</th>
+                                    <th>Alert</th>
+                                </tr>
+                                <tr ng-repeat="n in profile.notifications">
+                                    <td>{{n.description}}</td>
+                                    <td><input type="checkbox" ng-model="n.email"/></td>
+                                    <td><input type="checkbox" ng-model="n.alert"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-1">&nbsp;</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding-top: 8px">
+                    <div class="nbt-centered">
+                        <div class="nbt-status" ng-class="{ 'nbt-info': !statusIsError, 'nbt-error': statusIsError, 'nbt-invisible': !status}">&nbsp;{{status}}</div>
+                    </div>
+                    <div class="centered">
+                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="onApply()" class="btn btn-info nbt-button" role="button">Apply</a></span>
+                        <span style="display: inline;"><a href="javascript: void(0)" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

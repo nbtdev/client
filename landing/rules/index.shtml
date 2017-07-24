@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NetBattletech League Rules</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+
+    <!-- Theme CSS -->
+    <link href="/css/grayscale.css" rel="stylesheet">
+
+    <!-- NBT CSS -->
+    <link href="/css/nbt.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</head>
+<body ng-controller="LeaguePageController as pageController" class="nbt-rules-body">
+    <!--#include virtual="glossary.html" -->
+    <div class="nbt-rules">
+        <section class="nbt-rules-section" id="nbt-rules-definition" style="display: none">
+            <div>
+                <div class="nbt-h5">DEFINITION : LEAGUE</div>
+                <i>league</i>, (n.) Middle English (Sc) ligg, from Middle French ligue, from Old Italian liga, from ligare to bind, from Latin
+                <ol>
+                    <li>An association of nations or other political entities for a common purpose</li>
+                    <li>An association of persons or groups united by common interests or goals</li>
+                    <li>A group of sports teams that regularly play one another</li>
+                    <li>An informal alliance</li>
+                </ol>
+            </div>
+        </section>
+
+        <h3 class="nbt-h3">NBT Table Of Contents -- General Rules</h3>
+        <ol>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-intro">Introduction</a>
+                <!--#include virtual="/rules/intro.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-ground-rules">Ground Rules</a>
+                <!--#include virtual="/rules/ground-rules.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-factions">Factions</a>
+                <!--#include virtual="/rules/factions.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-economy">Economics</a>
+                <!--#include virtual="/rules/economy.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-factories">Factories And Production</a>
+                <!--#include virtual="/rules/factories.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-planets">Planets And Sectors</a>
+                <!--#include virtual="/rules/planets.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-transport">Transportation And Movement</a>
+                <!--#include virtual="/rules/transport.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-battles">Attacks And Battles</a>
+                <!--#include virtual="/rules/battles.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-sector-assaults">Sector Assaults</a>
+                <!--#include virtual="/rules/assaults.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-protocols">Battle Procedures And Protocols</a>
+                <!--#include virtual="/rules/procedures.html" -->
+            </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-diplomacy">Diplomacy, Alliances and Espionage</a>
+                <!--#include virtual="/rules/diplomacy.html" -->
+            </li>
+        </ol>
+    </div>
+
+
+</body>
+</html>
