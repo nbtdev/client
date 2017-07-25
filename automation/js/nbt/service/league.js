@@ -127,7 +127,7 @@ var _LeagueService = (function() {
         if (!aLeague)
             return;
 
-        if (!aLeague.userProfileLink())
+        if (!aLeague._links.userProfile)
             return;
 
         // fetch the leagues from the service
@@ -135,7 +135,7 @@ var _LeagueService = (function() {
 
         http({
             method: 'GET', // TODO: get from links!
-            url: aLeague.userProfileLink().href,
+            url: aLeague._links.userProfile.href,
             headers: hdrs.get()
         }).then(
             function (resp) {

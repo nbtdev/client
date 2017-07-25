@@ -1,12 +1,13 @@
 [
   {
-    "date": null,
+    "date": "23 July 2017",
     "changes": {
       "Features": [
       ],
       "Bugfixes": [
       ],
       "Enhancements": [
+        "Separated automation from static-content landing page so that it can be bookmarked on its own",
         "Left mouse button now used to move (pan) starmap, instead of middle mouse button",
         "Added legend to Map Tools in starmap",
         "Added 'loading' animation (spinning Reload icon) to starmap",

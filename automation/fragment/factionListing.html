@@ -15,7 +15,7 @@
                 <h4 class="modal-title text-center">{{league.name}} Factions</h4>
             </div>
             <div ng-hide="showApplyToggle && canApply()">
-                <a href="javascript: void(0)" data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
+                <a data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
             </div>
             <div class="modal-body nbt-modal-body">
                 <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>

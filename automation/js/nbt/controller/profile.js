@@ -22,59 +22,60 @@
 
 (function() {
     angular
-        .module('nbt.app')
-        .controller('ProfileController', ['$sce', '$scope', '$timeout', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtUser, nbtLeague, nbtIdentity) {
-            var timeoutPromise = null;
-            $scope.league = null;
+    .module('nbt.app')
+    .controller('ProfileController', ['$sce', '$scope', '$timeout', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtUser, nbtLeague, nbtIdentity) {
+        var timeoutPromise = null;
+        $scope.league = null;
 
-            var updateStatus = function(message, isError) {
-                $scope.status = message;
-                $scope.statusIsError = isError;
+        var updateStatus = function(message, isError) {
+            $scope.status = message;
+            $scope.statusIsError = isError;
 
-                // cause the message to go away in 5 seconds
-                if (timeoutPromise)
-                    $timeout.cancel(timeoutPromise);
+            // cause the message to go away in 5 seconds
+            if (timeoutPromise)
+                $timeout.cancel(timeoutPromise);
 
-                timeoutPromise = $timeout(function() {
-                    $scope.status = null;
-                    timeoutPromise = null;
-                }, 5000);
-            };
+            timeoutPromise = $timeout(function() {
+                $scope.status = null;
+                timeoutPromise = null;
+            }, 5000);
+        };
 
-            function reset() {
-                $scope.profile = {};
-                nbtLeague.fetchLeagueProfile($scope.league, nbtIdentity.get().token, function(data) {
-                    $scope.profile = data.data;
-                });
-            }
-
-            $("#profileModal").on("shown.bs.modal", function() {
-                reset();
+        function reset() {
+            $scope.profile = {};
+            nbtLeague.fetchLeagueProfile($scope.league, nbtIdentity.get().token, function(data) {
+                $scope.profile = data.data;
             });
+        }
 
+        $("#profileModal").on("shown.bs.modal", function() {
             reset();
+        });
 
-            $scope.onApply = function() {
-                nbtUser.updateProfile($scope.profile, nbtIdentity.get().token,
-                    function(data) {
-                        // blip that the update succeeded
-                        updateStatus("Changes saved");
-                    },
-                    function(err) {
-                        // blip that the update failed
-                        updateStatus(err.data.message, true);
-                    }
-                );
-            };
+        reset();
 
-            $scope.onCancel = function() {
-                $scope.profile = {};
-            };
+        $scope.onApply = function() {
+            nbtUser.updateProfile($scope.profile, nbtIdentity.get().token,
+                function(data) {
+                    // blip that the update succeeded
+                    updateStatus("Changes saved");
+                },
+                function(err) {
+                    // blip that the update failed
+                    updateStatus(err.data.message, true);
+                }
+            );
+        };
 
-            // when the user chooses a different league, we want to update out cached current-league
-            cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
-                $scope.league = aLeague;
-            });
-            $scope.$on('destroy', cb);
-        }]);
+        $scope.onCancel = function() {
+            $scope.profile = {};
+        };
+
+        // when the user chooses a different league, we want to update out cached current-league
+        var cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
+            $scope.league = aLeague;
+            reset();
+        });
+        $scope.$on('destroy', cb);
+    }]);
 })();

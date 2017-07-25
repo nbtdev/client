@@ -22,65 +22,67 @@
 
 (function() {
     angular
-        .module('nbt.app')
-        .controller('SigninFormController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
-            var self = this;
+    .module('nbt.app')
+    .controller('SigninFormController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
+        var self = this;
 
-            var resetError = function() {
-                $scope.needsCaptcha = false;
-                $scope.captchaError = null;
-                $scope.signinError = null;
-            };
+        var resetError = function() {
+            $scope.needsCaptcha = false;
+            $scope.captchaError = null;
+            $scope.signinError = null;
+        };
 
-            function reset() {
-                // form model data
-                $scope.username = null;
-                $scope.password = null;
+        function reset() {
+            // form model data
+            $scope.username = null;
+            $scope.password = null;
 
-                resetError();
+            resetError();
+        }
+
+        this.signinSucceeded = function(data) {
+            console.log(data);
+            $scope.signinSucceeded = true;
+            grecaptcha.reset();
+            $('#signinModal').modal('hide');
+            reset();
+
+            // trigger a reload of the profile for this user in this league
+            nbtLeague.fetchLeagues(nbtIdentity.get().token, function(leagues, leaguesRaw) {
+
+            });
+        };
+
+        this.signinFailed = function(data) {
+            $scope.signinSucceeded = false;
+            $scope.signinError = "Username or password do not match our records, please try again";
+            grecaptcha.reset();
+        };
+
+        var onSignin = function() {
+            nbtIdentity.login(
+                $scope.username,
+                $scope.password,
+                self.signinSucceeded,
+                self.signinFailed
+            );
+        };
+
+        $scope.onSignin = onSignin;
+
+        $scope.onCancel = function() {
+            reset();
+        };
+
+        this.closeForm = function() {
+            reset();
+        };
+
+        $scope.checkEnterKey = function(event) {
+            var code = event.which || event.keyCode;
+            if (code === 13) {
+                onSignin();
             }
-
-            this.signinSucceeded = function(data) {
-                console.log(data);
-                $scope.signinSucceeded = true;
-                grecaptcha.reset();
-                $('#signinModal').modal('hide');
-                reset();
-
-                // trigger a reload of the profile for this user in this league
-                nbtLeague.reloadCurrentLeague(nbtIdentity.get().token);
-            };
-
-            this.signinFailed = function(data) {
-                $scope.signinSucceeded = false;
-                $scope.signinError = "Username or password do not match our records, please try again";
-                grecaptcha.reset();
-            };
-
-            var onSignin = function() {
-                nbtIdentity.login(
-                    $scope.username,
-                    $scope.password,
-                    self.signinSucceeded,
-                    self.signinFailed
-                );
-            };
-
-            $scope.onSignin = onSignin;
-
-            $scope.onCancel = function() {
-                reset();
-            };
-
-            this.closeForm = function() {
-                reset();
-            };
-
-            $scope.checkEnterKey = function(event) {
-                var code = event.which || event.keyCode;
-                if (code === 13) {
-                    onSignin();
-                }
-            };
-        }]);
+        };
+    }]);
 })();
