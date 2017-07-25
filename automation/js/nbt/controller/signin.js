@@ -24,8 +24,6 @@
     angular
     .module('nbt.app')
     .controller('SigninFormController', ['$sce', '$scope', 'nbtUser', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtUser, nbtLeague, nbtIdentity) {
-        var self = this;
-
         var resetError = function() {
             $scope.needsCaptcha = false;
             $scope.captchaError = null;
@@ -63,8 +61,8 @@
             nbtIdentity.login(
                 $scope.username,
                 $scope.password,
-                self.signinSucceeded,
-                self.signinFailed
+                signinSucceeded,
+                signinFailed
             );
         };
 

@@ -156,6 +156,48 @@ var _IdentityService = (function() {
         );
     };
 
+    IdentityService.prototype.requestPasswordReset = function(aUsername, aResetLink, aSuccess, aFailure) {
+        // submit a request to reset the user's password
+        http({
+            method: 'POST', // TODO: get this from the links!
+            url: nbtRoot.links().resetPassword.href,
+            data: { // TODO: fill out a template that we get from the links!
+                username: aUsername,
+                resetPasswordUrl: aResetLink
+            }
+        }).then(
+            function(resp) {
+                // invoke the callback, if any
+                if (aSuccess) aSuccess(resp.data);
+            },
+            function(resp) {
+                // invoke the callback, if any
+                if (aFailure) aFailure(resp.message);
+            }
+        );
+    };
+
+    IdentityService.prototype.resetPassword = function(aPassword, aKey, aSuccess, aFailure) {
+        // actually do the password change, with the associated key
+        http({
+            method: 'PUT', // TODO: get this from the links!
+            url: nbtRoot.links().resetPassword.href,
+            data: { // TODO: fill out a template that we get from the links!
+                password: aPassword,
+                recoveryKey: aKey
+            }
+        }).then(
+            function(resp) {
+                // invoke the callback, if any
+                if (aSuccess) aSuccess(resp.data);
+            },
+            function(resp) {
+                // invoke the callback, if any
+                if (aFailure) aFailure(resp);
+            }
+        );
+    };
+
     IdentityService.prototype.logout = function() {
         if (mIdentity) {
             var hdrs = new Headers(Header.TOKEN, mIdentity.value);
