@@ -1,3 +1,4 @@
+<script src='/js/nbt/controller/signin.js'></script>
 <div id="signinModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="SigninFormController as signinForm">
     <div class="modal-dialog modal-lg with-border">
         <div class="modal-content">
@@ -27,6 +28,9 @@
 
                 <div style="text-align: center; padding-top: 8px">
                     <div class="centered">
+                        <span><a class="ui-interactive" data-dismiss="modal" data-toggle="modal" data-target="#passwordModal">Forgot Password?</a></span>
+                    </div>
+                    <div class="centered">
                         <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="onSignin()" class="btn btn-info nbt-button" role="button">Sign In</a></span>
                         <span style="display: inline;"><a href="javascript: void(0)" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
                     </div>
@@ -38,6 +42,42 @@
                     </div>
                     <div style="margin: auto; text-align: center; padding-top: 4px;">
                         <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="closeForm()" data-dismiss="modal">Close Form</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/nbt/controller/password-reset.js"></script>
+<div id="passwordModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="PasswordResetController as resetController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Request Password Reset</h4>
+            </div>
+            <div class="modal-body nbt-base">
+                <div class="container col-md-12" ng-keypress="checkEnterKey($event)">
+                    <div class="row">
+                        <div class="col-md-6 nbt-right-justified">
+                            Automation Account Username:
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" ng-model="username" required>
+                        </div>
+                    </div>
+
+                    <div class="row nbt-centered" ng-show="message">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 nbt-centered" style="padding: 15px;">
+                            <span><a ng-click="onSubmit()" class="btn btn-info nbt-button ui-interactive" role="button">Submit</a></span>
+                            <span><a ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button ui-interactive" role="button">{{closeButtonText}}</a></span>
+                        </div>
                     </div>
                 </div>
             </div>

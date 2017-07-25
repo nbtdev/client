@@ -61,7 +61,6 @@
     <script src='/js/nbt/controller/about.js'></script>
     <script src='/js/nbt/controller/faction-listing.js'></script>
     <script src='/js/nbt/controller/profile.js'></script>
-    <script src='/js/nbt/controller/signin.js'></script>
     <script src='/js/nbt/controller/starmap-ui.js'></script>
     <script src='/js/nbt/controller/transfer-combat-unit.js'></script>
     <script src='/js/nbt/controller/dropship-dock.js'></script>
