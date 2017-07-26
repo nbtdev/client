@@ -38,7 +38,7 @@
             resetError();
         }
 
-        this.signinSucceeded = function(data) {
+        var signinSucceeded = function(data) {
             console.log(data);
             $scope.signinSucceeded = true;
             grecaptcha.reset();
@@ -51,7 +51,7 @@
             });
         };
 
-        this.signinFailed = function(data) {
+        var signinFailed = function(data) {
             $scope.signinSucceeded = false;
             $scope.signinError = "Username or password do not match our records, please try again";
             grecaptcha.reset();
