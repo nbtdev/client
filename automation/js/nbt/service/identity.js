@@ -30,13 +30,15 @@ var _IdentityService = (function() {
 
     function IdentityService(aHttp, aRootScope, aNbtRoot) {
         self = this;
-        http = aHttp;
-        rootScope = aRootScope;
-        nbtRoot = aNbtRoot;
+        self.http = aHttp;
+        self.rootScope = aRootScope;
+        self.nbtRoot = aNbtRoot;
+        self.mIdentity = null;
+        self.mCurrentProfile = null;
 
         // initialize the service
         restore();
-        if (mIdentity)
+        if (self.mIdentity)
            self.refresh();
 
         // post initial state to any subscribers
@@ -48,18 +50,18 @@ var _IdentityService = (function() {
     };
 
     var save = function() {
-        localStorage.setItem('nbtIdentity', JSON.stringify(mIdentity));
+        localStorage.setItem('nbtIdentity', JSON.stringify(self.mIdentity));
     };
 
     var restore = function() {
         try {
-            var currentIdent = mIdentity;
+            var currentIdent = self.mIdentity;
 
             if (localStorage.nbtIdentity)
-                mIdentity = JSON.parse(localStorage.nbtIdentity);
+                self.mIdentity = JSON.parse(localStorage.nbtIdentity);
 
-            if (mIdentity !== currentIdent)
-                rootScope.$broadcast('nbtIdentityChanged', self.get());
+            if (self.mIdentity !== currentIdent)
+                self.rootScope.$broadcast('nbtIdentityChanged', self.get());
         } catch (e) {
             console.log(e);
         }
@@ -67,21 +69,21 @@ var _IdentityService = (function() {
 
     IdentityService.prototype.reset = function() {
         // clear out any current user identity object
-        mIdentity = null;
+        self.mIdentity = null;
 
         // reset current profile to none
-        mCurrentProfile = null;
+        self.mCurrentProfile = null;
 
         // clear out any existing cached login data (local storage)
         clearLocalStorage();
     };
 
     IdentityService.prototype.profile = function() {
-        if (mCurrentProfile) {
+        if (self.mCurrentProfile) {
             return {
-                callsign: mCurrentProfile.callsign,
+                callsign: self.mCurrentProfile.callsign,
                 links: {
-                    faction: mCurrentProfile._links.faction
+                    faction: self.mCurrentProfile._links.faction
                 }
             };
         }
@@ -91,8 +93,8 @@ var _IdentityService = (function() {
 
     IdentityService.prototype.get = function() {
         // first check to see if the token is expired
-        if (mIdentity) {
-            var ms = mIdentity.expires;
+        if (self.mIdentity) {
+            var ms = self.mIdentity.expires;
             var d = new Date();
             var now = d.getTime();
 
@@ -103,13 +105,13 @@ var _IdentityService = (function() {
             }
         }
 
-        if (mIdentity) {
+        if (self.mIdentity) {
             return {
-                username: mIdentity.username,
-                token: mIdentity.value,
-                isSiteAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='SITE_ADMIN' : false; },
-                isLeagueAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
-                isTeamAdmin: function() { return mIdentity.coarseRole ? mIdentity.coarseRole==='TEAM_ADMIN' : false;  },
+                username: self.mIdentity.username,
+                token: self.mIdentity.value,
+                isSiteAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='SITE_ADMIN' : false; },
+                isLeagueAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
+                isTeamAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='TEAM_ADMIN' : false;  },
                 isValid: function() { return true; }
             };
         }
@@ -129,9 +131,9 @@ var _IdentityService = (function() {
         this.reset();
 
         // attempt to get a token based on the provided login credentials
-        http({
+        self.http({
             method: 'POST', // TODO: get this from the links!
-            url: nbtRoot.links().login.href,
+            url: self.nbtRoot.links().login.href,
             data: { // TODO: fill out a template that we get from the links!
                 username: aUsername,
                 password: aPassword
@@ -139,7 +141,7 @@ var _IdentityService = (function() {
         }).then(
             function(resp) {
                 // save the new user data
-                mIdentity = resp.data;
+                self.mIdentity = resp.data;
 
                 save();
 
@@ -147,7 +149,7 @@ var _IdentityService = (function() {
                 if (aSuccess) aSuccess(resp.data);
 
                 // post event to any subscribers
-                rootScope.$broadcast('nbtIdentityChanged', self.get());
+                self.rootScope.$broadcast('nbtIdentityChanged', self.get());
             },
             function(resp) {
                 // invoke the callback, if any
@@ -158,9 +160,9 @@ var _IdentityService = (function() {
 
     IdentityService.prototype.requestPasswordReset = function(aUsername, aResetLink, aSuccess, aFailure) {
         // submit a request to reset the user's password
-        http({
+        self.http({
             method: 'POST', // TODO: get this from the links!
-            url: nbtRoot.links().resetPassword.href,
+            url: self.nbtRoot.links().resetPassword.href,
             data: { // TODO: fill out a template that we get from the links!
                 username: aUsername,
                 resetPasswordUrl: aResetLink
@@ -177,11 +179,39 @@ var _IdentityService = (function() {
         );
     };
 
+    IdentityService.prototype.updatePassword = function(aPassword, aNewPassword, aSuccess, aFailure) {
+        if (!self.mIdentity)
+            return;
+
+        var hdrs = new Headers(Header.TOKEN, self.mIdentity.value);
+
+        // actually do the password change, with the associated key
+        self.http({
+            method: 'PUT', // TODO: get this from the links!
+            url: self.mIdentity._links.self.href,
+            headers: hdrs.get(),
+            data: { // TODO: fill out a template that we get from the links!
+                username: self.mIdentity.username,
+                password: aPassword,
+                newPassword: aNewPassword
+            }
+        }).then(
+            function(resp) {
+                // invoke the callback, if any
+                if (aSuccess) aSuccess(resp.data);
+            },
+            function(resp) {
+                // invoke the callback, if any
+                if (aFailure) aFailure(resp);
+            }
+        );
+    };
+
     IdentityService.prototype.resetPassword = function(aPassword, aKey, aSuccess, aFailure) {
         // actually do the password change, with the associated key
-        http({
+        self.http({
             method: 'PUT', // TODO: get this from the links!
-            url: nbtRoot.links().resetPassword.href,
+            url: self.nbtRoot.links().resetPassword.href,
             data: { // TODO: fill out a template that we get from the links!
                 password: aPassword,
                 recoveryKey: aKey
@@ -199,12 +229,12 @@ var _IdentityService = (function() {
     };
 
     IdentityService.prototype.logout = function() {
-        if (mIdentity) {
-            var hdrs = new Headers(Header.TOKEN, mIdentity.value);
+        if (self.mIdentity) {
+            var hdrs = new Headers(Header.TOKEN, self.mIdentity.value);
 
-            http({
+            self.http({
                 method: 'DELETE', // TODO: get this from the links!
-                url: mIdentity._links.logout.href,
+                url: self.mIdentity._links.logout.href,
                 headers: hdrs.get()
             });
         }
@@ -212,18 +242,18 @@ var _IdentityService = (function() {
         this.reset();
 
         // post event to any subscribers
-        rootScope.$broadcast('nbtIdentityChanged', this.get());
+        self.rootScope.$broadcast('nbtIdentityChanged', this.get());
     };
 
     IdentityService.prototype.refresh = function(aFailureCb) {
-        if (mIdentity) {
-            var hdrs = new Headers(Header.TOKEN, mIdentity.value);
+        if (self.mIdentity) {
+            var hdrs = new Headers(Header.TOKEN, self.mIdentity.value);
 
             // attempt to refresh the token, if failed, callback on any supplied valid function
             // and clear ourselves (failure for any reason means the token is no longer valid)
-            http({
+            self.http({
                 method: 'PUT', // TODO: get this from the links!
-                url: mIdentity._links.refresh.href,
+                url: self.mIdentity._links.refresh.href,
                 headers: hdrs.get()
             }).then(
                 function(resp) {
@@ -242,9 +272,9 @@ var _IdentityService = (function() {
         // submit the new-user registration
         var hdrs = new Headers(Header.CAPTCHA, aCaptchaResponse);
 
-        http({
+        self.http({
             method: 'POST', // TODO: get from links!
-            url: nbtRoot.links().signup.href,
+            url: self.nbtRoot.links().signup.href,
             data: aRegData,
             headers: hdrs.get()
         }).then(
@@ -258,18 +288,18 @@ var _IdentityService = (function() {
     };
 
     IdentityService.prototype.onLeagueChanged = function(aLeague) {
-        if (mIdentity) {
+        if (self.mIdentity) {
             var hdrs = new Headers(Header.TOKEN, mIdentity.value);
 
             if (aLeague) {
                 // fetch the user's profile for this league
-                http({
+                self.http({
                     method: 'GET', // TODO: get from links!
                     url: aLeague._links.userProfile.href,
                     headers: hdrs.get()
                 }).then(function (resp) {
-                    mCurrentProfile = resp.data;
-                    rootScope.$broadcast('nbtProfileChanged', mCurrentProfile);
+                    self.mCurrentProfile = resp.data;
+                    self.rootScope.$broadcast('nbtProfileChanged', mCurrentProfile);
                 });
             } else {
                 // fetch default profile?
@@ -278,8 +308,8 @@ var _IdentityService = (function() {
                     url: mIdentity._links.self.href,
                     headers: hdrs.get()
                 }).then(function (resp) {
-                    mCurrentProfile = resp.data;
-                    rootScope.$broadcast('nbtProfileChanged', mCurrentProfile);
+                    self.mCurrentProfile = resp.data;
+                    self.rootScope.$broadcast('nbtProfileChanged', mCurrentProfile);
                 });
             }
         }

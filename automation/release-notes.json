@@ -1,5 +1,19 @@
 [
   {
+    "date": "25 July 2017",
+    "changes": {
+      "Features": [
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "Added password-reset workflow and change-password feature to the user profile form",
+        "Disabled caching for the static content landing page and automation site, to prevent stale files in browsers"
+      ]
+    }
+  },
+
+  {
     "date": "23 July 2017",
     "changes": {
       "Features": [

@@ -46,18 +46,67 @@
                         </div>
                         <div class="col-md-1">&nbsp;</div>
                     </div>
-                </div>
 
-                <div style="text-align: center; padding-top: 8px">
-                    <div class="nbt-centered">
-                        <div class="nbt-status" ng-class="{ 'nbt-info': !statusIsError, 'nbt-error': statusIsError, 'nbt-invisible': !status}">&nbsp;{{status}}</div>
+                    <div style="text-align: center; padding-top: 8px">
+                        <div class="nbt-centered">
+                            <div class="nbt-status" ng-class="{ 'nbt-info': !statusIsError, 'nbt-error': statusIsError, 'nbt-invisible': !status}">&nbsp;{{status}}</div>
+                        </div>
+                        <div class="centered">
+                            <span style="margin-right: 25px;"><a ng-click="onApply()" class="btn btn-info nbt-button ui-interactive" role="button">Apply</a></span>
+                            <span style="display: inline;"><a ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button ui-interactive" role="button">Cancel</a></span>
+                        </div>
                     </div>
-                    <div class="centered">
-                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="onApply()" class="btn btn-info nbt-button" role="button">Apply</a></span>
-                        <span style="display: inline;"><a href="javascript: void(0)" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
+
+                    <div class="row nbt-para">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <hr/>
+                            <h3 class="nbt-h3">Change Password</h3>
+                            <div>Password and profile are updated separately; updating your profile will not change your password
+                                and changing your password will not save profile changes.
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="nbt-para">
+                        <div class="row">
+                            <div class="col-md-6 nbt-right-justified">
+                                Current Password:
+                            </div>
+                            <div class="col-md-6">
+                                <input type="password" ng-model="currentPassword" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 nbt-right-justified">
+                                New Password:
+                            </div>
+                            <div class="col-md-6">
+                                <input type="password" ng-model="newPassword" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 nbt-right-justified">
+                                Confirm New Password:
+                            </div>
+                            <div class="col-md-6">
+                                <input type="password" ng-model="newPasswordConfirm" required>
+                            </div>
+                        </div>
+
+                        <div class="row nbt-centered" ng-show="passwordMessage">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-6" ng-class="{'nbt-info': passwordSuccess, 'nbt-error': !passwordSuccess}">{{passwordMessage}}</div>
+                            <div class="col-md-3"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 nbt-centered" style="padding: 15px;">
+                                <span><a ng-click="onChangePassword()" class="btn btn-info nbt-button ui-interactive" role="button">Change Password</a></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
