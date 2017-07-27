@@ -50,6 +50,7 @@
     <script src='/js/nbt/model/user.js'></script>
     <script src='/js/nbt/service/league.js'></script>
     <script src='/js/nbt/service/about.js'></script>
+    <script src='/js/nbt/service/combat.js'></script>
     <script src='/js/nbt/service/identity.js'></script>
     <script src='/js/nbt/service/planet.js'></script>
     <script src='/js/nbt/service/battle.js'></script>
@@ -96,6 +97,9 @@
 
     <!-- header bar -->
     <!--#include virtual="/fragment/navbar.html" -->
+
+    <!-- modal dialog fragments -->
+    <!--#include virtual="/fragment/admin/combatUnitType.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/profile.html" -->
