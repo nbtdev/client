@@ -1,0 +1,77 @@
+<script src="/js/nbt/controller/admin/combat-unit-type.js"></script>
+<div id="combatUnitTypeAdminModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="CombatUnitTypeAdminController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Combat Unit Types (Admin - {{league.name}})</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <!-- status/error message -->
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+                    <!-- the rows of data -->
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2 nbt-bold">Available</div>
+                        <div class="col-md-3 nbt-bold">Name</div>
+                        <div class="col-md-3 nbt-bold">Short Name</div>
+                        <div class="col-md-2"></div>
+                    </div>
+                    <div class="row" ng-repeat="type in combatUnitTypes._embedded.combatUnitTypes">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2">
+                            <input type="checkbox" ng-disabled="!type.editing" ng-model="type.enabledInLeague">
+                        </div>
+                        <div class="col-md-3">
+                            <span ng-hide="type.editing">{{type.name}}</span>
+                            <span ng-show="type.editing"><input type="text" ng-model="type.name"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <span ng-hide="type.editing">{{type.abbrev}}</span>
+                            <span ng-show="type.editing"><input type="text" ng-model="type.abbrev"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <span ng-hide="type.editing">
+                                <a class="ui-interactive" ng-click="onEdit(type)"><img src="../../images/edit.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onDelete(type)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                            </span>
+                            <span ng-show="type.editing">
+                                <a class="ui-interactive" ng-click="onApply(type)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onCancel(type)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- the "add item" row-->
+                    <div class="row">
+                        <div class="col-md-1">
+                            <a ng-hide="newType.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                        </div>
+                        <div class="col-md-2">
+                            <input ng-show="newType.editing" type="checkbox" ng-model="newType.enabledInLeague">
+                        </div>
+                        <div class="col-md-3">
+                            <span ng-show="newType.editing"><input type="text" ng-model="newType.name"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <span ng-show="newType.editing"><input type="text" ng-model="newType.abbrev"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <span ng-show="newType.editing">
+                                <a class="ui-interactive" ng-click="onApply(newType)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onCancel(newType)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

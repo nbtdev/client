@@ -178,9 +178,13 @@ input[type=password] {
 
 .sa-side-users {
     background-image: url(../stage/img/icon/person-icon.png);
-} 
+}
 
 .bold {
+    font-weight: bold;
+}
+
+.nbt-bold {
     font-weight: bold;
 }
 

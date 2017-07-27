@@ -31,7 +31,7 @@
             });
 
             // when the user chooses a different league, we want to update out cached league
-            cb = $scope.$on('nbtLeagueChanged', function(event, league) {
+            var cb = $scope.$on('nbtLeagueChanged', function(event, league) {
                 $scope.league = league;
             });
             $scope.$on('destroy', cb);
