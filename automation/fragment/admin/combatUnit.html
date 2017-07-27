@@ -1,11 +1,96 @@
-<script src="/js/nbt/controller/admin/combat-unit-type.js"></script>
-<div id="combatUnitTypeAdminModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="CombatUnitTypeAdminController">
+<script src="/js/nbt/controller/admin/combat-unit.js"></script>
+<div id="combatUnitAdminModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="CombatUnitAdminController">
     <div class="modal-dialog modal-lg with-border">
         <div class="modal-content">
             <div class="modal-header nbt-base nbt-modal-header">
-                <h4 class="modal-title text-center">Combat Unit Types (Admin - {{league.name}})</h4>
+                <h4 class="modal-title text-center">Combat Units (Admin - {{league.name}})</h4>
             </div>
             <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <!-- status/error message -->
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+                    <!-- the rows of data -->
+                    <div class="row nbt-bold">
+                        <div class="col-md-1">Avail</div>
+                        <div class="col-md-2">Name</div>
+                        <div class="col-md-1">Code</div>
+                        <div class="col-md-2">Type</div>
+                        <div class="col-md-1">BV</div>
+                        <div class="col-md-1">Tonnage</div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    <div class="row" ng-repeat="unit in data._embedded.combatUnits">
+                        <div class="col-md-1">
+                            <input type="checkbox" ng-disabled="!unit.editing" ng-model="unit.enabledInLeague">
+                        </div>
+                        <div class="col-md-2">
+                            <span ng-hide="unit.editing">{{unit.name}}</span>
+                            <span ng-show="unit.editing"><input type="text" size="10" ng-model="unit.name"></span>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-hide="unit.editing">{{unit.designation}}</span>
+                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.designation"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <span ng-hide="unit.editing">{{unit.type.name}}</span>
+                            <select ng-show="unit.editing" ng-model="unit.type" ng-options="type.name for type in unitTypes"></select>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-hide="unit.editing">{{unit.battleValue}}</span>
+                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.battleValue"></span>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-hide="unit.editing">{{unit.tonnage}}</span>
+                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.tonnage"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span ng-hide="unit.editing">
+                                <a class="ui-interactive" ng-click="onEdit(unit)"><img src="../../images/edit.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onDelete(unit)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                            </span>
+                            <span ng-show="unit.editing">
+                                <a class="ui-interactive" ng-click="onApply(unit)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onCancel(unit)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- the "add item" row-->
+                    <div class="row">
+                        <div class="col-md-1">
+                            <a ng-hide="newUnit.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                            <input ng-show="newUnit.editing" type="checkbox" ng-model="newUnit.enabledInLeague">
+                        </div>
+                        <div class="col-md-2">
+                            <span ng-show="newUnit.editing"><input type="text" size="10" ng-model="newUnit.name"></span>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-show="newUnit.editing"><input type="text" size="4" ng-model="newUnit.designation"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <select ng-show="newUnit.editing" ng-model="newUnit.type" ng-options="type.name for type in unitTypes"></select>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-show="newUnit.editing"><input type="text" size="4" ng-model="newUnit.battleValue"></span>
+                        </div>
+                        <div class="col-md-1">
+                            <span ng-show="newUnit.editing"><input type="text" size="4" ng-model="newUnit.tonnage"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <span ng-show="newUnit.editing">
+                                <a class="ui-interactive" ng-click="onApply(newUnit)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                <a class="ui-interactive" ng-click="onCancel(newUnit)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

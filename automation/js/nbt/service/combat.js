@@ -95,6 +95,72 @@ var _CombatService = (function() {
         }
     };
 
+    // fetch combat units for league
+    CombatService.prototype.fetchCombatUnits = function (aLeague, aToken, aSuccess, aFailure) {
+        if (aLeague._links.units) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aLeague._links.units.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) { if (aSuccess) aSuccess(aResp.data); },
+                function (aErr) { if (aFailure) aFailure(aErr); }
+            );
+        }
+    };
+
+    // update combat unit type
+    CombatService.prototype.updateCombatUnit = function (aUnit, aToken, aSuccess, aFailure) {
+        if (aUnit._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aUnit._links.self.href,
+                data: aUnit,
+                headers: hdr.get()
+            }).then(
+                function (aResp) { if (aSuccess) aSuccess(aResp.data); },
+                function (aErr) { if (aFailure) aFailure(aErr); }
+            );
+        }
+    };
+
+    // add new combat unit type
+    CombatService.prototype.addCombatUnit = function (aUnit, aToken, aSuccess, aFailure) {
+        if (aUnit._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aUnit._links.self.href,
+                data: aUnit,
+                headers: hdr.get()
+            }).then(
+                function (aResp) { if (aSuccess) aSuccess(aResp.data); },
+                function (aErr) { if (aFailure) aFailure(aErr); }
+            );
+        }
+    };
+
+    // delete combat unit type
+    CombatService.prototype.deleteCombatUnit = function (aUnit, aToken, aSuccess, aFailure) {
+        if (aUnit._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: aUnit._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) { if (aSuccess) aSuccess(aResp.data); },
+                function (aErr) { if (aFailure) aFailure(aErr); }
+            );
+        }
+    };
+
     return CombatService;
 })();
 

@@ -23,21 +23,30 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('CombatUnitTypeAdminController', ['$sce', '$timeout', '$scope', 'nbtCombat', 'nbtIdentity', function($sce, $timeout, $scope, nbtCombat, nbtIdentity) {
+        .controller('CombatUnitAdminController', ['$sce', '$scope', 'nbtCombat', 'nbtIdentity', function($sce, $scope, nbtCombat, nbtIdentity) {
             $scope.league = null;
-            $scope.combatUnitTypes = null;
-            $scope.newType = null;
+            $scope.data = null;
+            $scope.unitTypes = null;
+            $scope.newUnit = null;
+            $scope.message = null;
+            $scope.success = null;
 
-            // used to restore previous values when editing is cancelled
+            // when editing, we want to save off the old values in case we need to restore
+            // them on a cancel
             var temp = null;
 
-            function processCombatUnitTypes(aData) {
-                $scope.combatUnitTypes = aData;
-                for (var i=0; i<$scope.combatUnitTypes._embedded.length; ++i) {
-                    var t = $scope.combatUnitTypes._embedded[i];
+            function processCombatUnits(aData) {
+                $scope.data = aData;
+                for (var i=0; i<$scope.data._embedded.combatUnits.length; ++i) {
+                    var t = $scope.data._embedded.combatUnits[i];
                     if ($scope.league.id === t.leagueId)
                         t.enabledInLeague = true;
                 }
+
+                // fetch the unit types too
+                nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
+                    $scope.unitTypes = aData._embedded.combatUnitTypes;
+                })
             }
 
             var timeoutPromise = null;
@@ -56,46 +65,55 @@
                 }, 5000);
             }
 
-            var reloadCombatUnitTypes = function() {
-                nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
-                    processCombatUnitTypes(aData);
+            var reloadCombatUnits = function() {
+                nbtCombat.fetchCombatUnits($scope.league, nbtIdentity.get().token, function(aData) {
+                    processCombatUnits(aData);
                 });
             };
 
-            $("#combatUnitTypeAdminModal").on("shown.bs.modal", function() {
-                reloadCombatUnitTypes();
+            $("#combatUnitAdminModal").on("shown.bs.modal", function() {
+                reloadCombatUnits();
             });
 
             $scope.onAdd = function() {
-                $scope.newType = {
+                $scope.newUnit = {
                     enabledInLeague: true,
                     name: null,
-                    abbrev: null,
+                    designation: null,
+                    type: { id: null },
+                    battleValue: null,
+                    tonnage: null,
                     editing: true,
                     isNew: true,
                     _links: {
-                        self: $scope.combatUnitTypes._links.self
+                        self: $scope.data._links.self
                     }
                 }
             };
 
-            $scope.onEdit = function(type) {
-                type.editing = true;
+            $scope.onEdit = function(unit) {
+                unit.editing = true;
 
+                // save off the current editable values
                 temp = {
-                    leagueId: type.leagueId,
-                    name: type.name,
-                    abbrev: type.abbrev
+                    name: unit.name,
+                    leagueId: unit.leagueId,
+                    type: {
+                        id: unit.type.id,
+                        name: unit.type.name
+                    },
+                    battleValue: unit.battleValue,
+                    tonnage: unit.tonnage
                 };
             };
 
-            $scope.onDelete = function(type) {
-                nbtCombat.deleteCombatUnitType(
-                    type,
+            $scope.onDelete = function(unit) {
+                nbtCombat.deleteCombatUnit(
+                    unit,
                     nbtIdentity.get().token,
                     function(aData) {
-                        reloadCombatUnitTypes();
-                        setStatus("Type successfully deleted", true);
+                        reloadCombatUnits();
+                        setStatus("Combat unit successfully deleted", true);
                     },
                     function(aErr) {
                         setStatus(aErr.data.message, false);
@@ -103,28 +121,28 @@
                 );
             };
 
-            $scope.onApply= function(type) {
-                if (type.isNew) {
-                    nbtCombat.addCombatUnitType(
-                        type,
+            $scope.onApply= function(unit) {
+                if (unit.isNew) {
+                    nbtCombat.addCombatUnit(
+                        unit,
                         nbtIdentity.get().token,
                         function(aData) {
-                            processCombatUnitTypes(aData);
-                            setStatus("Type successfully added", true);
-                            delete type.editing;
-                            delete type.isNew;
+                            processCombatUnits(aData);
+                            setStatus("Combat unit successfully added", true);
+                            delete unit.editing;
+                            delete unit.isNew;
                         },
                         function(aErr) {
                             setStatus(aErr.data.message, false);
                         }
                     );
                 } else {
-                    nbtCombat.updateCombatUnitType(
-                        type,
+                    nbtCombat.updateCombatUnit(
+                        unit,
                         nbtIdentity.get().token,
                         function(aData) {
                             setStatus("Type successfully updated", true);
-                            delete type.editing;
+                            delete unit.editing;
                         },
                         function(aErr) {
                             setStatus(aErr.data.message, false);
@@ -133,13 +151,16 @@
                 }
             };
 
-            $scope.onCancel = function(type) {
-                delete type.editing;
-                delete type.isNew;
+            $scope.onCancel = function(unit) {
+                delete unit.editing;
+                delete unit.isNew;
 
-                type.leagueId = temp.leagueId;
-                type.name = temp.name;
-                type.abbrev = temp.abbrev;
+                // restore the previous values
+                unit.leagueId = temp.leagueId;
+                unit.name = temp.name;
+                unit.type = temp.type;
+                unit.battleValue = temp.battleValue;
+                unit.tonnage = temp.tonnage;
             };
 
             // when the user chooses a different league, we want to update our cached league
