@@ -101,6 +101,7 @@
     <!-- modal dialog fragments -->
     <!--#include virtual="/fragment/admin/combatUnitType.html" -->
     <!--#include virtual="/fragment/admin/combatUnit.html" -->
+    <!--#include virtual="/fragment/admin/factionApplications.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/profile.html" -->

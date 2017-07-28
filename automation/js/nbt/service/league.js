@@ -173,6 +173,29 @@ var _LeagueService = (function() {
         );
     };
 
+    LeagueService.prototype.fetchApplications = function(aLeague, aToken, aSuccessCb, aFailCb) {
+        if (!aLeague._links.applications)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: get from links!
+            url: aLeague._links.applications.href,
+            headers: hdrs.get()
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp.data);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
+    };
+
     LeagueService.prototype.cancelApplication = function(aLeague, aApplicationData, aToken, aSuccessCb, aFailCb) {
         if (!aApplicationData._links.self)
             return;

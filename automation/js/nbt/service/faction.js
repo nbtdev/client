@@ -32,6 +32,23 @@ var _FactionService = (function() {
         rootScope = aRootScope;
     }
 
+    FactionService.prototype.fetchFactionDetail = function(aFaction, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken, aSuccessCb) {
         if (aLeague._links.factions) {
             var hdr = new Headers(Header.TOKEN, aToken);

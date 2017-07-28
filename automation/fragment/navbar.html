@@ -3,7 +3,12 @@
     <div class="container">
         <div id="navbar" class="navbar-collapse collapse">
 
-            <!-- League logo and league-select dropdown -->
+            <!-- Facton logo -->
+            <div class="navbar-left nbt-header-faction">
+                <img ng-show="faction" class="header-logo" data-ng-src="{{faction.logoSmall._links.raw.href}}">
+            </div>
+
+            <!-- League logo -->
             <img ng-show="league" class="navbar-left header-logo" data-ng-src="{{league.logoSmall._links.raw.href}}">
 
             <!-- Main league tools -->
@@ -24,6 +29,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="ui-interactive" data-toggle="modal" data-target="#combatUnitAdminModal">Combat Units</a></li>
                         <li><a class="ui-interactive" data-toggle="modal" data-target="#combatUnitTypeAdminModal">Combat Unit Types</a></li>
+                        <li><a class="ui-interactive" data-toggle="modal" data-target="#factionApplicationsModal">Faction Applications</a></li>
                     </ul>
                 </li>
 
@@ -65,7 +71,9 @@
                 </li>
 
                 <li ng-show="isLoggedIn()">
-                    <a class="ui-interactive" data-toggle="modal" data-target="#profileModal"><img class="nbt-pseudo-button" src="/images/profile-32.png" height="32" width="32"/></a>
+                    <a class="ui-interactive" data-toggle="modal" data-target="#profileModal">
+                        <img class="nbt-pseudo-button" src="/images/profile-32.png" height="32" width="32"/>
+                    </a>
                 </li>
             </ul>
         </div>
