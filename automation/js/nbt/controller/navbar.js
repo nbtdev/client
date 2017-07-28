@@ -23,12 +23,13 @@
 (function() {
     angular
     .module('nbt.app')
-    .controller('NavbarController', ['$scope', '$rootScope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, $rootScope, nbtIdentity, nbtLeague, nbtPlanet) {
+    .controller('NavbarController', ['$scope', '$rootScope', 'nbtIdentity', 'nbtLeague', 'nbtFaction', function($scope, $rootScope, nbtIdentity, nbtLeague, nbtFaction) {
 
         var reset = function() {
             $scope.league = null;
             $scope.leagues = null;
             $scope.identity = null;
+            $scope.faction = null;
         };
 
         reset();
@@ -60,6 +61,7 @@
 
         var cbIdentity = $scope.$on('nbtIdentityChanged', function (event, aData) {
             $scope.identity = aData;
+            $scope.faction = null;
         });
         $scope.$on('destroy', cbIdentity);
 
@@ -69,6 +71,14 @@
                 var l = $scope.leagues[i];
                 if (l.id == leagueId) {
                     $scope.league = l;
+
+                    // fire off a request to get the user profile for the current league
+                    nbtLeague.fetchLeagueProfile($scope.league, nbtIdentity.get().token, function(aData) {
+                        // fire off a request to get the faction I am in, if any
+                        nbtFaction.fetchFactionDetail(aData.data.faction, nbtIdentity.get().token, function(aFaction) {
+                            $scope.faction = aFaction;
+                        });
+                    });
                     break;
                 }
             }

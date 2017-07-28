@@ -188,6 +188,11 @@ input[type=password] {
     font-weight: bold;
 }
 
+.nbt-header-faction {
+    font-size: xx-small;
+    margin-right: 20px;
+}
+
 .inline {
     display: inline-block;
 }
