@@ -47,17 +47,24 @@
                         <ul style="-webkit-padding-start: 5px">
                             <li style="list-style: none" ng-repeat="(id, summary) in planetSetup.combatUnitSummary">
                                 <input type="number" min="0" size="3" style="width: 3em" ng-model="summary.count">&nbsp;<span>{{summary.template.name}}</span>
-                                <span style="float: right; margin-right: 5px;"><img src="../images/delete-16.png" height="16" width="16"/></span>
+                                <span
+                                        class="nbt-pseudo-button"
+                                        data-cmd="cmdDeleteCombatUnit"
+                                        data-target="{{id}}"
+                                        style="float: right; margin-right: 5px;">
+                                    <img src="../images/delete-16.png" height="16" width="16"/>
+                                </span>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div style="margin-top: 5px; background-color: lightgray; color: #202020; margin: 5px">
-                        <span>Combat Units Available</span>
-                        <ul>
-                            <li style="list-style: none" draggable="true" ng-repeat="unit in factionSetup.availableCombatUnits" data-unit="{{unit}}">{{unit.name}}</li>
-                        </ul>
+                <div class="col-md-1 nbt-align-middle">
+                    <div class="nbt-image-button-sm nbt-pseudo-button" data-cmd="cmdAddCombatUnits"><img title="Add selected combat units to planet" src="../images/move-left.png" height="24" width="32"/></div>
+                </div>
+                <div class="col-md-5">
+                    <div style="width: 90%; padding: 5px; background-color: lightgray; color: #202020;">
+                        <div >Combat Units Available</div>
+                        <select style="width:100%" multiple ng-model="selectedCombatUnits" ng-options="unit.name for unit in factionSetup.availableCombatUnits"></select>
                     </div>
                 </div>
             </div>
