@@ -1,0 +1,69 @@
+<script>
+    $(function() {
+        $(".nbt-modeless")
+            .draggable({
+                containment: "window",
+                handle: "h5"})
+            .disableSelection()
+            .resizable();
+    });
+</script>
+<script src="/js/nbt/controller/planet-setup.js"></script>
+
+<div class="nbt-modeless" ng-show="show" ng-controller="PlanetSetupController" ng-cloak>
+    <h5 class="nbt-h5 header">Planet Setup - {{faction.displayName}}<span ng-show="planet">&nbsp;({{planet.name}})</span><span class="nbt-close-dialog" style="float: right; cursor: pointer">&#10006;</span></h5>
+    <div class="content nbt-base">
+        <div class="container col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <span ng-class="{'nbt-error': factionSetup.combatUnitLimitRemaining < 0}">Combat Units: {{factionSetup.combatUnitLimitRemaining|number}}&nbsp;{{factionSetup.combatUnitLimitUnits}}<span ng-hide="factionSetup.combatUnitLimitUnits < 0"> Remaining</span></span>
+                </div>
+                <div class="col-md-3">
+                    <span ng-class="{'nbt-error': factionSetup.industryLimitRemaining < 0}">Industry: {{factionSetup.industryLimitRemaining|number}}&nbsp;cbills<span ng-hide="factionSetup.industryLimitRemaining < 0"> Remaining</span></span>
+                </div>
+                <div class="col-md-3">
+                    <span ng-class="{'nbt-error': factionSetup.dropshipLimitRemaining < 0}">Dropships: {{factionSetup.dropshipLimitRemaining|number}}&nbsp;Tons<span ng-hide="factionSetup.dropshipLimitRemaining < 0"> Remaining</span></span>
+                </div>
+                <div class="col-md-3">
+                    <span ng-class="{'nbt-error': factionSetup.jumpshipLimitRemaining < 0}">Jumpships: {{factionSetup.jumpshipLimitRemaining|number}}&nbsp;Tons<span ng-hide="factionSetup.jumpshipLimitRemaining < 0"> Remaining</span></span>
+                </div>
+            </div>
+            <hr>
+            <div class="row" ng-show="planet">
+                <div class="col-md-12">Planet Industry&nbsp;<input
+                            type="number"
+                            ng-model="planet.industry"
+                            ng-change=""
+                            min="{{planetSetup.autoIndustry}}"
+                            max="{{factionSetup.setupLimits.maxPlanetIndustry}}"
+                            style="background-color: #1d1e1f"
+                            step="25000000"><span ng-show="planet">&nbsp;(Min: {{planetSetup.autoIndustry|number}})</span>
+                </div>
+            </div>
+            <div class="row" ng-show="planet">
+                <div class="col-md-6">
+                    <div style="background-color: lightgray; color: #202020; margin: 5px;">
+                        <span style="margin-left: 5px;">Combat Units On {{planet.name}}</span>
+                        <ul style="-webkit-padding-start: 5px">
+                            <li style="list-style: none" ng-repeat="(id, summary) in planetSetup.combatUnitSummary">
+                                <input type="number" min="0" size="3" style="width: 3em" ng-model="summary.count">&nbsp;<span>{{summary.template.name}}</span>
+                                <span style="float: right; margin-right: 5px;"><img src="../images/delete-16.png" height="16" width="16"/></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="margin-top: 5px; background-color: lightgray; color: #202020; margin: 5px">
+                        <span>Combat Units Available</span>
+                        <ul>
+                            <li style="list-style: none" draggable="true" ng-repeat="unit in factionSetup.availableCombatUnits" data-unit="{{unit}}">{{unit.name}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="centered" ng-show="planet">
+                <span style="margin-right: 25px;"><a ng-click="onSave()" class="btn btn-info nbt-button ui-interactive" role="button">Save Changes</a></span>
+            </div>
+        </div>
+    </div>
+</div>

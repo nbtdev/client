@@ -521,3 +521,36 @@ input[type=password] {
         transform: rotate(-360deg)
     }
 }
+
+.nbt-modeless {
+    background-color: black;
+    border: solid goldenrod 1.5px;
+    z-index: 15000;
+    color: wheat;
+    min-width: 200px;
+    min-height: 300px;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.nbt-modeless .header {
+    margin: 0;
+    padding: 10px;
+    background-color: #404040;
+    cursor: move;
+}
+
+.nbt-modeless .content {
+    background-color: #080808;
+    margin: 0;
+    padding: 10px;
+}
+
+.nbt-modeless .ui-icon {
+    background-color: goldenrod;
+    border-top-left-radius: 5px;
+}

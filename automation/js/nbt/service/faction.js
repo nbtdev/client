@@ -49,6 +49,45 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.fetchFactionSetup = function(aFaction, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.setup) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.setup.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.submitFactionSetup = function(aFaction, aData, aToken, aSuccessCb, aFailCb) {
+        if (aFaction && aFaction._links.setup) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aFaction._links.setup.href,
+                data: aData,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.fetchFactionsForLeague = function(aLeague, aToken, aSuccessCb) {
         if (aLeague._links.factions) {
             var hdr = new Headers(Header.TOKEN, aToken);
