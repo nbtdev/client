@@ -23,10 +23,28 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PlanetSetupController', ['$sce', '$scope', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtLeague, nbtIdentity) {
+        .controller('PlanetSetupController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtLeague, nbtIdentity) {
             $scope.show = false;
             $scope.league = null;
             $scope.planetSetup = null;
+            $scope.message = null;
+            $scope.success = false;
+
+            var timeoutPromise = null;
+
+            function setStatus(message, success) {
+                $scope.message = message;
+                $scope.success = success;
+
+                // cause the message to go away in 5 seconds
+                if (timeoutPromise)
+                    $timeout.cancel(timeoutPromise);
+
+                timeoutPromise = $timeout(function() {
+                    $scope.message = null;
+                    timeoutPromise = null;
+                }, 5000);
+            }
 
             function transformInstancesToTotals() {
                 $scope.totals = [];
@@ -101,9 +119,10 @@
                     transformTotalsToInstances();
                     nbtFaction.submitFactionSetup($scope.faction, $scope.factionSetup, nbtIdentity.get().token, function(aData) {
                         processFactionSetupData(aData);
+                        setStatus("Data saved successfully", true);
                     },
                     function(aErr) {
-                        console.log(aErr.data.message);
+                        setStatus(aErr.data.message, false);
                     });
                 }
             };

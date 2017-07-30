@@ -30,7 +30,8 @@
             </div>
             <hr>
             <div class="row" ng-show="planet">
-                <div class="col-md-12">Planet Industry&nbsp;<input
+                <div class="col-md-12">
+                    <span>Planet Industry&nbsp;<input
                             type="number"
                             ng-model="planet.industry"
                             ng-change=""
@@ -38,6 +39,8 @@
                             max="{{factionSetup.setupLimits.maxPlanetIndustry}}"
                             style="background-color: #1d1e1f"
                             step="25000000"><span ng-show="planet">&nbsp;(Min: {{planetSetup.autoIndustry|number}})</span>
+                    </span>
+                    <span style="float: right" ng-show="message" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</span>
                 </div>
             </div>
             <div class="row" ng-show="planet">
