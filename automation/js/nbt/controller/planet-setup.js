@@ -80,6 +80,22 @@
                 }
             }
 
+            function addSelectedUnitsToPlanet() {
+                for (var i=0; i<$scope.selectedCombatUnits.length; ++i) {
+                    var unit = $scope.selectedCombatUnits[i];
+                    if (!$scope.planetSetup.combatUnitSummary[unit.id]) {
+                        $scope.planetSetup.combatUnitSummary[unit.id] = {
+                            count: 0,
+                            template: unit
+                        }
+                    }
+
+                    $scope.planetSetup.combatUnitSummary[unit.id].count++;
+                }
+
+                $scope.$apply();
+            }
+
             $scope.onSave = function() {
                 if ($scope.faction) {
                     transformTotalsToInstances();
@@ -96,6 +112,22 @@
                 $scope.show = false;
                 $scope.$apply();
             });
+            
+            function onPseudoButtonClick(event) {
+                if (!event.currentTarget.dataset.cmd)
+                    return;
+
+                var cmd = event.currentTarget.dataset.cmd;
+                if (cmd === 'cmdAddCombatUnits') {
+                    addSelectedUnitsToPlanet();
+                }
+
+                if (cmd === 'cmdDeleteCombatUnit') {
+                    var id = event.currentTarget.dataset.target;
+                    delete $scope.planetSetup.combatUnitSummary[id];
+                    $scope.$apply();
+                }
+            };
 
             var cb = $scope.$on('planetChanged', function (event, aPlanet) {
                 // before we move off of this planet, make sure we save any changes that were made
@@ -115,7 +147,16 @@
                     }
                 }
 
+                // before we digest, remove any existing nbt-pseudo-element click handlers
+                var x = $(".nbt-pseudo-button");
+                x.off("click", onPseudoButtonClick);
+
                 $scope.$apply();
+
+                // attach a click handler to all of the nbt-pseudo-button elements (some of these
+                // could have been created as part of the digest)
+                x = $(".nbt-pseudo-button");
+                x.on("click", onPseudoButtonClick);
             });
             $scope.$on('destroy', cb);
 
@@ -129,9 +170,18 @@
             });
             $scope.$on('destroy', cb);
 
+            // when the user clicks the Faction Tools menu item...
             cb = $scope.$on('cmdPlanetSetup', function (event, command) {
                 $scope.show = true;
                 $scope.$apply();
+            });
+            $scope.$on('destroy', cb);
+
+            // when the user identity changes (login or logout, for example), we should close
+            cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
+                if (!aIdent.token) {
+                    $scope.show = false;
+                }
             });
             $scope.$on('destroy', cb);
         }]);

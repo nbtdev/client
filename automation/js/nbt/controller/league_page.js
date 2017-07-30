@@ -27,7 +27,9 @@
             $scope.showTransfer = false;
             $scope.showTransferCombatUnits = false;
             $scope.showDockUndockDropships = false;
+            $scope.showLeftBar = false;
             $scope.showRightBar = false;
+            $scope.factionActive = false;
             $scope.showSummary = false;
             $scope.showJumpshipSummary = false;
 
@@ -144,6 +146,12 @@
                 nbtPlanet.load(league, user.token);
             };
 
+            var cbFaction = $scope.$on('nbtFactionChanged', function (event, aFaction) {
+                if (aFaction.status === "Active" || aFaction.status === "Semi-Active")
+                    $scope.factionActive = true;
+            });
+            $scope.$on('destroy', cbFaction);
+
             var cbIdentity = $scope.$on('nbtIdentityChanged', function (event, aData) {
                 user = aData;
                 loadStarmap(league, user);
@@ -157,6 +165,7 @@
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
                 $scope.showRightBar = false;
+                $scope.showLeftBar = false;
                 $scope.showSummary = false;
 
                 if (selectedPlanet === aPlanet) {
@@ -179,6 +188,7 @@
                         localShowDockUndockDropships = true;
                         localShowJumpshipSummary = true;
                         $scope.showSummary = true;
+                        $scope.showLeftBar = true;
                         $scope.showRightBar = true;
                     }
                 }

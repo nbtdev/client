@@ -359,6 +359,7 @@ input[type=password] {
 
 .nbt-pseudo-button {
     opacity: 0.5;
+    cursor: pointer;
 }
 
 .nbt-pseudo-button:hover {
@@ -395,6 +396,8 @@ input[type=password] {
 
 .nbt-centered {
     text-align: center;
+    margin: auto;
+    padding: 0;
 }
 
 .nbt-label {
@@ -525,7 +528,7 @@ input[type=password] {
 .nbt-modeless {
     background-color: black;
     border: solid goldenrod 1.5px;
-    z-index: 15000;
+    z-index: 1000;
     color: wheat;
     min-width: 200px;
     min-height: 300px;
@@ -553,4 +556,16 @@ input[type=password] {
 .nbt-modeless .ui-icon {
     background-color: goldenrod;
     border-top-left-radius: 5px;
+}
+
+.nbt-align-middle {
+    vertical-align: middle;
+}
+
+.nbt-image-button-sm {
+    width: 32px;
+    height: 24px;
+    overflow: hidden;
+    border-radius: 1.5px;
+    background-color: goldenrod;
 }
