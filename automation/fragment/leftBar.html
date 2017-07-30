@@ -1,0 +1,33 @@
+<script src="/js/nbt/controller/left-bar.js"></script>
+<div class="nbt-side-menu" ng-controller="LeftBarController" ng-cloak>
+    <div ng-show="showTransfer">
+        <div class="nbt-side-menu-label">
+            Transfer
+        </div>
+        <div class="nbt-side-menu-item" ng-show="showTransferCombatUnits">
+            <a class="ui-interactive" data-toggle="modal" data-target="#transferCombatUnits">Combat Units</a>
+        </div>
+        <div class="nbt-side-menu-item" ng-show="showDockUndockDropships" >
+            <a class="ui-interactive" data-toggle="modal" data-target="#dockUndockDropships">Dropships</a>
+        </div>
+    </div>
+
+    <div ng-show="showSummary">
+        <div class="nbt-side-menu-label">
+            Summary
+        </div>
+        <div class="nbt-side-menu-item" ng-show="showJumpshipSummary">
+            <a class="ui-interactive" ng-show="showJumpshipSummary" data-toggle="modal" data-target="#jumpshipSummary">Jumpship(s)</a>
+        </div>
+    </div>
+
+    <!--<div ng-show="planetGroups">-->
+        <!--<div class="nbt-side-menu-label">-->
+            <!--Planets-->
+        <!--</div>-->
+        <!--<div ng-repeat="group in planetGroups">-->
+            <!--<div>{{group.sectorId===-1 ? '(No Sector)' : group.sectorCapital.name}}</div>-->
+            <!--<div style="padding-left: 10px" ng-repeat="planet in group.planets">{{planet.name}}</div>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>

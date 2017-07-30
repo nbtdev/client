@@ -77,6 +77,7 @@
                         // fire off a request to get the faction I am in, if any
                         nbtFaction.fetchFactionDetail(aData.data.faction, nbtIdentity.get().token, function(aFaction) {
                             $scope.faction = aFaction;
+                            $rootScope.$broadcast('nbtFactionChanged', $scope.faction);
                         });
                     });
                     break;
@@ -99,6 +100,10 @@
             localStorage.setItem("leagueId", leagueId);
             setCurrentLeague(leagueId);
         };
+
+        $("a.nbt-menu-item").on("click", function(event) {
+            $rootScope.$broadcast(event.target.dataset.target);
+        });
 
         nbtLeague.fetchLeagues(nbtIdentity.get().token);
     }]);
