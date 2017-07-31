@@ -29,6 +29,10 @@
             $scope.planetSetup = null;
             $scope.message = null;
             $scope.success = false;
+            $scope.visitedPlanets = {};
+            $scope.selectedCombatUnits = [];
+            $scope.selectedDropships = [];
+            $scope.selectedJumpships = [];
 
             var timeoutPromise = null;
 
@@ -45,10 +49,9 @@
                     timeoutPromise = null;
                 }, 5000);
             }
-
-            function transformInstancesToTotals() {
-                $scope.totals = [];
-
+            
+            function transformCombatUnitInstancesToTotals() {
+                // transform combat unit instances to combat unit summary totals
                 var dict = {};
                 for (var i=0; i<$scope.planetSetup.instances.length; ++i) {
                     var inst = $scope.planetSetup.instances[i];
@@ -68,17 +71,106 @@
                 $scope.planetSetup.combatUnitSummary = dict;
             }
 
-            function transformTotalsToInstances() {
+            function transformDropshipInstancesToTotals() {
+                // transform dropship instances to dropship summary totals
+                var dict = {};
+                for (var i=0; i<$scope.planetSetup.dropships.length; ++i) {
+                    var inst = $scope.planetSetup.dropships[i];
+
+                    var entry = dict[inst.type.id];
+                    if (!entry) {
+                        entry = {
+                            count: 0,
+                            type: inst.type
+                        };
+                        dict[inst.type.id] = entry;
+                    }
+
+                    entry.count++;
+                }
+
+                $scope.planetSetup.dropshipSummary = dict;
+            }
+
+            function transformJumpshipInstancesToTotals() {
+                // transform jumpship instances to dropship summary totals
+                var dict = {};
+                for (var i=0; i<$scope.planetSetup.jumpships.length; ++i) {
+                    var inst = $scope.planetSetup.jumpships[i];
+
+                    var entry = dict[inst.type.id];
+                    if (!entry) {
+                        entry = {
+                            count: 0,
+                            type: inst.type
+                        };
+                        dict[inst.type.id] = entry;
+                    }
+
+                    entry.count++;
+                }
+
+                $scope.planetSetup.jumpshipSummary = dict;
+            }
+
+            function transformInstancesToTotals() {
+                transformCombatUnitInstancesToTotals();
+                transformDropshipInstancesToTotals();
+                transformJumpshipInstancesToTotals();
+            }
+
+            function transformCombatUnitTotalsToInstances(aSetup) {
+                if (!aSetup)
+                    aSetup = $scope.planetSetup;
+
                 // first, blow away the existing instances
-                $scope.planetSetup.instances.length = 0;
-                Object.keys($scope.planetSetup.combatUnitSummary).forEach(function(key, index) {
+                aSetup.instances.length = 0;
+                Object.keys(aSetup.combatUnitSummary).forEach(function(key, index) {
                     var obj = this[key];
                     for (var i=0; i<obj.count; ++i) {
-                        $scope.planetSetup.instances.push({
+                        aSetup.instances.push({
                             template: obj.template
                         });
                     }
-                }, $scope.planetSetup.combatUnitSummary);
+                }, aSetup.combatUnitSummary);
+            }
+
+            function transformDropshipTotalsToInstances(aSetup) {
+                if (!aSetup)
+                    aSetup = $scope.planetSetup;
+
+                // first, blow away the existing instances
+                aSetup.dropships.length = 0;
+                Object.keys(aSetup.dropshipSummary).forEach(function(key, index) {
+                    var obj = this[key];
+                    for (var i=0; i<obj.count; ++i) {
+                        aSetup.dropships.push({
+                            type: obj.type
+                        });
+                    }
+                }, aSetup.dropshipSummary);
+            }
+
+            function transformJumpshipTotalsToInstances(aSetup) {
+                if (!aSetup)
+                    aSetup = $scope.planetSetup;
+
+                // first, blow away the existing instances
+                aSetup.jumpships.length = 0;
+                Object.keys(aSetup.jumpshipSummary).forEach(function(key, index) {
+                    var obj = this[key];
+                    for (var i=0; i<obj.count; ++i) {
+                        aSetup.jumpships.push({
+                            type: obj.type
+                        });
+                    }
+                }, aSetup.jumpshipSummary);
+            }
+
+            function transformTotalsToInstances(aAltSetup) {
+                 transformCombatUnitTotalsToInstances(aAltSetup);
+                 transformDropshipTotalsToInstances(aAltSetup);
+                 transformJumpshipTotalsToInstances(aAltSetup);
             }
 
             function processFactionSetupData(aData) {
@@ -114,18 +206,98 @@
                 $scope.$apply();
             }
 
-            $scope.onSave = function() {
-                if ($scope.faction) {
-                    transformTotalsToInstances();
-                    nbtFaction.submitFactionSetup($scope.faction, $scope.factionSetup, nbtIdentity.get().token, function(aData) {
-                        processFactionSetupData(aData);
-                        setStatus("Data saved successfully", true);
-                    },
-                    function(aErr) {
-                        setStatus(aErr.data.message, false);
-                    });
+            function addSelectedDropshipTypesToPlanet() {
+                for (var i=0; i<$scope.selectedDropships.length; ++i) {
+                    var type = $scope.selectedDropships[i];
+                    if (!$scope.planetSetup.dropshipSummary[type.id]) {
+                        $scope.planetSetup.dropshipSummary[type.id] = {
+                            count: 0,
+                            type: type
+                        }
+                    }
+
+                    $scope.planetSetup.dropshipSummary[type.id].count++;
                 }
-            };
+
+                $scope.$apply();
+            }
+
+            function addSelectedJumpshipTypesToPlanet() {
+                for (var i=0; i<$scope.selectedJumpships.length; ++i) {
+                    var type = $scope.selectedJumpships[i];
+                    if (!$scope.planetSetup.jumpshipSummary[type.id]) {
+                        $scope.planetSetup.jumpshipSummary[type.id] = {
+                            count: 0,
+                            type: type
+                        }
+                    }
+
+                    $scope.planetSetup.jumpshipSummary[type.id].count++;
+                }
+
+                $scope.$apply();
+            }
+
+            function calculateIndustryChanges() {
+                // difference between each planet's industry and the auto-industry for that planet;
+                // we need only check the visited planets as those are the only ones whose industry could have changed
+                Object.keys($scope.visitedPlanets).forEach(function(key, index) {
+                    var planet = this[key];
+                    var planetSetup = $scope.planetSetupDict[planet.id];
+                    planetSetup.additionalIndustry = planet.industry - planetSetup.autoIndustry;
+                }, $scope.visitedPlanets);
+            }
+
+            function processPlanetChange(aPlanet) {
+                $timeout(function() {
+                    if (aPlanet) {
+                        if (aPlanet.parentGroup.owner.id === $scope.faction.id) {
+                            $scope.planet = aPlanet;
+                            $scope.visitedPlanets[aPlanet.id] = aPlanet;
+                            $scope.planetSetup = $scope.planetSetupDict[aPlanet.id];
+
+                            // convert the instance list to a summary total dictionary
+                            transformInstancesToTotals();
+                        }
+                    }
+
+                    // before we digest, remove any existing nbt-pseudo-element click handlers
+                    var x = $(".nbt-pseudo-button");
+                    x.off("click", onPseudoButtonClick);
+
+                    // attach a click handler to all of the nbt-pseudo-button elements (some of these
+                    // could have been created as part of the digest)
+                    x = $(".nbt-pseudo-button");
+                    x.on("click", onPseudoButtonClick);
+                }, 0, false); // run right after the digest completes, do not run another digest
+            }
+
+            $(".nbt-button").on("click", function(event) {
+                if (!event.currentTarget.dataset.cmd)
+                    return;
+
+                var cmd = event.currentTarget.dataset.cmd;
+                if (cmd === 'cmdSaveChanges') {
+                    if ($scope.faction) {
+                        calculateIndustryChanges();
+
+                        Object.keys($scope.visitedPlanets).forEach(function (key, index) {
+                            transformTotalsToInstances($scope.planetSetupDict[this[key].id]);
+                        }, $scope.visitedPlanets);
+
+                        $scope.visitedPlanets = {};
+
+                        nbtFaction.submitFactionSetup($scope.faction, $scope.factionSetup, nbtIdentity.get().token, function (aData) {
+                                processFactionSetupData(aData);
+                                processPlanetChange($scope.planet);
+                                setStatus("Data saved successfully", true);
+                            },
+                            function (aErr) {
+                                setStatus(aErr.data.message, false);
+                            });
+                    }
+                }
+            });
 
             $(".nbt-close-dialog").on("click", function(event) {
                 $scope.show = false;
@@ -139,14 +311,24 @@
                 var cmd = event.currentTarget.dataset.cmd;
                 if (cmd === 'cmdAddCombatUnits') {
                     addSelectedUnitsToPlanet();
-                }
-
-                if (cmd === 'cmdDeleteCombatUnit') {
+                } else if (cmd === 'cmdAddDropships') {
+                    addSelectedDropshipTypesToPlanet();
+                } else if (cmd === 'cmdAddJumpships') {
+                    addSelectedJumpshipTypesToPlanet();
+                } else if (cmd === 'cmdDeleteCombatUnit') {
                     var id = event.currentTarget.dataset.target;
                     delete $scope.planetSetup.combatUnitSummary[id];
                     $scope.$apply();
+                } else if (cmd === 'cmdDeleteDropship') {
+                    var id = event.currentTarget.dataset.target;
+                    delete $scope.planetSetup.dropshipSummary[id];
+                    $scope.$apply();
+                } else if (cmd === 'cmdDeleteJumpship') {
+                    var id = event.currentTarget.dataset.target;
+                    delete $scope.planetSetup.jumpshipSummary[id];
+                    $scope.$apply();
                 }
-            };
+            }
 
             var cb = $scope.$on('planetChanged', function (event, aPlanet) {
                 // before we move off of this planet, make sure we save any changes that were made
@@ -156,26 +338,7 @@
                 $scope.planet = null;
                 $scope.planetSetup = null;
 
-                if (aPlanet) {
-                    if (aPlanet.parentGroup.owner.id === $scope.faction.id) {
-                        $scope.planet = aPlanet;
-                        $scope.planetSetup = $scope.planetSetupDict[aPlanet.id];
-
-                        // convert the instance list to a summary total dictionary
-                        transformInstancesToTotals();
-                    }
-                }
-
-                // before we digest, remove any existing nbt-pseudo-element click handlers
-                var x = $(".nbt-pseudo-button");
-                x.off("click", onPseudoButtonClick);
-
-                $scope.$apply();
-
-                // attach a click handler to all of the nbt-pseudo-button elements (some of these
-                // could have been created as part of the digest)
-                x = $(".nbt-pseudo-button");
-                x.on("click", onPseudoButtonClick);
+                processPlanetChange(aPlanet);
             });
             $scope.$on('destroy', cb);
 
