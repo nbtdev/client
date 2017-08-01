@@ -23,9 +23,25 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('FactionApplicationAdminController', ['$sce', '$scope', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtLeague, nbtIdentity) {
+        .controller('FactionApplicationAdminController', ['$sce', '$scope', '$timeout', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtLeague, nbtIdentity) {
             $scope.league = null;
             $scope.data = null;
+
+            var timeoutPromise = null;
+
+            function setStatus(message, success) {
+                $scope.message = message;
+                $scope.success = success;
+
+                // cause the message to go away in 5 seconds
+                if (timeoutPromise)
+                    $timeout.cancel(timeoutPromise);
+
+                timeoutPromise = $timeout(function() {
+                    $scope.message = null;
+                    timeoutPromise = null;
+                }, 5000);
+            }
 
             $("#factionApplicationsModal").on("shown.bs.modal", function() {
                 nbtLeague.fetchApplications($scope.league, nbtIdentity.get().token, function(aData) {
@@ -33,13 +49,15 @@
                 });
             });
 
-            $scope.onDelete = function(unit) {
-                nbtCombat.deleteCombatUnit(
-                    unit,
+            $scope.approve = function(application) {
+                nbtLeague.approveApplication(
+                    $scope.league,
+                    application,
+                    application.resetFaction ? false : application.resetFaction,
                     nbtIdentity.get().token,
                     function(aData) {
-                        reloadCombatUnits();
-                        setStatus("Combat unit successfully deleted", true);
+                        $scope.data = aData;
+                        setStatus("Application for " + application.faction + " by " + application.applicant + " approved", true);
                     },
                     function(aErr) {
                         setStatus(aErr.data.message, false);
