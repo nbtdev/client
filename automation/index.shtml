@@ -113,6 +113,7 @@
     <!--#include virtual="/fragment/dockUndockDropships.html" -->
     <!--#include virtual="/fragment/jumpshipSummary.html" -->
     <!--#include virtual="/fragment/planetSetupEditor.html" -->
+    <!--#include virtual="/fragment/battles.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">

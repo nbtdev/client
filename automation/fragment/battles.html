@@ -1,0 +1,39 @@
+<script src="/js/nbt/controller/battles.js"></script>
+<div id="battlesModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="BattleController as battleController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">{{faction.displayName}} Battles</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <div class="row">
+                        <div class="col-md-1"><span class="nbt-bold">ID</span></div>
+                        <div class="col-md-2"><span class="nbt-bold">Type</span></div>
+                        <div class="col-md-2"><span class="nbt-bold">Sector</span></div>
+                        <div class="col-md-2"><span class="nbt-bold">Attacker</span></div>
+                        <div class="col-md-2"><span class="nbt-bold">Launched</span></div>
+                        <div class="col-md-2"><span class="nbt-bold">Status</span></div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="row" ng-repeat="battle in battles">
+                        <div class="col-md-1">{{battle.id}}</div>
+                        <div class="col-md-2">{{battle.type}}</div>
+                        <div class="col-md-2">{{battle.sector.name}}</div>
+                        <div class="col-md-2">{{battle.attacker.displayName}}</div>
+                        <div class="col-md-2">{{battle.attackDate | date:'short'}}</div>
+                        <div class="col-md-2">{{battle.status}}</div>
+                        <div class="col-md-1">
+                            <button type="button"
+                                    title="Log drops and/or report this battle"
+                                    class="btn btn-xs btn-primary"
+                                    ng-click="report(battle)">
+                                Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

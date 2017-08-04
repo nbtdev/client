@@ -50,8 +50,8 @@ var _BattleService = (function() {
     };
 
     // load the list of sector assaults for a faction
-    BattleService.prototype.fetchSectorAssaultsForFaction = function (aFaction, aToken, aCallback) {
-        if (aFaction._links.battle) {
+    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aToken, aCallback) {
+        if (aFaction._links.battles) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
@@ -61,7 +61,7 @@ var _BattleService = (function() {
             }).then(
                 function (aResp) {
                     if (aCallback)
-                        aCallback(new _Battle(aResp.data));
+                        aCallback(aResp.data);
                 }
             );
         }
