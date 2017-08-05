@@ -99,7 +99,7 @@
                         <!-- available -->
                         <div class="col-md-4">
                             <h5 class="nbt-h5">Available</h5>
-                            <div style="height: 200px; overflow-y: auto; border: solid 1px #990000">
+                            <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
                                 <ul style="padding-left: 0">
                                     <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
                                         <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
@@ -119,14 +119,16 @@
                         <!-- used/taken -->
                         <div class="col-md-4">
                             <h5 class="nbt-h5">Used</h5>
-                            <div style="height: 200px; border: solid 1px #990000">
+                            <div style="height: 240px; border: solid 1px #990000">
                                 <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}}</div>
                                 <ul style="padding-left: 0">
-                                    <li ng-repeat="unit in usedUnits"
-                                        style="list-style: none; cursor: pointer"
-                                        ng-click="unuseUnit(unit)"
-                                        ng-dblclick="destroyUnit(unit)"
-                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
+                                    <li ng-repeat="unit in usedUnits" style="list-style: none; padding-bottom: 5px">
+                                        <span ng-click="unuseUnit(unit)" style="cursor: pointer;">
+                                            <span class="nbt-highlight" style="padding-right: 10px">
+                                            {{unit.owner.shortName}}</span>{{unit.template.name}}
+                                        </span>
+                                        <button style="float: right; margin-right: 5px" class="btn btn-xs btn-primary" ng-click="destroyUnit(unit)" title="Mark Unit As Destroyed">Destroy</button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -134,12 +136,12 @@
                         <!-- destroyed -->
                         <div class="col-md-4">
                             <h5 class="nbt-h5">Destroyed</h5>
-                            <div style="height: 200px; border: solid 1px #990000">
+                            <div style="height: 240px; border: solid 1px #990000">
                                 <ul style="padding-left: 0">
                                     <li ng-repeat="unit in destroyedUnits"
                                         style="list-style: none; cursor: pointer"
                                         ng-click="undestroyUnit(unit)"
-                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner}}</span>{{unit.name}}</li>
+                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
                                 </ul>
                             </div>
                         </div>

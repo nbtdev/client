@@ -223,6 +223,10 @@
             }
 
             $scope.useUnit = function(summary) {
+                // limit to 8 instances used at a time
+                if ($scope.usedUnits && $scope.usedUnits.length === 8)
+                    return;
+
                 if (summary) {
                     if (summary.count <= 0)
                         return;
@@ -242,12 +246,25 @@
                 moveUsedUnitToAvailable(unit);
             };
 
+            // move unit from used list to destroyed list
             $scope.destroyUnit = function(unit) {
+                removeObjectFromArrayById(unit, $scope.usedUnits);
 
+                if (!$scope.destroyedUnits)
+                    $scope.destroyedUnits = [];
+
+                $scope.destroyedUnits.push(unit);
+
+                if (unit.template.tonnage)
+                    $scope.usedLimitAmount -= unit.template.tonnage;
+
+                if (unit.template.battleValue)
+                    $scope.usedLimitAmount -= unit.template.battleValue;
             };
 
             $scope.undestroyUnit = function(unit) {
-
+                removeObjectFromArrayById(unit, $scope.destroyedUnits);
+                addUsedUnit(unit);
             };
 
             // notify us of battle changes/loads
