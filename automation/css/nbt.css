@@ -617,3 +617,16 @@ input[type=password] {
 .nbt-header-cell-2 {
     background-color: #003300;
 }
+
+.nbt-disabled {
+    color: #808080;
+}
+
+.nbt-click-only {
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}

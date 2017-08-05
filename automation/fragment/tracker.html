@@ -54,22 +54,28 @@
                                 <td ng-repeat="drop in battle.drops" class="nbt-header-cell-2 nbt-bold">{{drop.type}}</td>
                             </tr>
 
-                            <!-- second row is map name, or '-' if no drop -->
+                            <!-- third row is map name, or '-' if no drop -->
                             <tr>
                                 <td class="nbt-title-cell">Map</td>
                                 <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mapName}}</td>
                             </tr>
 
-                            <!-- third row is game mode, or '-' if no drop -->
+                            <!-- fourth row is game mode, or '-' if no drop -->
                             <tr>
                                 <td class="nbt-title-cell">Mode</td>
                                 <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mode}}</td>
                             </tr>
 
-                            <!-- fourth row is drop tonnage/BV, or '-' if no drop -->
+                            <!-- fifth row is drop tonnage/BV, or '-' if no drop -->
                             <tr>
                                 <td class="nbt-title-cell">{{battle.limitString}}</td>
                                 <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.upperLimit}}</td>
+                            </tr>
+
+                            <!-- sixth row is drop result (from viewer's perspective), or '-' if no/current drop -->
+                            <tr>
+                                <td class="nbt-title-cell">Result</td>
+                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.result}}</td>
                             </tr>
                         </table>
                     </div>
@@ -80,30 +86,62 @@
                         <div class="col-md-3"><input type="text" size="20" placeholder="Match ID From Game"></div>
                         <div class="col-md-5">
                             <button type="button"
-                                    title="Log drop as Team 1"
+                                    title="Log drop"
                                     class="btn btn-xs btn-primary"
-                                    ng-click="logTeam1()">
-                                Log As Team 1
-                            </button>
-                            <button type="button"
-                                    title="Log drop as Team 2"
-                                    class="btn btn-xs btn-primary"
-                                    ng-click="logTeam2()">
-                                Log As Team 2
+                                    ng-click="logGameId()">
+                                Submit Game Id
                             </button>
                         </div>
                     </div>
 
                     <!-- alternate data entry -- available, used, destroyed -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <select
-                                    size="10"
-                                    ng-repeat="(fabbrev, funits) in factionCombatUnits"
-                                    ng-model="selectedUnits"
-                                    ng-options="lbl as unit.name + ': ' + unit.count  group by funits.name for (des, unit) in funits.units"
-                                    style="width: 60%"
-                            ></select>
+                        <!-- available -->
+                        <div class="col-md-4">
+                            <h5 class="nbt-h5">Available</h5>
+                            <div style="height: 200px; overflow-y: auto; border: solid 1px #990000">
+                                <ul style="padding-left: 0">
+                                    <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
+                                        <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
+                                        <ul style="padding-left: 10px">
+                                            <li ng-repeat="summary in factionUnits.units"
+                                                ng-click="useUnit(summary)"
+                                                class="nbt-click-only"
+                                                style="list-style: none; cursor: pointer; padding-left: 10px"
+                                                ng-class="{'nbt-disabled': summary.count===0}"
+                                            >{{summary.name}}: {{summary.count}} </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- used/taken -->
+                        <div class="col-md-4">
+                            <h5 class="nbt-h5">Used</h5>
+                            <div style="height: 200px; border: solid 1px #990000">
+                                <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}}</div>
+                                <ul style="padding-left: 0">
+                                    <li ng-repeat="unit in usedUnits"
+                                        style="list-style: none; cursor: pointer"
+                                        ng-click="unuseUnit(unit)"
+                                        ng-dblclick="destroyUnit(unit)"
+                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- destroyed -->
+                        <div class="col-md-4">
+                            <h5 class="nbt-h5">Destroyed</h5>
+                            <div style="height: 200px; border: solid 1px #990000">
+                                <ul style="padding-left: 0">
+                                    <li ng-repeat="unit in destroyedUnits"
+                                        style="list-style: none; cursor: pointer"
+                                        ng-click="undestroyUnit(unit)"
+                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner}}</span>{{unit.name}}</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

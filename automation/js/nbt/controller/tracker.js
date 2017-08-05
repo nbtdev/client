@@ -25,6 +25,8 @@
         .module('nbt.app')
         .controller('TrackerController', ['$sce', '$scope', '$timeout', 'nbtBattle', 'nbtIdentity', function($sce, $scope, $timeout, nbtBattle, nbtIdentity) {
             $scope.battle = null;
+            $scope.selectedUnit = null;
+            $scope.usedLimitAmount = 0;
 
             // https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
             function drawRoundedRect(canvas, x, y, w, h, r) {
@@ -38,6 +40,21 @@
                 canvas.arcTo(x,   y,   x+w, y,   r);
                 canvas.closePath();
                 return canvas;
+            }
+
+            function getDropResult(drop) {
+                if (drop.number >= 0)
+                    return '-';
+            }
+
+            function makeSummaryEntry(group, template) {
+                return {
+                    group: group,
+                    name: template.name,
+                    tonnage: template.tonnage,
+                    bv: template.battleValue,
+                    count: 0
+                };
             }
 
             function processBattle() {
@@ -56,11 +73,12 @@
 
                     // we just want to know the index of the current drop; we will re-label the drops below
                     currentDropIndex = i;
+                    $scope.drop = drop;
                     break;
                 }
 
-                // summarize/group all combat units by owner and count; this is the original starting set of combat
-                // units for the battle
+                // summarize/group all combat units by owner and count; the service will have updated the forcedec
+                // to consider destroyed and repaired instances
                 $scope.factionCombatUnits = {};
                 for (var g=0; g<$scope.battle.sector.instanceGroups.length; ++g) {
                     var group = $scope.battle.sector.instanceGroups[g];
@@ -69,6 +87,7 @@
                     if (!ownerUnits) {
                         ownerUnits = {
                             name: group.owner.displayName,
+                            abbrev: group.owner.shortName,
                             units: {}
                         };
                         $scope.factionCombatUnits[group.owner.shortName] = ownerUnits;
@@ -79,32 +98,26 @@
 
                         var summary = ownerUnits.units[tmpl.designation];
                         if (!summary) {
-                            summary = {
-                                name: tmpl.name,
-                                tonnage: tmpl.tonnage,
-                                bv: tmpl.battleValue,
-                                count: 0
-                            };
+                            summary = makeSummaryEntry(group, tmpl);
                             ownerUnits.units[tmpl.designation] = summary;
+
+                            if (!$scope.selectedUnit)
+                                $scope.selectedUnit = summary;
                         }
 
                         summary.count++;
                     }
                 }
 
-                // now, go through the drop logs and subtract everything that was destroyed and not repaired; also take
-                // this opportunity to renumber the drops
+                // renumber the drops
                 for (var d=0; d<$scope.battle.drops.length; ++d) {
                     var drop = $scope.battle.drops[d];
 
-                    for (var i=0; i<drop.combatUnitInstances.length; ++i) {
-                        var inst = drop.combatUnitInstances[i];
+                    drop.number = d - currentDropIndex;
+                    drop.result = getDropResult(drop);
 
-                        if (inst.destroyed && !(inst.repaired && inst.reppairFaction!==inst.owner.id)) {
-                            var summary = $scope.factionCombatUnits[inst.owner.shortName];
-                            summary.count--;
-                        }
-                    }
+                    if (drop.number === 0)
+                        drop.number = 'Current';
                 }
             }
 
@@ -139,11 +152,115 @@
             //         drawAssaultProgressBar();
             // }
 
-            // notify us of faction changes/loads
+            function removeObjectFromArrayById(obj, array) {
+                var idx = array.findIndex(function(e, i, a) {
+                    return (e.id === obj.id);
+                }, array);
+                array.splice(idx, 1);
+            }
+
+            // find and claim the next available combat unit instance for this owner, that matches the designation.
+            // For example, the next available CDA for Federated Suns. This function will also remove the instance from
+            // the owner's stocks
+            function claimNextUnitInstanceForOwner(summary) {
+                var group = summary.group;
+                for (var i = 0; i < group.instances.length; ++i) {
+                    var instance = group.instances[i];
+
+                    // "instance" can be undefined, as a previous claim operation could have wiped out its entry in the list
+                    if (instance && instance.template.name === summary.name) {
+                        removeObjectFromArrayById(instance, group.instances);
+                        return instance;
+                    }
+                }
+
+                return null;
+            }
+
+            function addUsedUnit(instance) {
+                if (!$scope.usedUnits)
+                    $scope.usedUnits = [];
+
+                $scope.usedUnits.push(instance);
+
+                if (instance.template.tonnage)
+                    $scope.usedLimitAmount += instance.template.tonnage;
+
+                if (instance.template.battleValue)
+                    $scope.usedLimitAmount += instance.template.battleValue;
+            }
+
+            function moveUsedUnitToAvailable(unit) {
+                // remove it from the used array...
+                removeObjectFromArrayById(unit, $scope.usedUnits);
+
+                // ...and add it back to the faction combat unit summaries...
+                var ownerGroup = $scope.factionCombatUnits[unit.owner.shortName];
+                var ownerUnits = ownerGroup.units;
+                var units = ownerUnits[unit.template.designation];
+                if (!units) {
+                    units = makeSummaryEntry(ownerGroup, unit.template);
+                    ownerUnits[unit.template.designation] = units;
+                }
+                units.count++;
+
+                // ...as well as the 'forcedec' unit listings...
+                var groups = $scope.battle.sector.instanceGroups;
+                for (var i=0; i<groups.length; ++i) {
+                    var group = groups[i];
+                    if (group.owner.name !== unit.owner.name)
+                        continue;
+
+                    group.instances.push(unit);
+                }
+
+                // ...and then update the used-tonnage/BV total
+                if (unit.template.tonnage)
+                    $scope.usedLimitAmount -= unit.template.tonnage;
+
+                if (unit.template.battleValue)
+                    $scope.usedLimitAmount -= unit.template.battleValue;
+            }
+
+            $scope.useUnit = function(summary) {
+                if (summary) {
+                    if (summary.count <= 0)
+                        return;
+
+                    var instance = claimNextUnitInstanceForOwner(summary);
+                    if (instance) {
+                        if (!instance.owner)
+                            instance.owner = summary.group.owner;
+
+                        addUsedUnit(instance);
+                        summary.count--;
+                    }
+                }
+            };
+
+            $scope.unuseUnit = function(unit) {
+                moveUsedUnitToAvailable(unit);
+            };
+
+            $scope.destroyUnit = function(unit) {
+
+            };
+
+            $scope.undestroyUnit = function(unit) {
+
+            };
+
+            // notify us of battle changes/loads
             var cb = $scope.$on('nbtBattleChanged', function (event, battle) {
                 $scope.battle = battle;
                 processBattle();
                 // drawProgressBar();
+            });
+            $scope.$on('destroy', cb);
+
+            // notify us of faction changes/loads
+            cb = $scope.$on('nbtFactionChanged', function (event, faction) {
+                $scope.faction = faction;
             });
             $scope.$on('destroy', cb);
         }]);
