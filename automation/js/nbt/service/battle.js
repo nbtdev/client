@@ -67,6 +67,27 @@ var _BattleService = (function() {
         }
     };
 
+    // load the list of sector assaults for a faction
+    BattleService.prototype.fetchBattleDetail = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aBattle._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+
+                    // post event to any subscribers
+                    rootScope.$broadcast('nbtBattleChanged', aResp.data);
+                }
+            );
+        }
+    };
+
     return BattleService;
 })();
 

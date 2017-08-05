@@ -1,0 +1,113 @@
+<script src="/js/nbt/controller/tracker.js"></script>
+<div id="trackerModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="TrackerController as trackerController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">{{battle.type}} Tracker - {{battle.attacker.displayName}} vs. {{battle.sector.owner.displayName}}</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <!-- the battle header -->
+                    <div class="row">
+                        <div class="col-md-3 nbt-right-justified"><img data-ng-src="{{battle.attacker.logo._links.raw.href}}"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <div class="container col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6 nbt-left-justified nbt-font-xxxl">{{battle.attackerPlanetCount}}</div>
+                                    <div class="col-md-6 nbt-right-justified nbt-font-xxxl">{{battle.defenderPlanetCount}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">ID: </div>
+                                    <div class="col-md-6 nbt-left-justified">{{battle.id}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Attacker: </div>
+                                    <div class="col-md-6 nbt-left-justified">{{battle.attacker.displayName}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Defender: </div>
+                                    <div class="col-md-6 nbt-left-justified">{{battle.sector.owner.displayName}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Attack Date: </div>
+                                    <div class="col-md-6 nbt-left-justified">{{battle.attackDate | date:'short'}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"><img data-ng-src="{{battle.sector.owner.logo._links.raw.href}}"></div>
+                    </div>
+
+                    <!-- the drop ticker -->
+
+                    <!-- header bar -->
+                    <div class="nbt-drop-tracker">
+                        <table class="nbt-tracker-table">
+                            <!-- header row is drop number, '-' if no drop, or 'Current' for the current drop -->
+                            <tr>
+                                <th>Drop</th>
+                                <th ng-repeat="drop in battle.drops">{{drop.number}}</th>
+                            </tr>
+
+                            <!-- second row is map name, or '-' if no drop -->
+                            <tr>
+                                <td class="nbt-title-cell">Type</td>
+                                <td ng-repeat="drop in battle.drops" class="nbt-header-cell-2 nbt-bold">{{drop.type}}</td>
+                            </tr>
+
+                            <!-- second row is map name, or '-' if no drop -->
+                            <tr>
+                                <td class="nbt-title-cell">Map</td>
+                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mapName}}</td>
+                            </tr>
+
+                            <!-- third row is game mode, or '-' if no drop -->
+                            <tr>
+                                <td class="nbt-title-cell">Mode</td>
+                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mode}}</td>
+                            </tr>
+
+                            <!-- fourth row is drop tonnage/BV, or '-' if no drop -->
+                            <tr>
+                                <td class="nbt-title-cell">{{battle.limitString}}</td>
+                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.upperLimit}}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- drop logging entry -->
+                    <div class="row">
+                        <div class="col-md-4 nbt-right-justified">Match ID: </div>
+                        <div class="col-md-3"><input type="text" size="20" placeholder="Match ID From Game"></div>
+                        <div class="col-md-5">
+                            <button type="button"
+                                    title="Log drop as Team 1"
+                                    class="btn btn-xs btn-primary"
+                                    ng-click="logTeam1()">
+                                Log As Team 1
+                            </button>
+                            <button type="button"
+                                    title="Log drop as Team 2"
+                                    class="btn btn-xs btn-primary"
+                                    ng-click="logTeam2()">
+                                Log As Team 2
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- alternate data entry -- available, used, destroyed -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select
+                                    size="10"
+                                    ng-repeat="(fabbrev, funits) in factionCombatUnits"
+                                    ng-model="selectedUnits"
+                                    ng-options="lbl as unit.name + ': ' + unit.count  group by funits.name for (des, unit) in funits.units"
+                                    style="width: 60%"
+                            ></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

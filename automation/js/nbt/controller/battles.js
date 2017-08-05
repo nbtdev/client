@@ -37,6 +37,10 @@
                 }
             });
 
+            $scope.report = function(battle) {
+                nbtBattle.fetchBattleDetail(battle, nbtIdentity.get().token);
+            };
+
             // notify us of faction changes/loads
             var cb = $scope.$on('nbtFactionChanged', function (event, faction) {
                 $scope.faction = faction;

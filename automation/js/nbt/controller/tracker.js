@@ -1,0 +1,150 @@
+/**
+ Copyright (c) 2017, Netbattletech
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification, are
+ permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+(function() {
+    angular
+        .module('nbt.app')
+        .controller('TrackerController', ['$sce', '$scope', '$timeout', 'nbtBattle', 'nbtIdentity', function($sce, $scope, $timeout, nbtBattle, nbtIdentity) {
+            $scope.battle = null;
+
+            // https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
+            function drawRoundedRect(canvas, x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                canvas.beginPath();
+                canvas.moveTo(x+r, y);
+                canvas.arcTo(x+w, y,   x+w, y+h, r);
+                canvas.arcTo(x+w, y+h, x,   y+h, r);
+                canvas.arcTo(x,   y+h, x,   y,   r);
+                canvas.arcTo(x,   y,   x+w, y,   r);
+                canvas.closePath();
+                return canvas;
+            }
+
+            function processBattle() {
+                // rename the 'number' field for easy display:
+                //      * negative numbers for drops already completed and logged
+                //      * 'Current' for the current drop
+                //      * positive numbers for upcoming drops (if known)
+                var currentDropIndex = -1;
+                for (var i=0; i<$scope.battle.drops.length; ++i) {
+                    var drop = $scope.battle.drops[i];
+
+                    // go past all of the drops that have instances logged against them...
+                    if (drop.combatUnitInstances) {
+                        continue;
+                    }
+
+                    // we just want to know the index of the current drop; we will re-label the drops below
+                    currentDropIndex = i;
+                    break;
+                }
+
+                // summarize/group all combat units by owner and count; this is the original starting set of combat
+                // units for the battle
+                $scope.factionCombatUnits = {};
+                for (var g=0; g<$scope.battle.sector.instanceGroups.length; ++g) {
+                    var group = $scope.battle.sector.instanceGroups[g];
+
+                    var ownerUnits = $scope.factionCombatUnits[group.owner.shortName];
+                    if (!ownerUnits) {
+                        ownerUnits = {
+                            name: group.owner.displayName,
+                            units: {}
+                        };
+                        $scope.factionCombatUnits[group.owner.shortName] = ownerUnits;
+                    }
+
+                    for (var i=0; i<group.instances.length; ++i) {
+                        var tmpl = group.instances[i].template;
+
+                        var summary = ownerUnits.units[tmpl.designation];
+                        if (!summary) {
+                            summary = {
+                                name: tmpl.name,
+                                tonnage: tmpl.tonnage,
+                                bv: tmpl.battleValue,
+                                count: 0
+                            };
+                            ownerUnits.units[tmpl.designation] = summary;
+                        }
+
+                        summary.count++;
+                    }
+                }
+
+                // now, go through the drop logs and subtract everything that was destroyed and not repaired; also take
+                // this opportunity to renumber the drops
+                for (var d=0; d<$scope.battle.drops.length; ++d) {
+                    var drop = $scope.battle.drops[d];
+
+                    for (var i=0; i<drop.combatUnitInstances.length; ++i) {
+                        var inst = drop.combatUnitInstances[i];
+
+                        if (inst.destroyed && !(inst.repaired && inst.reppairFaction!==inst.owner.id)) {
+                            var summary = $scope.factionCombatUnits[inst.owner.shortName];
+                            summary.count--;
+                        }
+                    }
+                }
+            }
+
+            // function drawAssaultProgressBar() {
+            //     // how many steps do we need? each side can claim up to (N-1)/2 planets, where N is the number of
+            //     // member planets in the sector. So we need a center spot, and then (N-1)/2-1 spots on either side (the
+            //     // "minus one" is because if someone claims that last planet, then we are either going to Siege or
+            //     // going home
+            //     var canvas = $('#assaultProgress')[0];
+            //     var ctx = canvas.getContext('2d')
+            //     var w = canvas.clientWidth - 10;
+            //     var h = canvas.clientHeight - 10;
+            //
+            //     var fill = ctx.createLinearGradient(0, 0, w, 0);
+            //     fill.addColorStop(0, "red");
+            //     fill.addColorStop(0.5, "green");
+            //     fill.addColorStop(1, "red");
+            //     ctx.fillStyle = fill;
+            //     drawRoundedRect(ctx, 5, 5, w, h, 7).fill();
+            //
+            //     ctx.font = '48px Arial';
+            //     ctx.fillStyle = 'white';
+            //     ctx.textAlign = 'center';
+            //     ctx.fillText('Capture', w / 2 + 5, h / 2 + 5);
+            // }
+            //
+            // function drawProgressBar() {
+            //     if (!$scope.battle)
+            //         return;
+            //
+            //     if ($scope.battle.type === 'Sector Assault')
+            //         drawAssaultProgressBar();
+            // }
+
+            // notify us of faction changes/loads
+            var cb = $scope.$on('nbtBattleChanged', function (event, battle) {
+                $scope.battle = battle;
+                processBattle();
+                // drawProgressBar();
+            });
+            $scope.$on('destroy', cb);
+        }]);
+})();
