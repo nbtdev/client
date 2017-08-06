@@ -248,23 +248,16 @@
 
             // move unit from used list to destroyed list
             $scope.destroyUnit = function(unit) {
-                removeObjectFromArrayById(unit, $scope.usedUnits);
-
                 if (!$scope.destroyedUnits)
                     $scope.destroyedUnits = [];
 
+                unit.destroyed = 1;
                 $scope.destroyedUnits.push(unit);
-
-                if (unit.template.tonnage)
-                    $scope.usedLimitAmount -= unit.template.tonnage;
-
-                if (unit.template.battleValue)
-                    $scope.usedLimitAmount -= unit.template.battleValue;
             };
 
             $scope.undestroyUnit = function(unit) {
                 removeObjectFromArrayById(unit, $scope.destroyedUnits);
-                addUsedUnit(unit);
+                delete unit.destroyed;
             };
 
             // notify us of battle changes/loads

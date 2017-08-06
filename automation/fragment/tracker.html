@@ -89,13 +89,16 @@
                                     title="Log drop"
                                     class="btn btn-xs btn-primary"
                                     ng-click="logGameId()">
-                                Submit Game Id
+                                Submit Match ID
                             </button>
                         </div>
                     </div>
 
                     <!-- alternate data entry -- available, used, destroyed -->
                     <div class="row">
+                        <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Manual Drop Logging And Drop Calculator</a></div>
+                    </div>
+                    <div id="manualDropEntry" class="row collapse">
                         <!-- available -->
                         <div class="col-md-4">
                             <h5 class="nbt-h5">Available</h5>
@@ -127,7 +130,11 @@
                                             <span class="nbt-highlight" style="padding-right: 10px">
                                             {{unit.owner.shortName}}</span>{{unit.template.name}}
                                         </span>
-                                        <button style="float: right; margin-right: 5px" class="btn btn-xs btn-primary" ng-click="destroyUnit(unit)" title="Mark Unit As Destroyed">Destroy</button>
+                                        <button style="float: right; margin-right: 5px"
+                                                class="btn btn-xs btn-primary"
+                                                ng-click="destroyUnit(unit)"
+                                                ng-show="!unit.destroyed"
+                                                title="Mark Unit As Destroyed">Destroy</button>
                                     </li>
                                 </ul>
                             </div>
