@@ -260,6 +260,15 @@
                 delete unit.destroyed;
             };
 
+            // log the current drop
+            $scope.logDrop = function() {
+                $scope.drop.combatUnitInstances = $scope.usedUnits;
+                nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                });
+            };
+
             // notify us of battle changes/loads
             var cb = $scope.$on('nbtBattleChanged', function (event, battle) {
                 $scope.battle = battle;

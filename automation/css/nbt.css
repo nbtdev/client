@@ -630,3 +630,7 @@ input[type=password] {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
 }
+
+.nbt-hover:hover {
+    background-color: #303030;
+}

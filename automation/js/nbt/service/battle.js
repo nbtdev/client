@@ -88,6 +88,25 @@ var _BattleService = (function() {
         }
     };
 
+    // log a drop in a battle; returns the entire battle through aCallback, updated through the drop logging
+    BattleService.prototype.logBattleDrop = function (aDrop, aToken, aCallback) {
+        if (aDrop._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aDrop._links.self.href,
+                data: aDrop,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
     return BattleService;
 })();
 
