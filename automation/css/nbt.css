@@ -497,7 +497,7 @@ input[type=password] {
 
 .nbt-modal-body {
     padding: 10px;
-    max-height: calc(100vh - 225px);
+    max-height: calc(100vh - 175px);
     overflow-y: auto;
 }
 
@@ -578,8 +578,19 @@ input[type=password] {
     border-radius: 1.5px;
     background-color: goldenrod;
 }
+
 .nbt-font-xxxl {
     font-size: 5em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-xl {
+    font-size: 3em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-s {
+    font-size: .5em;
     font-family: arial, helvetica, verdana;
 }
 
@@ -608,6 +619,7 @@ input[type=password] {
 
 .nbt-drop-tracker {
     padding:  10px;
+    overflow-x: auto;
 }
 
 .nbt-current-drop {

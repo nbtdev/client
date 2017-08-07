@@ -42,11 +42,6 @@
                 return canvas;
             }
 
-            function getDropResult(drop) {
-                if (drop.number >= 0)
-                    return '-';
-            }
-
             function makeSummaryEntry(group, template) {
                 return {
                     group: group,
@@ -57,22 +52,87 @@
                 };
             }
 
+            function findInvolvedFactionIds() {
+                // the obvious ones are the attacker and the sector owner
+                var rtn = {
+                    attackers: [$scope.battle.attacker.id],
+                    defenders: [$scope.battle.sector.owner.id]
+                };
+
+                // then the allies
+                if ($scope.battle.alliedAttackers) {
+                    for (var i = 0; i < $scope.battle.alliedAttackers.length; ++i) {
+                        rtn.attackers.push($scope.battle.alliedAttackers[i].id);
+                    }
+                }
+
+                if ($scope.battle.alliedDefenders) {
+                    for (var i = 0; i < $scope.battle.alliedDefenders.length; ++i) {
+                        rtn.defenders.push($scope.battle.alliedDefenders[i].id);
+                    }
+                }
+
+                return rtn;
+            }
+
+            function arrayContains(array, obj) {
+                if (Array.prototype.includes) {
+                    return array.includes(obj);
+                } else {
+                    // do it the hard way...
+                    var idx = array.indexOf(obj, function(e, i, a) {
+                        return (e===obj);
+                    }, array);
+                    return idx !== -1;
+                }
+            }
+
+            function isFullyLogged(drop, factionIds) {
+                var defenderLogged = false;
+                var attackerLogged = false;
+
+                if (drop.combatUnitInstances) {
+                    for (var i=0; i<drop.combatUnitInstances.length; ++i) {
+                        if (!attackerLogged && arrayContains(factionIds.attackers, drop.combatUnitInstances[i].owner.id)) {
+                            attackerLogged = true;
+                            continue;
+                        }
+
+                        if (!defenderLogged && arrayContains(factionIds.defenders, drop.combatUnitInstances[i].owner.id)) {
+                            defenderLogged = true;
+                            continue;
+                        }
+
+                        if (attackerLogged && defenderLogged)
+                            break;
+                    }
+                }
+
+                return (attackerLogged && defenderLogged);
+            }
+
             function processBattle() {
+                $scope.usedUnits = [];
+                $scope.destroyedUnits = [];
+                $scope.usedLimitAmount = 0;
+                $scope.drop = null;
+
                 // rename the 'number' field for easy display:
                 //      * negative numbers for drops already completed and logged
                 //      * 'Current' for the current drop
                 //      * positive numbers for upcoming drops (if known)
                 var currentDropIndex = -1;
-                for (var i=0; i<$scope.battle.drops.length; ++i) {
-                    var drop = $scope.battle.drops[i];
+                var factionIds = findInvolvedFactionIds();
+
+                for (var d=0; d<$scope.battle.drops.length; ++d) {
+                    var drop = $scope.battle.drops[d];
 
                     // go past all of the drops that have instances logged against them...
-                    if (drop.combatUnitInstances) {
+                    if (isFullyLogged(drop, factionIds))
                         continue;
-                    }
 
                     // we just want to know the index of the current drop; we will re-label the drops below
-                    currentDropIndex = i;
+                    currentDropIndex = d;
                     $scope.drop = drop;
                     break;
                 }
@@ -114,7 +174,6 @@
                     var drop = $scope.battle.drops[d];
 
                     drop.number = d - currentDropIndex;
-                    drop.result = getDropResult(drop);
 
                     if (drop.number === 0)
                         drop.number = 'Current';
@@ -262,8 +321,21 @@
 
             // log the current drop
             $scope.logDrop = function() {
+                if (!$scope.drop) {
+                    alert("There is no current drop to log; perhaps\n" +
+                        "the opponent needs to log or confirm?");
+                    return;
+                }
+
                 $scope.drop.combatUnitInstances = $scope.usedUnits;
                 nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                });
+            };
+
+            $scope.reloadBattle = function() {
+                nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                 });
