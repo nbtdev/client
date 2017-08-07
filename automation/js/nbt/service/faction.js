@@ -99,7 +99,7 @@ var _FactionService = (function() {
             }).then(
                 function (aResp) {
                     // populate faction database with response
-                    var factions = aResp.data._embedded.factions;
+                    var factions = aResp.data._embedded.factionExes;
                     mFactions[aLeague.id] = factions;
 
                     if (aSuccessCb)
