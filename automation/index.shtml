@@ -104,6 +104,7 @@
     <!--#include virtual="/fragment/admin/combatUnitType.html" -->
     <!--#include virtual="/fragment/admin/combatUnit.html" -->
     <!--#include virtual="/fragment/admin/factionApplications.html" -->
+    <!--#include virtual="/fragment/admin/factions.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/profile.html" -->
@@ -113,6 +114,8 @@
     <!--#include virtual="/fragment/dockUndockDropships.html" -->
     <!--#include virtual="/fragment/jumpshipSummary.html" -->
     <!--#include virtual="/fragment/planetSetupEditor.html" -->
+    <!--#include virtual="/fragment/battles.html" -->
+    <!--#include virtual="/fragment/tracker.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">

@@ -30,13 +30,15 @@
                         <li><a class="ui-interactive" data-toggle="modal" data-target="#combatUnitAdminModal">Combat Units</a></li>
                         <li><a class="ui-interactive" data-toggle="modal" data-target="#combatUnitTypeAdminModal">Combat Unit Types</a></li>
                         <li><a class="ui-interactive" data-toggle="modal" data-target="#factionApplicationsModal">Faction Applications</a></li>
+                        <li><a class="ui-interactive" data-toggle="modal" data-target="#factionAdminModal">Factions</a></li>
                     </ul>
                 </li>
 
                 <li ng-show="(isAdmin() || isTeamAdmin()) && league"  class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle ui-interactive">Faction Tools<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a class="ui-interactive nbt-menu-item" data-target="cmdPlanetSetup">Faction Setup</a></li>
+                        <li ng-show="faction.status==='Pending'"><a class="ui-interactive nbt-menu-item" data-cmdTarget="cmdPlanetSetup">Faction Setup</a></li>
+                        <li ng-show="faction.status==='Active' || faction.status==='Semi-Active'"><a class="ui-interactive nbt-menu-item" data-toggle="modal" data-target="#battlesModal">Battles</a></li>
                     </ul>
                 </li>
 

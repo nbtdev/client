@@ -32,7 +32,7 @@
 
 <div id="planetSetupDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetSetupController" ng-cloak>
     <h5 class="nbt-h5 header">Planet Setup - {{faction.displayName}}<span ng-show="planet">&nbsp;({{planet.name}})</span><span class="nbt-close-dialog" style="float: right; cursor: pointer">&#10006;</span></h5>
-    <div class="content nbt-base">
+    <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
         <div class="container col-md-12">
             <div class="row">
                 <div class="col-md-3">
@@ -63,7 +63,7 @@
                     <span style="float: right" ng-show="message" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</span>
                 </div>
             </div>
-            <div style="padding: 5px; overflow-x: hidden; overflow-y: scroll">
+            <div style="padding: 5px; overflow-x: hidden;">
                 <div class="row" ng-show="planet" style="margin-top: 5px;">
                     <div class="col-md-6">
                         <div style="background-color: lightgray; color: #202020;">
@@ -88,7 +88,7 @@
                     <div class="col-md-5">
                         <div style="width: 90%; padding: 5px; background-color: lightgray; color: #202020;">
                             <div >Combat Units Available</div>
-                            <select style="width:100%" multiple ng-model="selectedCombatUnits" ng-options="unit.name for unit in factionSetup.availableCombatUnits"></select>
+                            <select style="width:100%" size="10" multiple ng-model="selectedCombatUnits" ng-options="unit.name for unit in factionSetup.availableCombatUnits"></select>
                         </div>
                     </div>
                 </div>

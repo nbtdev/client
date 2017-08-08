@@ -25,6 +25,8 @@ var _FactionService = (function() {
     var http = null;
     var rootScope = null;
     var mFactions = {};
+    var mClasses = [];
+    var mStatuses = [];
 
     function FactionService(aHttp, aRootScope) {
         self = this;
@@ -44,6 +46,31 @@ var _FactionService = (function() {
                 function (aResp) {
                     if (aSuccessCb)
                         aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.deleteFaction = function(aFaction, aToken, aSuccessCb, aFailCb) {
+    };
+
+    FactionService.prototype.updateFaction = function(aFaction, aToken, aSuccessCb, aFailCb) {
+        if (aFaction && aFaction._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aFaction._links.self.href,
+                data: aFaction,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
                 }
             );
         }
@@ -99,8 +126,29 @@ var _FactionService = (function() {
             }).then(
                 function (aResp) {
                     // populate faction database with response
-                    var factions = aResp.data._embedded.factions;
+                    var factions = aResp.data._embedded.factionExes;
                     mFactions[aLeague.id] = factions;
+
+                    // trigger a load of faction classes and statuses too; the links will be sent with the factions collection
+                    http({
+                        method: 'GET', // TODO: GET FROM LINKS!
+                        url: aResp.data._links.classes.href,
+                        headers: hdr.get()
+                    }).then(
+                        function(resp) {
+                            rootScope.$broadcast('nbtFactionClassesChanged', resp.data);
+                        }
+                    );
+
+                    http({
+                        method: 'GET', // TODO: GET FROM LINKS!
+                        url: aResp.data._links.statuses.href,
+                        headers: hdr.get()
+                    }).then(
+                        function(resp) {
+                            rootScope.$broadcast('nbtFactionStatusesChanged', resp.data);
+                        }
+                    );
 
                     if (aSuccessCb)
                         aSuccessCb(factions);

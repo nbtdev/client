@@ -102,7 +102,7 @@
         };
 
         $("a.nbt-menu-item").on("click", function(event) {
-            $rootScope.$broadcast(event.target.dataset.target);
+            $rootScope.$broadcast(event.target.dataset.cmdtarget);
         });
 
         nbtLeague.fetchLeagues(nbtIdentity.get().token);

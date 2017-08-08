@@ -160,11 +160,43 @@ var _LeagueService = (function() {
             method: 'PUT', // TODO: get from links!
             url: aApplicationData._links.self.href,
             headers: hdrs.get(),
-            data:aApplicationData
+            data: {
+                application: aApplicationData
+            }
         }).then(
             function (resp) {
                 if (aSuccessCb)
                     aSuccessCb(resp);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
+    };
+
+    // NOTE: this call only succeeds if the API determines that aToken has the proper access to approve applications...otherwise,
+    // you are wasting your time trying to make this call.
+    LeagueService.prototype.approveApplication = function(aLeague, aApplicationData, aResetFaction, aToken, aSuccessCb, aFailCb) {
+        if (!aApplicationData._links.self)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'PUT', // TODO: get from links!
+            url: aApplicationData._links.self.href,
+            headers: hdrs.get(),
+            data: {
+                application: aApplicationData,
+                approved: true,
+                resetFaction: aResetFaction
+            }
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp.data);
             },
             function (err) {
                 if (aFailCb)

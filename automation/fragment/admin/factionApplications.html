@@ -7,30 +7,18 @@
             </div>
             <div class="modal-body nbt-base nbt-modal-body">
                 <div class="container col-md-12">
-                    <!-- status/error message -->
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-6 nbt-centered">
-                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
-                        </div>
-                        <div class="col-md-3"></div>
-                    </div>
-
                     <!-- the rows of data -->
                     <div class="row nbt-bold">
-                        <div class="col-md-1"></div>
                         <div class="col-md-2">Faction</div>
                         <div class="col-md-2">Team</div>
                         <div class="col-md-1">Tags</div>
                         <div class="col-md-1">Pilots</div>
                         <div class="col-md-1">Geo(s)</div>
                         <div class="col-md-2">Applicant</div>
-                        <div class="col-md-2"></div>
+                        <div class="col-md-1">Reset Faction</div>
+                        <div class="col-md-2">Actions</div>
                     </div>
                     <div class="row" ng-repeat="appl in data._embedded.applications">
-                        <div class="col-md-1">
-                            <input type="checkbox" ng-model="app.selected">
-                        </div>
                         <div class="col-md-2">
                             <span>{{appl.faction}}</span>
                         </div>
@@ -46,13 +34,29 @@
                         <div class="col-md-1">
                             <span>{{appl.geo.join(',')}}</span>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-2">
                             <span>{{appl.applicant}}</span>
                         </div>
-                        <div class="col-md-2">
-                            <a class="ui-interactive" ng-click="onAccept(unit)"><img src="../../images/check16.png" height="16" width="16"/></a>
-                            <a class="ui-interactive" ng-click="onDecline(unit)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                        <div class="col-md-1">
+                            <input type="checkbox" ng-model="appl.resetFaction">
                         </div>
+                        <div class="col-md-2">
+                            <button type="button"
+                                    class="btn btn-xs"
+                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                    ng-click="approve(appl)">
+                                Approve
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- status/error message -->
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                        </div>
+                        <div class="col-md-3"></div>
                     </div>
                 </div>
             </div>

@@ -50,8 +50,8 @@ var _BattleService = (function() {
     };
 
     // load the list of sector assaults for a faction
-    BattleService.prototype.fetchSectorAssaultsForFaction = function (aFaction, aToken, aCallback) {
-        if (aFaction._links.battle) {
+    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aToken, aCallback) {
+        if (aFaction._links.battles) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
@@ -61,7 +61,47 @@ var _BattleService = (function() {
             }).then(
                 function (aResp) {
                     if (aCallback)
-                        aCallback(new _Battle(aResp.data));
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // load the list of sector assaults for a faction
+    BattleService.prototype.fetchBattleDetail = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aBattle._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+
+                    // post event to any subscribers
+                    rootScope.$broadcast('nbtBattleChanged', aResp.data);
+                }
+            );
+        }
+    };
+
+    // log a drop in a battle; returns the entire battle through aCallback, updated through the drop logging
+    BattleService.prototype.logBattleDrop = function (aDrop, aToken, aCallback) {
+        if (aDrop._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aDrop._links.self.href,
+                data: aDrop,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
                 }
             );
         }

@@ -417,6 +417,11 @@ input[type=password] {
     padding-right: 2px;
 }
 
+.nbt-left-justified {
+    text-align: left;
+    padding-left: 2px;
+}
+
 .nbt-rules-body
 {
     background: #101010 url(http://www.nbt-mwo.com/forum/Themes/zone99_20_1/images/custom/body_bg.jpg) 50% 0 no-repeat fixed;
@@ -482,13 +487,17 @@ input[type=password] {
     color: goldenrod;
 }
 
+.nbt-highlight {
+    color: goldenrod;
+}
+
 .nbt-hover-highlight:hover {
     background: #222;
 }
 
 .nbt-modal-body {
     padding: 10px;
-    max-height: calc(100vh - 225px);
+    max-height: calc(100vh - 175px);
     overflow-y: auto;
 }
 
@@ -568,4 +577,72 @@ input[type=password] {
     overflow: hidden;
     border-radius: 1.5px;
     background-color: goldenrod;
+}
+
+.nbt-font-xxxl {
+    font-size: 5em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-xl {
+    font-size: 3em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-s {
+    font-size: 0.8em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-tracker-table {
+    color:  white;
+    font-size:  small;
+    border:  solid 0.5px goldenrod;
+}
+
+.nbt-tracker-table th {
+    background-color: #660000;
+    color:  goldenrod;
+    text-align: center;
+    border:  solid 0.5px goldenrod;
+}
+
+.nbt-tracker-table td {
+    padding: 2px;
+    border:  solid 0.5px goldenrod;
+    text-align: center;
+}
+
+.nbt-title-cell {
+    background-color: #003300;
+}
+
+.nbt-drop-tracker {
+    padding:  10px;
+    overflow-x: auto;
+}
+
+.nbt-current-drop {
+    background-color: #660000;
+}
+
+.nbt-header-cell-2 {
+    background-color: #003300;
+}
+
+.nbt-disabled {
+    color: #808080;
+}
+
+.nbt-click-only {
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+
+.nbt-hover:hover {
+    background-color: #303030;
 }
