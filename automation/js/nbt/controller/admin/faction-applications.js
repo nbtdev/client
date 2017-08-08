@@ -53,7 +53,7 @@
                 nbtLeague.approveApplication(
                     $scope.league,
                     application,
-                    application.resetFaction ? false : application.resetFaction,
+                    application.resetFaction ? application.resetFaction : false,
                     nbtIdentity.get().token,
                     function(aData) {
                         $scope.data = aData;
