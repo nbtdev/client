@@ -197,6 +197,93 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.fetchRoster = function(aFaction, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.roster) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.roster.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.addPilotsToRoster = function(aFaction, aPilots, aToken, aSuccessCb, aFailCb) {
+        if (!(aPilots instanceof Array)) {
+            aFailCb({data: { message: "Expected an array of Pilot instances"}});
+            return;
+        }
+
+        if (aFaction && aFaction._links.roster) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFaction._links.roster.href,
+                data: aPilots,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.updateRosterPilot = function(aPilot, aToken, aSuccessCb, aFailCb) {
+        if (aPilot && aPilot._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aPilot._links.self.href,
+                data: aPilot,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.removePilotFromRoster = function(aPilot, aToken, aSuccessCb, aFailCb) {
+        if (aPilot && aPilot._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: aPilot._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
     return FactionService;
 })();
 

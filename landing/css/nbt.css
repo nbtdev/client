@@ -1,0 +1,648 @@
+.starmapOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.starmapUI {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.ui-interactive {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.ui-content {
+    display: inline-block;
+}
+
+.ui-contentItem {
+    display: inline-block;
+}
+
+.starmapUI input[type=search] {
+    color: black;
+    opacity: 0.9;
+}
+
+.starmapContainer {
+    position: relative;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 100%;
+}
+
+.starmap {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: black;
+    color: wheat;
+}
+
+.planetNameLabel {
+    color: white;
+    position: absolute;
+    font-size: smaller;
+    font-family: arial, helvetica, verdana;
+}
+
+.planetBrief {
+    color: white;
+    position: absolute;
+    border: solid 1px white;
+    font-family: arial, helvetica, verdana;
+    font-size: smaller;
+    background-color: darkblue;
+}
+
+/* the main site them does not actually have styles for selects... */
+
+select, option {
+    color: black;
+}
+
+input[type=email] {
+    color: black;
+}
+
+input[type=text] {
+    color: black;
+}
+
+input[type=password] {
+    color: black;
+}
+
+.planetDetailEnabled {
+    color: white;
+}
+
+.planetDetailDisabled {
+    color: grey;
+}
+
+.planetDetailCanJump {
+    color: rgb(176, 255, 123);
+}
+
+.planetDetailActiveBattle {
+    background-color: rgb(138, 23, 23) !important;
+}
+
+@keyframes pwdIncorrect {
+    0%  {color: red}
+    50% {color: white}
+    100%{color: red}
+}
+
+.passwordIncorrect {
+    position: relative;
+    width: 70%;
+    left: 15%;
+    animation-name: pwdIncorrect;
+    animation-duration: 0.1s;
+    animation-iteration-count: 3;
+}
+
+.modalDialog {
+    position: fixed;
+    background: rgba(128, 128, 128, 0.4);
+}
+
+.modalFade {
+    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
+}
+
+.onTop {
+    z-index: 10000;
+}
+
+.onBottom {
+    z-index: -10000;
+}
+
+.fullscreen {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.minimized {
+    top: 0px;
+    left: 0px;
+    width: 0%;
+    height: 0%;
+}
+
+.invisible {
+    display: none;
+}
+
+.fadeIn {
+    opacity: 1;
+}
+
+.fadeOut {
+    opacity: 0;
+}
+
+.privacyPolicy {
+    border: solid 1px white;
+}
+
+.g-recaptcha {
+    display: inline-block;
+}
+
+.sa-side-settings {
+    background-image: url(../stage/img/icon/gear.png);
+}
+
+.sa-side-users {
+    background-image: url(../stage/img/icon/person-icon.png);
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.nbt-bold {
+    font-weight: bold;
+}
+
+.nbt-header-faction {
+    font-size: xx-small;
+    margin-right: 20px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.planetDetail.listing {
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    max-height: 760px;
+}
+
+.planetDetail.listing table {
+    width: 100%;
+}
+
+.planetDetail.headerRow {    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
+    display: table-row;
+    font-weight: bold;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.planetDetail.row {
+    display: table-row;
+    width: 100%;
+}
+
+.planetDetail.cell {
+    display: table-cell;
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+.planetDetail.insetContainer {
+    background-color: gray;
+    color: white;
+    width: 100%;;
+}
+
+.planetDetail.insetSection {
+    padding-left: 5px;
+    width: 100%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.indent {
+    margin-left: 25px;
+}
+
+.nbt-left-drawer {
+    position: absolute;
+    height:100%;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 10010;
+    transition-property: width;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out;
+}
+
+.closed {
+    width: 0%;
+}
+
+.opened {
+    width: 200%;
+}
+
+.tool-panel-label {
+    font-size: larger;
+    font-weight: bold;
+    background-color: lightgray;
+    color: black;
+    width: 100%;
+}
+
+.tool-panel-contents {
+    width: 100%;
+    height: 100%;
+}
+
+.padded {
+    padding: 8px;
+}
+
+.tool-icon {
+    padding-left: 2px;
+    padding-right: 2px;
+    cursor: pointer;
+}
+
+.error-message {
+    color: red;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.waiting {
+    cursor: progress;
+}
+
+.header-logo {
+    height: 50px;
+}
+
+
+.nbt-base {
+    background-color: black;
+    color: white;
+}
+
+.nbt-base > li > a {
+    color: goldenrod;
+}
+
+.nbt-nav-bar {
+    margin-bottom: 0px; /* Bootstrap nav bar has a 20-px bottom margin */
+}
+
+.nbt-side-bar {
+    background-color: black;
+    height: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.nbt-side-menu {
+    padding: 4px;
+}
+
+.nbt-side-menu-label {
+    color: goldenrod;
+}
+
+.nbt-side-menu-item {
+    padding-bottom: 15px;
+}
+
+.nbt-multi-select {
+    min-width: 150px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.nbt-perform-transfer {
+    display: inline-block;
+    color: black;
+}
+
+.map-tools {
+    background-color: black;
+    padding: 3px;
+    border: solid 1px goldenrod;
+}
+
+.nbt-upper-right {
+    float: right;
+}
+
+.nbt-pseudo-button {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.nbt-pseudo-button:hover {
+    opacity: 0.8;
+}
+
+.nbt-pseudo-button:active {
+    opacity: 1;
+}
+
+.nbt-info {
+    color: green;
+    opacity: 1;
+}
+
+.nbt-error {
+    color: red;
+    opacity: 1;
+}
+
+.nbt-para {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.nbt-invisible {
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+.nbt-status {
+    display: inline-block;
+}
+
+.nbt-centered {
+    text-align: center;
+    margin: auto;
+    padding: 0;
+}
+
+.nbt-label {
+    color: white;
+}
+
+.nbt-unordered-list-item {
+
+}
+
+.nbt-plain-item {
+    list-style-type: none;
+}
+
+.nbt-right-justified {
+    text-align: right;
+    padding-right: 2px;
+}
+
+.nbt-left-justified {
+    text-align: left;
+    padding-left: 2px;
+}
+
+.nbt-rules-body
+{
+    background: #101010 url(http://www.nbt-mwo.com/forum/Themes/zone99_20_1/images/custom/body_bg.jpg) 50% 0 no-repeat fixed;
+    font: 14px/140% Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+.nbt-rules {
+    width: 75%;
+    margin: auto;
+    min-width: 150px;
+    padding-top: 15px;
+}
+
+.nbt-rules-table {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+}
+
+.nbt-rules-table-cell {
+    text-align: left;
+}
+
+.nbt-rules-section {
+}
+
+.nbt-rules-para {
+    margin-bottom: 10px;
+}
+
+.nbt-ordered-list {
+    margin-bottom: 10px;
+}
+
+.nbt-unordered-list {
+    margin-bottom: 10px;
+}
+
+.nbt-h1 {
+    color: goldenrod;
+}
+
+.nbt-h2 {
+    color: goldenrod;
+}
+
+.nbt-h3 {
+    color: goldenrod;
+}
+
+.nbt-h4 {
+    color: goldenrod;
+}
+
+.nbt-h5 {
+    color: goldenrod;
+}
+
+.highlight {
+    color: goldenrod;
+}
+
+.nbt-highlight {
+    color: goldenrod;
+}
+
+.nbt-hover-highlight:hover {
+    background: #222;
+}
+
+.nbt-modal-body {
+    padding: 10px;
+    max-height: calc(100vh - 175px);
+    overflow-y: auto;
+}
+
+.nbt-vert-spacing-1 {
+    margin-bottom: 1px;
+}
+
+.nbt-league-logos {
+    margin-bottom: 20px;
+}
+
+.nbt-padding-above-35 {
+    padding-top: 35px;
+    margin-bottom: 0px;
+}
+
+.nbt-space-5 {
+    margin: 5px;
+}
+
+.nbt-important {
+    color: #fbd850;
+    font-weight: bolder;
+}
+
+.nbt-busy-spin {
+    opacity: 1;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(-360deg)
+    }
+}
+
+.nbt-modeless {
+    background-color: black;
+    border: solid goldenrod 1.5px;
+    z-index: 1000;
+    color: wheat;
+    min-width: 200px;
+    min-height: 300px;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.nbt-modeless .header {
+    margin: 0;
+    padding: 10px;
+    background-color: #404040;
+    cursor: move;
+}
+
+.nbt-modeless .content {
+    background-color: #080808;
+    margin: 0;
+    padding: 10px;
+}
+
+.nbt-modeless .ui-icon {
+    background-color: goldenrod;
+    border-top-left-radius: 5px;
+}
+
+.nbt-align-middle {
+    vertical-align: middle;
+}
+
+.nbt-image-button-sm {
+    width: 32px;
+    height: 24px;
+    overflow: hidden;
+    border-radius: 1.5px;
+    background-color: goldenrod;
+}
+
+.nbt-font-xxxl {
+    font-size: 5em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-xl {
+    font-size: 3em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-font-s {
+    font-size: 0.8em;
+    font-family: arial, helvetica, verdana;
+}
+
+.nbt-tracker-table {
+    color:  white;
+    font-size:  small;
+    border:  solid 0.5px goldenrod;
+}
+
+.nbt-tracker-table th {
+    background-color: #660000;
+    color:  goldenrod;
+    text-align: center;
+    border:  solid 0.5px goldenrod;
+}
+
+.nbt-tracker-table td {
+    padding: 2px;
+    border:  solid 0.5px goldenrod;
+    text-align: center;
+}
+
+.nbt-title-cell {
+    background-color: #003300;
+}
+
+.nbt-drop-tracker {
+    padding:  10px;
+    overflow-x: auto;
+}
+
+.nbt-current-drop {
+    background-color: #660000;
+}
+
+.nbt-header-cell-2 {
+    background-color: #003300;
+}
+
+.nbt-disabled {
+    color: #808080;
+}
+
+.nbt-click-only {
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+
+.nbt-hover:hover {
+    background-color: #303030;
+}
