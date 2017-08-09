@@ -116,6 +116,7 @@
     <!--#include virtual="/fragment/planetSetupEditor.html" -->
     <!--#include virtual="/fragment/battles.html" -->
     <!--#include virtual="/fragment/tracker.html" -->
+    <!--#include virtual="/fragment/roster.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">
