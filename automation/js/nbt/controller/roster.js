@@ -26,39 +26,16 @@
         .controller('RosterController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtIdentity) {
             $scope.faction = null;
             $scope.roster = null;
-
             var temp = null;
-            var timeoutPromise = null;
 
-            function setStatus(message, success) {
-                $scope.message = message;
-                $scope.success = success;
-
-                // cause the message to go away in 5 seconds
-                if (timeoutPromise)
-                    $timeout.cancel(timeoutPromise);
-
-                timeoutPromise = $timeout(function() {
-                    $scope.message = null;
-                    timeoutPromise = null;
-                }, 5000);
+            function setOperationStatus(message, success) {
+                setStatusWithTimeout($scope, $timeout, message, success, 5000);
             }
 
             function reloadRoster() {
                 nbtFaction.fetchRoster($scope.faction, nbtIdentity.get().token, function(aRoster) {
                     $scope.roster = aRoster._embedded.pilots;
                 });
-            }
-
-            function shallowCopy(dest, src) {
-                // save off the current editable values; just shallow-copy the first level of property values
-                Object.keys(src).forEach(function(k) {
-                    // skip anything that starts with $
-                    if (k.charAt(0)==='$')
-                        return;
-
-                    dest[k] = this[k];
-                }, src);
             }
 
             $scope.onAdd = function() {
@@ -84,7 +61,7 @@
                     nbtIdentity.get().token,
                     function(aData) {
                         reloadRoster();
-                        setStatus("Pilot successfully deleted", true);
+                        setOperationStatus("Pilot successfully deleted", true);
                     },
                     function(aErr) {
                         setStatus(aErr.data.message, false);
@@ -108,7 +85,7 @@
                         nbtIdentity.get().token,
                         function(aData) {
                             $scope.roster = aData._embedded.pilots;
-                            setStatus("Pilot(s) successfully added", true);
+                            setOperationStatus("Pilot(s) successfully added", true);
                             pilot.editing = false;
                             pilot.isNew = false;
                         },
@@ -121,7 +98,7 @@
                         pilot,
                         nbtIdentity.get().token,
                         function(aData) {
-                            setStatus("Pilot successfully updated", true);
+                            setOperationStatus("Pilot successfully updated", true);
                             temp = {};
                             $scope.onCancel(pilot);
                         },

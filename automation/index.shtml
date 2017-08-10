@@ -59,6 +59,7 @@
     <script src='/js/nbt/service/transport.js'></script>
     <script src='/js/nbt/service/faction.js'></script>
     <script src='/js/nbt/service/user.js'></script>
+    <script src='/js/nbt/controller/common/common.js'></script>
     <script src='/js/nbt/controller/league_page.js'></script>
     <script src='/js/nbt/controller/registration.js'></script>
     <script src='/js/nbt/controller/about.js'></script>
@@ -117,6 +118,7 @@
     <!--#include virtual="/fragment/battles.html" -->
     <!--#include virtual="/fragment/tracker.html" -->
     <!--#include virtual="/fragment/roster.html" -->
+    <!--#include virtual="/fragment/modeless/jumpships.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">
@@ -142,4 +144,18 @@
         </div>
     </div>
 </body>
+
+<!-- post-DOM-load script -->
+<script language="JavaScript">
+    // set up shared modeless dialog properties
+    $(function() {
+        $(".nbt-modeless")
+            .draggable({
+                containment: "window",
+                handle: "h5"})
+            .disableSelection()
+            .resizable();
+    });
+</script>
+
 </html>

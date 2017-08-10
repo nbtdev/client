@@ -227,3 +227,22 @@ var _NbtRootService = (function() {
     nbt.init(nbtRoot);
     console.log('NBT initialization complete');
 })();
+
+var saveModelessState = function() {
+    var variableName = this.id + 'Dimensions';
+    localStorage.setItem(variableName, JSON.stringify({
+        width: this.offsetWidth,
+        height: this.offsetHeight,
+        left: this.offsetLeft,
+        top: this.offsetTop
+    }));
+};
+
+var restoreModelessState = function(dlg) {
+    var variableName = dlg.id + 'Dimensions';
+    if (localStorage[variableName]) {
+        var dims = JSON.parse(localStorage[variableName]);
+        $(dlg).css({top: dims.top, left: dims.left, width: dims.width, height: dims.height});
+    }
+};
+

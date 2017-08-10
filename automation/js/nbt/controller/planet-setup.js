@@ -34,20 +34,8 @@
             $scope.selectedDropships = [];
             $scope.selectedJumpships = [];
 
-            var timeoutPromise = null;
-
-            function setStatus(message, success) {
-                $scope.message = message;
-                $scope.success = success;
-
-                // cause the message to go away in 5 seconds
-                if (timeoutPromise)
-                    $timeout.cancel(timeoutPromise);
-
-                timeoutPromise = $timeout(function() {
-                    $scope.message = null;
-                    timeoutPromise = null;
-                }, 5000);
+            function setOperationStatus(message, success) {
+                setStatusWithTimeout($scope, $timeout, message, success, 5000);
             }
             
             function transformCombatUnitInstancesToTotals() {
@@ -249,6 +237,9 @@
             }
 
             function processPlanetChange(aPlanet) {
+                if (!$scope.planetSetupDict)
+                    return;
+
                 $timeout(function() {
                     if (aPlanet) {
                         if (aPlanet.parentGroup.owner.id === $scope.faction.id) {
@@ -290,7 +281,7 @@
                         nbtFaction.submitFactionSetup($scope.faction, $scope.factionSetup, nbtIdentity.get().token, function (aData) {
                                 processFactionSetupData(aData);
                                 processPlanetChange($scope.planet);
-                                setStatus("Data saved successfully", true);
+                                setOperationStatus("Data saved successfully", true);
                             },
                             function (aErr) {
                                 setStatus(aErr.data.message, false);
@@ -303,7 +294,7 @@
                 $scope.show = false;
                 $scope.$apply();
             });
-            
+
             function onPseudoButtonClick(event) {
                 if (!event.currentTarget.dataset.cmd)
                     return;

@@ -33,6 +33,7 @@
 
             $scope.showPlanetBrief = false;
             $scope.planetNames = [];
+            $scope.planetNameToPlanetMap = {};
 
             // planet data from service
             this.planets = null;
@@ -77,6 +78,8 @@
                 var maxY = -Infinity;
 
                 var planetNames = [];
+                $scope.planetNameToPlanetMap = {};
+
                 for (var g=0; g < aPlanets.length; ++g) {
                     var group = aPlanets[g];
                     if (!group.owner) {
@@ -87,6 +90,7 @@
                     for (var i = 0; i < group.planets.length; ++i) {
                         var p = group.planets[i];
                         planetNames.push({name: p.name, id: p.id, owner: ownerName, position: {x: p.x, y: p.y}});
+                        $scope.planetNameToPlanetMap[p.name] = p;
 
                         if (p.x < minX) minX = p.x;
                         if (p.x > maxX) maxX = p.x;
@@ -588,6 +592,25 @@
                 return false;
             };
 
+            function setSelectedPlanet(planet) {
+                self.selectedPlanet = planet;
+                self.onPlanetSelected(planet);
+
+                // get the list of planets within 60LY
+                var planets = [];
+
+                if (planet) {
+                    planets = self.quadtree.findAllWithinRadius(planet, 60.0);
+                } else {
+                    // remove any existing jump path
+                    clearJumpPath();
+                    redraw();
+                }
+
+                // call out
+                $rootScope.$broadcast('planetChanged', planet, planets, self.token);
+            }
+
             this.onMouseUp = function(event) {
                 if (event.button === 0) {
                     self.state = 0;
@@ -615,22 +638,7 @@
                         if (self.quadtree)
                             obj = self.quadtree.find(mouseX, mouseY);
 
-                        self.selectedPlanet = obj;
-                        self.onPlanetSelected(obj);
-
-                        // get the list of planets within 60LY
-                        var planets = [];
-
-                        if (obj) {
-                            planets = self.quadtree.findAllWithinRadius({x: mouseX, y: mouseY}, 60.0);
-                        } else {
-                            // remove any existing jump path
-                            clearJumpPath();
-                            redraw();
-                        }
-
-                        // call out
-                        $rootScope.$broadcast('planetChanged', obj, planets, self.token);
+                        setSelectedPlanet(obj);
                     }
                 }
 
@@ -684,12 +692,19 @@
             });
 
             this.onPlanetSearch = function(position) {
-                console.log(position);
                 self.camera3D.position.x = self.offsetX = position.x;
                 self.camera3D.position.y = self.offsetY = position.y;
-
                 redraw();
             };
+
+            $scope.$on("planetSearchRequest", function(event, planetName) {
+                // find the planet in the $scope.planetNames map
+                var planet = $scope.planetNameToPlanetMap[planetName];
+                if (planet) {
+                    self.onPlanetSearch(planet);
+                    setSelectedPlanet(planet);
+                }
+            });
 
             this.drawSelectRect = function(cornerB) {
                 if (!self.selectCornerA)

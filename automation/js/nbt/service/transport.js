@@ -105,6 +105,47 @@ var _TransportService = (function() {
         }
     };
 
+    // fetch the jumpship(s) owned by a particular faction
+    TransportService.prototype.fetchJumpshipsForFaction = function (aFaction, aToken, aCallback) {
+        if (aFaction._links.jumpships) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.jumpships.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // update jumpship data -- service will limit what can actually be edited by calling user, so send whatever we like
+    TransportService.prototype.updateJumpship = function (aJumpship, aToken, aSuccessCb, aFailCb) {
+        if (aJumpship._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aJumpship._links.self.href,
+                data: aJumpship,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
     var transferUnitInstances = function(aPlanet, aCombatUnits, aDropship, aDirection, aToken, aCallback, aFail) {
         if (aDropship._links.unitInstances) {
             var hdr = new Headers(Header.TOKEN, aToken);

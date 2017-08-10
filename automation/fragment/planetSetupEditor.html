@@ -1,35 +1,4 @@
-<script>
-    $(function() {
-        $(".nbt-modeless")
-            .draggable({
-                containment: "window",
-                handle: "h5"})
-            .disableSelection()
-            .resizable();
-
-        var saveState = function() {
-            var dlg = $("#planetSetupDialog");
-            localStorage.setItem("planetSetupDialogDimensions", JSON.stringify({
-                width: dlg[0].offsetWidth,
-                height: dlg[0].offsetHeight,
-                left: dlg[0].offsetLeft,
-                top: dlg[0].offsetTop
-            }));
-        };
-
-        $("#planetSetupDialog")
-            .on("resize", saveState)
-            .on("drag", saveState);
-
-        if (localStorage.planetSetupDialogDimensions) {
-            var dims = JSON.parse(localStorage.planetSetupDialogDimensions);
-            var dlg = $("#planetSetupDialog");
-            dlg.css({top: dims.top, left: dims.left, width: dims.width, height: dims.height});
-        }
-    });
-</script>
 <script src="/js/nbt/controller/planet-setup.js"></script>
-
 <div id="planetSetupDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetSetupController" ng-cloak>
     <h5 class="nbt-h5 header">Planet Setup - {{faction.displayName}}<span ng-show="planet">&nbsp;({{planet.name}})</span><span class="nbt-close-dialog" style="float: right; cursor: pointer">&#10006;</span></h5>
     <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
@@ -155,3 +124,11 @@
         </div>
     </div>
 </div>
+<script language="JavaScript">
+$(function() {
+    var dlgs = $("#planetSetupDialog");
+    dlgs.on("resize", saveModelessState)
+        .on("drag", saveModelessState);
+    restoreModelessState(dlgs[0]);
+});
+</script>
