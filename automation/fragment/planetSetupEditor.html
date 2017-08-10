@@ -29,7 +29,6 @@
                             style="background-color: #1d1e1f"
                             step="25000000"><span ng-show="planet">&nbsp;(Min: {{planetSetup.autoIndustry|number}})</span>
                     </span>
-                    <span style="float: right" ng-show="message" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</span>
                 </div>
             </div>
             <div style="padding: 5px; overflow-x: hidden;">
@@ -120,6 +119,7 @@
             </div>
             <div class="centered" ng-show="planet" style="margin-top: 5px;">
                 <span style="margin-right: 25px;"><a class="btn btn-info nbt-button ui-interactive" data-cmd="cmdSaveChanges" role="button">Save Changes</a></span>
+                <span style="float: right" ng-show="message" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</span>
             </div>
         </div>
     </div>
