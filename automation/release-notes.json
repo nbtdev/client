@@ -1,5 +1,21 @@
 [
   {
+    "date": "09 Aug 2017",
+    "changes": {
+      "Features": [
+        "Initial version of faction setup tools",
+        "Initial version of administrative tools (faction editing, faction application/setup workflow)",
+        "Initial version/prototype of multi-drop battle tracker"
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "Restored 'Rules' link to the landing page"
+      ]
+    }
+  },
+
+  {
     "date": "25 July 2017",
     "changes": {
       "Features": [
