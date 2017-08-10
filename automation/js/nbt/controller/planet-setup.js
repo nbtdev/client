@@ -236,6 +236,20 @@
                 }, $scope.visitedPlanets);
             }
 
+            function rebindDynamicButtons() {
+                // before we digest, remove any existing nbt-pseudo-element click handlers
+                var x = $(".nbt-pseudo-button");
+                x.off("click", onPseudoButtonClick);
+
+                // and then schedule a rebind for after the digest
+                $timeout(function() {
+                    // attach a click handler to all of the nbt-pseudo-button elements (some of these
+                    // could have been created as part of the digest)
+                    x = $(".nbt-pseudo-button");
+                    x.on("click", onPseudoButtonClick);
+                }, 0, false); // run right after the digest completes, do not run another digest
+            }
+
             function processPlanetChange(aPlanet) {
                 if (!$scope.planetSetupDict)
                     return;
@@ -251,16 +265,7 @@
                     }
                 }
 
-                $timeout(function() {
-                    // before we digest, remove any existing nbt-pseudo-element click handlers
-                    var x = $(".nbt-pseudo-button");
-                    x.off("click", onPseudoButtonClick);
-
-                    // attach a click handler to all of the nbt-pseudo-button elements (some of these
-                    // could have been created as part of the digest)
-                    x = $(".nbt-pseudo-button");
-                    x.on("click", onPseudoButtonClick);
-                }, 0, false); // run right after the digest completes, do not run another digest
+                rebindDynamicButtons();
             }
 
             $(".nbt-button").on("click", function(event) {
@@ -302,10 +307,13 @@
                 var cmd = event.currentTarget.dataset.cmd;
                 if (cmd === 'cmdAddCombatUnits') {
                     addSelectedUnitsToPlanet();
+                    rebindDynamicButtons();
                 } else if (cmd === 'cmdAddDropships') {
                     addSelectedDropshipTypesToPlanet();
+                    rebindDynamicButtons();
                 } else if (cmd === 'cmdAddJumpships') {
                     addSelectedJumpshipTypesToPlanet();
+                    rebindDynamicButtons();
                 } else if (cmd === 'cmdDeleteCombatUnit') {
                     var id = event.currentTarget.dataset.target;
                     delete $scope.planetSetup.combatUnitSummary[id];
