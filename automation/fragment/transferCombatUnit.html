@@ -11,23 +11,26 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div>{{planet.name}}</div>
+                            <div class="nbt-highlight">{{planet.name}}</div>
                             <div>
-                                <select multiple class="nbt-multi-select" ng-model="selectedPlanetCombatUnits">
+                                <select multiple size="16" class="nbt-multi-select" ng-model="selectedPlanetCombatUnits">
                                     <option ng-repeat="unit in combatUnits" value="{{unit}}">{{unit.template.name}} ({{unit.ownerAbbr}})</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div ng-repeat="dropship in dropships">
-                                <div>{{dropship.name}} ({{dropship.owner.displayName}})</div>
+                                <div class="nbt-highlight">{{dropship.name}} ({{dropship.owner.displayName}})</div>
+                                <div class="nbt-font-s">Remaining Capacities:
+                                    <div style="margin-left: 10px" ng-repeat="capacity in dropship.type.capacities">{{capacity.available}} of {{capacity.capacity}} {{capacity.combatUnitType.abbrev}}</div>
+                                </div>
                                 <div>
                                     <div class="nbt-perform-transfer">
                                         <input type="button" value="<<" title="Drop selected combat units from dropship" ng-click="onTransferDropshipToPlanet(dropship)">
                                         <br>
                                         <input type="button" value=">>" title="Load selected dropships onto dropship" ng-click="onTransferPlanetToDropship(dropship)">
                                     </div>
-                                    <select multiple class="nbt-multi-select" ng-model="selectedDropshipCombatUnits[dropship.id]">
+                                    <select multiple size="8" class="nbt-multi-select" ng-model="selectedDropshipCombatUnits[dropship.id]">
                                         <option ng-repeat="unit in dropshipCombatUnits[dropship.id]" value="{{unit}}">{{unit.template.name}} ({{unit.owner.shortName}})</option>
                                     </select>
                                 </div>

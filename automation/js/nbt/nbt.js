@@ -245,4 +245,3 @@ var restoreModelessState = function(dlg) {
         $(dlg).css({top: dims.top, left: dims.left, width: dims.width, height: dims.height});
     }
 };
-

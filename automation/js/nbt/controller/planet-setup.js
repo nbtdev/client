@@ -24,15 +24,19 @@
     angular
         .module('nbt.app')
         .controller('PlanetSetupController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtLeague, nbtIdentity) {
-            $scope.show = false;
-            $scope.league = null;
-            $scope.planetSetup = null;
-            $scope.message = null;
-            $scope.success = false;
-            $scope.visitedPlanets = {};
-            $scope.selectedCombatUnits = [];
-            $scope.selectedDropships = [];
-            $scope.selectedJumpships = [];
+            function reset() {
+                $scope.show = false;
+                $scope.league = null;
+                $scope.planetSetup = null;
+                $scope.message = null;
+                $scope.success = false;
+                $scope.visitedPlanets = {};
+                $scope.selectedCombatUnits = [];
+                $scope.selectedDropships = [];
+                $scope.selectedJumpships = [];
+            }
+
+            reset();
 
             function setOperationStatus(message, success) {
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
@@ -360,6 +364,7 @@
 
             // when the user identity changes (login or logout, for example), we should close
             cb = $scope.$on('nbtIdentityChanged', function(event, aIdent) {
+                reset();
                 if (!aIdent.token) {
                     $scope.show = false;
                 }
