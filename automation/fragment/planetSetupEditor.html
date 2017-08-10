@@ -18,6 +18,9 @@
                 </div>
             </div>
             <hr>
+            <div class="row" ng-hide="planet">
+                <div class="col-md-12" style="color: #808080">No Planet Selected</div>
+            </div>
             <div class="row" ng-show="planet">
                 <div class="col-md-12">
                     <span>Planet Industry&nbsp;<input
@@ -56,7 +59,7 @@
                     <div class="col-md-5">
                         <div style="width: 90%; padding: 5px; background-color: lightgray; color: #202020;">
                             <div >Combat Units Available (Tonnage)</div>
-                            <select style="width:100%" size="10" multiple ng-model="selectedCombatUnits" ng-options="opt as unit.name+' ('+unit.tonnage+')' for unit in factionSetup.availableCombatUnits"></select>
+                            <select style="width:100%" size="10" multiple ng-model="selectedCombatUnits" ng-options="unit as unit.name+' ('+unit.tonnage+')' for unit in factionSetup.availableCombatUnits track by unit.id"></select>
                         </div>
                     </div>
                 </div>
@@ -84,7 +87,7 @@
                     <div class="col-md-5">
                         <div style="width: 90%; padding: 5px; background-color: lightgray; color: #202020;">
                             <div >Dropship Types Available (Tonnage)</div>
-                            <select style="width:100%" multiple ng-model="selectedDropships" ng-options="otp as dt.name+' ('+dt.tonnage+')' for dt in factionSetup.availableDropships"></select>
+                            <select style="width:100%" multiple ng-model="selectedDropships" ng-options="dt as dt.name+' ('+dt.tonnage+')' for dt in factionSetup.availableDropships track by dt.id"></select>
                         </div>
                     </div>
                 </div>
@@ -112,7 +115,7 @@
                     <div class="col-md-5">
                         <div style="width: 90%; padding: 5px; background-color: lightgray; color: #202020;">
                             <div >Jumpship Types Available (HP/Tonnage)</div>
-                            <select style="width:100%" multiple ng-model="selectedJumpships" ng-options="opt as jt.name+' ('+jt.hardpoints+' / '+jt.tonnage+')' for jt in factionSetup.availableJumpships"></select>
+                            <select style="width:100%" multiple ng-model="selectedJumpships" ng-options="jt as jt.name+' ('+jt.hardpoints+' / '+jt.tonnage+')' for jt in factionSetup.availableJumpships track by jt.id"></select>
                         </div>
                     </div>
                 </div>
