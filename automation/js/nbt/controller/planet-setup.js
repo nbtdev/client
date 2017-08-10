@@ -240,18 +240,18 @@
                 if (!$scope.planetSetupDict)
                     return;
 
-                $timeout(function() {
-                    if (aPlanet) {
-                        if (aPlanet.parentGroup.owner.id === $scope.faction.id) {
-                            $scope.planet = aPlanet;
-                            $scope.visitedPlanets[aPlanet.id] = aPlanet;
-                            $scope.planetSetup = $scope.planetSetupDict[aPlanet.id];
+                if (aPlanet) {
+                    if (aPlanet.parentGroup.owner.id === $scope.faction.id) {
+                        $scope.planet = aPlanet;
+                        $scope.visitedPlanets[aPlanet.id] = aPlanet;
+                        $scope.planetSetup = $scope.planetSetupDict[aPlanet.id];
 
-                            // convert the instance list to a summary total dictionary
-                            transformInstancesToTotals();
-                        }
+                        // convert the instance list to a summary total dictionary
+                        transformInstancesToTotals();
                     }
+                }
 
+                $timeout(function() {
                     // before we digest, remove any existing nbt-pseudo-element click handlers
                     var x = $(".nbt-pseudo-button");
                     x.off("click", onPseudoButtonClick);

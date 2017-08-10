@@ -151,5 +151,7 @@
                 $scope.identity = identity;
             });
             $scope.$on('destroy', cb);
+
+            $scope.checkEnterKey = checkEnterKeyAndSubmit;
         }]);
 })();

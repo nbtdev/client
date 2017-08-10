@@ -48,3 +48,10 @@ function shallowCopy(dest, src) {
         dest[k] = this[k];
     }, src);
 }
+
+function checkEnterKeyAndSubmit(event, scope, obj) {
+    var code = event.which || event.keyCode;
+    if (code === 13) {
+        scope.onApply(obj);
+    }
+}

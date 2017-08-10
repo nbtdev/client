@@ -103,7 +103,7 @@
                             $scope.onCancel(pilot);
                         },
                         function(aErr) {
-                            setStatus(aErr.data.message, false);
+                            setOperationStatus(aErr.data.message, false);
                         }
                     );
                 }
@@ -123,5 +123,7 @@
                 reloadRoster();
             });
             $scope.$on('destroy', cb);
+
+            $scope.checkEnterKey = checkEnterKeyAndSubmit;
         }]);
 })();
