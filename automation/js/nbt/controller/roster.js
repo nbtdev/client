@@ -123,5 +123,7 @@
                 reloadRoster();
             });
             $scope.$on('destroy', cb);
+
+            $scope.checkEnterKey = checkEnterKeyAndSubmit;
         }]);
 })();
