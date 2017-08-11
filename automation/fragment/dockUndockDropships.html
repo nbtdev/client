@@ -12,6 +12,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div style="width: 80%">
+                                <div class="nbt-centered nbt-font-l">Planet</div>
                                 <div><span class="nbt-highlight">{{planet.name}} ({{planet.parentGroup.owner.displayName}}):</span> {{planetDropships.length}} Dropships</div>
                                 <div>
                                     <select multiple class="nbt-multi-select" ng-model="selectedPlanetDropships">
@@ -21,6 +22,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <div class="nbt-centered nbt-font-l">Jumpships</div>
                             <div ng-repeat="js in jumpships" style="width: 80%">
                                 <div><span class="nbt-highlight">{{js.name}} ({{js.owner.displayName}})</span>: {{js.type.hardpoints-js.dropships.length}} of {{js.type.hardpoints}} HP available</div>
                                 <div>

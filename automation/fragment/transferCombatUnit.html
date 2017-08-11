@@ -11,6 +11,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
+                            <div class="nbt-centered nbt-font-l">Planet</div>
                             <div class="nbt-highlight">{{planet.name}}</div>
                             <div>
                                 <select multiple size="16" class="nbt-multi-select" ng-model="selectedPlanetCombatUnits">
@@ -19,6 +20,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <div class="nbt-centered nbt-font-l">Dropships</div>
                             <div ng-repeat="dropship in dropships">
                                 <div class="nbt-highlight">{{dropship.name}} ({{dropship.owner.displayName}})</div>
                                 <div class="nbt-font-s">Remaining Capacities:
