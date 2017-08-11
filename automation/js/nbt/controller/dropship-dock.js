@@ -83,6 +83,7 @@
                         }
 
                         $scope.jumpshipDropships[jumpship.id] = data.jumpshipState;
+                        jumpship.dropships = data.jumpshipState;
 
                         updateStatus("Dropship(s) successfully undocked");
                         $scope.selectedJumpshipDropships[jumpship.id] = [];
@@ -124,6 +125,7 @@
                         }
 
                         $scope.jumpshipDropships[jumpship.id] = data.jumpshipState;
+                        jumpship.dropships = data.jumpshipState;
 
                         updateStatus("Dropship(s) successfully docked");
                         $scope.selectedPlanetDropships = [];

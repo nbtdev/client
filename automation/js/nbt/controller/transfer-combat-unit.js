@@ -23,8 +23,41 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('TransferCombatUnitController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtTransport, nbtIdentity) {
-            var self = this;
+        .controller('TransferCombatUnitController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtTransport', 'nbtCombat', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtTransport, nbtCombat, nbtIdentity) {
+            $scope.typeTree = {};
+
+            function buildTypeTree(typeData) {
+                var types = typeData._embedded.combatUnitTypes;
+
+                // iterate twice - first to get all entries in, second to patch up parentage
+                for (var i=0; i<types.length; ++i) {
+                    var type = types[i];
+                    $scope.typeTree[type.id] = type;
+                }
+
+                for (var i=0; i<types.length; ++i) {
+                    var type = types[i];
+                    if (type.parentType)
+                        type.parentType = $scope.typeTree[type.parentType.id];
+                    else
+                        type.parentType = null;
+                }
+            }
+
+            /**
+             * Return true if type is a subtype of targetType, false otherwise
+             * @param type
+             * @param targetType
+             */
+            function isA(type, targetType) {
+                // first, find type in the tree
+                var entry = $scope.typeTree[type.id];
+
+                while (entry && entry.id !== targetType.id)
+                    entry = entry.parentType;
+
+                return entry !== null;
+            }
 
             $scope.planet = null;
             $scope.combatUnits = [];
@@ -49,6 +82,36 @@
                     timeoutPromise = null;
                 }, 5000);
             };
+
+            function updateAvailability(dropship) {
+                // for each type of unit that this dropship can carry, calculate how much
+                // space is remaining on the dropship for units of that type
+                var capacities = {};
+                for (var c=0; c<dropship.type.capacities.length; ++c) {
+                    var capacity = dropship.type.capacities[c];
+                    capacities[capacity.combatUnitType.id] = capacity;
+
+                    // reset the count to zero
+                    capacity.available = capacity.capacity;
+                }
+
+                // now, go through the instances and reduce by one for each instance of a given type
+                if (dropship.combatUnitInstances) {
+                    for (var i = 0; i < dropship.combatUnitInstances.length; ++i) {
+                        var inst = dropship.combatUnitInstances[i];
+
+                        // this may be a subtype, so we have to check the type tree for a match
+                        // against the capacity types
+                        Object.keys(capacities).forEach(function(key) {
+                            var capacity = this[key];
+                            if (isA(inst.template.type, capacity.combatUnitType)) {
+                                capacity.available--;
+                                return true;
+                            }
+                        }, capacities);
+                    }
+                }
+            }
 
             $scope.onTransferDropshipToPlanet = function(dropship) {
                 if ($scope.planet === null)
@@ -85,8 +148,10 @@
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.originState;
+                        dropship.combatUnitInstances = data.originState;
 
                         updateStatus("Transfer Succeeded");
+                        updateAvailability(dropship);
                     },
 
                     // failure callback
@@ -130,8 +195,10 @@
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.destinationState;
+                        dropship.combatUnitInstances = data.destinationState;
 
                         updateStatus("Transfer Succeeded");
+                        updateAvailability(dropship);
                     },
 
                     // failure callback
@@ -140,6 +207,14 @@
                     }
                 );
             };
+
+            var cbLeagueChanged = $scope.$on('nbtLeagueChanged', function (event, aLeague) {
+                nbtCombat.fetchCombatUnitTypes(aLeague, nbtIdentity.get().token, function(aData) {
+                    // set up type hierarchy
+                    buildTypeTree(aData);
+                });
+            });
+            $scope.$on('destroy', cbLeagueChanged);
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
                 $scope.planet = aPlanet;
@@ -171,6 +246,7 @@
                         var ds = data[i];
                         $scope.dropshipCombatUnits[ds.id] = ds.combatUnitInstances;
                         $scope.selectedDropshipCombatUnits[ds.id] = [];
+                        updateAvailability(ds);
                     }
                 });
             });

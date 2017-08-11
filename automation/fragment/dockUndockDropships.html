@@ -11,16 +11,20 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <div>{{planet.name}} ({{planet.parentGroup.owner.shortName}})</div>
-                            <div>
-                                <select multiple class="nbt-multi-select" ng-model="selectedPlanetDropships">
-                                    <option ng-repeat="ds in planetDropships" value="{{ds}}">{{ds.name}} ({{ds.owner.shortName}})</option>
-                                </select>
+                            <div style="width: 80%">
+                                <div class="nbt-centered nbt-font-l">Planet</div>
+                                <div><span class="nbt-highlight">{{planet.name}} ({{planet.parentGroup.owner.displayName}}):</span> {{planetDropships.length}} Dropships</div>
+                                <div>
+                                    <select multiple class="nbt-multi-select" ng-model="selectedPlanetDropships">
+                                        <option ng-repeat="ds in planetDropships" value="{{ds}}">{{ds.name}} ({{ds.owner.displayName}})</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div ng-repeat="js in jumpships">
-                                <div>{{js.name}} ({{js.owner.shortName}})</div>
+                            <div class="nbt-centered nbt-font-l">Jumpships</div>
+                            <div ng-repeat="js in jumpships" style="width: 80%">
+                                <div><span class="nbt-highlight">{{js.name}} ({{js.owner.displayName}})</span>: {{js.type.hardpoints-js.dropships.length}} of {{js.type.hardpoints}} HP available</div>
                                 <div>
                                     <div class="nbt-perform-transfer">
                                         <input type="button" value="<<" title="Deploy selected dropships (from jumpship)" ng-click="onUndockDropships(js)">

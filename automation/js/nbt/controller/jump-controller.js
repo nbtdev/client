@@ -110,7 +110,7 @@
                         updateStatus("Jump successful");
 
                         // update the origin and destination planet information (jumpships and battles)
-                        nbtPlanet.batchUpdatePlanets($scope.league.id(), [data.origin, data.destination]);
+                        nbtPlanet.batchUpdatePlanets($scope.league.id, [data.origin, data.destination]);
                     },
 
                     function(err) {
