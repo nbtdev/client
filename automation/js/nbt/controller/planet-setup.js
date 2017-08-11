@@ -251,7 +251,7 @@
                     // could have been created as part of the digest)
                     x = $(".nbt-pseudo-button");
                     x.on("click", onPseudoButtonClick);
-                }, 0, false); // run right after the digest completes, do not run another digest
+                }, 0, true); // run right after the digest completes, run another digest
             }
 
             function processPlanetChange(aPlanet) {
