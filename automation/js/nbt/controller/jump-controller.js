@@ -76,18 +76,13 @@
             };
 
             $scope.onExecuteJump = function() {
-                var jumpships = [];
-                for (var i=0; i<$scope.selectedJumpships.length; ++i) {
-                    jumpships.push(JSON.parse($scope.selectedJumpships[i]));
-                }
-
-                if (jumpships.length === 0) {
+                if ($scope.selectedJumpships.length === 0) {
                     alert("No jumpships selected");
                     return;
                 }
 
-                var jumpType = JSON.parse($scope.selectedJumpType);
-                var jumpAction = JSON.parse($scope.selectedJumpAction);
+                var jumpType = $scope.selectedJumpType;
+                var jumpAction = $scope.selectedJumpAction;
 
                 // strip out all but the planet IDs from the path
                 var path = [];
@@ -97,7 +92,7 @@
 
                 nbtTransport.jumpJumpships(
                     path,
-                    jumpships,
+                    $scope.selectedJumpships,
                     jumpType,
                     jumpAction,
                     nbtIdentity.get().token,
@@ -136,11 +131,13 @@
                 // grab the types of jumps allowed for this user, with this planet as the origin
                 nbtTransport.fetchJumpTypesFromPlanet(aPlanet, nbtIdentity.get().token, function(data) {
                     $scope.jumpTypes = data;
+                    $scope.selectedJumpType = $scope.jumpTypes[0];
                 });
 
                 // grab the jump actions allowed for this user, with this planet as the origin
                 nbtTransport.fetchJumpActionsFromPlanet(aPlanet, nbtIdentity.get().token, function(data) {
                     $scope.jumpActions = data;
+                    $scope.selectedJumpAction = $scope.jumpActions[0];
                 });
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);
