@@ -124,17 +124,19 @@
                 var currentDropIndex = -1;
                 var factionIds = findInvolvedFactionIds();
 
-                for (var d=0; d<$scope.battle.drops.length; ++d) {
-                    var drop = $scope.battle.drops[d];
+                if ($scope.battle.drops) {
+                    for (var d = 0; d < $scope.battle.drops.length; ++d) {
+                        var drop = $scope.battle.drops[d];
 
-                    // go past all of the drops that have instances logged against them...
-                    if (isFullyLogged(drop, factionIds))
-                        continue;
+                        // go past all of the drops that have instances logged against them...
+                        if (isFullyLogged(drop, factionIds))
+                            continue;
 
-                    // we just want to know the index of the current drop; we will re-label the drops below
-                    currentDropIndex = d;
-                    $scope.drop = drop;
-                    break;
+                        // we just want to know the index of the current drop; we will re-label the drops below
+                        currentDropIndex = d;
+                        $scope.drop = drop;
+                        break;
+                    }
                 }
 
                 // summarize/group all combat units by owner and count; the service will have updated the forcedec
@@ -170,13 +172,15 @@
                 }
 
                 // renumber the drops
-                for (var d=0; d<$scope.battle.drops.length; ++d) {
-                    var drop = $scope.battle.drops[d];
+                if ($scope.battle.drops) {
+                    for (var d = 0; d < $scope.battle.drops.length; ++d) {
+                        var drop = $scope.battle.drops[d];
 
-                    drop.number = d - currentDropIndex;
+                        drop.number = d - currentDropIndex;
 
-                    if (drop.number === 0)
-                        drop.number = 'Current';
+                        if (drop.number === 0)
+                            drop.number = 'Current';
+                    }
                 }
             }
 
