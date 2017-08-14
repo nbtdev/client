@@ -186,6 +186,24 @@ var _PlanetService = (function() {
         }
     };
 
+    PlanetService.prototype.fetchSectorDetail = function (aSector, aToken, aCallback) {
+        if (aSector) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aSector._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) {
+                        aCallback(aResp.data);
+                    }
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.fetchCombatUnitsOnPlanet = function (aPlanet, aToken, aCallback) {
         if (aPlanet && aPlanet._links.unitInstances) {
             var hdr = new Headers(Header.TOKEN, aToken);

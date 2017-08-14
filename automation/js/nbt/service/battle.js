@@ -88,6 +88,50 @@ var _BattleService = (function() {
         }
     };
 
+    // load the list of sector assaults for a faction
+    BattleService.prototype.toggleBattleReady = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.ready) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.ready.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // initialize the battle by posting the planet order
+    BattleService.prototype.initializeBattle = function (aBattle, aPlanets, aToken, aCallback, aFailCb) {
+        if (aBattle._links.initialize) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.initialize.href,
+                data: aPlanets,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+
+                    // post event to any subscribers
+                    rootScope.$broadcast('nbtBattleChanged', aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
     // log a drop in a battle; returns the entire battle through aCallback, updated through the drop logging
     BattleService.prototype.logBattleDrop = function (aDrop, aToken, aCallback) {
         if (aDrop._links.self) {
@@ -105,6 +149,11 @@ var _BattleService = (function() {
                 }
             );
         }
+    };
+
+    // log a drop in a battle; returns the entire battle through aCallback, updated through the drop logging
+    BattleService.prototype.requestBattlePlanets = function (aBattle) {
+        rootScope.$broadcast('nbtBattlePlanetsRequested', aBattle);
     };
 
     return BattleService;

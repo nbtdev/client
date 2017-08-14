@@ -168,6 +168,7 @@
                             <button class="btn btn-primary"
                                     ng-click="logDrop()"
                                     ng-show="battle.status=='Forcedec'"
+                                    ng-class="{'disabled': updating}"
                                     title="Log Drop">Log Drop</button>
                             <button class="btn btn-primary"
                                     ng-click="reloadBattle()"

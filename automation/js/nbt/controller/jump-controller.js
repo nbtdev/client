@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtLeague', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtLeague, nbtPlanet, nbtTransport, nbtIdentity) {
+        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtBattle', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtBattle, nbtPlanet, nbtTransport, nbtIdentity) {
             $scope.planet = null;
 
             $scope.showJump = false;
@@ -76,18 +76,20 @@
             };
 
             $scope.onExecuteJump = function() {
-                var jumpships = [];
-                for (var i=0; i<$scope.selectedJumpships.length; ++i) {
-                    jumpships.push(JSON.parse($scope.selectedJumpships[i]));
-                }
-
-                if (jumpships.length === 0) {
+                if ($scope.selectedJumpships.length === 0) {
                     alert("No jumpships selected");
                     return;
                 }
 
-                var jumpType = JSON.parse($scope.selectedJumpType);
-                var jumpAction = JSON.parse($scope.selectedJumpAction);
+                var jumpType = $scope.selectedJumpType;
+                var jumpAction = $scope.selectedJumpAction;
+                var battleAction = false;
+
+                if (jumpAction.name === 'Launch Sector Assault' || jumpAction.name === 'Launch Sector Raid') {
+                    // TODO: are there any combat units on the dropships?
+
+                    battleAction = true;
+                }
 
                 // strip out all but the planet IDs from the path
                 var path = [];
@@ -97,7 +99,7 @@
 
                 nbtTransport.jumpJumpships(
                     path,
-                    jumpships,
+                    $scope.selectedJumpships,
                     jumpType,
                     jumpAction,
                     nbtIdentity.get().token,
@@ -111,6 +113,11 @@
 
                         // update the origin and destination planet information (jumpships and battles)
                         nbtPlanet.batchUpdatePlanets($scope.league.id, [data.origin, data.destination]);
+
+                        if (battleAction && data.destination.battleId > 0) {
+                            // then request the user to choose their planets
+                            nbtBattle.requestBattlePlanets(data.destination.sectorAssault);
+                        }
                     },
 
                     function(err) {
@@ -136,11 +143,13 @@
                 // grab the types of jumps allowed for this user, with this planet as the origin
                 nbtTransport.fetchJumpTypesFromPlanet(aPlanet, nbtIdentity.get().token, function(data) {
                     $scope.jumpTypes = data;
+                    $scope.selectedJumpType = $scope.jumpTypes[0];
                 });
 
                 // grab the jump actions allowed for this user, with this planet as the origin
                 nbtTransport.fetchJumpActionsFromPlanet(aPlanet, nbtIdentity.get().token, function(data) {
                     $scope.jumpActions = data;
+                    $scope.selectedJumpAction = $scope.jumpActions[0];
                 });
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);

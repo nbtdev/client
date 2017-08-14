@@ -28,17 +28,50 @@
             $scope.faction = null;
             $scope.battles = null;
 
+            function processBattles() {
+                // go through the battles and add a 'ready' property to each
+                for (var i=0; i<$scope.battles.length; ++i) {
+                    var battle = $scope.battles[i];
+                    battle.ready = (battle._links.ready &&
+                        ($scope.faction.id === battle.attacker.id && battle.attackerReady ||
+                         $scope.faction.id === battle.sector.owner.id && battle.defenderReady)
+                    );
+                }
+            }
+
             $("#battlesModal").on("shown.bs.modal", function() {
                 $scope.battles = null;
                 if ($scope.faction) {
                     nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(aData) {
                         $scope.battles = aData._embedded.sectorAssaults;
+                        processBattles();
                     });
                 }
             });
 
             $scope.report = function(battle) {
                 nbtBattle.fetchBattleDetail(battle, nbtIdentity.get().token);
+            };
+
+            $scope.initialize = function(battle) {
+                nbtBattle.requestBattlePlanets(battle);
+            };
+
+            $scope.readyUp = function(battle) {
+                if (!battle.ready) {
+                    if (!confirm("WARNING!\n\nContinue only if you have ensured that both your faction, and any allies you plan to include in this battle, " +
+                            "have landed and offloaded all combat forces you intend to bring, and that you are ready to enter full battle lockdown.")) {
+                        return;
+                    }
+                }
+
+                nbtBattle.toggleBattleReady(battle, nbtIdentity.get().token, function(battle) {
+                    // just re-load the battle list
+                    nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(battles) {
+                        $scope.battles = battles._embedded.sectorAssaults;
+                        processBattles();
+                    })
+                });
             };
 
             // notify us of faction changes/loads

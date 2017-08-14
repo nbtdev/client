@@ -116,6 +116,7 @@
     <!--#include virtual="/fragment/jumpshipSummary.html" -->
     <!--#include virtual="/fragment/planetSetupEditor.html" -->
     <!--#include virtual="/fragment/battles.html" -->
+    <!--#include virtual="/fragment/battlePlanetSelect.html" -->
     <!--#include virtual="/fragment/tracker.html" -->
     <!--#include virtual="/fragment/roster.html" -->
     <!--#include virtual="/fragment/modeless/jumpships.html" -->

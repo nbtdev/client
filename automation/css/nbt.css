@@ -651,3 +651,21 @@ input[type=password] {
 .nbt-hover:hover {
     background-color: #303030;
 }
+
+.nbt-sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nbt-sortable li {
+    margin: 0 3px 3px 3px;
+    padding: 0.4em;
+    padding-left: 1.5em;
+    cursor: move;
+}
+
+.nbt-sortable li span {
+    position: absolute;
+    margin-left: -1.3em;
+}

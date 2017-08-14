@@ -28,11 +28,27 @@
                                     title="Log drops and/or report this battle"
                                     class="btn btn-xs btn-primary"
                                     ng-click="report(battle)"
+                                    ng-show="battle.status==='Forcedec'||battle.status==='Completed'"
                                     data-dismiss="modal"
                                     data-toggle="modal"
-                                    data-target="#trackerModal"
-                            >
+                                    data-target="#trackerModal">
                                 Report
+                            </button>
+                            <button type="button"
+                                    title="The battle needs the sector planet order selected by the attacker"
+                                    class="btn btn-xs btn-primary"
+                                    ng-click="initialize(battle)"
+                                    ng-show="battle.status==='Initialize'&&faction.id===battle.attacker.id"
+                                    data-dismiss="modal">
+                                Initialize
+                            </button>
+                            <button type="button"
+                                    title="If both factions indicate 'Ready' prior to the reinforcement timeout, the battle forcedec will be generated and the battle can be fought and logged immediately"
+                                    class="btn btn-xs"
+                                    ng-class="{'btn-primary': !battle.ready, 'btn-success': battle.ready}"
+                                    ng-click="readyUp(battle)"
+                                    ng-show="battle.status==='Pending'">
+                                Ready Up!
                             </button>
                         </div>
                     </div>
