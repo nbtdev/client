@@ -91,27 +91,14 @@ var _IdentityService = (function() {
         return null;
     };
 
-    IdentityService.prototype.get = function() {
-        // first check to see if the token is expired
-        if (self.mIdentity) {
-            var ms = self.mIdentity.expires;
-            var d = new Date();
-            var now = d.getTime();
-
-            if (now > ms) {
-                // then token is expired, try to refresh it -- if this fails, it will
-                // basically perform a logout
-                self.refresh();
-            }
-        }
-
-        if (self.mIdentity) {
+    function makeIdentity(identity) {
+        if (identity) {
             return {
-                username: self.mIdentity.username,
-                token: self.mIdentity.value,
-                isSiteAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='SITE_ADMIN' : false; },
-                isLeagueAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='LEAGUE_ADMIN' : false;  },
-                isTeamAdmin: function() { return self.mIdentity.coarseRole ? self.mIdentity.coarseRole==='TEAM_ADMIN' : false;  },
+                username: identity.username,
+                token: identity.value,
+                isSiteAdmin: function() { return identity.coarseRole ? identity.coarseRole==='SITE_ADMIN' : false; },
+                isLeagueAdmin: function() { return identity.coarseRole ? identity.coarseRole==='LEAGUE_ADMIN' : false;  },
+                isTeamAdmin: function() { return identity.coarseRole ? identity.coarseRole==='TEAM_ADMIN' : false;  },
                 isValid: function() { return true; }
             };
         }
@@ -124,6 +111,33 @@ var _IdentityService = (function() {
             isTeamAdmin: function() { return false;  },
             isValid: function() { return false; }
         };
+    }
+
+    IdentityService.prototype.get = function() {
+        // first check to see if the token is expired
+        if (self.mIdentity) {
+            var ms = self.mIdentity.expires;
+            var d = new Date();
+            var now = d.getTime();
+            var refreshInProgress = false;
+
+            if (now > ms && !refreshInProgress) {
+                refreshInProgress = true;
+
+                // then token is expired, try to refresh it -- if this fails, it will
+                // basically perform a logout
+                self.refresh(
+                    function(aIdent) {
+                        refreshInProgress = false;
+                    }, function() {
+                        self.rootScope.$broadcast('nbtIdentityChanged', makeIdentity());
+                        refreshInProgress = false;
+                    }
+                );
+            }
+        }
+
+        return makeIdentity(self.mIdentity);
     };
 
     IdentityService.prototype.login = function(aUsername, aPassword, aSuccess, aFailure) {
@@ -245,7 +259,7 @@ var _IdentityService = (function() {
         self.rootScope.$broadcast('nbtIdentityChanged', this.get());
     };
 
-    IdentityService.prototype.refresh = function(aFailureCb) {
+    IdentityService.prototype.refresh = function(aSuccessCb, aFailureCb) {
         if (self.mIdentity) {
             var hdrs = new Headers(Header.TOKEN, self.mIdentity.value);
 
@@ -259,6 +273,7 @@ var _IdentityService = (function() {
                 function(resp) {
                     // replace the identity with the refreshed one
                     mIdentity = resp.data;
+                    if (aSuccessCb) aSuccessCb(mIdentity);
                 },
                 function (resp) {
                     self.reset();
