@@ -319,6 +319,21 @@
                 delete unit.destroyed;
             };
 
+            function pollBattleUpdate(battle) {
+                // check every 3 seconds until a new drop is posted
+                $timeout(function() {
+                    nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
+                        if (aData.drops.length === $scope.battle.drops.length)
+                            pollBattleUpdate(aData);
+                        else {
+                            $scope.battle = aData;
+                            processBattle();
+                            $scope.updating = false;
+                        }
+                    });
+                }, 3000);
+            }
+
             // log the current drop
             $scope.logDrop = function() {
                 if (!$scope.drop) {
@@ -328,10 +343,23 @@
                 }
 
                 $scope.drop.combatUnitInstances = $scope.usedUnits;
-                nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token, function(aData) {
-                    $scope.battle = aData;
-                    processBattle();
-                });
+                $scope.updating = true;
+                nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token,
+                    function(aData) {
+                        // if the number of drops in the current battle is the same as the number of drops in the updated
+                        // battle, do long polling (every second) until the number of drops is different
+                        if (aData.drops.length === $scope.battle.drops.length)
+                            pollBattleUpdate(aData);
+                        else {
+                            $scope.updating = false;
+                            $scope.battle = aData;
+                            processBattle();
+                        }
+                    },
+                    function(aErr) {
+                        $scope.updating = false;
+                    }
+                );
             };
 
             $scope.reloadBattle = function() {

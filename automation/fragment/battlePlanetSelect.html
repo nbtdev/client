@@ -1,0 +1,42 @@
+<div id="battlePlanetSelectModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="BattlePlanetController as battlePlanetController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Select Planet Order For Battle: {{sector.capital.name}} Sector</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <!-- status line -->
+                    <div class="row">
+                        <div ng-show="message" class="col-md-12 nbt-error nbt-centered">{{message}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <div class="nbt-font-l">Battle launched successfully!</div>
+                            <div class="nbt-base">Next, arrange (drag and drop) the sector planets in the order you would like to play them.</div>
+                            <ul id="battlePlanetOrder" class="nbt-sortable nbt-centered">
+                                <li ng-repeat="planet in sector.planets" class="ui-state-default nbt-centered" id="{{planet.id}}">
+                                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>{{planet.name}} ({{planet.terrain}})
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 nbt-centered">
+                            <button class="btn btn-primary" ng-click="onSubmit()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/nbt/controller/battle-planet.js"></script>
+<script language="JavaScript">
+$(function() {
+    $("#battlePlanetOrder").sortable().disableSelection();
+});
+</script>
