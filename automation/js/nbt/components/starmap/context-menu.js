@@ -40,10 +40,14 @@
                             $scope.planet.chargeStation = true;
 
                         nbtPlanet.updatePlanet(
-                            { id: $scope.planet.id, chargeStation: $scope.planet.chargeStation },
+                            {
+                                id: $scope.planet.id,
+                                chargeStation: $scope.planet.chargeStation,
+                                _links: $scope.planet._links
+                            },
                             nbtIdentity.get().token,
                             function(aPlanet) {
-                                // NOP
+                                $rootScope.$broadcast('nbtPlanetUpdated', $scope.planet);
                             }, function(aErr) {
                                 // reverse the change
                                 $scope.planet.chargeStation = !$scope.planet.chargeStation;

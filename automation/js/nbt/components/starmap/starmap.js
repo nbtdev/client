@@ -417,6 +417,11 @@
                 }
             }
 
+            function getGroupColor(group) {
+                var mapColor = self.mapColors[group.owner.displayName];
+                return (mapColor.planetColor.red << 16) | (mapColor.planetColor.green << 8) | (mapColor.planetColor.blue << 0);
+            }
+
             this.reloadStarmapData = function() {
                 self.scene3D = new THREE.Scene();
                 self.scene3D.add(self.camera3D);
@@ -428,8 +433,7 @@
                     var points = [];
                     var verts2D = [];
 
-                    var mapColor = self.mapColors[group.owner.displayName];
-                    var groupColor = (mapColor.planetColor.red << 16) | (mapColor.planetColor.green << 8) | (mapColor.planetColor.blue << 0);
+                    var groupColor = getGroupColor(group);
 
                     var disp = 1.0;
                     for (var i = 0; i < group.planets.length; ++i) {
@@ -706,6 +710,16 @@
                     self.onPlanetSearch(planet);
                     setSelectedPlanet(planet);
                 }
+            });
+
+            $scope.$on("nbtPlanetUpdated", function(event, planet) {
+                // rebuild the planet graphics representation (it may have changed owner, properties may be different now, etc)
+                self.scene3D.remove(planet.graphics);
+                // TODO: will this parentGroup always be right, coming as it does from somewhere else?
+                var graphics = makePlanetDisc(planet, getGroupColor(planet.parentGroup));
+                makeRings(graphics);
+                self.scene3D.add(graphics);
+                redraw();
             });
 
             this.drawSelectRect = function(cornerB) {
