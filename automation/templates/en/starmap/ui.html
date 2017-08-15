@@ -77,13 +77,33 @@
                         </div>
                         <div>
                             <button type="button" class="btn btn-primary btn-xs" ng-click="onChangeOwner()">Transfer Selected To: </button>
-                            &nbsp;<select ng-model="selectedOwner">
-                            <option ng-repeat="faction in factions" value="{{faction}}">{{faction.name}}</option>
-                        </select>
+                            <select ng-model="selectedOwner">
+                                <option ng-repeat="faction in factions" value="{{faction}}">{{faction.name}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="checkbox" ng-model="hasChargeStation">&nbsp;Charge Station
+                        </div>
+                        <div ng-show="$parent.selectedPlanets.length === 1">
+                            <div>Factories:</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div id="starmapContextMenu" ng-controller="StarmapContextMenuController" style="display: none">
+    <ul>
+        <li class="ui-interactive nbt-hover">
+            <div class="nbt-ctx-menu-item" data-cmd="cmdToggleCS">
+                <span style="margin-left: -20px" ng-show="planet.chargeStation">&#10004;</span>Charge Station
+            </div>
+        </li>
+        <li class="ui-interactive nbt-hover">
+            <div class="nbt-ctx-menu-item" data-cmd="cmdEditFactories">
+                Factories...
+            </div>
+        </li>
+    </ul>
 </div>

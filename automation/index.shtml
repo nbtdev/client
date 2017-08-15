@@ -146,6 +146,7 @@
         </div>
     </div>
 </body>
+<script src="/js/nbt/components/starmap/context-menu.js"></script>
 
 <!-- post-DOM-load script -->
 <script language="JavaScript">

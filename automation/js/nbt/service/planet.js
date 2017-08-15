@@ -142,6 +142,25 @@ var _PlanetService = (function() {
         rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
     };
 
+    PlanetService.prototype.updatePlanet = function(aPlanet, aToken, aSuccess) {
+        if (aPlanet) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aPlanet._links.self.href,
+                data: aPlanet,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccess) {
+                        aSuccess(aResp.data);
+                    }
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.editPlanets = function(aLeagueId, planetEdits, pushToRemote) {
         if (!aLeagueId)
             return;
