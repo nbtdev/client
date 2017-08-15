@@ -29,6 +29,18 @@
             var mStarmapDebug;
             try { mStarmapDebug = starmapDebug; } catch (e) { mStarmapDebug = false; }
 
+            var MapLayer = {
+                PLANETS: 0,
+                CAPITALS: 1,
+                FACTORIES: 2,
+                CHARGESTATIONS: 3,
+                COMBATUNITS: 4,
+                DROPSHIPS: 5,
+                JUMPSHIPS: 6,
+                SECTORS: 7,
+                BATTLES: 8
+            };
+
             var self = this;
 
             $scope.showPlanetBrief = false;
@@ -152,7 +164,7 @@
             this.sectorBounds = [];
 
             // 30- and 60-LY rings
-            this.rings3060 = null
+            this.rings3060 = null;
 
             // mouse manipulation state
             this.mapZoom = 1.0;
@@ -253,18 +265,24 @@
                 self.setSize(w, h);
             };
 
-            var addRing = function(ringList, planet, innerRadius, outerRadius, material) {
+            function makeRingMesh(innerRadius, outerRadius, material) {
                 var ringGeom = new THREE.RingGeometry(innerRadius, outerRadius, 36);
-                var ringMesh = new THREE.Mesh(ringGeom, material);
-                var ringObj = new THREE.Object3D();
-                ringObj.add(ringMesh);
-                ringObj.position.set(planet.x, planet.y, 0);
-                ringList.push(ringObj);
-
-                return ringObj;
-            };
+                return new THREE.Mesh(ringGeom, material);
+            }
 
             var redraw = function() {
+                // update the camera layers to match the selected layers
+                self.camera3D.layers.set(MapLayer.PLANETS);
+
+                if ($scope.showBattles) self.camera3D.layers.enable(MapLayer.BATTLES);
+                if ($scope.showDropships) self.camera3D.layers.enable(MapLayer.DROPSHIPS);
+                if ($scope.showCapitalPlanets) self.camera3D.layers.enable(MapLayer.CAPITALS);
+                if ($scope.showChargeStations) self.camera3D.layers.enable(MapLayer.CHARGESTATIONS);
+                if ($scope.showCombatUnits) self.camera3D.layers.enable(MapLayer.COMBATUNITS);
+                if ($scope.showFactories) self.camera3D.layers.enable(MapLayer.FACTORIES);
+                if ($scope.showJumpships) self.camera3D.layers.enable(MapLayer.JUMPSHIPS);
+                if ($scope.displaySectorBounds) self.camera3D.layers.enable(MapLayer.SECTORS);
+
                 // draw the planet graphics
                 self.gl.render(self.scene3D, self.camera3D);
 
@@ -319,24 +337,87 @@
                 }
             };
 
+            var Color = {
+                WHITE: 0,
+                RED: 1,
+                GREEN: 2,
+                BLUE: 3,
+                MAGENTA: 4,
+                YELLOW: 5,
+                CYAN: 6
+            };
+
+            var ringMaterials = [
+                new THREE.MeshBasicMaterial({color: 0xFFFFFF}),
+                new THREE.MeshBasicMaterial({color: 0xFF0000}),
+                new THREE.MeshBasicMaterial({color: 0x00FF00}),
+                new THREE.MeshBasicMaterial({color: 0x0000FF}),
+                new THREE.MeshBasicMaterial({color: 0xFF00FF}),
+                new THREE.MeshBasicMaterial({color: 0xFFFF00}),
+                new THREE.MeshBasicMaterial({color: 0x00FFFF})
+            ];
+
+            function makePlanetDisc(planet, color) {
+                var geom = new THREE.CircleGeometry(1, 18);
+                var mtl = new THREE.MeshBasicMaterial();
+                mtl.color.set(color);
+                mtl.origColor = color;
+
+                var obj = new THREE.Mesh(geom, mtl);
+                obj.userData = planet;
+                planet.graphics = obj;
+                obj.position.set(planet.x, planet.y, 0);
+                obj.layers.set(MapLayer.PLANETS);
+                return obj;
+            }
+
+            function makeRings(planetObj) {
+                var p = planetObj.userData;
+
+                if (p.capitalPlanet) {
+                    var ringObj = makeRingMesh(1.5, 1.7, ringMaterials[Color.MAGENTA]);
+                    ringObj.layers.set(MapLayer.CAPITALS);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.chargeStation) {
+                    var ringObj = makeRingMesh(1.8, 2.0, ringMaterials[Color.YELLOW]);
+                    ringObj.layers.set(MapLayer.CHARGESTATIONS);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.factory) {
+                    var ringObj = makeRingMesh(2.1, 2.3, ringMaterials[Color.WHITE]);
+                    ringObj.layers.set(MapLayer.FACTORIES);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.parentGroup._links.battle) {
+                    var ringObj = makeRingMesh(2.4, 2.6, ringMaterials[Color.RED]);
+                    ringObj.layers.set(MapLayer.BATTLES);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.combatUnitCount) {
+                    var ringObj = makeRingMesh(2.7, 2.9, ringMaterials[Color.GREEN]);
+                    ringObj.layers.set(MapLayer.COMBATUNITS);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.dropshipCount) {
+                    var ringObj = makeRingMesh(3.0, 3.2, ringMaterials[Color.CYAN]);
+                    ringObj.layers.set(MapLayer.DROPSHIPS);
+                    planetObj.add(ringObj);
+                }
+
+                if (p.jumpshipCount) {
+                    var ringObj = makeRingMesh(3.3, 3.5, ringMaterials[Color.BLUE]);
+                    ringObj.layers.set(MapLayer.JUMPSHIPS);
+                    planetObj.add(ringObj);
+                }
+            }
+
             this.reloadStarmapData = function() {
-                var whiteMtl = new THREE.MeshBasicMaterial();
-                whiteMtl.color.setRGB(1,1,1);
-
-                var redMtl = new THREE.MeshBasicMaterial();
-                redMtl.color.setRGB(1,0,0);
-                var greenMtl = new THREE.MeshBasicMaterial();
-                greenMtl.color.setRGB(0,1,0);
-                var blueMtl = new THREE.MeshBasicMaterial();
-                blueMtl.color.setRGB(0,0,1);
-
-                var magentaMtl = new THREE.MeshBasicMaterial();
-                magentaMtl.color.setRGB(1,0,1);
-                var yellowMtl = new THREE.MeshBasicMaterial();
-                yellowMtl.color.setRGB(1,1,0);
-                var cyanMtl = new THREE.MeshBasicMaterial();
-                cyanMtl.color.setRGB(0,1,1);
-
                 self.scene3D = new THREE.Scene();
                 self.scene3D.add(self.camera3D);
                 self.sectorBounds = [];
@@ -344,7 +425,6 @@
                 // plow through the planets, making objects, geometries and meshes along the way
                 for (var g=0; g<self.planets.length; ++g) {
                     var group = self.planets[g];
-                    var vertices = new Float32Array(group.planets.length * 3);
                     var points = [];
                     var verts2D = [];
 
@@ -356,118 +436,29 @@
                         var p = group.planets[i];
                         var x = p.x;
                         var y = p.y;
-                        var name = p.name;
 
-                        //vertices[i * 3 + 0] = x;
-                        //vertices[i * 3 + 1] = y;
-                        //vertices[i * 3 + 2] = 0.0;
                         points.push(new THREE.Vector3(x, y, disp));
                         disp = 1.0 - disp;
                         verts2D.push([x, y]);
 
-                        var geom = new THREE.CircleGeometry(1, 18);
-                        var mtl = new THREE.MeshBasicMaterial();
-                        //var mc = self.mapColors[group.owner.displayName];
-                        //var gc = (mc.planetColor.red << 16) | (mc.planetColor.green << 8) | (mc.planetColor.blue << 0);
-                        mtl.color.set(groupColor);
-                        mtl.origColor = groupColor;
-
-                        var mesh = new THREE.Mesh(geom, mtl);
-                        var obj = new THREE.Object3D();
-                        obj.add(mesh);
-                        obj.userData = p;
-                        p.graphics = obj;
-
-                        obj.position.set(x, y, 0);
-
-                        self.scene3D.add(obj);
+                        var planetObj = makePlanetDisc(p, groupColor);
+                        self.scene3D.add(planetObj);
 
                         // add rings for various other properties
-                        if (p.capitalPlanet) {
-                            var ring = addRing(self.capitalPlanetRings, p, 1.5, 1.7, magentaMtl);
-
-                            if ($scope.showCapitalPlanets)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (p.chargeStation) {
-                            var ring = addRing(self.chargeStationRings, p, 1.8, 2.0, yellowMtl);
-
-                            if ($scope.showChargeStations)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (p.factory) {
-                            var ring = addRing(self.factoryRings, p, 2.1, 2.3, whiteMtl);
-
-                            if ($scope.showFactories)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (group._links.battle) {
-                            var ring = addRing(self.battleRings, p, 2.4, 2.6, redMtl);
-
-                            if ($scope.showBattles)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (p.combatUnitCount) {
-                            var ring = addRing(self.combatUnitRings, p, 2.7, 2.9, greenMtl);
-
-                            if ($scope.showCombatUnits)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (p.dropshipCount) {
-                            ring = addRing(self.dropshipRings, p, 3.0, 3.2, cyanMtl);
-
-                            if ($scope.showDropships)
-                                self.scene3D.add(ring);
-                        }
-
-                        if (p.jumpshipCount) {
-                            ring = addRing(self.jumpshipRings, p, 3.3, 3.5, blueMtl);
-
-                            if ($scope.showJumpships)
-                                self.scene3D.add(ring);
-                        }
+                        makeRings(planetObj);
                     }
 
                     // 598? Don't draw sector bounds "north" of Antinisus, it just gets messy
                     if (group.owner.displayName !== 'Unassigned' && points.length > 3 && p.y < 598) {
-                        // make a trimesh of the group's verts
-                        // console.time("triangulate");
-                        // var triangles = Delaunay.triangulate(verts2D);
-                        // console.timeEnd("triangulate");
-                        //
-                        // var indices = new Int32Array(triangles.length);
-                        // for (var ii=0; ii<triangles.length; ii+=3) {
-                        //     indices[ii*3 + 0] = triangles[ii*3 + 2];
-                        //     indices[ii*3 + 1] = triangles[ii*3 + 1];
-                        //     indices[ii*3 + 2] = triangles[ii*3 + 0];
-                        // }
-                        //
-                        // var sectorGeom = new THREE.BufferGeometry();
-                        // sectorGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-                        // sectorGeom.setIndex(new THREE.BufferAttribute(indices, 1));
-
                         var sectorGeom = new THREE.ConvexBufferGeometry(points);
-
                         var sectorMtl = new THREE.MeshBasicMaterial();
                         sectorMtl.color.set(groupColor);
                         sectorMtl.transparent = true;
                         sectorMtl.opacity = 0.15;
-                        //sectorMtl.wireframe = true;
-                        //sectorMtl.side = THREE.DoubleSide;
 
                         var sectorMesh = new THREE.Mesh(sectorGeom, sectorMtl);
-
-                        var obj = new THREE.Object3D();
-                        self.sectorBounds.push(obj);
-                        obj.add(sectorMesh);
-
-                        if ($scope.displaySectorBounds)
-                            self.scene3D.add(obj);
+                        sectorMesh.layers.set(MapLayer.SECTORS);
+                        self.scene3D.add(sectorMesh);
                     }
                 }
 
@@ -549,7 +540,18 @@
                 $scope.$apply();
             };
 
+            function clearContextMenu() {
+                $('#starmapContextMenu').hide();
+            }
+
+            function clearPlanetBrief() {
+                if (self.hoverPlanetTimeout) clearTimeout(self.hoverPlanetTimeout);
+                self.removePlanetBrief();
+            }
+
             this.onMouseDown = function(event) {
+                clearContextMenu();
+
                 if (event.button === 0) { // just the LMB by itself
                     // move the camera on left-mouse down
                     self.state = 1;
@@ -929,9 +931,15 @@
 
             this.onContextMenuClicked = function(e) {
                 var obj = findObjectUnderMouse();
+                clearContextMenu();
 
                 if (obj) {
-                    console.log("RMB");
+                    clearPlanetBrief();
+
+                    // show context menu at the click point
+                    var menu = $('#starmapContextMenu');
+                    menu.css({top: e.offsetY, left: e.offsetX});
+                    menu.show();
                     return false;
                 }
 
@@ -1110,7 +1118,7 @@
 
                 $scope.battleType = 'Sector Assault';
                 $scope.battleLaunched = battleData.getAttackDate().toString();
-            }
+            };
 
             this.updatePlanet = function(p) {
                 $scope.name = p.name;
