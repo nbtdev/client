@@ -27,6 +27,7 @@ var _IdentityService = (function() {
     var nbtRoot = null;
     var mIdentity = null;
     var mCurrentProfile = null;
+    var $refreshInProgress = false;
 
     function IdentityService(aHttp, aRootScope, aNbtRoot) {
         self = this;
@@ -119,19 +120,18 @@ var _IdentityService = (function() {
             var ms = self.mIdentity.expires;
             var d = new Date();
             var now = d.getTime();
-            var refreshInProgress = false;
 
-            if (now > ms && !refreshInProgress) {
-                refreshInProgress = true;
+            if (now > ms && !self.$refreshInProgress) {
+                self.$refreshInProgress = true;
 
                 // then token is expired, try to refresh it -- if this fails, it will
                 // basically perform a logout
                 self.refresh(
                     function(aIdent) {
-                        refreshInProgress = false;
+                        self.$refreshInProgress = false;
                     }, function() {
                         self.rootScope.$broadcast('nbtIdentityChanged', makeIdentity());
-                        refreshInProgress = false;
+                        self.$refreshInProgress = false;
                     }
                 );
             }
