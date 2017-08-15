@@ -142,7 +142,7 @@ var _PlanetService = (function() {
         rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
     };
 
-    PlanetService.prototype.updatePlanet = function(aPlanet, aToken, aSuccess) {
+    PlanetService.prototype.updatePlanet = function(aPlanet, aToken, aSuccess, aFail) {
         if (aPlanet) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
@@ -153,9 +153,10 @@ var _PlanetService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aSuccess) {
-                        aSuccess(aResp.data);
-                    }
+                    if (aSuccess) aSuccess(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
                 }
             );
         }
