@@ -241,6 +241,23 @@ var _PlanetService = (function() {
         }
     };
 
+    PlanetService.prototype.fetchFactories = function (aPlanet, aToken, aCallback) {
+        if (aPlanet && aPlanet._links.factories) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.factories.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.createSector = function(aFaction, aPlanetIds, aToken, aSuccessCb, aFailCb) {
         if (aFaction._links.sectors) {
             var hdr = new Headers(Header.TOKEN, aToken);
