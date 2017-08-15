@@ -23,9 +23,19 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PlanetFactoriesController', ['$sce', '$scope', '$timeout', '$rootScope', 'nbtPlanet', 'nbtIdentity', function($sce, $scope, $timeout, $rootScope, nbtPlanet, nbtIdentity) {
+        .controller('PlanetFactoriesController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtFaction', 'nbtCombat', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtFaction, nbtCombat, nbtIdentity) {
+            $scope.league = null;
             $scope.planet = null;
             $scope.factories = null;
+            $scope.factions = null;
+            $scope.combatUnits = null;
+            $scope.isAdmin = false;
+
+            // these are used for the "faction admin" data set
+            $scope.factionFactories = null;
+            $scope.factionPlanets = null;
+            $scope.faction = null;
+
             var temp = null;
 
             function setOperationStatus(message, success) {
@@ -33,85 +43,127 @@
             }
 
             function reloadPlanetFactories() {
+                if (!$scope.planet) {
+                    reloadFactionFactories();
+                }
+
+                $scope.factories = null;
+                $scope.factionFactories = null;
+                $scope.factionPlanets = null;
+                $scope.factoryList = null;
                 nbtPlanet.fetchFactories($scope.planet, nbtIdentity.get().token, function(aFactories) {
-                    $scope.factories = aFactories._embedded.factories;
+                    $timeout(function() {
+                        $scope.factories = aFactories._embedded.factories;
+                        $scope.factoryList = $scope.factories;
+                    }, 0, true);
+                });
+            }
+
+            function reloadFactionFactories() {
+                $scope.factories = null;
+                $scope.factionFactories = null;
+                $scope.factionPlanets = null;
+                $scope.factoryList = null;
+
+                nbtFaction.fetchFactories($scope.faction, nbtIdentity.get().token, function(aFactories) {
+                    $timeout(function() {
+                        $scope.factionFactories = aFactories._embedded.factories;
+                        $scope.factoryList = $scope.factionFactories;
+                    }, 0, true);
+                });
+
+                nbtFaction.fetchPlanets($scope.faction, nbtIdentity.get().token, function(aPlanets) {
+                    $scope.factionPlanets = aPlanets._embedded.planets;
+                });
+            }
+
+            function reloadCombatUnits() {
+                nbtCombat.fetchCombatUnits($scope.league, nbtIdentity.get().token, function(aUnits) {
+                    $scope.combatUnits = aUnits._embedded.combatUnits;
+                });
+            }
+
+            function reloadFactions() {
+                nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function(aFactions) {
+                    $scope.factions = aFactions;
                 });
             }
 
             $scope.onAdd = function() {
-                $scope.newJumpship = {
-                    name: null,
+                $scope.newFactory = {
+                    firm: null,
+                    baseRate: 3,
+                    maxRate: 25,
                     editing: true,
                     isNew: true
                 }
             };
 
-            $scope.onEdit = function(jumpship) {
+            $scope.onEdit = function(factory) {
                 temp = {};
-                shallowCopy(temp, jumpship);
-                jumpship.editing = true;
+                shallowCopy(temp, factory);
+                factory.editing = true;
             };
 
-            $scope.onDelete = function(jumpship) {
-                if (!confirm("Are you sure you want to delete jumpship '" + jumpship.name + "'?"))
+            $scope.onDelete = function(factory) {
+                if (!confirm("Are you sure you want to delete factory '" + factory.firm + "'?"))
                     return;
 
-                nbtTransport.deleteJumpship(
-                    $scope.faction,
-                    jumpship,
+                nbtPlanet.deleteFactory(
+                    factory,
                     nbtIdentity.get().token,
                     function(aData) {
-                        reloadJumpships();
-                        setOperationStatus("Jumpship successfully deleted", true);
+                        reloadPlanetFactories();
+                        setOperationStatus("Factory successfully deleted", true);
                     },
                     function(aErr) {
-                        setStatus(aErr.data.message, false);
+                        setOperationStatus(aErr.message, false);
                     }
                 );
             };
 
-            $scope.onApply = function(jumpship) {
-                if (jumpship.isNew) {
-                    nbtTransport.addNewJumpship(
-                        jumpship,
-                        $scope.faction,
+            $scope.onApply = function(factory) {
+                if (factory.isNew) {
+                    nbtPlanet.addFactory(
+                        $scope.planet,
+                        factory,
                         nbtIdentity.get().token,
                         function(aData) {
-                            $scope.jumpships = aData._embedded.jumpships;
-                            setStatus("Jumpship successfully added", true);
-                            jumpship.editing = false;
-                            jumpship.isNew = false;
+                            $scope.factories = aData._embedded.factories;
+                            setOperationStatus("Factory successfully added", true);
+                            factory.editing = false;
+                            factory.isNew = false;
                         },
                         function(aErr) {
-                            setStatus(aErr.data.message, false);
+                            setOperationStatus(aErr.message, false);
                         }
                     );
                 } else {
-                    nbtTransport.updateJumpship(
-                        jumpship,
+                    nbtPlanet.updateFactory(
+                        factory,
                         nbtIdentity.get().token,
                         function(aData) {
-                            setOperationStatus("Jumpship successfully updated", true);
+                            setOperationStatus("Factory successfully updated", true);
                             temp = {};
-                            $scope.onCancel(jumpship);
+                            $scope.onCancel(factory);
                         },
                         function(aErr) {
-                            setStatus(aErr.data.message, false);
+                            setOperationStatus(aErr.message, false);
                         }
                     );
                 }
             };
 
-            $scope.onCancel = function(jumpship) {
-                jumpship.editing = false;
-                jumpship.isNew = false;
+            $scope.onCancel = function(factory) {
+                factory.editing = false;
+                factory.isNew = false;
 
                 // restore the previous values
-                shallowCopy(jumpship, temp);
+                shallowCopy(factory, temp);
             };
 
             // TODO: don't tie this to a specific dialog...
-            $("#planetFactoriesDialog").on("click", function(event) {
+            $("#cmdClosePlanetFactoriesDialog").on("click", function(event) {
                 $scope.show = false;
                 $scope.$apply();
             });
@@ -126,14 +178,47 @@
             });
             $scope.$on('destroy', cb);
 
-            // when the user chooses a different league, we want to update out cached league
+            // when the user chooses a different planet, we want to update our cached planet
             cb = $scope.$on('planetChanged', function(event, planet) {
                 $timeout(function() {
                     $scope.planet = planet;
+                    reloadPlanetFactories();
                 }, 0, true);
             });
             $scope.$on('destroy', cb);
 
+            // when the user chooses a different planet, we want to update our cached planet
+            cb = $scope.$on('nbtFactionChanged', function(event, faction) {
+                $scope.faction = faction;
+                reloadFactionFactories();
+            });
+            $scope.$on('destroy', cb);
+
+            // when the user chooses a different league, we want to update our cached league
+            cb = $scope.$on('nbtLeagueChanged', function(event, league) {
+                $scope.league = league;
+                reloadCombatUnits();
+                reloadFactions();
+            });
+            $scope.$on('destroy', cb);
+
+            function initializeIdent(ident) {
+                $scope.isAdmin = (ident.isSiteAdmin() || ident.isLeagueAdmin());
+            }
+
+            $scope.$watch('faction', function(oldVal, newVal) {
+                reloadFactionFactories();
+            });
+
+            // when the user signs in or out, we want to know
+            cb = $scope.$on('nbtIdentityChanged', function(event, ident) {
+                initializeIdent(ident);
+                if (!ident.isValid())
+                    $scope.show = false;
+            });
+            $scope.$on('destroy', cb);
+
+            initializeIdent(nbtIdentity.get());
             $scope.checkEnterKey = checkEnterKeyAndSubmit;
         }]);
 })();

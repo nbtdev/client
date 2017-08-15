@@ -258,6 +258,65 @@ var _PlanetService = (function() {
         }
     };
 
+    PlanetService.prototype.addFactory = function (aPlanet, aFactory, aToken, aCallback, aFail) {
+        if (aPlanet && aPlanet._links.factories) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aPlanet._links.factories.href,
+                data: aFactory,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.updateFactory = function (aFactory, aToken, aCallback, aFail) {
+        if (aFactory && aFactory._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aFactory._links.self.href,
+                data: aFactory,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.deleteFactory = function (aFactory, aToken, aCallback, aFail) {
+        if (aFactory && aFactory._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: aFactory._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.createSector = function(aFaction, aPlanetIds, aToken, aSuccessCb, aFailCb) {
         if (aFaction._links.sectors) {
             var hdr = new Headers(Header.TOKEN, aToken);

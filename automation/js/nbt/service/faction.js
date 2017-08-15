@@ -197,6 +197,23 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.fetchFactories = function(aFaction, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.factories) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.factories.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.fetchRoster = function(aFaction, aToken, aSuccessCb) {
         if (aFaction && aFaction._links.roster) {
             var hdr = new Headers(Header.TOKEN, aToken);
@@ -204,6 +221,23 @@ var _FactionService = (function() {
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
                 url: aFaction._links.roster.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.fetchPlanets = function(aFaction, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.planets) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.planets.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
