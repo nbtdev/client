@@ -1,5 +1,20 @@
 [
   {
+    "date": "15 Aug 2017",
+    "changes": {
+      "Features": [
+        "[Admin] Planet and factory editor for league setup",
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "Usability fixes to battle tracker",
+        "Usability fixes for planet/faction setup tools"
+      ]
+    }
+  },
+
+  {
     "date": "09 Aug 2017",
     "changes": {
       "Features": [
