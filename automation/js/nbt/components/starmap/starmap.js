@@ -947,7 +947,9 @@
                 var obj = findObjectUnderMouse();
                 clearContextMenu();
 
-                if (obj) {
+                var ident = nbtIdentity.get();
+
+                if (obj && (ident.isSiteAdmin() || ident.isLeagueAdmin())) {
                     clearPlanetBrief();
 
                     // show context menu at the click point
