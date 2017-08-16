@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('CombatUnitAdminController', ['$sce', '$scope', 'nbtCombat', 'nbtIdentity', function($sce, $scope, nbtCombat, nbtIdentity) {
+        .controller('CombatUnitAdminController', ['$sce', '$scope', '$timeout', 'nbtCombat', 'nbtIdentity', function($sce, $scope, $timeout, nbtCombat, nbtIdentity) {
             $scope.league = null;
             $scope.data = null;
             $scope.unitTypes = null;
@@ -103,7 +103,8 @@
                         name: unit.type.name
                     },
                     battleValue: unit.battleValue,
-                    tonnage: unit.tonnage
+                    tonnage: unit.tonnage,
+                    designation: unit.designation
                 };
             };
 

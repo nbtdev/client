@@ -130,6 +130,7 @@
                         nbtIdentity.get().token,
                         function(aData) {
                             $scope.factories = aData._embedded.factories;
+                            $scope.factoryList = $scope.factories;
                             setOperationStatus("Factory successfully added", true);
                             factory.editing = false;
                             factory.isNew = false;

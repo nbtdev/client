@@ -85,10 +85,10 @@
                     <span ng-show="newFactory.editing"><select ng-model="newFactory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-show="newFactory.editing"><input type="text" size="4" ng-model="newFactory.baseRate"></span>
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.baseRate" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-show="newFactory.editing"><input type="text" size="4" ng-model="newFactory.maxRate"></span>
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.maxRate" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-2">
                     <span ng-show="newFactory.editing">
