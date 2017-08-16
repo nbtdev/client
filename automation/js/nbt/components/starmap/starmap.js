@@ -535,8 +535,8 @@
             var clearSelectedPlanets = function() {
                 for (var i=0; i<$scope.selectedPlanets.length; ++i) {
                     var planet = $scope.selectedPlanets[i];
-                    var origColor = planet.graphics.children[0].material.origColor;
-                    planet.graphics.children[0].material.color.set(origColor);
+                    var origColor = planet.graphics.material.origColor;
+                    planet.graphics.material.color.set(origColor);
                 }
                 redraw();
 
@@ -570,7 +570,7 @@
                         if (event.ctrlKey) {
                             var obj = findObjectUnderMouse();
                             if (obj) {
-                                obj.graphics.children[0].material.color.setRGB(1,1,1);
+                                obj.graphics.material.color.setRGB(1,1,1);
                                 addToSelectedSet(obj);
                                 redraw();
                             } else {
