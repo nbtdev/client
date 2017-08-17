@@ -40,7 +40,7 @@
                         <span ng-show="factory.editing"><select ng-model="factory.owner" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
                     </div>
                     <div ng-hide="planet">
-                        <span ng-hide="factory.editing">{{factory.planet.name}}</span>
+                        <span ng-hide="factory.editing"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}}</a></span>
                         <span ng-show="factory.editing"><select ng-model="factory.planet" ng-options="planet as planet.name for planet in factionPlanets track by planet.id"></select></span>
                     </div>
                 </div>

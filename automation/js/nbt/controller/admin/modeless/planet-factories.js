@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PlanetFactoriesController', ['$sce', '$scope', '$timeout', 'nbtPlanet', 'nbtFaction', 'nbtCombat', 'nbtIdentity', function($sce, $scope, $timeout, nbtPlanet, nbtFaction, nbtCombat, nbtIdentity) {
+        .controller('PlanetFactoriesController', ['$sce', '$scope', '$rootScope', '$timeout', 'nbtPlanet', 'nbtFaction', 'nbtCombat', 'nbtIdentity', function($sce, $scope, $rootScope, $timeout, nbtPlanet, nbtFaction, nbtCombat, nbtIdentity) {
             $scope.league = null;
             $scope.planet = null;
             $scope.factories = null;
@@ -77,18 +77,18 @@
                     return;
 
                 // then, if a planet is selected, the listing should be the factories on that planet only
-                var factoryList = $scope.factionFactories;
                 if ($scope.planet && $scope.factionFactories) {
-                    factoryList = [];
-                    $scope.factionFactories.forEach(function(e)  {
-                        if (e.planet.id === $scope.planet.id)
-                            factoryList.push(e);
-                    });
-                }
+                    var factoryList = [];
+                    for (var i=0; i<$scope.factionFactories.length; ++i) {
+                        var f = $scope.factionFactories[i];
+                        if (f.planet.id === $scope.planet.id)
+                            factoryList.push(f);
+                    }
 
-                $timeout(function() {
                     $scope.factoryList = factoryList;
-                }, 0, true);
+                } else {
+                    $scope.factoryList = $scope.factionFactories;
+                }
             }
 
             function removeFactory(factory) {
@@ -103,6 +103,11 @@
                     refreshListing();
                 }
             }
+
+            $scope.onPlanetClicked = function(planet) {
+                // call out to the starmap to relocate to this sector capital
+                $rootScope.$broadcast('planetSearchRequest', planet.name);
+            };
 
             $scope.onAdd = function() {
                 $scope.newFactory = {
