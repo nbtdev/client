@@ -23,10 +23,13 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('PlanetSetupController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtLeague, nbtIdentity) {
+        .controller('PlanetSetupController', ['$sce', '$scope', '$rootScope', '$timeout', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $rootScope, $timeout, nbtFaction, nbtLeague, nbtIdentity) {
             function reset() {
                 $scope.show = false;
                 $scope.league = null;
+                $scope.faction = null;
+                $scope.factionSetup = null;
+                $scope.planetGroups = null;
                 $scope.planetSetup = null;
                 $scope.message = null;
                 $scope.success = false;
@@ -34,6 +37,12 @@
                 $scope.selectedCombatUnits = [];
                 $scope.selectedDropships = [];
                 $scope.selectedJumpships = [];
+
+                $scope.views = [
+                    { id: 'planet', name: 'Planet Setup' },
+                    { id: 'summary', name: "Faction Setup Summary" }
+                ];
+                $scope.view = $scope.views[0];
             }
 
             reset();
@@ -290,7 +299,12 @@
                         nbtFaction.submitFactionSetup($scope.faction, $scope.factionSetup, nbtIdentity.get().token, function (aData) {
                                 processFactionSetupData(aData);
                                 processPlanetChange($scope.planet);
-                                setOperationStatus("Data saved successfully", true);
+
+                                var message = "Data saved successfully";
+                                if (aData.errors)
+                                    message += " (with errors)";
+
+                                setOperationStatus(message, true);
                             },
                             function (aErr) {
                                 setStatus(aErr.data.message, false);
@@ -333,6 +347,15 @@
                 }
             }
 
+            $scope.onSectorClicked = function(sector) {
+                // call out to the starmap to relocate to this sector capital
+                $rootScope.$broadcast('planetSearchRequest', sector.sectorCapital.name);
+            };
+
+            $scope.onBack = function() {
+                $scope.view = $scope.views[0];
+            };
+
             var cb = $scope.$on('planetChanged', function (event, aPlanet) {
                 // before we move off of this planet, make sure we save any changes that were made
                 if ($scope.planetSetup)
@@ -342,6 +365,39 @@
                 $scope.planetSetup = null;
 
                 processPlanetChange(aPlanet);
+            });
+            $scope.$on('destroy', cb);
+
+            cb = $scope.$on('nbtPlanetsLoaded', function(event, aLeagueId, aPlanetGroups, aMapColors) {
+                // filter out stuff that ain't ours...if we are a thing that is
+                if ($scope.faction) {
+                    var filtered = [];
+                    aPlanetGroups.forEach(function(g) {
+                        if (g.owner.id === $scope.faction.id) {
+                            g.industry = 0;
+                            g.combatUnits = 0;
+                            g.dropships = 0;
+                            g.jumpships = 0;
+                            g.planets.forEach(function(p) {
+                                var setup = $scope.planetSetupDict[p.id];
+                                if (setup) {
+                                    if (p.industry) g.industry += p.industry;
+                                    setup.instances.forEach(function (inst) {
+                                        g.combatUnits += inst.template.tonnage;
+                                    });
+                                    setup.dropships.forEach(function (ds) {
+                                        g.dropships += ds.type.tonnage;
+                                    });
+                                    setup.jumpships.forEach(function (js) {
+                                        g.jumpships += js.type.tonnage;
+                                    });
+                                }
+                            });
+                            filtered.push(g);
+                        }
+                    });
+                    $scope.planetGroups = filtered;
+                }
             });
             $scope.$on('destroy', cb);
 

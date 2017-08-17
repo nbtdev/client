@@ -46,6 +46,7 @@
             $scope.showPlanetBrief = false;
             $scope.planetNames = [];
             $scope.planetNameToPlanetMap = {};
+            $scope.planetIdToPlanetMap = {};
 
             // planet data from service
             this.planets = null;
@@ -103,6 +104,7 @@
                         var p = group.planets[i];
                         planetNames.push({name: p.name, id: p.id, owner: ownerName, position: {x: p.x, y: p.y}});
                         $scope.planetNameToPlanetMap[p.name] = p;
+                        $scope.planetIdToPlanetMap[p.id] = p;
 
                         if (p.x < minX) minX = p.x;
                         if (p.x > maxX) maxX = p.x;
@@ -614,7 +616,7 @@
                 }
 
                 // call out
-                $rootScope.$broadcast('planetChanged', planet, planets, self.token);
+                $rootScope.$broadcast('planetChanged', planet, planets);
             }
 
             this.onMouseUp = function(event) {

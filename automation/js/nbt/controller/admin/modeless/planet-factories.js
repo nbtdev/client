@@ -42,38 +42,14 @@
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
             }
 
-            function reloadPlanetFactories() {
-                if (!$scope.planet) {
-                    reloadFactionFactories();
-                }
-
-                $scope.factories = null;
-                $scope.factionFactories = null;
-                $scope.factionPlanets = null;
-                $scope.factoryList = null;
-                nbtPlanet.fetchFactories($scope.planet, nbtIdentity.get().token, function(aFactories) {
-                    $timeout(function() {
-                        $scope.factories = aFactories._embedded.factories;
-                        $scope.factoryList = $scope.factories;
-                    }, 0, true);
-                });
-            }
-
             function reloadFactionFactories() {
-                $scope.factories = null;
                 $scope.factionFactories = null;
-                $scope.factionPlanets = null;
-                $scope.factoryList = null;
 
                 nbtFaction.fetchFactories($scope.faction, nbtIdentity.get().token, function(aFactories) {
                     $timeout(function() {
                         $scope.factionFactories = aFactories._embedded.factories;
-                        $scope.factoryList = $scope.factionFactories;
+                        refreshListing();
                     }, 0, true);
-                });
-
-                nbtFaction.fetchPlanets($scope.faction, nbtIdentity.get().token, function(aPlanets) {
-                    $scope.factionPlanets = aPlanets._embedded.planets;
                 });
             }
 
@@ -87,6 +63,45 @@
                 nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function(aFactions) {
                     $scope.factions = aFactions;
                 });
+            }
+
+            function reloadFactionPlanets() {
+                nbtFaction.fetchPlanets($scope.faction, nbtIdentity.get().token, function(aPlanets) {
+                    $scope.factionPlanets = aPlanets._embedded.planets;
+                });
+            }
+
+            function refreshListing() {
+                // first, skip this all if we are not showing
+                if (!$scope.show)
+                    return;
+
+                // then, if a planet is selected, the listing should be the factories on that planet only
+                var factoryList = $scope.factionFactories;
+                if ($scope.planet && $scope.factionFactories) {
+                    factoryList = [];
+                    $scope.factionFactories.forEach(function(e)  {
+                        if (e.planet.id === $scope.planet.id)
+                            factoryList.push(e);
+                    });
+                }
+
+                $timeout(function() {
+                    $scope.factoryList = factoryList;
+                }, 0, true);
+            }
+
+            function removeFactory(factory) {
+                // remove this factory from the faction listing
+                var idx = $scope.factionFactories.findIndex(function(e, i, a) {
+                    if (e.id === factory.id)
+                        return i;
+                });
+
+                if (idx >= 0) {
+                    $scope.factionFactories.splice(idx, 1);
+                    refreshListing();
+                }
             }
 
             $scope.onAdd = function() {
@@ -113,7 +128,7 @@
                     factory,
                     nbtIdentity.get().token,
                     function(aData) {
-                        reloadPlanetFactories();
+                        removeFactory(factory);
                         setOperationStatus("Factory successfully deleted", true);
                     },
                     function(aErr) {
@@ -171,20 +186,15 @@
 
             // when the user clicks the Faction Tools "Jumpships" menu item...
             var cb = $scope.$on('cmdEditFactories', function (event, command) {
-                // only load the factories if we are opening
-                $scope.factories = null;
-                reloadPlanetFactories();
-
                 $scope.show = true;
+                refreshListing();
             });
             $scope.$on('destroy', cb);
 
             // when the user chooses a different planet, we want to update our cached planet
             cb = $scope.$on('planetChanged', function(event, planet) {
-                $timeout(function() {
-                    $scope.planet = planet;
-                    reloadPlanetFactories();
-                }, 0, true);
+                $scope.planet = planet;
+                refreshListing();
             });
             $scope.$on('destroy', cb);
 
@@ -192,14 +202,15 @@
             cb = $scope.$on('nbtFactionChanged', function(event, faction) {
                 $scope.faction = faction;
                 reloadFactionFactories();
+                reloadFactionPlanets();
             });
             $scope.$on('destroy', cb);
 
             // when the user chooses a different league, we want to update our cached league
             cb = $scope.$on('nbtLeagueChanged', function(event, league) {
                 $scope.league = league;
-                reloadCombatUnits();
                 reloadFactions();
+                reloadCombatUnits();
             });
             $scope.$on('destroy', cb);
 
