@@ -77,18 +77,20 @@
                     return;
 
                 // then, if a planet is selected, the listing should be the factories on that planet only
-                if ($scope.planet && $scope.factionFactories) {
-                    var factoryList = [];
-                    for (var i=0; i<$scope.factionFactories.length; ++i) {
-                        var f = $scope.factionFactories[i];
-                        if (f.planet.id === $scope.planet.id)
-                            factoryList.push(f);
-                    }
+                $timeout(function() {
+                    if ($scope.planet && $scope.factionFactories) {
+                        var factoryList = [];
+                        for (var i=0; i<$scope.factionFactories.length; ++i) {
+                            var f = $scope.factionFactories[i];
+                            if (f.planet.id === $scope.planet.id)
+                                factoryList.push(f);
+                        }
 
-                    $scope.factoryList = factoryList;
-                } else {
-                    $scope.factoryList = $scope.factionFactories;
-                }
+                        $scope.factoryList = factoryList;
+                    } else {
+                        $scope.factoryList = $scope.factionFactories;
+                    }
+                }, 0, true);
             }
 
             function removeFactory(factory) {

@@ -1,5 +1,19 @@
 [
   {
+    "date": "16 Aug 2017",
+    "changes": {
+      "Features": [
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "Usability fixes to planet setup (improved sorting, added faction setup summary pane)",
+        "Added 'click-to-locate' for most planet/sector listings in the automation (Issue #77)"
+      ]
+    }
+  },
+
+  {
     "date": "15 Aug 2017",
     "changes": {
       "Features": [
