@@ -46,6 +46,7 @@
             $scope.showPlanetBrief = false;
             $scope.planetNames = [];
             $scope.planetNameToPlanetMap = {};
+            $scope.planetIdToPlanetMap = {};
 
             // planet data from service
             this.planets = null;
@@ -103,6 +104,7 @@
                         var p = group.planets[i];
                         planetNames.push({name: p.name, id: p.id, owner: ownerName, position: {x: p.x, y: p.y}});
                         $scope.planetNameToPlanetMap[p.name] = p;
+                        $scope.planetIdToPlanetMap[p.id] = p;
 
                         if (p.x < minX) minX = p.x;
                         if (p.x > maxX) maxX = p.x;
@@ -535,8 +537,8 @@
             var clearSelectedPlanets = function() {
                 for (var i=0; i<$scope.selectedPlanets.length; ++i) {
                     var planet = $scope.selectedPlanets[i];
-                    var origColor = planet.graphics.children[0].material.origColor;
-                    planet.graphics.children[0].material.color.set(origColor);
+                    var origColor = planet.graphics.material.origColor;
+                    planet.graphics.material.color.set(origColor);
                 }
                 redraw();
 
@@ -570,7 +572,7 @@
                         if (event.ctrlKey) {
                             var obj = findObjectUnderMouse();
                             if (obj) {
-                                obj.graphics.children[0].material.color.setRGB(1,1,1);
+                                obj.graphics.material.color.setRGB(1,1,1);
                                 addToSelectedSet(obj);
                                 redraw();
                             } else {
@@ -614,7 +616,7 @@
                 }
 
                 // call out
-                $rootScope.$broadcast('planetChanged', planet, planets, self.token);
+                $rootScope.$broadcast('planetChanged', planet, planets);
             }
 
             this.onMouseUp = function(event) {
@@ -947,7 +949,9 @@
                 var obj = findObjectUnderMouse();
                 clearContextMenu();
 
-                if (obj) {
+                var ident = nbtIdentity.get();
+
+                if (obj && (ident.isSiteAdmin() || ident.isLeagueAdmin())) {
                     clearPlanetBrief();
 
                     // show context menu at the click point

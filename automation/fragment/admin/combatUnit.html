@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-md-2">
                             <span ng-hide="unit.editing">{{unit.type.name}}</span>
-                            <select ng-show="unit.editing" ng-model="unit.type" ng-options="type.name for type in unitTypes"></select>
+                            <select ng-show="unit.editing" ng-model="unit.type" ng-options="type as type.name for type in unitTypes track by type.id"></select>
                         </div>
                         <div class="col-md-1">
                             <span ng-hide="unit.editing">{{unit.battleValue}}</span>
@@ -75,7 +75,7 @@
                             <span ng-show="newUnit.editing"><input type="text" size="4" ng-model="newUnit.designation"></span>
                         </div>
                         <div class="col-md-2">
-                            <select ng-show="newUnit.editing" ng-model="newUnit.type" ng-options="type.name for type in unitTypes"></select>
+                            <select ng-show="newUnit.editing" ng-model="newUnit.type" ng-options="type as type.name for type in unitTypes track by type.id"></select>
                         </div>
                         <div class="col-md-1">
                             <span ng-show="newUnit.editing"><input type="text" size="4" ng-model="newUnit.battleValue"></span>

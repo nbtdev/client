@@ -34,7 +34,8 @@
     -->
 
     <script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>
-
+    <script src='/js/nbt/api.js'></script>
+    <script src='/js/nbt/nbt.js'></script>
     <script src="/js/gl-matrix/common.js"></script>
     <script src="/js/gl-matrix/mat4.js"></script>
     <script src="/js/gl-matrix/vec3.js"></script>
@@ -43,8 +44,6 @@
     <script src="/js/nbt/util/quickhull.js"></script>
     <script src="/js/nbt/util/convex-geometry.js"></script>
 
-    <script src='/js/nbt/api.js'></script>
-    <script src='/js/nbt/nbt.js'></script>
     <script src='/js/nbt/util/headers.js'></script>
     <script src='/js/nbt/model/battle.js'></script>
     <script src='/js/nbt/model/league.js'></script>
@@ -71,6 +70,7 @@
     <script src='/js/nbt/controller/jump-controller.js'></script>
     <script src='/js/nbt/controller/jumpship-summary.js'></script>
     <script src='/js/nbt/components/starmap/starmap.js'></script>
+    <script src="/js/nbt/components/starmap/context-menu.js"></script>
 </head>
 <body ng-controller="LeaguePageController as pageController" style="background-color: black;">
     <noscript>JavaScript must be enabled in your browser to use this site!</noscript>
@@ -106,6 +106,7 @@
     <!--#include virtual="/fragment/admin/combatUnit.html" -->
     <!--#include virtual="/fragment/admin/factionApplications.html" -->
     <!--#include virtual="/fragment/admin/factions.html" -->
+    <!--#include virtual="/fragment/admin/modeless/planetFactories.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/profile.html" -->
@@ -146,7 +147,6 @@
         </div>
     </div>
 </body>
-<script src="/js/nbt/components/starmap/context-menu.js"></script>
 
 <!-- post-DOM-load script -->
 <script language="JavaScript">

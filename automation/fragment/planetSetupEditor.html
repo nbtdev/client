@@ -1,25 +1,57 @@
 <script src="/js/nbt/controller/planet-setup.js"></script>
 <div id="planetSetupDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetSetupController" ng-cloak>
-    <h5 class="nbt-h5 header">Planet Setup - {{faction.displayName}}<span ng-show="planet">&nbsp;({{planet.name}})</span><span class="nbt-close-dialog" style="float: right; cursor: pointer">&#10006;</span></h5>
-    <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+    <h5 class="nbt-h5 header">
+        Planet Setup - {{faction.displayName}}<span ng-show="planet">&nbsp;({{planet.name}})</span><span class="nbt-close-dialog" style="float: right; cursor: pointer">&#10006;</span>
+    </h5>
+    <div ng-hide="view.id==='summary'" class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
         <div class="container col-md-12">
             <div class="row">
                 <div class="col-md-3">
-                    <span ng-class="{'nbt-error': factionSetup.combatUnitLimitRemaining < 0}">Combat Units: {{factionSetup.combatUnitLimitRemaining|number}}&nbsp;{{factionSetup.combatUnitLimitUnits}}<span ng-hide="factionSetup.combatUnitLimitUnits < 0"> Remaining</span></span>
+                    <span>Combat Units:
+                        <span ng-class="{'nbt-error': factionSetup.combatUnitLimitRemaining < 0}">{{factionSetup.combatUnitLimitRemaining|number}}&nbsp;{{factionSetup.combatUnitLimitUnits}}</span>
+                        <span ng-hide="factionSetup.combatUnitLimitUnits < 0"> Remaining</span>
+                    </span>
                 </div>
                 <div class="col-md-3">
-                    <span ng-class="{'nbt-error': factionSetup.industryLimitRemaining < 0}">Industry: {{factionSetup.industryLimitRemaining|number}}&nbsp;cbills<span ng-hide="factionSetup.industryLimitRemaining < 0"> Remaining</span></span>
+                    <span>Industry:
+                        <span ng-class="{'nbt-error': factionSetup.industryLimitRemaining < 0}">{{factionSetup.industryLimitRemaining|number}}&nbsp;cbills</span>
+                        <span ng-hide="factionSetup.industryLimitRemaining < 0"> Remaining</span>
+                    </span>
                 </div>
                 <div class="col-md-3">
-                    <span ng-class="{'nbt-error': factionSetup.dropshipLimitRemaining < 0}">Dropships: {{factionSetup.dropshipLimitRemaining|number}}&nbsp;Tons<span ng-hide="factionSetup.dropshipLimitRemaining < 0"> Remaining</span></span>
+                    <span>Dropships:
+                        <span ng-class="{'nbt-error': factionSetup.dropshipLimitRemaining < 0}">{{factionSetup.dropshipLimitRemaining|number}}&nbsp;Tons</span>
+                        <span ng-hide="factionSetup.dropshipLimitRemaining < 0"> Remaining</span>
+                    </span>
                 </div>
                 <div class="col-md-3">
-                    <span ng-class="{'nbt-error': factionSetup.jumpshipLimitRemaining < 0}">Jumpships: {{factionSetup.jumpshipLimitRemaining|number}}&nbsp;Tons<span ng-hide="factionSetup.jumpshipLimitRemaining < 0"> Remaining</span></span>
+                    <span>Jumpships:
+                        <span ng-class="{'nbt-error': factionSetup.jumpshipLimitRemaining < 0}">{{factionSetup.jumpshipLimitRemaining|number}}&nbsp;Tons</span>
+                        <span ng-hide="factionSetup.jumpshipLimitRemaining < 0"> Remaining</span>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">Current Ratios:</div>
+                <div class="col-md-3">
+                    <span class="nbt-highlight">Light/Med:</span> <span>{{factionSetup.medLightAmount/factionSetup.maxCombatUnitAmount*100|number:1}}%</span>
+                </div>
+                <div class="col-md-2">
+                    <span class="nbt-highlight">Heavy:</span> <span ng-class="{'nbt-error': factionSetup.heavyAmount/factionSetup.maxCombatUnitAmount > 0.35}">{{factionSetup.heavyAmount/factionSetup.maxCombatUnitAmount*100|number:1}}%</span>
+                </div>
+                <div class="col-md-2">
+                    <span class="nbt-highlight">Assault:</span> <span ng-class="{'nbt-error': factionSetup.assaultAmount/factionSetup.maxCombatUnitAmount > 0.15}">{{factionSetup.assaultAmount/factionSetup.maxCombatUnitAmount*100|number:1}}%</span>
+                </div>
+                <div class="col-md-3">
+                    <span class="nbt-highlight">Cross-Tech:</span> <span ng-class="{'nbt-error': factionSetup.crossTechLimitRemaining < 0}">Max {{factionSetup.maxCrossTechPercent|number}}%</span>
                 </div>
             </div>
             <hr>
             <div class="row" ng-hide="planet">
-                <div class="col-md-12" style="color: #808080">No Planet Selected</div>
+                <div class="col-md-12" style="color: #808080">
+                    <span>No Planet Selected</span>
+                    <span style="float: right">View: <select ng-model="view" ng-options="view as view.name for view in views track by view.id"></select></span>
+                </div>
             </div>
             <div class="row" ng-show="planet">
                 <div class="col-md-12">
@@ -32,6 +64,7 @@
                             style="background-color: #1d1e1f"
                             step="25000000"><span ng-show="planet">&nbsp;(Min: {{planetSetup.autoIndustry|number}})</span>
                     </span>
+                    <span style="float: right">View: <select ng-model="view" ng-options="view as view.name for view in views track by view.id"></select></span>
                 </div>
             </div>
             <div style="padding: 5px; overflow-x: hidden;">
@@ -123,6 +156,41 @@
             <div class="centered" ng-show="planet" style="margin-top: 5px;">
                 <span style="margin-right: 25px;"><a class="btn btn-info nbt-button ui-interactive" data-cmd="cmdSaveChanges" role="button">Save Changes</a></span>
                 <span style="float: right" ng-show="message" ng-class="{'nbt-info': success, 'nbt-error': !success}">{{message}}</span>
+                <div ng-show="factionSetup.errors">
+                    <div class="nbt-bold">Setup Errors Detected:</div>
+                    <div class="nbt-error" ng-repeat="error in factionSetup.errors">{{error}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="view.id==='summary'" class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div class="container col-md-12">
+            <div class="row nbt-centered">
+                <div class="col-md-12">
+                    <span style="float: left">
+                        <a class="ui-interactive" ng-click="onBack()">
+                            <img class="nbt-pseudo-button" src="../images/back.png"/>
+                        </a>
+                    </span>
+                    <h4 style="display: inline-block">{{faction.displayName}} Setup Summary</h4>
+                    <br>
+                    <div style="display: inline-block" class="nbt-font-s">(All quantities in tons)</div>
+                </div>
+            </div>
+            <hr style="margin: 7px 0 3px 0">
+            <div class="row nbt-bold nbt-highlight">
+                <div class="col-md-4">Sector</div>
+                <div class="col-md-2">Industry</div>
+                <div class="col-md-2">Combat Units</div>
+                <div class="col-md-2">Dropships</div>
+                <div class="col-md-2">Jumpships</div>
+            </div>
+            <div class="row nbt-hover" ng-repeat="group in planetGroups">
+                <div class="col-md-4"><a class="ui-interactive" ng-click="onSectorClicked(group)">{{group.sectorCapital.name}}</a></div>
+                <div class="col-md-2">{{group.industry|number}}</div>
+                <div class="col-md-2">{{group.combatUnits|number}}</div>
+                <div class="col-md-2">{{group.dropships|number}}</div>
+                <div class="col-md-2">{{group.jumpships|number}}</div>
             </div>
         </div>
     </div>

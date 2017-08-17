@@ -1,0 +1,124 @@
+<div id="planetFactoriesDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetFactoriesController" ng-cloak>
+    <!-- dialog header -->
+    <h5 class="nbt-h5 header">
+        <span>Factories
+            <span ng-show="planet"> - {{planet.name}}</span>
+            <span ng-show="faction"> - {{faction.displayName}}</span>
+        </span>
+        <span id="cmdClosePlanetFactoriesDialog" style="float: right; cursor: pointer">&#10006;</span>
+    </h5>
+
+    <!-- dialog body -->
+    <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div class="container col-md-12">
+            <div class="row" ng-show="isAdmin">
+                Edit All Factories For: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
+            </div>
+
+            <!-- the rows of data -->
+            <div class="row nbt-bold nbt-highlight">
+                <div class="col-md-3">Firm</div>
+                <div class="col-md-3">
+                    <span ng-show="planet">Faction</span>
+                    <span ng-hide="planet">Planet</span>
+                </div>
+                <div class="col-md-2">Line</div>
+                <div class="col-md-1">Base Rate</div>
+                <div class="col-md-1">Max Rate</div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <!-- factory listing -->
+            <div class="row nbt-hover" ng-repeat="factory in factoryList">
+                <div class="col-md-3">
+                    <span ng-hide="factory.editing">{{factory.firm}}</span>
+                    <span ng-show="factory.editing"><input type="text" ng-model="factory.firm" style="width: 90%"></span>
+                </div>
+                <div class="col-md-3">
+                    <div ng-show="planet">
+                        <span ng-hide="factory.editing">{{factory.owner.displayName}}</span>
+                        <span ng-show="factory.editing"><select ng-model="factory.owner" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
+                    </div>
+                    <div ng-hide="planet">
+                        <span ng-hide="factory.editing"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}}</a></span>
+                        <span ng-show="factory.editing"><select ng-model="factory.planet" ng-options="planet as planet.name for planet in factionPlanets track by planet.id"></select></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span ng-hide="factory.editing">{{factory.combatUnit.designation}}</span>
+                    <span ng-show="factory.editing"><select ng-model="factory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
+                </div>
+                <div class="col-md-1">
+                    <span ng-hide="factory.editing">{{factory.baseRate}}</span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
+                </div>
+                <div class="col-md-1">
+                    <span ng-hide="factory.editing">{{factory.maxRate}}</span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.maxRate" style="width: 90%; color: black"></span>
+                </div>
+                <div class="col-md-2">
+                    <div ng-show="isAdmin">
+                        <span ng-hide="factory.editing">
+                            <a class="ui-interactive" ng-click="onEdit(factory)"><img src="../../images/edit.png" height="16" width="16"/></a>
+                            <a class="ui-interactive" ng-click="onDelete(factory)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                        </span>
+                        <span ng-show="factory.editing">
+                            <a class="ui-interactive" ng-click="onApply(factory)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                            <a class="ui-interactive" ng-click="onCancel(factory)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- the "add item" row-->
+            <div class="row">
+                <div class="col-md-3">
+                    <div ng-show="isAdmin">
+                        <a ng-hide="newFactory.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                        <span ng-show="newFactory.editing"><input type="text" size="15" ng-model="newFactory.firm"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <span ng-show="newFactory.editing"><select ng-model="newFactory.owner" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
+                </div>
+                <div class="col-md-2">
+                    <span ng-show="newFactory.editing"><select ng-model="newFactory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
+                </div>
+                <div class="col-md-1">
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.baseRate" style="width: 90%; color: black"></span>
+                </div>
+                <div class="col-md-1">
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.maxRate" style="width: 90%; color: black"></span>
+                </div>
+                <div class="col-md-2">
+                    <span ng-show="newFactory.editing">
+                        <a class="ui-interactive" ng-click="onApply(newFactory)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                        <a class="ui-interactive" ng-click="onCancel(newFactory)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                    </span>
+                </div>
+            </div>
+
+            <!-- status/error message -->
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6 nbt-centered">
+                    <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- controller module for this dialog -->
+<script src="/js/nbt/controller/admin/modeless/planet-factories.js"></script>
+
+<!-- additional post-DOM-load initialization for this dialog -->
+<script language="JavaScript">
+    $(function() {
+        var dlgs = $("#planetFactoriesDialog");
+        dlgs.on("resize", saveModelessState)
+            .on("drag", saveModelessState);
+        restoreModelessState(dlgs[0]);
+    });
+</script>

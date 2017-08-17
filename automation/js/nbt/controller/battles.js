@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('BattleController', ['$sce', '$scope', 'nbtBattle', 'nbtIdentity', function($sce, $scope, nbtBattle, nbtIdentity) {
+        .controller('BattleController', ['$sce', '$scope', '$rootScope', 'nbtBattle', 'nbtIdentity', function($sce, $scope, $rootScope, nbtBattle, nbtIdentity) {
             $scope.league = null;
             $scope.faction = null;
             $scope.battles = null;
@@ -55,6 +55,11 @@
 
             $scope.initialize = function(battle) {
                 nbtBattle.requestBattlePlanets(battle);
+            };
+
+            $scope.onSectorClicked = function(sector) {
+                // call out to the starmap to relocate to this sector capital
+                $rootScope.$broadcast('planetSearchRequest', sector.name);
             };
 
             $scope.readyUp = function(battle) {

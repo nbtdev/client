@@ -142,7 +142,7 @@ var _PlanetService = (function() {
         rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
     };
 
-    PlanetService.prototype.updatePlanet = function(aPlanet, aToken, aSuccess) {
+    PlanetService.prototype.updatePlanet = function(aPlanet, aToken, aSuccess, aFail) {
         if (aPlanet) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
@@ -153,9 +153,10 @@ var _PlanetService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aSuccess) {
-                        aSuccess(aResp.data);
-                    }
+                    if (aSuccess) aSuccess(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
                 }
             );
         }
@@ -235,6 +236,82 @@ var _PlanetService = (function() {
                 function (aResp) {
                     if (aCallback)
                         aCallback(aResp.data._embedded.combatUnitInstances);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.fetchFactories = function (aPlanet, aToken, aCallback) {
+        if (aPlanet && aPlanet._links.factories) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.factories.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.addFactory = function (aPlanet, aFactory, aToken, aCallback, aFail) {
+        if (aPlanet && aPlanet._links.factories) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aPlanet._links.factories.href,
+                data: aFactory,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.updateFactory = function (aFactory, aToken, aCallback, aFail) {
+        if (aFactory && aFactory._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aFactory._links.self.href,
+                data: aFactory,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
+    PlanetService.prototype.deleteFactory = function (aFactory, aToken, aCallback, aFail) {
+        if (aFactory && aFactory._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: aFactory._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
                 }
             );
         }
