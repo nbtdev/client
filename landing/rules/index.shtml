@@ -39,6 +39,7 @@
         </section>
 
         <h3 class="nbt-h3">NBT Table Of Contents -- General Rules</h3>
+        <div class="nbt-rules-para nbt-font-s" style="opacity: 0.5">Last Updated: 18 Aug 2017</div>
         <ol>
             <li>
                 <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-intro">Introduction</a>

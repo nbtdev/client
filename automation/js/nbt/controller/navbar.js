@@ -119,7 +119,7 @@
                 // schedule another one later
                 timeoutPromise = $timeout(function() {
                     pollAlerts($scope.league);
-                }, 5000);
+                }, 60000);
             });
         }
 

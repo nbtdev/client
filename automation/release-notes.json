@@ -3,6 +3,22 @@
     "date": "16 Aug 2017",
     "changes": {
       "Features": [
+        "Added alert notification system in automation interface",
+        "Roster management - invite registered user to faction roster",
+        "Roster management - interface to mark roster pilots as faction admin and faction point of contact"
+      ],
+      "Bugfixes": [
+        "Struck out parts of rules that discuss flagships and non-combat jumpships -- league will not be starting with either of those"
+      ],
+      "Enhancements": [
+      ]
+    }
+  },
+
+  {
+    "date": "16 Aug 2017",
+    "changes": {
+      "Features": [
       ],
       "Bugfixes": [
       ],

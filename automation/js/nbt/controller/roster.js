@@ -69,6 +69,13 @@
                 );
             };
 
+            function replacePilot(pilot) {
+                $scope.roster.forEach(function (e,i,a) {
+                    if (e.name===pilot.name)
+                        a[i] = pilot;
+                });
+            }
+
             $scope.onApply = function(pilot) {
                 if (pilot.isNew) {
                     // parse this into a list of pilot names, delimited on newline
@@ -101,6 +108,7 @@
                             setOperationStatus("Pilot successfully updated", true);
                             temp = {};
                             $scope.onCancel(pilot);
+                            replacePilot(aData);
                         },
                         function(aErr) {
                             setOperationStatus(aErr.data.message, false);
