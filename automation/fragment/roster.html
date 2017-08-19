@@ -39,7 +39,8 @@
                                 </span>
                             </div>
                             <div ng-show="pilot.editing">
-                                <input type="text" size="16" ng-disabled="pilot.registered" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)">
+                                <span ng-show="pilot.registered">{{pilot.name}}</span>
+                                <span ng-hide="pilot.registered"><input type="text" size="16" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)"></span>
                                 <span style="float: right">
                                     <a class="ui-interactive" ng-click="onApply(pilot)"><img title="Save Changes And Exit Pilot Edit Mode" src="../../images/check16.png" height="16" width="16"/></a>
                                     <a class="ui-interactive" ng-click="onCancel(pilot)"><img title="Discard Changes And Exit Pilot Edit Mode" src="../../images/cancel16.png" height="16" width="16"/></a>
