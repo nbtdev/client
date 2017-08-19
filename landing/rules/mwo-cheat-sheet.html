@@ -1,0 +1,170 @@
+<div>
+    <h2 class="nbt-h2">
+        NBT-MWO
+    </h2>
+    <div class="nbt-rules-para">
+        The following rules are specific to the NBT-MWO league.
+    </div>
+    <ul>
+        <li class="nbt-bold">NBT-MWO is a tonnage-based (not BV-based) league.</li>
+        <li>NBT-MWO drop tonnages are chosen at random in 50-ton increments, from the following ranges. The probability
+            function is not 1.0; in other words, the randomness is "weighted" and the weighting can change at any time
+            without notice. Notice will only be given if/when the ranges themselves change.
+            <ul>
+                <li><span class="nbt-bold nbt-highlight">Sector Raids: </span>350-500 tons</li>
+                <li><span class="nbt-bold nbt-highlight">Sector Assault (Assault Phase): </span>300-600 tons</li>
+                <li><span class="nbt-bold nbt-highlight">Sector Assault (Siege Phase): </span>400-600 tons</li>
+            </ul>
+        </li>
+        <li>NBT-MWO will use all games modes from the Mechwarrior:Online game except for Escort. Assault and Incursion are
+            only used during the Siege phase of Sector Assaults. Skirmish, Domination and Conquest will be used for the
+            remaining types of drops throughout the league. All modes are chosen randomly (not necessarily an equal distribution)
+            by the automation. On Assault and Incursion mode drops, the defender will forfeit
+            the drop if they "capture" the attacker's base; consider the attacker base as "off-limits" for defenders. The
+            symmetric objective modes (Conquest and Domination) are played as normal, with no restrictions.
+            <ul>
+                <li>
+                    <span class="nbt-bold">Incursion Note:</span> Incursion requires that one base be damaged more than the other.
+                    If the defender destroys all attacker mechs, they are required to damage the attacker base in order to end the
+                    drop. If the defender destroys all attacker mechs but is so damaged itself that damaging the attacker base will
+                    result in the destruction of the last defender units (and a "win" for the attackers), the automation will provide
+                    a means of logging this situation. (Note: the Incursion mode will not be enabled until the automation has this
+                    support).
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3 class="nbt-h3">Time</h3>
+    <div>The following time limits are in effect for NBT-MWO</div>
+    <ul>
+        <li><span class="nbt-bold nbt-highlight">Battle Lockdown: </span>18 hours from battle launch</li>
+    </ul>
+
+    <h3 class="nbt-h3">Cost Schedules</h3>
+    <div>The costs for combat unit purchases are listed on the factory purchase pages in the automation. Costs will fluctuate
+        dynamically with supply and demand.
+    </div>
+    <div>
+        <h4 class="nbt-h4">Base Maintenance costs for NBT-MWO<sup>1</sup></h4>
+        <table class="nbt-rules-table-wide">
+            <tr>
+                <th>Item</th>
+                <th>C-bills</th>
+                <th>Rate</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Planet</td>
+                <td>10,000,000</td>
+                <td>per planet</td>
+                <td>Monthly maintenance charge for each planet owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Charge Station</td>
+                <td>75,000,000</td>
+                <td>per station</td>
+                <td>Monthly maintenance charge for each charge station owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Factory</td>
+                <td>25,000,000</td>
+                <td>per factory</td>
+                <td>Monthly maintenance charge for each factory owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Jumpship</td>
+                <td>100</td>
+                <td>per ton</td>
+                <td>Monthly maintenance charge for each jumpship owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Dropship</td>
+                <td>75</td>
+                <td>per ton</td>
+                <td>Monthly maintenance charge for each dropship owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Light/Med 'Mech</td>
+                <td>
+                    <table style="width: 100%">
+                        <tr><th>Garrison</th><th>Attack</th><th>Mothball</th></tr>
+                        <tr><td>250,000</td><td>1,250,000</td><td>750,000</td></tr>
+                    </table>
+                </td>
+                <td>per 'Mech</td>
+                <td>Monthly maintenance charge for each light or medium 'Mech owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Heavy 'Mech</td>
+                <td>
+                    <table style="width: 100%">
+                        <tr><th>Garrison</th><th>Attack</th><th>Mothball</th></tr>
+                        <tr><td>312,500</td><td>1,562,500</td><td>937,500</td></tr>
+                    </table>
+                </td>
+                <td>per 'Mech</td>
+                <td>Monthly maintenance charge for each heavy 'Mech owned by the faction</td>
+            </tr>
+            <tr>
+                <td>Assault 'Mech</td>
+                <td>
+                    <table style="width: 100%">
+                        <tr><th>Garrison</th><th>Attack</th><th>Mothball</th></tr>
+                        <tr><td>375,000</td><td>1,875,000</td><td>1,125,000</td></tr>
+                    </table>
+                </td>
+                <td>per 'Mech</td>
+                <td>Monthly maintenance charge for each assault 'Mech owned by the faction</td>
+            </tr>
+        </table>
+        <div class="nbt-rules-para">
+            <sup>1</sup>NBT-MWO Administration reserves the right to adjust the maintenance costs across the board for all factions,
+            at the faction class level, at any time, without notice. "Faction class" refers to the type of faction (Clan,
+            House, Periph, Merc, etc.).
+        </div>
+
+        <h4 class="nbt-h4">Jump Costs For NBT-MWO</h4>
+        <div class="nbt-rules-para">
+            NBT-MWO jump costs are linearly dependant on the mass of the jumpship in tons. The per-ton jump costs
+            are:
+        </div>
+        <table class="nbt-rules-table nbt-nested-table">
+            <tr>
+                <th>Type</th>
+                <th>IS</th>
+                <th>Clan</th>
+            </tr>
+            <tr>
+                <td>Normal (Attack and Pass-Through)</td>
+                <td>2</td>
+                <td>1.1</td>
+            </tr>
+            <tr>
+                <td>Clan Homeworld</td>
+                <td>N/A</td>
+                <td>350</td>
+            </tr>
+            <tr>
+                <td>Merc Contract</td>
+                <td>350</td>
+                <td>N/A</td>
+            </tr>
+            <tr>
+                <td>Periphery Link</td>
+                <td>350</td>
+                <td>N/A</td>
+            </tr>
+        </table>
+        <div class="nbt-rules-para">There is no additional cost for charge-station-assisted jumps.</div>
+
+        <h4 class="nbt-h4">Industry Upgrades</h4>
+        <div class="nbt-rules-para">
+            Factions may upgrade the industry on the planets in their space at a cost of between 5 and 13 c-bills per
+            c-bill of industry purchased. This factor will change daily and is chosen randomly. The random distribution for
+            industry purchases, like those for tonnage distributions, is not evenly distributed and may change at the
+            discretion of NBT Administration, without notice or warning. Notice will only be given when/if the range
+            of the industry purchase factors change.
+        </div>
+    </div>
+</div>

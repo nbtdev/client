@@ -444,8 +444,46 @@ input[type=password] {
     margin: auto;
 }
 
+.nbt-rules-table-wide {
+    text-align: center;
+    width: 100%;
+    margin: auto;
+}
+
 .nbt-rules-table-cell {
     text-align: left;
+}
+
+.nbt-rules-table-wide td {
+    text-align: left;
+    padding: 0 15px 0 15px;
+    border-left: solid 1px #660000;
+    border-right: solid 1px #660000;
+}
+
+.nbt-rules-table-wide th {
+    background-color: #660000;
+    padding: 0 15px 0 15px;
+}
+
+.nbt-rules-table-wide tr:nth-child(odd) {
+    background-color: #303030;
+}
+
+.nbt-rules-table td {
+    text-align: left;
+    padding: 0 15px 0 15px;
+    border-left: solid 1px #660000;
+    border-right: solid 1px #660000;
+}
+
+.nbt-rules-table th {
+    background-color: #660000;
+    padding: 0 15px 0 15px;
+}
+
+.nbt-rules-table tr:nth-child(odd) {
+    background-color: #303030;
 }
 
 .nbt-rules-section {
@@ -453,6 +491,7 @@ input[type=password] {
 
 .nbt-rules-para {
     margin-bottom: 10px;
+    margin-top: 5px;
 }
 
 .nbt-ordered-list {
@@ -469,14 +508,20 @@ input[type=password] {
 
 .nbt-h2 {
     color: goldenrod;
+    margin-bottom:  10px;
+    margin-top:  15px;
 }
 
 .nbt-h3 {
     color: goldenrod;
+    margin-bottom:  10px;
+    margin-top:  15px;
 }
 
 .nbt-h4 {
     color: goldenrod;
+    margin-top:  15px;
+    margin-bottom:  5px;
 }
 
 .nbt-h5 {
@@ -598,6 +643,10 @@ input[type=password] {
     color:  white;
     font-size:  small;
     border:  solid 0.5px goldenrod;
+}
+
+.nbt-nested-table {
+    padding: 5px 0 5px 0;
 }
 
 .nbt-tracker-table th {

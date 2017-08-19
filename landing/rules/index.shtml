@@ -84,6 +84,10 @@
                 <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-diplomacy">Diplomacy, Alliances and Espionage</a>
                 <!--#include virtual="/rules/diplomacy.html" -->
             </li>
+            <li>
+                <a href="javascript: void(0)" class="nbt-rules-toc-entry" data-toggle="collapse" data-target="#nbt-rules-mwo">NBT-MWO-Specific Rules</a>
+                <!--#include virtual="/rules/mwo.shtml" -->
+            </li>
         </ol>
     </div>
 
