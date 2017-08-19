@@ -117,6 +117,28 @@
                 shallowCopy(pilot, temp);
             };
 
+            $scope.onRefresh = function() {
+                reloadRoster();
+            };
+
+            $scope.extendInvite = function() {
+                if ($scope.invitee) {
+                    nbtFaction.extendInvite($scope.faction, $scope.invitee, nbtIdentity.get().token,
+                        function(aRoster) {
+                            setOperationStatus("Invitation extended successfully", true);
+                            $scope.invitee = null;
+                        },
+                        function(aErr) {
+                            setOperationStatus(aErr.data.message, false);
+                        }
+                    );
+                }
+            };
+
+            $("#rosterModal").on("shown.bs.modal", function() {
+                reloadRoster();
+            });
+
             // when the user chooses a different league, we want to update out cached league
             var cb = $scope.$on('nbtFactionChanged', function(event, faction) {
                 $scope.faction = faction;

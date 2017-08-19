@@ -297,6 +297,28 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.extendInvite = function(aFaction, aInvitee, aToken, aSuccessCb, aFailCb) {
+        if (aFaction && aFaction._links.invitations) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFaction._links.invitations.href,
+                data: aInvitee,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.acceptInvite = function(aAlert, aToken, aSuccessCb, aFailCb) {
         if (aAlert && aAlert._links.reference) {
             var hdr = new Headers(Header.TOKEN, aToken);

@@ -65,6 +65,24 @@
                         </div>
                         <div class="col-md-4"></div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-2"><button class="btn btn-primary" ng-click="onRefresh()">Refresh</button></div>
+                        <div class="col-md-5"></div>
+                    </div>
+
+                    <!-- pilot invite -->
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2 nbt-right-justified">Invite Pilot: </div>
+                        <div class="col-md-6">
+                            <input type="text" ng-model="invitee" size="20">
+                            <button class="btn btn-primary" ng-click="extendInvite()">Extend Invitation</button>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
                 </div>
             </div>
         </div>
