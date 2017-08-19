@@ -121,10 +121,17 @@
                 reloadRoster();
             };
 
+            $scope.onInviteRegisteredPilot = function(pilot) {
+                if (pilot) {
+                    $scope.invitee = pilot.name;
+                    $scope.extendInvite();
+                }
+            };
+
             $scope.extendInvite = function() {
                 if ($scope.invitee) {
                     nbtFaction.extendInvite($scope.faction, $scope.invitee, nbtIdentity.get().token,
-                        function(aRoster) {
+                        function() {
                             setOperationStatus("Invitation extended successfully", true);
                             $scope.invitee = null;
                         },
