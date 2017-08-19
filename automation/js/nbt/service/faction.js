@@ -297,6 +297,48 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.acceptInvite = function(aAlert, aToken, aSuccessCb, aFailCb) {
+        if (aAlert && aAlert._links.reference) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aAlert._links.reference.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.declineInvite = function(aAlert, aToken, aSuccessCb, aFailCb) {
+        if (aAlert && aAlert._links.reference) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'DELETE', // TODO: GET FROM LINKS!
+                url: aAlert._links.reference.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.removePilotFromRoster = function(aPilot, aToken, aSuccessCb, aFailCb) {
         if (aPilot && aPilot._links.self) {
             var hdr = new Headers(Header.TOKEN, aToken);

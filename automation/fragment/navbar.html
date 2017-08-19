@@ -82,6 +82,28 @@
                         <img class="nbt-pseudo-button" src="/images/profile-32.png" height="32" width="32"/>
                     </a>
                 </li>
+
+                <li class="dropdown" ng-show="alerts.length">
+                    <a class="nbt-pseudo-button" data-toggle="dropdown" class="dropdown-toggle">
+                        <img src="../images/alert.png" />
+                        <div ng-show="newAlertCount" class="nbt-alert-count">{{newAlertCount}}</div>
+                    </a>
+                    <ul class="dropdown-menu nbt-alerts nbt-font-s">
+                        <li ng-repeat="alert in alerts" class="nbt-alert nbt-hover">
+                            <!-- alert notifications -->
+                            <div ng-show="alert.type.id===1" >
+                                <div>
+                                    <div class="nbt-highlight">{{alert.type.name}}:</div>
+                                    <span>{{alert.text}}</span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-primary btn-xs" ng-click="onAlertAction($event, alert)" data-action="accept">Accept</button>
+                                    <button class="btn btn-primary btn-xs" ng-click="onAlertAction($event, alert)" data-action="decline">Decline</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
