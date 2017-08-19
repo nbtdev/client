@@ -18,14 +18,18 @@
 
                     <!-- column headers-->
                     <div class="row nbt-bold nbt-highlight">
-                        <div class="col-md-4"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-1">Contact</div>
+                        <div class="col-md-1">Admin</div>
                         <div class="col-md-4">Pilot Name</div>
                         <div class="col-md-4"></div>
                     </div>
 
                     <!-- pilot listing -->
                     <div class="row" ng-repeat="pilot in roster">
-                        <div class="col-md-4"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-1"><input type="checkbox" ng-model="pilot.pointOfContact" ng-disabled="!pilot.editing"></div>
+                        <div class="col-md-1"><input type="checkbox" ng-model="pilot.admin" ng-disabled="!pilot.editing"></div>
                         <div class="col-md-4 nbt-hover">
                             <div ng-hide="pilot.editing">
                                 {{pilot.name}}
@@ -35,7 +39,7 @@
                                 </span>
                             </div>
                             <div ng-show="pilot.editing">
-                                <input type="text" size="16" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)">
+                                <input type="text" size="16" ng-disabled="pilot.registered" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)">
                                 <span style="float: right">
                                     <a class="ui-interactive" ng-click="onApply(pilot)"><img title="Save Changes And Exit Pilot Edit Mode" src="../../images/check16.png" height="16" width="16"/></a>
                                     <a class="ui-interactive" ng-click="onCancel(pilot)"><img title="Discard Changes And Exit Pilot Edit Mode" src="../../images/cancel16.png" height="16" width="16"/></a>
@@ -50,7 +54,7 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <a ng-hide="newPilot.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                            <a ng-hide="newPilot.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" width="16" height="16" title="Add non-registered pilot(s) to roster"/></a>
                             <span ng-show="newPilot.editing">
                                 <textarea placeholder="Add one or more pilot names, one per line" style="width: 75%; color: black" rows="10" type="text" ng-model="newPilot.name"></textarea>
                             </span>

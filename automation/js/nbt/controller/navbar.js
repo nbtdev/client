@@ -78,6 +78,7 @@
 
                     // set off a chain of data reloading...
                     nbtIdentity.refresh();
+                    refreshLeague();
                 });
             }
 
@@ -105,6 +106,7 @@
                 processFactionInvitation(alert, action);
         };
 
+        var timeoutPromise = null;
         function pollAlerts(league) {
             nbtLeague.fetchAlerts(league, nbtIdentity.get().token, function(aAlerts) {
                 $scope.alerts = null;
@@ -115,7 +117,7 @@
                 processAlerts();
 
                 // schedule another one later
-                $timeout(function() {
+                timeoutPromise = $timeout(function() {
                     pollAlerts($scope.league);
                 }, 5000);
             });
@@ -123,6 +125,7 @@
 
         var cbIdentity = $scope.$on('nbtIdentityChanged', function (event, aData) {
             $scope.identity = aData;
+            $timeout.cancel(timeoutPromise);
             $scope.faction = null;
         });
         $scope.$on('destroy', cbIdentity);
@@ -152,11 +155,14 @@
             }
         };
 
-        var cbLeague = $scope.$on('nbtLeaguesChanged', function (event, leagues, leaguesRaw) {
-            $scope.leagues = leaguesRaw;
-
+        function refreshLeague() {
             var leagueId = localStorage.getItem("leagueId");
             setCurrentLeague(leagueId);
+        }
+
+        var cbLeague = $scope.$on('nbtLeaguesChanged', function (event, leagues, leaguesRaw) {
+            $scope.leagues = leaguesRaw;
+            refreshLeague();
         });
         $scope.$on('destroy', cbLeague);
 
