@@ -101,6 +101,10 @@
                         }
                     );
                 } else {
+                    if (!pilot.registered && (pilot.admin || pilot.pointOfContact)) {
+                        alert('Cannot set \'' + pilot.name + '\' to admin or point of contact as they are not a registered automation user');
+                    }
+
                     nbtFaction.updateRosterPilot(
                         pilot,
                         nbtIdentity.get().token,
