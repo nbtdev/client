@@ -157,7 +157,9 @@
                 containment: "window",
                 handle: "h5"})
             .disableSelection()
-            .resizable();
+            .resizable({
+                handles: 'n, e, s, w, se, sw'
+            });
     });
 </script>
 
