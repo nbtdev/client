@@ -23,7 +23,14 @@
 importScripts('/js/nbt/util/quadtree-functions.js');
 
 function createChargeStationNetwork(planetGroups, quadtree) {
-    var startTime = performance.now();
+    var startTime = 0;
+
+    try {
+        startTime = performance.now();
+    } catch (e) {
+
+    }
+
     var csNetwork = {};
 
     for (var g=0; g<planetGroups.length; ++g) {
@@ -60,7 +67,14 @@ function createChargeStationNetwork(planetGroups, quadtree) {
         }
     }
 
-    var elapsed = performance.now() - startTime;
+    var elapsed = 0;
+
+    try {
+        elapsed = performance.now() - startTime;
+    } catch (e) {
+
+    }
+
     console.log(elapsed.toFixed(2) + ' ms to create charge station network');
 
     return csNetwork;

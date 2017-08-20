@@ -128,6 +128,8 @@ var _IdentityService = (function() {
                 // basically perform a logout
                 self.refresh(
                     function(aIdent) {
+                        self.mIdentity = aIdent;
+                        save();
                         self.$refreshInProgress = false;
                     }, function() {
                         self.rootScope.$broadcast('nbtIdentityChanged', makeIdentity());

@@ -18,14 +18,18 @@
 
                     <!-- column headers-->
                     <div class="row nbt-bold nbt-highlight">
-                        <div class="col-md-4"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-1">Contact</div>
+                        <div class="col-md-1">Admin</div>
                         <div class="col-md-4">Pilot Name</div>
                         <div class="col-md-4"></div>
                     </div>
 
                     <!-- pilot listing -->
                     <div class="row" ng-repeat="pilot in roster">
-                        <div class="col-md-4"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-1"><input type="checkbox" ng-model="pilot.pointOfContact" ng-disabled="!pilot.editing"></div>
+                        <div class="col-md-1"><input type="checkbox" ng-model="pilot.admin" ng-disabled="!pilot.editing"></div>
                         <div class="col-md-4 nbt-hover">
                             <div ng-hide="pilot.editing">
                                 {{pilot.name}}
@@ -35,7 +39,8 @@
                                 </span>
                             </div>
                             <div ng-show="pilot.editing">
-                                <input type="text" size="16" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)">
+                                <span ng-show="pilot.registered">{{pilot.name}}</span>
+                                <span ng-hide="pilot.registered"><input type="text" size="16" ng-model="pilot.name" ng-keypress="checkEnterKey($event, this, pilot)"></span>
                                 <span style="float: right">
                                     <a class="ui-interactive" ng-click="onApply(pilot)"><img title="Save Changes And Exit Pilot Edit Mode" src="../../images/check16.png" height="16" width="16"/></a>
                                     <a class="ui-interactive" ng-click="onCancel(pilot)"><img title="Discard Changes And Exit Pilot Edit Mode" src="../../images/cancel16.png" height="16" width="16"/></a>
@@ -43,14 +48,14 @@
                             </div>
 
                         </div>
-                        <div class="col-md-4"></div>
+                        <div class="col-md-4"><button ng-show="!pilot.registered" class="btn btn-primary btn-xs" ng-click="onInviteRegisteredPilot(pilot)">Invite</button></div>
                     </div>
 
                     <!-- new pilot entry -->
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <a ng-hide="newPilot.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                            <a ng-hide="newPilot.editing" class="ui-interactive" ng-click="onAdd()"><img src="../../images/add-icon.png" width="16" height="16" title="Add non-registered pilot(s) to roster"/></a>
                             <span ng-show="newPilot.editing">
                                 <textarea placeholder="Add one or more pilot names, one per line" style="width: 75%; color: black" rows="10" type="text" ng-model="newPilot.name"></textarea>
                             </span>
@@ -60,6 +65,24 @@
                             </span>
                         </div>
                         <div class="col-md-4"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-2"><button class="btn btn-primary" ng-click="onRefresh()">Refresh</button></div>
+                        <div class="col-md-5"></div>
+                    </div>
+
+                    <!-- pilot invite -->
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2 nbt-right-justified">Invite Pilot: </div>
+                        <div class="col-md-6">
+                            <input type="text" ng-model="invitee" size="20">
+                            <button class="btn btn-primary" ng-click="extendInvite()">Extend Invitation</button>
+                        </div>
+                        <div class="col-md-2"></div>
                     </div>
                 </div>
             </div>

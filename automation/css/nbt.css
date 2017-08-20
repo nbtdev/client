@@ -690,3 +690,22 @@ input[type=password] {
 .nbt-ctx-menu-item {
     padding-left: 20px;
 }
+
+.nbt-alerts {
+    background-color: black;
+    color: white;
+    width: 350px;
+}
+
+.nbt-alert-count {
+    position: absolute;
+    text-align: center;
+    top: 30%;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    color: white;
+    opacity: 1;
+    font-weight: bold;
+    font-size: 1.5em;
+}

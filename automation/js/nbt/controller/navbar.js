@@ -23,13 +23,15 @@
 (function() {
     angular
     .module('nbt.app')
-    .controller('NavbarController', ['$scope', '$rootScope', 'nbtIdentity', 'nbtLeague', 'nbtFaction', function($scope, $rootScope, nbtIdentity, nbtLeague, nbtFaction) {
+    .controller('NavbarController', ['$scope', '$rootScope', '$timeout', 'nbtIdentity', 'nbtLeague', 'nbtFaction', function($scope, $rootScope, $timeout, nbtIdentity, nbtLeague, nbtFaction) {
 
         var reset = function() {
             $scope.league = null;
             $scope.leagues = null;
             $scope.identity = null;
             $scope.faction = null;
+            $scope.alerts = null;
+            $scope.newAlertCount = 0;
         };
 
         reset();
@@ -59,8 +61,71 @@
             localStorage.removeItem("nbtIdentity");
         };
 
+        function processAlerts() {
+            $scope.newAlertCount = 0;
+
+            if ($scope.alerts) {
+                $scope.alerts.forEach(function (e) {
+                    if (!e.readDatetime) $scope.newAlertCount++;
+                });
+            }
+        }
+
+        function processFactionInvitation(alert, action) {
+            if (action === 'accept') {
+                nbtFaction.acceptInvite(alert, nbtIdentity.get().token, function() {
+                    $scope.onDismissAlert(alert);
+
+                    // set off a chain of data reloading...
+                    nbtIdentity.refresh();
+                    refreshLeague();
+                });
+            }
+
+            if (action === 'decline') {
+                nbtFaction.declineInvite(alert, nbtIdentity.get().token, function() {
+                    $scope.onDismissAlert(alert);
+                });
+            }
+        }
+
+        $scope.onDismissAlert = function(alert) {
+            nbtLeague.dismissAlert(alert, nbtIdentity.get().token, function(aAlerts) {
+                $scope.alerts = null;
+                if (aAlerts._embedded) {
+                    $scope.alerts = aAlerts._embedded.alerts;
+                }
+                processAlerts();
+            });
+        };
+
+        $scope.onAlertAction = function(event, alert) {
+            var action = event.currentTarget.dataset.action;
+
+            if (alert.type.name === 'Faction Invitation')
+                processFactionInvitation(alert, action);
+        };
+
+        var timeoutPromise = null;
+        function pollAlerts(league) {
+            nbtLeague.fetchAlerts(league, nbtIdentity.get().token, function(aAlerts) {
+                $scope.alerts = null;
+
+                if (aAlerts._embedded)
+                    $scope.alerts = aAlerts._embedded.alerts;
+
+                processAlerts();
+
+                // schedule another one later
+                timeoutPromise = $timeout(function() {
+                    pollAlerts($scope.league);
+                }, 60000);
+            });
+        }
+
         var cbIdentity = $scope.$on('nbtIdentityChanged', function (event, aData) {
             $scope.identity = aData;
+            $timeout.cancel(timeoutPromise);
             $scope.faction = null;
         });
         $scope.$on('destroy', cbIdentity);
@@ -84,15 +149,20 @@
                 }
             }
 
-            if ($scope.league)
+            if ($scope.league) {
                 $rootScope.$broadcast('nbtLeagueChanged', $scope.league);
+                pollAlerts($scope.league);
+            }
         };
+
+        function refreshLeague() {
+            var leagueId = localStorage.getItem("leagueId");
+            setCurrentLeague(leagueId);
+        }
 
         var cbLeague = $scope.$on('nbtLeaguesChanged', function (event, leagues, leaguesRaw) {
             $scope.leagues = leaguesRaw;
-
-            var leagueId = localStorage.getItem("leagueId");
-            setCurrentLeague(leagueId);
+            refreshLeague();
         });
         $scope.$on('destroy', cbLeague);
 

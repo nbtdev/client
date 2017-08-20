@@ -186,11 +186,28 @@
                 <div class="col-md-2">Jumpships</div>
             </div>
             <div class="row nbt-hover" ng-repeat="group in planetGroups">
-                <div class="col-md-4"><a class="ui-interactive" ng-click="onSectorClicked(group)">{{group.sectorCapital.name}}</a></div>
+                <div class="col-md-4">
+                    <a class="ui-interactive" ng-click="onSectorClicked(group)">
+                        <span ng-show="group.closed" ng-click="onOpenGroup(group)">&#9654;</span>
+                        <span ng-hide="group.closed" ng-click="onCloseGroup(group)">&#9660;</span>
+                        {{group.sectorCapital.name}}
+                    </a>
+                </div>
                 <div class="col-md-2">{{group.industry|number}}</div>
                 <div class="col-md-2">{{group.combatUnits|number}}</div>
                 <div class="col-md-2">{{group.dropships|number}}</div>
                 <div class="col-md-2">{{group.jumpships|number}}</div>
+                <div ng-repeat="planet in group.planets" ng-hide="group.closed">
+                    <div class="col-md-4">
+                        <span style="padding-left: 25px">
+                            <a class="ui-interactive"  ng-click="onPlanetClicked(planet)">{{planet.name}}</a>
+                        </span>
+                    </div>
+                    <div class="col-md-2">{{planet.industry|number}}</div>
+                    <div class="col-md-2">{{planet.setup.combatUnits|number}}</div>
+                    <div class="col-md-2">{{planet.setup.dropships|number}}</div>
+                    <div class="col-md-2">{{planet.setup.jumpships|number}}</div>
+                </div>
             </div>
         </div>
     </div>

@@ -69,6 +69,13 @@
                 );
             };
 
+            function replacePilot(pilot) {
+                $scope.roster.forEach(function (e,i,a) {
+                    if (e.name===pilot.name)
+                        a[i] = pilot;
+                });
+            }
+
             $scope.onApply = function(pilot) {
                 if (pilot.isNew) {
                     // parse this into a list of pilot names, delimited on newline
@@ -94,6 +101,10 @@
                         }
                     );
                 } else {
+                    if (!pilot.registered && (pilot.admin || pilot.pointOfContact)) {
+                        alert('Cannot set \'' + pilot.name + '\' to admin or point of contact as they are not a registered automation user');
+                    }
+
                     nbtFaction.updateRosterPilot(
                         pilot,
                         nbtIdentity.get().token,
@@ -101,6 +112,7 @@
                             setOperationStatus("Pilot successfully updated", true);
                             temp = {};
                             $scope.onCancel(pilot);
+                            replacePilot(aData);
                         },
                         function(aErr) {
                             setOperationStatus(aErr.data.message, false);
@@ -116,6 +128,35 @@
                 // restore the previous values
                 shallowCopy(pilot, temp);
             };
+
+            $scope.onRefresh = function() {
+                reloadRoster();
+            };
+
+            $scope.onInviteRegisteredPilot = function(pilot) {
+                if (pilot) {
+                    $scope.invitee = pilot.name;
+                    $scope.extendInvite();
+                }
+            };
+
+            $scope.extendInvite = function() {
+                if ($scope.invitee) {
+                    nbtFaction.extendInvite($scope.faction, $scope.invitee, nbtIdentity.get().token,
+                        function() {
+                            setOperationStatus("Invitation extended successfully", true);
+                            $scope.invitee = null;
+                        },
+                        function(aErr) {
+                            setOperationStatus(aErr.data.message, false);
+                        }
+                    );
+                }
+            };
+
+            $("#rosterModal").on("shown.bs.modal", function() {
+                reloadRoster();
+            });
 
             // when the user chooses a different league, we want to update out cached league
             var cb = $scope.$on('nbtFactionChanged', function(event, faction) {
