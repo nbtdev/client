@@ -352,8 +352,21 @@
                 $rootScope.$broadcast('planetSearchRequest', sector.sectorCapital.name);
             };
 
+            $scope.onPlanetClicked = function(planet) {
+                // call out to the starmap to relocate to this sector capital
+                $rootScope.$broadcast('planetSearchRequest', planet.name);
+            };
+
             $scope.onBack = function() {
                 $scope.view = $scope.views[0];
+            };
+
+            $scope.onOpenGroup = function(group) {
+                group.closed = false;
+            };
+
+            $scope.onCloseGroup = function(group) {
+                group.closed = true;
             };
 
             var cb = $scope.$on('planetChanged', function (event, aPlanet) {
@@ -374,6 +387,7 @@
                     var filtered = [];
                     aPlanetGroups.forEach(function(g) {
                         if (g.owner.id === $scope.faction.id) {
+                            g.closed = true;
                             g.industry = 0;
                             g.combatUnits = 0;
                             g.dropships = 0;
@@ -381,14 +395,24 @@
                             g.planets.forEach(function(p) {
                                 var setup = $scope.planetSetupDict[p.id];
                                 if (setup) {
+                                    p.setup = {};
                                     if (p.industry) g.industry += p.industry;
+
+                                    p.setup.combatUnits = 0;
                                     setup.instances.forEach(function (inst) {
+                                        p.setup.combatUnits += inst.template.tonnage;
                                         g.combatUnits += inst.template.tonnage;
                                     });
+
+                                    p.setup.dropships = 0;
                                     setup.dropships.forEach(function (ds) {
+                                        p.setup.dropships += ds.type.tonnage;
                                         g.dropships += ds.type.tonnage;
                                     });
+
+                                    p.setup.jumpships = 0;
                                     setup.jumpships.forEach(function (js) {
+                                        p.setup.jumpships += js.type.tonnage;
                                         g.jumpships += js.type.tonnage;
                                     });
                                 }
