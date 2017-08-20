@@ -1,6 +1,6 @@
 [
   {
-    "date": "16 Aug 2017",
+    "date": "20 Aug 2017",
     "changes": {
       "Features": [
         "Added alert notification system in automation interface",
@@ -11,7 +11,8 @@
         "Struck out parts of rules that discuss flagships and non-combat jumpships -- league will not be starting with either of those",
         "Fixed bug with factory dialog that would cause it to extend beyond the limits of the window dimensions when opened",
         "Fixed a bug that would cause hundreds of requests to the API when the user's session timed out",
-        "Fixed a bug that was preventing update of the user's session, causing forced logouts after 90 minutes even with activity within that time"
+        "Fixed a bug that was preventing update of the user's session, causing forced logouts after 90 minutes even with activity within that time",
+        "Fixed a bug that prevented scrolling in Firefox with the mouse wheel"
       ],
       "Enhancements": [
         "Added NBT-MWO-specific rules to rules page",
