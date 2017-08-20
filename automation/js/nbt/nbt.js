@@ -243,5 +243,7 @@ var restoreModelessState = function(dlg) {
     if (localStorage[variableName]) {
         var dims = JSON.parse(localStorage[variableName]);
         $(dlg).css({top: dims.top, left: dims.left, width: dims.width, height: dims.height});
+    } else {
+        $(dlg).css({top: 100, left: 100, width: 300, height: 400});
     }
 };
