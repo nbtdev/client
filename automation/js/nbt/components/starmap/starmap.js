@@ -245,6 +245,10 @@
 
                 // add mouse event handlers
                 self.gl.domElement.addEventListener('mousewheel', self.onMouseWheel);
+
+                // Firefox...
+                self.gl.domElement.addEventListener('DOMMouseScroll', self.onMouseWheel);
+
                 self.gl.domElement.addEventListener('mousedown', self.onMouseDown);
                 self.gl.domElement.addEventListener('mouseup', self.onMouseUp);
                 self.gl.domElement.addEventListener('mousemove', self.onMouseMove);
@@ -507,7 +511,7 @@
             this.onMouseWheel = function(event) {
                 // calculate new zoom factor
                 var zoom = self.camera3D.zoom;
-                zoom += event.wheelDelta / 600;
+                zoom += (event.wheelDelta / 600 || -event.detail / 8);
 
                 if (zoom > 0.39 && zoom < 12.1) {
                     self.camera3D.zoom = zoom;
