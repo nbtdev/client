@@ -308,7 +308,10 @@
                             },
                             function (aErr) {
                                 setStatus(aErr.data.message, false);
-                            });
+                            }
+                        );
+
+                        populateSummary();
                     }
                 }
             });
@@ -369,23 +372,13 @@
                 group.closed = true;
             };
 
-            var cb = $scope.$on('planetChanged', function (event, aPlanet) {
-                // before we move off of this planet, make sure we save any changes that were made
-                if ($scope.planetSetup)
-                    transformTotalsToInstances();
+            function populateSummary() {
+                var planetGroups = $scope.planetGroups;
 
-                $scope.planet = null;
-                $scope.planetSetup = null;
-
-                processPlanetChange(aPlanet);
-            });
-            $scope.$on('destroy', cb);
-
-            cb = $scope.$on('nbtPlanetsLoaded', function(event, aLeagueId, aPlanetGroups, aMapColors) {
                 // filter out stuff that ain't ours...if we are a thing that is
                 if ($scope.faction) {
                     var filtered = [];
-                    aPlanetGroups.forEach(function(g) {
+                    planetGroups.forEach(function(g) {
                         if (g.owner.id === $scope.faction.id) {
                             g.closed = true;
                             g.industry = 0;
@@ -422,6 +415,23 @@
                     });
                     $scope.planetGroups = filtered;
                 }
+            }
+
+            var cb = $scope.$on('planetChanged', function (event, aPlanet) {
+                // before we move off of this planet, make sure we save any changes that were made
+                if ($scope.planetSetup)
+                    transformTotalsToInstances();
+
+                $scope.planet = null;
+                $scope.planetSetup = null;
+
+                processPlanetChange(aPlanet);
+            });
+            $scope.$on('destroy', cb);
+
+            cb = $scope.$on('nbtPlanetsLoaded', function(event, aLeagueId, aPlanetGroups, aMapColors) {
+                $scope.planetGroups = aPlanetGroups;
+                populateSummary();
             });
             $scope.$on('destroy', cb);
 
