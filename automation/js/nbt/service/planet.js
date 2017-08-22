@@ -188,12 +188,12 @@ var _PlanetService = (function() {
     };
 
     PlanetService.prototype.fetchPlanetDetail = function (aPlanet, aToken, aCallback) {
-        if (aPlanet) {
+        if (aPlanet && aPlanet._links.brief) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aPlanet._links.self.href,
+                url: aPlanet._links.brief.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
