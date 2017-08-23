@@ -133,7 +133,7 @@ var _BattleService = (function() {
     };
 
     // log a drop in a battle; returns the entire battle through aCallback, updated through the drop logging
-    BattleService.prototype.logBattleDrop = function (aDrop, aToken, aCallback) {
+    BattleService.prototype.logBattleDrop = function (aDrop, aToken, aCallback, aFail) {
         if (aDrop._links.self) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
@@ -146,6 +146,10 @@ var _BattleService = (function() {
                 function (aResp) {
                     if (aCallback)
                         aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail)
+                        aFail(aErr.data);
                 }
             );
         }

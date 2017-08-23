@@ -42,6 +42,10 @@
                 return canvas;
             }
 
+            function setOperationStatus(message, success) {
+                setStatusWithTimeout($scope, $timeout, message, success, 5000);
+            }
+
             function makeSummaryEntry(group, template) {
                 return {
                     group: group,
@@ -116,6 +120,11 @@
                 $scope.destroyedUnits = [];
                 $scope.usedLimitAmount = 0;
                 $scope.drop = null;
+
+                // set a convenience field to match the number of planets available
+                $scope.battle.sector.planetsInPlay = $scope.battle.sector.planets.length;
+                if ($scope.battle.sector.planets.length % 2 === 0)
+                    $scope.battle.sector.planetsInPlay--;
 
                 // rename the 'number' field for easy display:
                 //      * negative numbers for drops already completed and logged
@@ -362,6 +371,7 @@
                     },
                     function(aErr) {
                         $scope.updating = false;
+                        setOperationStatus(aErr.message, false);
                     }
                 );
             };

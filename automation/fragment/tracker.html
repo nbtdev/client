@@ -16,7 +16,7 @@
                                     <div class="col-md-2 nbt-left-justified nbt-font-xxxl">{{battle.attackerPlanetCount}}</div>
                                     <div class="col-md-8 nbt-centered">
                                         <div class="nbt-font-xl nbt-highlight">{{battle.phase}}</div>
-                                        <div class="nbt-font-s">Claim {{(battle.sector.planets.length + 1) / 2}} of {{battle.sector.planets.length}} planets to resolve this phase.</div>
+                                        <div class="nbt-font-s">Claim {{(battle.sector.planetsInPlay + 1) / 2}} of {{battle.sector.planetsInPlay}} planets to resolve this phase.</div>
                                     </div>
                                     <div class="col-md-2 nbt-right-justified nbt-font-xxxl">{{battle.defenderPlanetCount}}</div>
                                 </div>
@@ -40,6 +40,9 @@
                                 <div class="row">
                                     <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Attack Date: </div>
                                     <div class="col-md-6 nbt-left-justified">{{battle.attackDate | date:'short'}}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12"><span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</div>
                                 </div>
                             </div>
                         </div>
@@ -92,12 +95,12 @@
                     <!-- drop logging entry -->
                     <div class="row">
                         <div class="col-md-4 nbt-right-justified">Match ID: </div>
-                        <div class="col-md-3"><input type="text" size="20" placeholder="Match ID From Game"></div>
+                        <div class="col-md-3"><input type="text" size="20" ng-model="drop.gameId" placeholder="Match ID From Game"></div>
                         <div class="col-md-5">
                             <button type="button"
                                     title="Log drop"
                                     class="btn btn-xs btn-primary"
-                                    ng-click="logGameId()">
+                                    ng-click="logDrop()">
                                 Submit Match ID
                             </button>
                         </div>
