@@ -373,6 +373,9 @@
             };
 
             function populateSummary() {
+                if (!$scope.planetSetupDict)
+                    return;
+
                 var planetGroups = $scope.planetGroups;
 
                 // filter out stuff that ain't ours...if we are a thing that is

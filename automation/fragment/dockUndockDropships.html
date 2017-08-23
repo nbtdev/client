@@ -4,7 +4,7 @@
             <div class="modal-header nbt-base nbt-modal-header">
                 <h4 class="modal-title text-center">Dock/Undock Dropship(s)</h4>
             </div>
-            <div class="modal-body nbt-base">
+            <div class="modal-body nbt-modal-body nbt-base">
                 <div class="container-fluid">
                     <div class="row nbt-centered">
                         <div class="nbt-status" ng-class="{ 'nbt-info': !msgIsError, 'nbt-error': msgIsError, 'nbt-invisible': !message}">&nbsp;{{message}}</div>
@@ -15,7 +15,7 @@
                                 <div class="nbt-centered nbt-font-l">Planet</div>
                                 <div><span class="nbt-highlight">{{planet.name}} ({{planet.parentGroup.owner.displayName}}):</span> {{planetDropships.length}} Dropships</div>
                                 <div>
-                                    <select multiple class="nbt-multi-select" ng-model="selectedPlanetDropships">
+                                    <select multiple size="10" class="nbt-multi-select" ng-model="selectedPlanetDropships" style="width: 90%">
                                         <option ng-repeat="ds in planetDropships" value="{{ds}}">{{ds.name}} ({{ds.owner.displayName}})</option>
                                     </select>
                                 </div>
@@ -23,15 +23,18 @@
                         </div>
                         <div class="col-md-6">
                             <div class="nbt-centered nbt-font-l">Jumpships</div>
-                            <div ng-repeat="js in jumpships" style="width: 80%">
-                                <div><span class="nbt-highlight">{{js.name}} ({{js.owner.displayName}})</span>: {{js.type.hardpoints-js.dropships.length}} of {{js.type.hardpoints}} HP available</div>
+                            <div ng-repeat="js in jumpships" style="width: 80%; margin-bottom: 10px;">
+                                <div>
+                                    <div class="nbt-highlight">{{js.name}} ({{js.owner.displayName}})</div>
+                                    <div>{{js.type.hardpoints-js.dropships.length}} of {{js.type.hardpoints}} HP available</div>
+                                </div>
                                 <div>
                                     <div class="nbt-perform-transfer">
                                         <input type="button" value="<<" title="Deploy selected dropships (from jumpship)" ng-click="onUndockDropships(js)">
                                         <br>
                                         <input type="button" value=">>" title="Dock selected dropships (from planet)" ng-click="onDockDropships(js)">
                                     </div>
-                                    <select multiple class="nbt-multi-select" ng-model="selectedJumpshipDropships[js.id]">
+                                    <select multiple ng-attr-size="{{js.type.hardpoints}}" class="nbt-multi-select" ng-model="selectedJumpshipDropships[js.id]" style="width: 80%">
                                         <option ng-repeat="ds in jumpshipDropships[js.id]" value="{{ds}}">{{ds.name}} ({{ds.owner.shortName}})</option>
                                     </select>
                                 </div>

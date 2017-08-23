@@ -4,7 +4,7 @@
             <div class="modal-header nbt-base nbt-modal-header">
                 <h4 class="modal-title text-center">Transfer Combat Units To/From Dropship</h4>
             </div>
-            <div class="modal-body nbt-base">
+            <div class="modal-body nbt-modal-body nbt-base">
                 <div class="container-fluid">
                     <div class="row nbt-centered">
                         <div class="nbt-status" ng-class="{ 'nbt-info': !msgIsError, 'nbt-error': msgIsError, 'nbt-invisible': !message}">&nbsp;{{message}}</div>
@@ -12,9 +12,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="nbt-centered nbt-font-l">Planet</div>
-                            <div class="nbt-highlight">{{planet.name}}</div>
+                            <div class="nbt-highlight">{{planet.name}} ({{planet.owner.displayName}})</div>
                             <div>
-                                <select multiple size="16" class="nbt-multi-select" ng-model="selectedPlanetCombatUnits">
+                                <select multiple size="16" class="nbt-multi-select" ng-model="selectedPlanetCombatUnits" style="width: 90%">
                                     <option ng-repeat="unit in combatUnits" value="{{unit}}">{{unit.template.name}} ({{unit.ownerAbbr}})</option>
                                 </select>
                             </div>
@@ -22,7 +22,7 @@
                         <div class="col-md-6">
                             <div class="nbt-centered nbt-font-l">Dropships</div>
                             <div ng-repeat="dropship in dropships">
-                                <div class="nbt-highlight">{{dropship.name}} ({{dropship.owner.displayName}})</div>
+                                <div class="nbt-highlight">{{dropship.name}}</div>
                                 <div class="nbt-font-s">Remaining Capacities:
                                     <div style="margin-left: 10px" ng-repeat="capacity in dropship.type.capacities">{{capacity.available}} of {{capacity.capacity}} {{capacity.combatUnitType.abbrev}}</div>
                                 </div>
@@ -32,7 +32,7 @@
                                         <br>
                                         <input type="button" value=">>" title="Load selected dropships onto dropship" ng-click="onTransferPlanetToDropship(dropship)">
                                     </div>
-                                    <select multiple size="8" class="nbt-multi-select" ng-model="selectedDropshipCombatUnits[dropship.id]">
+                                    <select multiple size="8" class="nbt-multi-select" ng-model="selectedDropshipCombatUnits[dropship.id]" style="width: 80%">
                                         <option ng-repeat="unit in dropshipCombatUnits[dropship.id]" value="{{unit}}">{{unit.template.name}} ({{unit.owner.shortName}})</option>
                                     </select>
                                 </div>

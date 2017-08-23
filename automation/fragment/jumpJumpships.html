@@ -2,15 +2,15 @@
     <div class="nbt-side-menu-label">
         Jump
     </div>
-    <div class="nbt-side-menu-item">
+    <div class="nbt-side-menu-item" style="padding-bottom: 10px;">
         <div class="nbt-label"><span class="bold">Step 1:</span> Set up jump path on starmap.</div>
     </div>
-    <div class="nbt-side-menu-item">
+    <div class="nbt-side-menu-item" style="padding-bottom: 10px;">
         <div class="nbt-label"><span class="bold">Step 2:</span> Select jumpship(s) to jump.</div>
         <div>
             <select multiple
                     class="nbt-multi-select"
-                    ng-options="js as js.name+' ('+js.owner.shortName+')' for js in jumpships track by js.id"
+                    ng-options="js as js.name for js in jumpships track by js.id"
                     ng-model="selectedJumpships">
             </select>
         </div>
@@ -30,19 +30,17 @@
     </div>
     <div class="nbt-side-menu-item">
         <div class="nbt-label"><span class="bold">Step 3:</span> Select jump type and action.</div>
-        <div class="nbt-label">Action</div>
+        <div class="nbt-label">Jump Type&nbsp;<a class="ui-interactive"><img src="../images/help-16.png" height="16" width="16"/></a></div>
         <div>
             <select ng-model="selectedJumpType"
-                    ng-options="type.factionClass.shortName+': '+type.name for type in jumpTypes"
-                    alt="This will populate automatically with valid types once the jump path and jumpships are selected">
+                    ng-options="type.name for type in jumpTypes">
             </select>
         </div>
     </div>
-    <div class="nbt-side-menu-item">
-        <div class="nbt-label">Action</div>
+    <div class="nbt-side-menu-item" style="padding-bottom: 10px;">
+        <div class="nbt-label">Jump Action&nbsp;<a class="ui-interactive"><img src="../images/help-16.png" height="16" width="16"/></a></div>
         <div>
             <select ng-model="selectedJumpAction"
-                    alt="This will populate automatically with valid actions once the jump path and jumpships are selected"
                     ng-options="action.name for action in jumpActions">
             </select>
         </div>

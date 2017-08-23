@@ -585,16 +585,14 @@
                             }
                         }
                     } else {
-                        // if we are in pathfinding state, just exit the state and leave the path
-                        // in place; otherwise, treat it as a normal planet select
-                        if (self.isPathfinding) {
-                            self.isPathfinding = false;
-                        } else {
-                            var obj = findObjectUnderMouse();
-                            self.selectedPlanet = obj;
-
-                            if (obj && event.shiftKey) {
-                                self.isPathfinding = true;
+                        if (!event.ctrlKey) {
+                            // if we are in pathfinding state, just exit the state and leave the path
+                            // in place; otherwise, treat it as a normal planet select
+                            if (self.isPathfinding) {
+                                self.isPathfinding = false;
+                            } else {
+                                var obj = findObjectUnderMouse();
+                                self.selectedPlanet = obj;
                                 self.originPlanet = obj;
                             }
                         }
@@ -626,6 +624,10 @@
             this.onMouseUp = function(event) {
                 if (event.button === 0) {
                     self.state = 0;
+
+                    // CTRL means we are doing something and don't want the current selection unselected
+                    if (event.ctrlKey)
+                        return;
 
                     if ($scope.editMode) {
                         self.selectCornerA = null;
@@ -908,6 +910,8 @@
             };
 
             this.onMouseMove = function(event) {
+                self.isPathfinding = event.shiftKey;
+
                 var pos = {x: event.offsetX, y: event.offsetY};
                 if (self.state === 1) {
                     moveCamera(pos);
@@ -922,7 +926,7 @@
                             if (obj !== self.hoverPlanet) {
                                 self.hoverPlanet = obj;
 
-                                if (self.isPathfinding && event.shiftKey) { // the user is looking at jump paths
+                                if (self.isPathfinding) { // the user is looking at jump paths
                                     self.destinationPlanet = obj;
                                     self.jumpPlan = findJumpPath(self.originPlanet, self.destinationPlanet);
                                     $rootScope.$broadcast('jumpPathChanged', self.jumpPlan);
@@ -1066,7 +1070,11 @@
                 updateMapColors(aMapColors);
 
                 // kick off a worker task to create the charge station network
-                csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+                try {
+                    csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+                } catch (e) {
+
+                }
 
                 // reset the map and overlay(s)
                 var startTime = performance.now();

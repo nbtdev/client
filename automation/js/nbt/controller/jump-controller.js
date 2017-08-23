@@ -159,7 +159,7 @@
             // to the destination.
             var cbJumpPathChanged = $scope.$on('jumpPathChanged', function (event, aPath) {
                 $scope.jumpPath = aPath;
-                $showJump = true;
+                $scope.showJump = true;
             });
             $scope.$on('destroy', cbJumpPathChanged);
 
