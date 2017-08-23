@@ -336,9 +336,9 @@
                 // check every 3 seconds until a new drop is posted
                 $timeout(function() {
                     nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
-                        if (aData.drops.length === $scope.battle.drops.length)
+                        if (battle.outcome === 'Pending' && aData.drops.length === $scope.battle.drops.length) {
                             pollBattleUpdate(aData);
-                        else {
+                        } else {
                             $scope.battle = aData;
                             processBattle();
                             $scope.updating = false;
