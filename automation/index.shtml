@@ -133,6 +133,11 @@
 
         <!-- center content area-->
         <div id="starmapContainer" class="col-md-10 starmapContainer">
+            <div class="starmap-message nbt-centered nbt-base"
+                 id="starmap-message-banner"
+                 ng-class="{'nbt-info': !starmapMessageError, 'nbt-error': starmapMessageError, 'open': starmapMessage}">
+                {{starmapMessage}}
+            </div>
             <starmap id="starmap">
                 <planet_brief id="planetBrief" ng-show="showPlanetBrief"></planet_brief>
             </starmap>

@@ -23,7 +23,8 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtBattle', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtBattle, nbtPlanet, nbtTransport, nbtIdentity) {
+        .controller('JumpController', ['$sce', '$scope', '$rootScope', '$timeout', 'nbtBattle', 'nbtPlanet', 'nbtTransport', 'nbtIdentity',
+         function($sce, $scope, $rootScope, $timeout, nbtBattle, nbtPlanet, nbtTransport, nbtIdentity) {
             $scope.planet = null;
 
             $scope.showJump = false;
@@ -45,20 +46,8 @@
             // Step 4: Select destination planet
             // Step 5: Perform the jump
 
-            var timeoutPromise = null;
-
             var updateStatus = function(message, isError) {
-                $scope.message = message;
-                $scope.msgIsError = isError;
-
-                // cause the message to go away in 5 seconds
-                if (timeoutPromise)
-                    $timeout.cancel(timeoutPromise);
-
-                timeoutPromise = $timeout(function() {
-                    $scope.message = null;
-                    timeoutPromise = null;
-                }, 5000);
+                $rootScope.$broadcast('nbtGlobalMessage', message, isError);
             };
 
             var reset = function() {
@@ -127,7 +116,7 @@
                     },
 
                     function(err) {
-                        updateStatus(err, true);
+                        updateStatus(err.message, true);
                     }
                 );
             };
