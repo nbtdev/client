@@ -66,6 +66,7 @@
                 $scope.jumpTypes = [];
                 $scope.jumpActions = [];
                 $scope.invalidJumpships = [];
+                $scope.jumpPath = [];
 
                 $scope.selectedJumpships = [];
                 $scope.selectedJumpType = null;
@@ -139,7 +140,11 @@
             $scope.$on('destroy', cbDestinationPlanetChanged);
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
+                if (aPlanet && $scope.planet && aPlanet.id === $scope.planet.id)
+                    return;
+
                 $scope.planet = aPlanet;
+                $scope.destinationPlanet = null;
                 reset();
 
                 if (aPlanet === null)
@@ -172,6 +177,9 @@
             var cbJumpPathChanged = $scope.$on('jumpPathChanged', function (event, aPath) {
                 $scope.jumpPath = aPath;
                 $scope.showJump = true;
+
+                if (aPath && aPath.length > 1)
+                    $scope.destinationPlanet = aPath[aPath.length-1];
             });
             $scope.$on('destroy', cbJumpPathChanged);
 
