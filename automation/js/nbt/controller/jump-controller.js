@@ -124,6 +124,10 @@
             var cbDestinationPlanetChanged = $scope.$on('nbtDestinationPlanetChanged', function (event, aPlanet) {
                 $timeout(function() {
                     $scope.destinationPlanet = aPlanet;
+
+                    if (!($scope.jumpPath && $scope.jumpPath.length)) {
+                        $scope.jumpPath = [$scope.planet, aPlanet];
+                    }
                 }, 0);
             });
             $scope.$on('destroy', cbDestinationPlanetChanged);
@@ -164,11 +168,13 @@
             // such a path has been selected. The path is a an ordered list of planets, from the origin
             // to the destination.
             var cbJumpPathChanged = $scope.$on('jumpPathChanged', function (event, aPath) {
-                $scope.jumpPath = aPath;
-                $scope.showJump = true;
+                $timeout(function() {
+                    $scope.jumpPath = aPath;
+                    $scope.showJump = true;
 
-                if (aPath && aPath.length > 1)
-                    $scope.destinationPlanet = aPath[aPath.length-1];
+                    if (aPath && aPath.length > 1)
+                        $scope.destinationPlanet = aPath[aPath.length-1];
+                }, 0);
             });
             $scope.$on('destroy', cbJumpPathChanged);
 
@@ -177,7 +183,7 @@
                 var csHops = 0;
                 if (self.jumpPath) {
                     for (var i = 1; i < self.jumpPath.length; ++i) {
-                        var planet = self.jumpPath;
+                        var planet = self.jumpPath[i];
                         if (planet.chargeStation)
                             csHops++;
                     }
@@ -197,6 +203,7 @@
 
                     for (var i = 0; i < self.jumpships.length; ++i) {
                         var js = self.jumpships[i];
+                        js.reason = null;
 
                         // exception -- if the origin planet is a CS planet AND the JS has CS hops left,
                         // then the JS should still be available to jump
@@ -204,20 +211,14 @@
                             continue;
 
                         if (js.hoursToFullCharge > 0) {
-                            self.invalidJumpships.push({
-                                name: js.name,
-                                reason: js.hoursToFullCharge + ' hours to charge'
-                            });
-
+                            js.reason = js.hoursToFullCharge + ' hours to charge';
+                            self.invalidJumpships.push(js);
                             jumpshipsToRemove[js.id] = js;
                         }
 
                         if (js.csChargesRemaining < csHops) {
-                            self.invalidJumpships.push({
-                                name: js.name,
-                                reason: js.csChargesRemaining + ' jumps available'
-                            });
-
+                            js.reason = js.csChargesRemaining + ' CS jumps available';
+                            self.invalidJumpships.push(js);
                             jumpshipsToRemove[js.id] = js;
                         }
                     }
@@ -237,5 +238,6 @@
 
             $scope.$watch('jumpPath', jumpParamsChanged);
             $scope.$watch('selectedJumpships', jumpParamsChanged);
+            $scope.$watch('destinationPlanet', jumpParamsChanged);
         }]);
 })();
