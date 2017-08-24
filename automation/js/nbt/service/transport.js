@@ -291,7 +291,7 @@ var _TransportService = (function() {
             },
             function (aError) {
                 if (aFail)
-                    aFail(aError);
+                    aFail(aError.data);
             }
         );
     };

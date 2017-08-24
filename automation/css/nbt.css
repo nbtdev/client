@@ -19,6 +19,22 @@
     pointer-events: none;
 }
 
+.starmap-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    width: 100%;
+    max-height: 0px;
+    z-index: 100;
+    transition: max-height 0.15s ease-out;
+}
+
+.starmap-message open {
+    max-height: 45px;
+    transition: max-height 0.25s ease-in;
+}
+
 .ui-interactive {
     pointer-events: all;
     cursor: pointer;
@@ -333,7 +349,7 @@ input[type=password] {
 }
 
 .nbt-side-menu-item {
-    padding-bottom: 15px;
+    padding-bottom: 2px;
 }
 
 .nbt-multi-select {
@@ -708,4 +724,20 @@ input[type=password] {
     opacity: 1;
     font-weight: bold;
     font-size: 1.5em;
+}
+
+.nbt-border-s {
+    border-bottom: solid 1px;
+}
+
+.nbt-border-w {
+    border-left: solid 1px;
+}
+
+.nbt-border-e {
+    border-right: solid 1px;
+}
+
+.nbt-border-n {
+    border-top: solid 1px;
 }

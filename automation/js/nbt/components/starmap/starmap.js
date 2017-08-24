@@ -38,7 +38,10 @@
                 DROPSHIPS: 5,
                 JUMPSHIPS: 6,
                 SECTORS: 7,
-                BATTLES: 8
+                BATTLES: 8,
+
+                NORMAL_JUMP: 9,
+                SPECIAL_JUMP: 10
             };
 
             var self = this;
@@ -165,7 +168,7 @@
             this.capitalPlanetRings = [];
             this.sectorBounds = [];
 
-            // 30- and 60-LY rings
+            // 30-, 60- and 500-LY rings
             this.rings3060 = null;
 
             // mouse manipulation state
@@ -236,12 +239,26 @@
                 self.rings3060 = new THREE.Object3D();
                 var ring30 = new THREE.RingGeometry(29.9, 30.1, 90);
                 var ring60 = new THREE.RingGeometry(59.9, 60.1, 120);
+                var ring500 = new THREE.RingGeometry(499.9, 500.1, 1000);
+
                 var whtMtl = new THREE.MeshBasicMaterial();
                 whtMtl.color.setRGB(1,1,1);
                 var grnMtl = new THREE.MeshBasicMaterial();
                 grnMtl.color.setRGB(0,1,0);
-                self.rings3060.add(new THREE.Mesh(ring30, whtMtl));
-                self.rings3060.add(new THREE.Mesh(ring60, grnMtl));
+                var cyanMtl = new THREE.MeshBasicMaterial();
+                cyanMtl.color.setRGB(0,1,1);
+
+                var mesh30 = new THREE.Mesh(ring30, whtMtl);
+                var mesh60 = new THREE.Mesh(ring60, grnMtl);
+                var mesh500 = new THREE.Mesh(ring500, cyanMtl);
+
+                mesh30.layers.set(MapLayer.NORMAL_JUMP);
+                mesh60.layers.set(MapLayer.NORMAL_JUMP);
+                mesh500.layers.set(MapLayer.SPECIAL_JUMP);
+
+                self.rings3060.add(mesh30);
+                self.rings3060.add(mesh60);
+                self.rings3060.add(mesh500);
 
                 // add mouse event handlers
                 self.gl.domElement.addEventListener('mousewheel', self.onMouseWheel);
@@ -279,6 +296,10 @@
             var redraw = function() {
                 // update the camera layers to match the selected layers
                 self.camera3D.layers.set(MapLayer.PLANETS);
+                self.camera3D.layers.enable(MapLayer.NORMAL_JUMP);
+
+                if ($scope.showSpecialJump)
+                    self.camera3D.layers.enable(MapLayer.SPECIAL_JUMP);
 
                 if ($scope.showBattles) self.camera3D.layers.enable(MapLayer.BATTLES);
                 if ($scope.showDropships) self.camera3D.layers.enable(MapLayer.DROPSHIPS);
@@ -585,16 +606,14 @@
                             }
                         }
                     } else {
-                        // if we are in pathfinding state, just exit the state and leave the path
-                        // in place; otherwise, treat it as a normal planet select
-                        if (self.isPathfinding) {
-                            self.isPathfinding = false;
-                        } else {
-                            var obj = findObjectUnderMouse();
-                            self.selectedPlanet = obj;
-
-                            if (obj && event.shiftKey) {
-                                self.isPathfinding = true;
+                        if (!event.ctrlKey) {
+                            // if we are in pathfinding state, just exit the state and leave the path
+                            // in place; otherwise, treat it as a normal planet select
+                            if (self.isPathfinding) {
+                                self.isPathfinding = false;
+                            } else {
+                                var obj = findObjectUnderMouse();
+                                self.selectedPlanet = obj;
                                 self.originPlanet = obj;
                             }
                         }
@@ -623,9 +642,18 @@
                 $rootScope.$broadcast('planetChanged', planet, planets);
             }
 
+            function setDestinationPlanet(planet) {
+                self.destinationPlanet = planet;
+                $rootScope.$broadcast('nbtDestinationPlanetChanged', planet);
+            }
+
             this.onMouseUp = function(event) {
                 if (event.button === 0) {
                     self.state = 0;
+
+                    // CTRL means we are doing something and don't want the current selection unselected
+                    if (event.ctrlKey)
+                        return;
 
                     if ($scope.editMode) {
                         self.selectCornerA = null;
@@ -647,10 +675,16 @@
                         var mouseY = t - ny * h;
 
                         var obj = null;
+                        self.destinationPlanet = null;
+
                         if (self.quadtree)
                             obj = self.quadtree.find(mouseX, mouseY);
 
-                        setSelectedPlanet(obj);
+                        // if SHIFT, then selecting jump target
+                        if (event.shiftKey)
+                            setDestinationPlanet(obj);
+                        else
+                            setSelectedPlanet(obj);
                     }
                 }
 
@@ -908,6 +942,8 @@
             };
 
             this.onMouseMove = function(event) {
+                self.isPathfinding = event.shiftKey;
+
                 var pos = {x: event.offsetX, y: event.offsetY};
                 if (self.state === 1) {
                     moveCamera(pos);
@@ -922,7 +958,7 @@
                             if (obj !== self.hoverPlanet) {
                                 self.hoverPlanet = obj;
 
-                                if (self.isPathfinding && event.shiftKey) { // the user is looking at jump paths
+                                if (self.isPathfinding) { // the user is looking at jump paths
                                     self.destinationPlanet = obj;
                                     self.jumpPlan = findJumpPath(self.originPlanet, self.destinationPlanet);
                                     $rootScope.$broadcast('jumpPathChanged', self.jumpPlan);
@@ -1052,6 +1088,13 @@
             });
             $scope.$on('destroy', cb);
 
+            var cb = $scope.$on('nbtFactionChanged', function(event, aFaction) {
+                if (aFaction && aFaction.factionClass.displayName !== 'Inner Sphere') {
+                    $scope.showSpecialJump = true;
+                }
+            });
+            $scope.$on('destroy', cb);
+
             cb = $scope.$on('nbtLeagueChanged', function(event, aLeague) {
                 if (aLeague) {
                     currentLeague = aLeague;
@@ -1066,7 +1109,11 @@
                 updateMapColors(aMapColors);
 
                 // kick off a worker task to create the charge station network
-                csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+                try {
+                    csWorker.postMessage({planetGroups: self.planets, quadtree: self.quadtree});
+                } catch (e) {
+
+                }
 
                 // reset the map and overlay(s)
                 var startTime = performance.now();

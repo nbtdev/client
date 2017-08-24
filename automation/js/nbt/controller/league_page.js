@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('LeaguePageController', ['$scope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, nbtIdentity, nbtLeague, nbtPlanet) {
+        .controller('LeaguePageController', ['$scope', '$timeout', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, $timeout, nbtIdentity, nbtLeague, nbtPlanet) {
             $scope.showTransfer = false;
             $scope.showTransferCombatUnits = false;
             $scope.showDockUndockDropships = false;
@@ -32,6 +32,24 @@
             $scope.factionActive = false;
             $scope.showSummary = false;
             $scope.showJumpshipSummary = false;
+
+            $scope.starmapMessage = null;
+            $scope.starmapMessageError = false;
+
+            var timeoutPromise = null;
+            var updateStatus = function(message, isError) {
+                $scope.starmapMessage = message;
+                $scope.starmapMessageError = isError;
+
+                // cause the message to go away in 5 seconds
+                if (timeoutPromise)
+                    $timeout.cancel(timeoutPromise);
+
+                timeoutPromise = $timeout(function() {
+                    $scope.starmapMessage = null;
+                    timeoutPromise = null;
+                }, 5000);
+            };
 
             $scope.getLogo = function(data) {
                 // we want the link directly to the logo
@@ -145,6 +163,11 @@
 
                 nbtPlanet.load(league, user.token);
             };
+
+            var cbMessage = $scope.$on('nbtGlobalMessage', function (event, aMessage, aError) {
+                updateStatus(aMessage, aError);
+            });
+            $scope.$on('destroy', cbMessage);
 
             var cbFaction = $scope.$on('nbtFactionChanged', function (event, aFaction) {
                 if (aFaction.status === "Active" || aFaction.status === "Semi-Active")

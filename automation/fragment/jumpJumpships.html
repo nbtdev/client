@@ -1,54 +1,70 @@
+<div class="help-jump-step-1" style="display: none">
+    <h5 class="nbt-h5">Step 1</h5>
+    <div class="nbt-rules-para">
+        Hold down SHIFT and select the destination planet. You will need to keep SHIFT or CTRL pressed while you move the
+        map around (it is not necessary to hold either of these keys while zooming with the mouse wheel). When you have
+        selected your destination planet, the name will show in the Jump pane.
+    </div>
+</div>
+
 <div ng-show="showJump" ng-controller="JumpController as jumpCtl">
     <div class="nbt-side-menu-label">
         Jump
     </div>
-    <div class="nbt-side-menu-item">
-        <div class="nbt-label"><span class="bold">Step 1:</span> Set up jump path on starmap.</div>
+    <div class="nbt-side-menu-item" style="padding-bottom: 10px;">
+        <div class="nbt-label">
+            <div><span class="bold">Step 1:</span> Select Destination <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-contentref=".help-jump-step-1"><img src="/images/help-16.png"></a></div>
+            <div class="nbt-font-s"><span class="nbt-highlight">Origin: </span>{{planet.name}}</div>
+            <div class="nbt-font-s"><span class="nbt-highlight">Destination: </span>{{destinationPlanet.name}}</div>
+        </div>
     </div>
-    <div class="nbt-side-menu-item">
+    <div class="nbt-side-menu-item" style="padding-bottom: 10px;" ng-show="destinationPlanet">
         <div class="nbt-label"><span class="bold">Step 2:</span> Select jumpship(s) to jump.</div>
         <div>
             <select multiple
                     class="nbt-multi-select"
-                    ng-options="js as js.name+' ('+js.owner.shortName+')' for js in jumpships track by js.id"
+                    ng-options="js as js.name for js in jumpships track by js.id"
                     ng-model="selectedJumpships">
             </select>
         </div>
-        <div ng-show="invalidJumpships.length">
-            <div class="nbt-label">The following jumpships cannot jump the selected path:</div>
-            <table>
-                <tr>
-                    <th>Jumpship</th>
-                    <th>Reason</th>
-                </tr>
-                <tr ng-repeat="js in invalidJumpships">
-                    <td>{{js.name}}</td>
-                    <td>{{js.reason}}</td>
-                </tr>
-            </table>
+        <div ng-show="invalidJumpships.length" class="nbt-base nbt-font-s" style="margin-top: 10px">
+            <div>The following jumpships cannot jump the selected path:</div>
+            <div class="container col-md-12">
+                <div class="row nbt-border-s">
+                    <div class="col-md-6 nbt-bold nbt-highlight">Jumpship</div>
+                    <div class="col-md-6 nbt-bold nbt-highlight">Reason</div>
+                </div>
+                <div ng-repeat="js in invalidJumpships" class="row">
+                    <div class="col-md-6">{{js.name}}</div>
+                    <div class="col-md-6">{{js.reason}}</div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="nbt-side-menu-item">
-        <div class="nbt-label"><span class="bold">Step 3:</span> Select jump type and action.</div>
-        <div class="nbt-label">Action</div>
-        <div>
-            <select ng-model="selectedJumpType"
-                    ng-options="type.factionClass.shortName+': '+type.name for type in jumpTypes"
-                    alt="This will populate automatically with valid types once the jump path and jumpships are selected">
-            </select>
+    <div ng-show="destinationPlanet && selectedJumpships.length">
+        <div class="nbt-side-menu-item">
+            <div class="nbt-label"><span class="bold">Step 3:</span> Select jump type and action.</div>
+            <div class="nbt-label">Jump Type</div>
+            <div>
+                <select ng-model="selectedJumpType"
+                        ng-options="type.name for type in jumpTypes">
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="nbt-side-menu-item">
-        <div class="nbt-label">Action</div>
-        <div>
-            <select ng-model="selectedJumpAction"
-                    alt="This will populate automatically with valid actions once the jump path and jumpships are selected"
-                    ng-options="action.name for action in jumpActions">
-            </select>
+        <div class="nbt-side-menu-item" style="padding-bottom: 10px;">
+            <div class="nbt-label">Jump Action</div>
+            <div>
+                <select ng-model="selectedJumpAction"
+                        ng-options="action.name for action in jumpActions">
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="nbt-side-menu-item">
-        <div class="nbt-label"><span class="bold">Step 4:</span> Execute the jump.</div>
-        <button class="btn btn-primary nbt-button" ng-click="onExecuteJump()" >Execute Jump</button>
+        <div class="nbt-side-menu-item">
+            <div class="nbt-label"><span class="bold">Step 4:</span> Execute the jump.</div>
+            <button class="btn btn-primary nbt-button"
+                    ng-class="{'disabled': !destinationPlanet}"
+                    ng-click="onExecuteJump()" >
+                Execute Jump</button>
+        </div>
     </div>
 </div>

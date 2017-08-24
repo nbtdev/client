@@ -23,7 +23,8 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('JumpController', ['$sce', '$scope', '$timeout', 'nbtBattle', 'nbtPlanet', 'nbtTransport', 'nbtIdentity', function($sce, $scope, $timeout, nbtBattle, nbtPlanet, nbtTransport, nbtIdentity) {
+        .controller('JumpController', ['$sce', '$scope', '$rootScope', '$timeout', 'nbtBattle', 'nbtPlanet', 'nbtTransport', 'nbtIdentity',
+         function($sce, $scope, $rootScope, $timeout, nbtBattle, nbtPlanet, nbtTransport, nbtIdentity) {
             $scope.planet = null;
 
             $scope.showJump = false;
@@ -45,20 +46,8 @@
             // Step 4: Select destination planet
             // Step 5: Perform the jump
 
-            var timeoutPromise = null;
-
             var updateStatus = function(message, isError) {
-                $scope.message = message;
-                $scope.msgIsError = isError;
-
-                // cause the message to go away in 5 seconds
-                if (timeoutPromise)
-                    $timeout.cancel(timeoutPromise);
-
-                timeoutPromise = $timeout(function() {
-                    $scope.message = null;
-                    timeoutPromise = null;
-                }, 5000);
+                $rootScope.$broadcast('nbtGlobalMessage', message, isError);
             };
 
             var reset = function() {
@@ -66,6 +55,7 @@
                 $scope.jumpTypes = [];
                 $scope.jumpActions = [];
                 $scope.invalidJumpships = [];
+                $scope.jumpPath = [];
 
                 $scope.selectedJumpships = [];
                 $scope.selectedJumpType = null;
@@ -93,8 +83,13 @@
 
                 // strip out all but the planet IDs from the path
                 var path = [];
-                for (var i=0; i<$scope.jumpPath.length; ++i) {
-                    path.push({id: $scope.jumpPath[i].id});
+                if ($scope.jumpPath.length > 0) {
+                    for (var i=0; i<$scope.jumpPath.length; ++i) {
+                        path.push({id: $scope.jumpPath[i].id});
+                    }
+                } else {
+                    path.push({id: $scope.planet.id});
+                    path.push({id: $scope.destinationPlanet.id});
                 }
 
                 nbtTransport.jumpJumpships(
@@ -121,13 +116,28 @@
                     },
 
                     function(err) {
-                        updateStatus(err, true);
+                        updateStatus(err.message, true);
                     }
                 );
             };
 
+            var cbDestinationPlanetChanged = $scope.$on('nbtDestinationPlanetChanged', function (event, aPlanet) {
+                $timeout(function() {
+                    $scope.destinationPlanet = aPlanet;
+
+                    if (!($scope.jumpPath && $scope.jumpPath.length)) {
+                        $scope.jumpPath = [$scope.planet, aPlanet];
+                    }
+                }, 0);
+            });
+            $scope.$on('destroy', cbDestinationPlanetChanged);
+
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
+                if (aPlanet && $scope.planet && aPlanet.id === $scope.planet.id)
+                    return;
+
                 $scope.planet = aPlanet;
+                $scope.destinationPlanet = null;
                 reset();
 
                 if (aPlanet === null)
@@ -158,8 +168,13 @@
             // such a path has been selected. The path is a an ordered list of planets, from the origin
             // to the destination.
             var cbJumpPathChanged = $scope.$on('jumpPathChanged', function (event, aPath) {
-                $scope.jumpPath = aPath;
-                $showJump = true;
+                $timeout(function() {
+                    $scope.jumpPath = aPath;
+                    $scope.showJump = true;
+
+                    if (aPath && aPath.length > 1)
+                        $scope.destinationPlanet = aPath[aPath.length-1];
+                }, 0);
             });
             $scope.$on('destroy', cbJumpPathChanged);
 
@@ -168,7 +183,7 @@
                 var csHops = 0;
                 if (self.jumpPath) {
                     for (var i = 1; i < self.jumpPath.length; ++i) {
-                        var planet = self.jumpPath;
+                        var planet = self.jumpPath[i];
                         if (planet.chargeStation)
                             csHops++;
                     }
@@ -188,6 +203,7 @@
 
                     for (var i = 0; i < self.jumpships.length; ++i) {
                         var js = self.jumpships[i];
+                        js.reason = null;
 
                         // exception -- if the origin planet is a CS planet AND the JS has CS hops left,
                         // then the JS should still be available to jump
@@ -195,20 +211,14 @@
                             continue;
 
                         if (js.hoursToFullCharge > 0) {
-                            self.invalidJumpships.push({
-                                name: js.name,
-                                reason: js.hoursToFullCharge + ' hours to charge'
-                            });
-
+                            js.reason = js.hoursToFullCharge + ' hours to charge';
+                            self.invalidJumpships.push(js);
                             jumpshipsToRemove[js.id] = js;
                         }
 
                         if (js.csChargesRemaining < csHops) {
-                            self.invalidJumpships.push({
-                                name: js.name,
-                                reason: js.csChargesRemaining + ' jumps available'
-                            });
-
+                            js.reason = js.csChargesRemaining + ' CS jumps available';
+                            self.invalidJumpships.push(js);
                             jumpshipsToRemove[js.id] = js;
                         }
                     }
@@ -228,5 +238,6 @@
 
             $scope.$watch('jumpPath', jumpParamsChanged);
             $scope.$watch('selectedJumpships', jumpParamsChanged);
+            $scope.$watch('destinationPlanet', jumpParamsChanged);
         }]);
 })();
