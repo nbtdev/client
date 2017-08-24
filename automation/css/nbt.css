@@ -725,3 +725,19 @@ input[type=password] {
     font-weight: bold;
     font-size: 1.5em;
 }
+
+.nbt-border-s {
+    border-bottom: solid 1px;
+}
+
+.nbt-border-w {
+    border-left: solid 1px;
+}
+
+.nbt-border-e {
+    border-right: solid 1px;
+}
+
+.nbt-border-n {
+    border-top: solid 1px;
+}

@@ -27,18 +27,18 @@
                     ng-model="selectedJumpships">
             </select>
         </div>
-        <div ng-show="invalidJumpships.length">
-            <div class="nbt-label">The following jumpships cannot jump the selected path:</div>
-            <table>
-                <tr>
-                    <th>Jumpship</th>
-                    <th>Reason</th>
-                </tr>
-                <tr ng-repeat="js in invalidJumpships">
-                    <td>{{js.name}}</td>
-                    <td>{{js.reason}}</td>
-                </tr>
-            </table>
+        <div ng-show="invalidJumpships.length" class="nbt-base nbt-font-s" style="margin-top: 10px">
+            <div>The following jumpships cannot jump the selected path:</div>
+            <div class="container col-md-12">
+                <div class="row nbt-border-s">
+                    <div class="col-md-6 nbt-bold nbt-highlight">Jumpship</div>
+                    <div class="col-md-6 nbt-bold nbt-highlight">Reason</div>
+                </div>
+                <div ng-repeat="js in invalidJumpships" class="row">
+                    <div class="col-md-6">{{js.name}}</div>
+                    <div class="col-md-6">{{js.reason}}</div>
+                </div>
+            </div>
         </div>
     </div>
     <div ng-show="destinationPlanet && selectedJumpships.length">
