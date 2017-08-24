@@ -93,8 +93,13 @@
 
                 // strip out all but the planet IDs from the path
                 var path = [];
-                for (var i=0; i<$scope.jumpPath.length; ++i) {
-                    path.push({id: $scope.jumpPath[i].id});
+                if ($scope.jumpPath.length > 0) {
+                    for (var i=0; i<$scope.jumpPath.length; ++i) {
+                        path.push({id: $scope.jumpPath[i].id});
+                    }
+                } else {
+                    path.push({id: $scope.planet.id});
+                    path.push({id: $scope.destinationPlanet.id});
                 }
 
                 nbtTransport.jumpJumpships(
@@ -125,6 +130,13 @@
                     }
                 );
             };
+
+            var cbDestinationPlanetChanged = $scope.$on('nbtDestinationPlanetChanged', function (event, aPlanet) {
+                $timeout(function() {
+                    $scope.destinationPlanet = aPlanet;
+                }, 0);
+            });
+            $scope.$on('destroy', cbDestinationPlanetChanged);
 
             var cbSelectedPlanetChanged = $scope.$on('planetChanged', function (event, aPlanet) {
                 $scope.planet = aPlanet;

@@ -87,7 +87,6 @@
         $(document).ready(function() {
             $('[data-toggle="popover"]').popover({
                 html: true,
-                trigger: "hover",
                 content: function(){
                     return $($(this).data('contentref')).html();
                 }
@@ -162,5 +161,4 @@
             });
     });
 </script>
-
 </html>
