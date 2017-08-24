@@ -29,10 +29,11 @@
                 <div style="text-align: center; padding-top: 8px">
                     <div class="centered">
                         <span><a class="ui-interactive" data-dismiss="modal" data-toggle="modal" data-target="#passwordModal">Forgot Password?</a></span>
+                        <span style="margin-left: 30px"><input type="checkbox" ng-model="permanentLogin">&nbsp;Keep me logged in</span>
                     </div>
                     <div class="centered">
-                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="onSignin()" class="btn btn-info nbt-button" role="button">Sign In</a></span>
-                        <span style="display: inline;"><a href="javascript: void(0)" ng-click="onCancel()" data-dismiss="modal" class="btn btn-info nbt-button" role="button">Cancel</a></span>
+                        <span style="margin-right: 25px;"><a class="ui-interactive"><button ng-click="onSignin()" class="btn btn-info nbt-button" role="button">Sign In</button></a></span>
+                        <span style="display: inline;"><a class="ui-interactive" ng-click="onCancel()" data-dismiss="modal"><button class="btn btn-info nbt-button" role="button">Cancel</button></a></span>
                     </div>
                 </div>
 
@@ -41,7 +42,7 @@
                         {{signinError}}
                     </div>
                     <div style="margin: auto; text-align: center; padding-top: 4px;">
-                        <span style="margin-right: 25px;"><a href="javascript: void(0)" ng-click="closeForm()" data-dismiss="modal">Close Form</a></span>
+                        <span style="margin-right: 25px;"><a class="ui-interactive" ng-click="closeForm()" data-dismiss="modal">Close Form</a></span>
                     </div>
                 </div>
             </div>

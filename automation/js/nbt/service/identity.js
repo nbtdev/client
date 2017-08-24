@@ -142,7 +142,7 @@ var _IdentityService = (function() {
         return makeIdentity(self.mIdentity);
     };
 
-    IdentityService.prototype.login = function(aUsername, aPassword, aSuccess, aFailure) {
+    IdentityService.prototype.login = function(aLoginData, aSuccess, aFailure) {
         // clear out any existing user data
         this.reset();
 
@@ -150,10 +150,7 @@ var _IdentityService = (function() {
         self.http({
             method: 'POST', // TODO: get this from the links!
             url: self.nbtRoot.links().login.href,
-            data: { // TODO: fill out a template that we get from the links!
-                username: aUsername,
-                password: aPassword
-            }
+            data: aLoginData
         }).then(
             function(resp) {
                 // save the new user data

@@ -34,9 +34,11 @@
             // form model data
             $scope.username = null;
             $scope.password = null;
-
+            $scope.permanentLogin = false;
             resetError();
         }
+
+        reset();
 
         var signinSucceeded = function(data) {
             console.log(data);
@@ -59,8 +61,11 @@
 
         var onSignin = function() {
             nbtIdentity.login(
-                $scope.username,
-                $scope.password,
+                {
+                    username: $scope.username,
+                    password: $scope.password,
+                    permanentLogin: $scope.permanentLogin
+                },
                 signinSucceeded,
                 signinFailed
             );
