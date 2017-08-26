@@ -382,7 +382,28 @@ var _FactionService = (function() {
         }
     };
 
-    FactionService.prototype.issueFunds = function(aFaction, aTransaction, aToken, aSuccessCb, aFailCb) {
+    FactionService.prototype.fetchLedger = function(aFaction, aToken, aSuccessCb, aFailCb) {
+        if (aFaction && aFaction._links.ledger) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.ledger.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
+    FactionService.prototype.transferFunds = function(aFaction, aTransaction, aToken, aSuccessCb, aFailCb) {
         if (aFaction && aFaction._links.ledger) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
@@ -398,7 +419,7 @@ var _FactionService = (function() {
                 },
                 function (aErr) {
                     if (aFailCb)
-                        aFailCb(aErr);
+                        aFailCb(aErr.data);
                 }
             );
         }

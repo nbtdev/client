@@ -615,6 +615,11 @@ input[type=password] {
     font-family: arial, helvetica, verdana;
 }
 
+.nbt-font-m {
+    font-size: 1.2em;
+    font-family: arial, helvetica, verdana;
+}
+
 .nbt-tracker-table {
     color:  white;
     font-size:  small;

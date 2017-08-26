@@ -122,6 +122,7 @@
     <!--#include virtual="/fragment/roster.html" -->
     <!--#include virtual="/fragment/modeless/jumpships.html" -->
     <!--#include virtual="/fragment/modeless/dropships.html" -->
+    <!--#include virtual="/fragment/modeless/ledger.html" -->
 
     <!-- content body with left and right menus -->
     <div style="height: 92%">

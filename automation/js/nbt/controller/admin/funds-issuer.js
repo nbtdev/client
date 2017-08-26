@@ -58,7 +58,7 @@
                     note: faction.issuanceReason
                 };
 
-                nbtFaction.issueFunds(faction, data, nbtIdentity.get().token,
+                nbtFaction.transferFunds(faction, data, nbtIdentity.get().token,
                     function(aData) {
                         setStatus("Transaction succeeded", true);
                         faction.issuanceAmount = null;
