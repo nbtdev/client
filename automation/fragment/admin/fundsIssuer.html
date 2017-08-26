@@ -1,0 +1,62 @@
+<script src="/js/nbt/controller/admin/funds-issuer.js"></script>
+<div id="fundsIssuerModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="FundsIssuerAdminController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">Issue Funds (Admin - {{league.name}})</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                <div class="container col-md-12">
+                    <!-- status/error message -->
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+                    <!-- bulk issuance buttons -->
+                    <div>
+                        <button class="btn btn-primary" ng-click="onIssueStartupFunds()">Issue Startup Funds</button>
+                        <button class="btn btn-primary" ng-click="onIssueWeeklyNetIncome()">Issue Net Weekly Income</button>
+                        <button class="btn btn-primary" ng-click="onIssueMonthlyNetIncome()">Issue Net Monthly Income</button>
+                        <input type="checkbox" ng-model="activeOnly">Active Factions Only
+                    </div>
+
+                    <!-- the rows of data -->
+                    <div class="row nbt-bold">
+                        <div class="col-md-4 nbt-highlight"><input type="checkbox" ng-model="selectAll">&nbsp;Faction</div>
+                        <div class="col-md-2 nbt-highlight">Balance</div>
+                        <div class="col-md-2 nbt-highlight">Amount</div>
+                        <div class="col-md-2 nbt-highlight">Reason</div>
+                        <div class="col-md-2"></div>
+                    </div>
+
+                    <div class="row nbt-hover" ng-repeat="faction in factions">
+                        <!-- primary faction essentials -->
+                        <div class="container col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="checkbox" ng-model="faction.selected">&nbsp;{{faction.displayName}}
+                                </div>
+                                <div class="col-md-2">
+                                    {{faction.accountBalance|number}}
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" ng-model="faction.issuanceAmount" style="color: black; width: 90%">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" ng-model="faction.issuanceReason" style="color: black; width: 90%">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="onIssueFunds(faction)">Issue Funds</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
