@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="nbt-centered nbt-font-l">Planet</div>
-                            <div class="nbt-highlight">{{planet.name}} ({{planet.owner.displayName}})</div>
+                            <div><span class="nbt-highlight">{{planet.name}} ({{planet.parentGroup.owner.displayName}}) </span> {{selectedPlanetCombatUnits.length||0}} selected</div>
                             <div>
                                 <select multiple size="16" class="nbt-multi-select" ng-model="selectedPlanetCombatUnits" style="width: 90%">
                                     <option ng-repeat="unit in combatUnits" value="{{unit}}">{{unit.template.name}} ({{unit.ownerAbbr}})</option>
