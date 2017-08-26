@@ -43,7 +43,7 @@
                 $scope.battles = null;
                 if ($scope.faction) {
                     nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(aData) {
-                        $scope.battles = aData._embedded.sectorAssaults;
+                        $scope.battles = aData._embedded.sectorBattles;
                         processBattles();
                     });
                 }
@@ -73,7 +73,7 @@
                 nbtBattle.toggleBattleReady(battle, nbtIdentity.get().token, function(battle) {
                     // just re-load the battle list
                     nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(battles) {
-                        $scope.battles = battles._embedded.sectorAssaults;
+                        $scope.battles = battles._embedded.sectorBattles;
                         processBattles();
                     })
                 });

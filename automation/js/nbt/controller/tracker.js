@@ -56,23 +56,23 @@
                 };
             }
 
-            function findInvolvedFactionIds() {
+            function findInvolvedFactionIds(battle) {
                 // the obvious ones are the attacker and the sector owner
                 var rtn = {
-                    attackers: [$scope.battle.attacker.id],
-                    defenders: [$scope.battle.sector.owner.id]
+                    attackers: [battle.attacker.id],
+                    defenders: [battle.sector.owner.id]
                 };
 
                 // then the allies
-                if ($scope.battle.alliedAttackers) {
-                    for (var i = 0; i < $scope.battle.alliedAttackers.length; ++i) {
-                        rtn.attackers.push($scope.battle.alliedAttackers[i].id);
+                if (battle.alliedAttackers) {
+                    for (var i = 0; i < battle.alliedAttackers.length; ++i) {
+                        rtn.attackers.push(battle.alliedAttackers[i].id);
                     }
                 }
 
-                if ($scope.battle.alliedDefenders) {
-                    for (var i = 0; i < $scope.battle.alliedDefenders.length; ++i) {
-                        rtn.defenders.push($scope.battle.alliedDefenders[i].id);
+                if (battle.alliedDefenders) {
+                    for (var i = 0; i < battle.alliedDefenders.length; ++i) {
+                        rtn.defenders.push(battle.alliedDefenders[i].id);
                     }
                 }
 
@@ -115,6 +115,23 @@
                 return (attackerLogged && defenderLogged);
             }
 
+            function getCurrentDrop(battle, factionIds) {
+                if (battle.drops) {
+                    for (var d = 0; d < battle.drops.length; ++d) {
+                        var drop = battle.drops[d];
+
+                        // go past all of the drops that have instances logged against them...
+                        if (isFullyLogged(drop, factionIds))
+                            continue;
+
+                        // we just want to know the index of the current drop; we will re-label the drops below
+                        return d;
+                    }
+                }
+
+                return -1;
+            }
+
             function processBattle() {
                 $scope.usedUnits = [];
                 $scope.destroyedUnits = [];
@@ -130,23 +147,22 @@
                 //      * negative numbers for drops already completed and logged
                 //      * 'Current' for the current drop
                 //      * positive numbers for upcoming drops (if known)
-                var currentDropIndex = -1;
-                var factionIds = findInvolvedFactionIds();
+                var factionIds = findInvolvedFactionIds($scope.battle);
+                var viewerIsAttacker = false;
+                if (arrayContains(factionIds.attackers, $scope.faction.id))
+                    viewerIsAttacker = true;
 
-                if ($scope.battle.drops) {
-                    for (var d = 0; d < $scope.battle.drops.length; ++d) {
-                        var drop = $scope.battle.drops[d];
-
-                        // go past all of the drops that have instances logged against them...
-                        if (isFullyLogged(drop, factionIds))
-                            continue;
-
-                        // we just want to know the index of the current drop; we will re-label the drops below
-                        currentDropIndex = d;
-                        $scope.drop = drop;
-                        break;
-                    }
+                if ($scope.battle.type === 'Sector Assault') {
+                    $scope.battle.attackerScore = $scope.battle.attackerPlanetCount;
+                    $scope.battle.defenderScore = $scope.battle.defenderPlanetCount;
+                } else {
+                    $scope.battle.attackerScore = $scope.battle.attackerCreditCount;
+                    $scope.battle.defenderScore = $scope.battle.defenderCreditCount;
                 }
+
+                var currentDropIndex = getCurrentDrop($scope.battle, factionIds);
+                if (currentDropIndex >= 0)
+                    $scope.drop = $scope.battle.drops[currentDropIndex];
 
                 // summarize/group all combat units by owner and count; the service will have updated the forcedec
                 // to consider destroyed and repaired instances
@@ -180,15 +196,23 @@
                     }
                 }
 
-                // renumber the drops
+                // tag the current drop and calculate the drop losses
                 if ($scope.battle.drops) {
                     for (var d = 0; d < $scope.battle.drops.length; ++d) {
                         var drop = $scope.battle.drops[d];
-
-                        drop.number = d - currentDropIndex;
-
-                        if (drop.number === 0)
+                        if (d === currentDropIndex)
                             drop.number = 'Current';
+                        else
+                            drop.number = d + 1;
+
+                        // annotate the drop results from the perspective of the viewer
+                        if (viewerIsAttacker) {
+                            drop.myLosses = drop.attackerUnitsDestroyed;
+                            drop.theirLosses = drop.defenderUnitsDestroyed;
+                        } else {
+                            drop.theirLosses = drop.attackerUnitsDestroyed;
+                            drop.myLosses = drop.defenderUnitsDestroyed;
+                        }
                     }
                 }
             }
@@ -332,17 +356,32 @@
                 delete unit.destroyed;
             };
 
+            function checkBattleUpdate(battle) {
+                // if the battle is still ongoing and we are waiting for the other side to log,
+                // then check what we get for current drop in the returned data against what is
+                // the current drop in the scope, and if they are the same, keep polling
+                if (battle.outcome === 'Pending' && $scope.updating) {
+                    var factionIds = findInvolvedFactionIds($scope.battle);
+                    var newCurrentDropIndex = getCurrentDrop(battle, factionIds);
+                    if (newCurrentDropIndex >= 0) {
+                        var newDrop = battle.drops[newCurrentDropIndex];
+                        if (newDrop.id === $scope.drop.id) {
+                            pollBattleUpdate(battle);
+                            return;
+                        }
+                    }
+                }
+
+                $scope.battle = battle;
+                processBattle();
+                $scope.updating = false;
+            }
+
             function pollBattleUpdate(battle) {
                 // check every 3 seconds until a new drop is posted
                 $timeout(function() {
                     nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
-                        if (battle.outcome === 'Pending' && aData.drops.length === $scope.battle.drops.length) {
-                            pollBattleUpdate(aData);
-                        } else {
-                            $scope.battle = aData;
-                            processBattle();
-                            $scope.updating = false;
-                        }
+                        checkBattleUpdate(aData);
                     });
                 }, 3000);
             }
@@ -359,15 +398,7 @@
                 $scope.updating = true;
                 nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token,
                     function(aData) {
-                        // if the number of drops in the current battle is the same as the number of drops in the updated
-                        // battle, do long polling (every second) until the number of drops is different
-                        if (aData.drops.length === $scope.battle.drops.length)
-                            pollBattleUpdate(aData);
-                        else {
-                            $scope.updating = false;
-                            $scope.battle = aData;
-                            processBattle();
-                        }
+                        checkBattleUpdate(aData);
                     },
                     function(aErr) {
                         $scope.updating = false;
