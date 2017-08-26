@@ -13,12 +13,15 @@
                         <div class="col-md-6 nbt-centered">
                             <div class="container col-md-12">
                                 <div class="row" ng-show="battle.status==='Forcedec'">
-                                    <div class="col-md-2 nbt-left-justified nbt-font-xxxl">{{battle.attackerPlanetCount}}</div>
-                                    <div class="col-md-8 nbt-centered">
+                                    <div class="col-md-2 nbt-left-justified nbt-font-xxxl">{{battle.attackerScore}}</div>
+                                    <div class="col-md-8 nbt-centered" ng-show="battle.type==='Sector Assault'">
                                         <div class="nbt-font-xl nbt-highlight">{{battle.phase}}</div>
                                         <div class="nbt-font-s">Claim {{(battle.sector.planetsInPlay + 1) / 2}} of {{battle.sector.planetsInPlay}} planets to resolve this phase.</div>
                                     </div>
-                                    <div class="col-md-2 nbt-right-justified nbt-font-xxxl">{{battle.defenderPlanetCount}}</div>
+                                    <div class="col-md-8 nbt-centered" ng-show="battle.type==='Sector Raid'">
+                                        <div class="nbt-font-xl nbt-highlight">Credits Earned</div>
+                                    </div>
+                                    <div class="col-md-2 nbt-right-justified nbt-font-xxxl">{{battle.defenderScore}}</div>
                                 </div>
                                 <div class="row" ng-hide="battle.status==='Forcedec'">
                                     <div class="col-md-12 nbt-centered">
@@ -60,13 +63,13 @@
                                 <th ng-repeat="drop in battle.drops">{{drop.number}}</th>
                             </tr>
 
-                            <!-- second row is map name, or '-' if no drop -->
-                            <tr>
+                            <!-- second row is drop type, or blank if no drop -->
+                            <tr ng-show="battle.type==='Sector Assault'">
                                 <td class="nbt-title-cell">Type</td>
                                 <td ng-repeat="drop in battle.drops" class="nbt-header-cell-2 nbt-bold">{{drop.type}}</td>
                             </tr>
 
-                            <!-- third row is map name, or '-' if no drop -->
+                            <!-- third row is relative drop number, or 'Current' if it is the current drop -->
                             <tr>
                                 <td class="nbt-title-cell">Map</td>
                                 <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mapName}}</td>
@@ -88,6 +91,12 @@
                             <tr>
                                 <td class="nbt-title-cell">Result</td>
                                 <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.result}}</td>
+                            </tr>
+
+                            <!-- seventh row is destroyed count (from viewer's perspective), or '-' if no/current drop -->
+                            <tr>
+                                <td class="nbt-title-cell">Losses</td>
+                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.theirLosses}}-{{drop.myLosses}}</td>
                             </tr>
                         </table>
                     </div>
