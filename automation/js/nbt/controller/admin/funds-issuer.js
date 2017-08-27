@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('FundsIssuerAdminController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtIdentity) {
+        .controller('FundsIssuerAdminController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtLeague', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtLeague, nbtIdentity) {
             $scope.league = null;
             $scope.factions = null;
             $scope.allFactions = null
@@ -71,6 +71,37 @@
                         setStatus(aErr.message, false);
                     }
                 );
+            };
+
+            function runPayroll(league, scope) {
+                var data = {
+                    affectedFactions: [],
+                    type: 'PAYDAY',
+                    scope: scope
+                };
+
+                $scope.factions.forEach(function(e,i,a) {
+                    if (e.selected)
+                        data.affectedFactions.push(e);
+                });
+
+                nbtLeague.runPayroll(league, data, nbtIdentity.get().token,
+                    function(aData) {
+                        setStatus("Transaction succeeded", true);
+                        reloadFactions();
+                    },
+                    function(aErr) {
+                        setStatus(aErr.message, false);
+                    }
+                );
+            }
+
+            $scope.onIssueWeeklyNetIncome = function() {
+                runPayroll($scope.league, 'WEEKLY');
+            };
+
+            $scope.onIssueMonthlyNetIncome = function() {
+                runPayroll($scope.league, 'MONTHLY');
             };
 
             $scope.$watch('activeOnly', function(newVal, oldVal) {
