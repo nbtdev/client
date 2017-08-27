@@ -26,6 +26,7 @@
         .controller('FundsIssuerAdminController', ['$sce', '$scope', '$timeout', 'nbtFaction', 'nbtIdentity', function($sce, $scope, $timeout, nbtFaction, nbtIdentity) {
             $scope.league = null;
             $scope.factions = null;
+            $scope.allFactions = null
 
             var timeoutPromise = null;
 
@@ -47,6 +48,7 @@
                 if ($scope.league) {
                     nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function (factions) {
                         $scope.factions = factions;
+                        $scope.allFactions = factions;
                     });
                 }
             }
@@ -70,6 +72,28 @@
                     }
                 );
             };
+
+            $scope.$watch('activeOnly', function(newVal, oldVal) {
+                if (!newVal) {
+                    $scope.factions = $scope.allFactions;
+                    return;
+                }
+
+                // otherwise, filter out non-active factions
+                var filtered = [];
+                $scope.allFactions.forEach(function(e, i, a) {
+                    if (e.factionStatus.displayName === 'Active')
+                        filtered.push(e);
+                });
+
+                $scope.factions = filtered;
+            });
+
+            $scope.$watch('selectAll', function(newVal, oldVal) {
+                $scope.factions.forEach(function(e, i, a) {
+                        e.selected = newVal;
+                });
+            });
 
             $("#fundsIssuerModal").on('show.bs.modal', function() {
                 reloadFactions();
