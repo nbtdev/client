@@ -205,6 +205,30 @@ var _LeagueService = (function() {
         );
     };
 
+    LeagueService.prototype.runPayroll = function(aLeague, aData, aToken, aSuccessCb, aFailCb) {
+        if (!aLeague._links.jobs)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'POST', // TODO: get from links!
+            url: aLeague._links.jobs.href,
+            headers: hdrs.get(),
+            data: aData
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp.data);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err.data);
+            }
+        );
+    };
+
     LeagueService.prototype.fetchAlerts = function(aLeague, aToken, aSuccessCb, aFailCb) {
         if (!aLeague._links.alerts)
             return;

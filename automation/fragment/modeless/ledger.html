@@ -1,0 +1,85 @@
+<div id="ledgerDialog" class="nbt-modeless" ng-show="show" ng-controller="LedgerController" ng-cloak>
+    <!-- dialog header -->
+    <h5 class="nbt-h5 header">
+        <span>Ledger - {{faction.displayName}}</span>
+        <span id="cmdCloseLedgerDialog" style="float: right; cursor: pointer">&#10006;</span>
+    </h5>
+
+    <!-- dialog body -->
+    <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div class="container col-md-12">
+            <!-- status/error message -->
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6 nbt-centered">
+                    <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+
+            <!-- admin actions -->
+            <div class="row" style="border-bottom: solid 1px white; padding-bottom: 3px;">
+                <div class="col-md-12">
+                    <div class="container col-md-12">
+                        <div class="row">
+                            <div class="col-md-2 nbt-highlight nbt-font-m">Current Balance</div>
+                            <div class="col-md-3">Recipient</div>
+                            <div class="col-md-3">Amount</div>
+                            <div class="col-md-2">Reason</div>
+                            <div class="col-md-2">
+                                <button class="btn btn-xs btn-primary" ng-click="onTransfer()">Transfer Funds</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 nbt-font-m">{{faction.accountBalance | number}} c-bills</div>
+                            <div class="col-md-3"><select ng-options="f as f.displayName for f in factions track by f.id" ng-model="tx.recipient"></select></div>
+                            <div class="col-md-3"><input type="number" style="color: black; width: 90%" ng-model="tx.credit"></div>
+                            <div class="col-md-2"><input type="text" style="color: black; width: 90%" ng-model="tx.note"></div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- the rows of data -->
+            <div class="row nbt-bold">
+                <div class="col-md-1 nbt-highlight">ID</div>
+                <div class="col-md-2 nbt-highlight">Date/Time</div>
+                <div class="col-md-2 nbt-highlight nbt-right-justified">Credit</div>
+                <div class="col-md-2 nbt-highlight nbt-right-justified">Debit</div>
+                <div class="col-md-5 nbt-highlight">Note</div>
+            </div>
+
+            <div class="row nbt-hover" ng-repeat="tx in ledger">
+                <div class="col-md-1">
+                    {{tx.id}}
+                </div>
+                <div class="col-md-2">
+                    {{tx.timestamp | date:'short'}}
+                </div>
+                <div class="col-md-2 nbt-right-justified">
+                    {{tx.credit | number}}
+                </div>
+                <div class="col-md-2 nbt-right-justified">
+                    {{tx.debit | number}}
+                </div>
+                <div class="col-md-5">
+                    {{tx.note}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- controller module for this dialog -->
+<script src="/js/nbt/controller/modeless/ledger.js"></script>
+
+<!-- additional post-DOM-load initialization for this dialog -->
+<script language="JavaScript">
+    $(function() {
+        var dlgs = $("#ledgerDialog");
+        dlgs.on("resize", saveModelessState)
+            .on("drag", saveModelessState);
+        restoreModelessState(dlgs[0]);
+    });
+</script>
