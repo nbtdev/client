@@ -121,9 +121,11 @@
             });
 
             $scope.$watch('selectAll', function(newVal, oldVal) {
-                $scope.factions.forEach(function(e, i, a) {
+                if ($scope.factions) {
+                    $scope.factions.forEach(function (e, i, a) {
                         e.selected = newVal;
-                });
+                    });
+                }
             });
 
             $("#fundsIssuerModal").on('show.bs.modal', function() {
