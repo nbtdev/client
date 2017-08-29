@@ -103,7 +103,7 @@
                     <span ng-show="factory.editing"><input type="number" ng-model="factory.stockLevel" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.baseRate}}</span>
+                    <span ng-hide="factory.editing">{{factory.currentRate|number:1}}</span>
                     <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-1">
