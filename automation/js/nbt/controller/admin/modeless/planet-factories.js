@@ -223,7 +223,7 @@
                         nbtFaction.submitFactoryOrder(e, e.purchaseQty, nbtIdentity.get().token,
                             function(aData) {
                                 // it succeeded, there is at least the one
-                                var order = aData._embedded.factoryOrders[0];
+                                var order = aData;
 
                                 e.queueDepth = order.factory.queueDepth;
                                 e.stockLevel = order.factory.stockLevel;
