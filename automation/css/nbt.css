@@ -746,3 +746,24 @@ input[type=password] {
 .nbt-border-n {
     border-top: solid 1px;
 }
+
+@keyframes success-anim {
+    0% { background-color: green; }
+    100% { background-color: black; }
+}
+
+
+@keyframes failure-anim {
+    0% { background-color: red; }
+    100% { background-color: black; }
+}
+
+.nbt-background-success-anim {
+    animation-name: success-anim;
+    animation-duration: 1.2s;
+}
+
+.nbt-background-failure-anim {
+    animation-name: failure-anim;
+    animation-duration: 1.2s;
+}

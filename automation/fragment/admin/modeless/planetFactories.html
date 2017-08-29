@@ -80,7 +80,7 @@
             </div>
 
             <!-- factory listing -->
-            <div class="row nbt-hover" ng-repeat="factory in factoryList">
+            <div class="row nbt-hover" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
                 <div class="col-md-3">
                     <span ng-hide="factory.editing">{{factory.firm}}</span>
                     <span ng-show="factory.editing"><input type="text" ng-model="factory.firm" style="width: 90%"></span>
@@ -174,6 +174,7 @@
                 <div class="col-md-3"></div>
                 <div class="col-md-6 nbt-centered">
                     <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                    <div ng-show="messages" class="nbt-error" ng-repeat="msg in messages">{{msg}}</div>
                 </div>
                 <div class="col-md-3"></div>
             </div>

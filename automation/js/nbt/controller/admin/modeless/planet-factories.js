@@ -42,6 +42,20 @@
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
             }
 
+            var promise = null;
+            function appendOperationStatus(message) {
+                if (promise) $timeout.cancel(promise);
+
+                if (!$scope.errorMessages)
+                    $scope.errorMessages = [];
+
+                $scope.errorMessages.push(message);
+
+                promise = $timeout(function() {
+                    $scope.errorMessages = null;
+                }, 5000);
+            }
+
             function reloadFactionFactories() {
                 $scope.factionFactories = null;
 
@@ -195,6 +209,44 @@
 
                 // restore the previous values
                 shallowCopy(factory, temp);
+            };
+
+            $scope.onPurchase = function() {
+                // present the user with one last chance to abort; if they do not, then submit an order to each factory in turn.
+                if (!confirm("Are you sure you want to submit factory order(s)\n" +
+                        "totaling " + $scope.total + " c-bills?")) {
+                    return;
+                }
+
+                $scope.factionFactories.forEach(function(e,i,a) {
+                    if (e.purchaseQty) {
+                        nbtFaction.submitFactoryOrder(e, e.purchaseQty, nbtIdentity.get().token,
+                            function(aData) {
+                                // it succeeded, there is at least the one
+                                var order = aData._embedded.factoryOrders[0];
+
+                                e.queueDepth = order.factory.queueDepth;
+                                e.stockLevel = order.factory.stockLevel;
+                                e.operationSuccess = true;
+                                e.purchaseQty = null;
+
+                                // make the extra class go away after two seconds
+                                $timeout(function() {
+                                    e.operationSuccess = null;
+                                }, 2000);
+                            },
+                            function(aErr) {
+                                e.operationFailure = true;
+                                appendOperationStatus(aErr.message);
+
+                                // make the extra class go away after two seconds
+                                $timeout(function() {
+                                    e.operationFailure = null;
+                                }, 2000);
+                            }
+                        );
+                    }
+                });
             };
 
             // TODO: don't tie this to a specific dialog...
