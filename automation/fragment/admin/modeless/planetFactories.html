@@ -8,9 +8,10 @@
 </div>
 
 <div class="help-in-stock" style="display: none">
-    <h5 class="nbt-h5">In Stock</h5>
+    <h5 class="nbt-h5">Stock Levels</h5>
     <div class="nbt-rules-para">
-        This is the current "in-stock" quantity for this factory slot, available for immediate delivery.
+        This is the current "in-stock" quantity for this factory slot, available for immediate delivery. Numbers in
+        parentheses indicate the current queue depth (backorders) for this factory slot.
     </div>
 </div>
 
@@ -99,7 +100,7 @@
                     <span ng-show="factory.editing"><select ng-model="factory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.stockLevel}}</span>
+                    <span ng-hide="factory.editing">{{factory.stockLevel}} <span ng-show="factory.queueDepth">({{factory.queueDepth}})</span></span>
                     <span ng-show="factory.editing"><input type="number" ng-model="factory.stockLevel" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-1">
