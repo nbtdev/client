@@ -199,6 +199,10 @@
 
             // TODO: don't tie this to a specific dialog...
             $("#cmdClosePlanetFactoriesDialog").on("click", function(event) {
+                if ($scope.factionFactories)
+                    $scope.factionFactories.forEach(function(e,i,a) {
+                        e.purchaseQty = null;
+                    });
                 $scope.show = false;
                 $scope.$apply();
             });
