@@ -106,6 +106,18 @@
                 }
             }
 
+            function recalculateTotal() {
+                $scope.total = 0;
+                $scope.factionFactories.forEach(function(e,i,a) {
+                    if (e.purchaseQty)
+                        $scope.total += e.currentCost * e.purchaseQty;
+                });
+            }
+
+            $scope.onQuantityChange = function() {
+                recalculateTotal();
+            };
+
             $scope.onPlanetClicked = function(planet) {
                 // call out to the starmap to relocate to this sector capital
                 $rootScope.$broadcast('planetSearchRequest', planet.name);
