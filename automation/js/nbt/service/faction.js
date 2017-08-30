@@ -403,6 +403,27 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.fetchDiplomacyData = function(aFaction, aToken, aSuccessCb, aFailCb) {
+        if (aFaction && aFaction._links.alliances) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aFaction._links.alliances.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.submitFactoryOrder = function(aFactory, aQty, aToken, aSuccessCb, aFailCb) {
         if (aFactory && aFactory._links.factoryOrders) {
             var hdr = new Headers(Header.TOKEN, aToken);
