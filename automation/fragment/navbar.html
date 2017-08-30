@@ -103,6 +103,16 @@
                                     <button class="btn btn-primary btn-xs" ng-click="onAlertAction($event, alert)" data-action="decline">Decline</button>
                                 </div>
                             </div>
+
+                            <div ng-show="alert.type.id===2" >
+                                <div>
+                                    <span style="float: right; padding: 3px" class="ui-interactive" ng-click="onDismissAlert(alert)">
+                                        <img src="../images/cancel16.png" height="16" width="16"/>
+                                    </span>
+                                    <div class="nbt-highlight">{{alert.type.name}}:</div>
+                                    <span>{{alert.text}}</span>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </li>

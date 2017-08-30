@@ -223,8 +223,8 @@
                     return;
 
                 // else, populate the combat unit list with combat units...
+                $scope.combatUnits = [];
                 nbtPlanet.fetchCombatUnitsOnPlanet(aPlanet, nbtIdentity.get().token, function(data) {
-                    $scope.combatUnits = [];
                     for (var i=0; i<data.length; ++i) {
                         var unit = data[i];
                         $scope.combatUnits.push({

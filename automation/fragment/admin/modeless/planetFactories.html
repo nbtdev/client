@@ -1,3 +1,27 @@
+<div class="help-factory-output" style="display: none">
+    <h5 class="nbt-h5">Factory Output</h5>
+    <div class="nbt-rules-para">
+        "Output" indicates how many units this factory slot will produce per week. Production is run on a daily basis,
+        so for instance, a slot that produces 2 units per week, will actually produce a unit every 3 1/2 days. These units
+        will be delivered into factory stock, or used to fulfill outstanding orders at the factory.
+    </div>
+</div>
+
+<div class="help-in-stock" style="display: none">
+    <h5 class="nbt-h5">Stock Levels</h5>
+    <div class="nbt-rules-para">
+        This is the current "in-stock" quantity for this factory slot, available for immediate delivery. Numbers in
+        parentheses indicate the current queue depth (backorders) for this factory slot.
+    </div>
+</div>
+
+<div class="help-factory-price" style="display: none">
+    <h5 class="nbt-h5">Unit Price</h5>
+    <div class="nbt-rules-para">
+        This is your faction's price, including any discounts and/or premiums.
+    </div>
+</div>
+
 <div id="planetFactoriesDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetFactoriesController" ng-cloak>
     <!-- dialog header -->
     <h5 class="nbt-h5 header">
@@ -18,29 +42,56 @@
             <!-- the rows of data -->
             <div class="row nbt-bold nbt-highlight">
                 <div class="col-md-3">Firm</div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <span ng-show="planet">Faction</span>
                     <span ng-hide="planet">Planet</span>
                 </div>
                 <div class="col-md-2">Line</div>
-                <div class="col-md-1">Base Rate</div>
-                <div class="col-md-1">Max Rate</div>
-                <div class="col-md-2"></div>
+
+                <div class="col-md-1" ng-hide="isAdmin">
+                    Stock&nbsp;
+                    <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-in-stock">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-1" ng-show="isAdmin">
+                    Base
+                </div>
+
+                <div class="col-md-1" ng-hide="isAdmin">
+                    Output&nbsp;
+                    <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-factory-output">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-1" ng-show="isAdmin">
+                    Max
+                </div>
+
+                <div class="col-md-1 nbt-right-justified">
+                    <div ng-hide="isAdmin">
+                        Price&nbsp;
+                        <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-factory-price">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-2"><span ng-hide="isAdmin || faction.factionStatus.id<4">Purchase Qty</span></div>
             </div>
 
             <!-- factory listing -->
-            <div class="row nbt-hover" ng-repeat="factory in factoryList">
+            <div class="row nbt-hover" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
                 <div class="col-md-3">
                     <span ng-hide="factory.editing">{{factory.firm}}</span>
                     <span ng-show="factory.editing"><input type="text" ng-model="factory.firm" style="width: 90%"></span>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div ng-show="planet">
                         <span ng-hide="factory.editing">{{factory.owner.displayName}}</span>
                         <span ng-show="factory.editing"><select ng-model="factory.owner" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
                     </div>
                     <div ng-hide="planet">
-                        <span ng-hide="factory.editing"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}}</a></span>
+                        <span ng-hide="factory.editing"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}} ({{factory.owner.shortName}})</a></span>
                         <span ng-show="factory.editing"><select ng-model="factory.planet" ng-options="planet as planet.name for planet in factionPlanets track by planet.id"></select></span>
                     </div>
                 </div>
@@ -49,14 +100,18 @@
                     <span ng-show="factory.editing"><select ng-model="factory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.baseRate}}</span>
-                    <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
+                    <span ng-hide="factory.editing">{{factory.stockLevel}} <span ng-show="factory.queueDepth">({{factory.queueDepth}})</span></span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.stockLevel" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.maxRate}}</span>
-                    <span ng-show="factory.editing"><input type="number" ng-model="factory.maxRate" style="width: 90%; color: black"></span>
+                    <span ng-hide="factory.editing">{{factory.currentRate|number:1}}</span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
+                </div>
+                <div class="col-md-1 nbt-right-justified">
+                    <span>{{factory.currentCost|number}}</span>
                 </div>
                 <div class="col-md-2">
+                    <!-- admin tools -->
                     <div ng-show="isAdmin">
                         <span ng-hide="factory.editing">
                             <a class="ui-interactive" ng-click="onEdit(factory)"><img src="../../images/edit.png" height="16" width="16"/></a>
@@ -67,6 +122,22 @@
                             <a class="ui-interactive" ng-click="onCancel(factory)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
                         </span>
                     </div>
+
+                    <!-- faction tools -->
+                    <div ng-hide="isAdmin || faction.factionStatus.id<4">
+                        <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%; color: black">
+                    </div>
+                </div>
+            </div>
+
+            <div ng-hide="isAdmin" class="row">
+                <div class="col-md-9"></div>
+                <div class="col-md-1 nbt-right-justified"><span ng-show="total > 0">Total:</span></div>
+                <div class="col-md-2" ng-class="{'nbt-border-n': total > 0}">
+                    {{total|number}}
+                    <span ng-show="total > 0">
+                        <button class="btn btn-xs btn-primary" ng-click="onPurchase()">Purchase</button>
+                    </span>
                 </div>
             </div>
 
@@ -103,6 +174,7 @@
                 <div class="col-md-3"></div>
                 <div class="col-md-6 nbt-centered">
                     <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                    <div ng-show="errorMessages" class="nbt-error" ng-repeat="msg in errorMessages">{{msg}}</div>
                 </div>
                 <div class="col-md-3"></div>
             </div>

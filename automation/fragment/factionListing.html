@@ -15,7 +15,7 @@
                 <h4 class="modal-title text-center">{{league.name}} Factions</h4>
             </div>
             <div ng-hide="showApplyToggle && canApply()">
-                <a data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
+                <a class="ui-interactive" data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
             </div>
             <div class="modal-body nbt-modal-body">
                 <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
@@ -104,7 +104,7 @@
                         <div class="col-md-3 bold">Type</div>
                         <div class="col-md-1 bold">Status</div>
                         <div class="col-md-2 bold">Apply</div>
-                        <div class="col-md-3 bold">Applications</div>
+                        <div class="col-md-3 bold">Applications/Teams</div>
                     </div>
 
                     <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
@@ -147,7 +147,8 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            {{faction.pendingApplications.join(', ')}}
+                            <span ng-show="faction.factionStatus.id===1">{{faction.pendingApplications.join(', ')}}</span>
+                            <span ng-hide="faction.factionStatus.id===1">{{faction.tags}}</span>
                         </div>
                     </div>
                 </div>

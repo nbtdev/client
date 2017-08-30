@@ -403,6 +403,28 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.submitFactoryOrder = function(aFactory, aQty, aToken, aSuccessCb, aFailCb) {
+        if (aFactory && aFactory._links.factoryOrders) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aFactory._links.factoryOrders.href,
+                data: aQty,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.transferFunds = function(aFaction, aTransaction, aToken, aSuccessCb, aFailCb) {
         if (aFaction && aFaction._links.ledger) {
             var hdr = new Headers(Header.TOKEN, aToken);
