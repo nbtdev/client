@@ -64,7 +64,7 @@
                         setOperationStatus("Pilot successfully deleted", true);
                     },
                     function(aErr) {
-                        setStatus(aErr.data.message, false);
+                        setOperationStatus(aErr.data.message, false);
                     }
                 );
             };
@@ -97,7 +97,7 @@
                             pilot.isNew = false;
                         },
                         function(aErr) {
-                            setStatus(aErr.data.message, false);
+                            setOperationStatus(aErr.data.message, false);
                         }
                     );
                 } else {
