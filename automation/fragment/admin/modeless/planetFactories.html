@@ -68,7 +68,7 @@
                     Max
                 </div>
 
-                <div class="col-md-1">
+                <div class="col-md-1 nbt-right-justified">
                     <div ng-hide="isAdmin">
                         Price&nbsp;
                         <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-factory-price">
@@ -76,7 +76,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-2"><span ng-hide="isAdmin">Purchase Qty</span></div>
+                <div class="col-md-2"><span ng-hide="isAdmin || faction.factionStatus.id<4">Purchase Qty</span></div>
             </div>
 
             <!-- factory listing -->
@@ -107,7 +107,7 @@
                     <span ng-hide="factory.editing">{{factory.currentRate|number:1}}</span>
                     <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1 nbt-right-justified">
                     <span>{{factory.currentCost|number}}</span>
                 </div>
                 <div class="col-md-2">
@@ -124,7 +124,7 @@
                     </div>
 
                     <!-- faction tools -->
-                    <div ng-hide="isAdmin">
+                    <div ng-hide="isAdmin || faction.factionStatus.id<4">
                         <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%; color: black">
                     </div>
                 </div>
