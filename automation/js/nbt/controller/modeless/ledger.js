@@ -92,7 +92,9 @@
                     reloadLedger();
                 }
 
-                $scope.show = true;
+                $timeout(function() {
+                    $scope.show = true;
+                }, 0);
             });
             $scope.$on('destroy', cb);
 
