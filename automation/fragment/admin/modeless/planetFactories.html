@@ -39,23 +39,22 @@
                 Edit All Factories For: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
             </div>
 
-            <!-- the rows of data -->
-            <div class="row nbt-bold nbt-highlight">
+            <!-- faction header row -->
+            <div class="row nbt-bold nbt-highlight" ng-hide="isAdmin">
                 <div class="col-md-3">Firm</div>
+
                 <div class="col-md-2">
                     <span ng-show="planet">Faction</span>
                     <span ng-hide="planet">Planet</span>
                 </div>
+
                 <div class="col-md-2">Line</div>
 
-                <div class="col-md-1" ng-hide="isAdmin">
+                <div class="col-md-1">
                     Stock&nbsp;
                     <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-in-stock">
                         <img src="../../../images/help-16.png" height="16" width="16"/>
                     </a>
-                </div>
-                <div class="col-md-1" ng-show="isAdmin">
-                    Base
                 </div>
 
                 <div class="col-md-1" ng-hide="isAdmin">
@@ -64,23 +63,53 @@
                         <img src="../../../images/help-16.png" height="16" width="16"/>
                     </a>
                 </div>
-                <div class="col-md-1" ng-show="isAdmin">
-                    Max
-                </div>
 
                 <div class="col-md-1 nbt-right-justified">
-                    <div ng-hide="isAdmin">
+                    <div>
                         Price&nbsp;
                         <a class="ui-interactive" data-toggle="popover" data-placement="auto" data-container="body" data-contentref=".help-factory-price">
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                     </div>
                 </div>
-                <div class="col-md-2"><span ng-hide="isAdmin || faction.factionStatus.id<4">Purchase Qty</span></div>
+                <div class="col-md-2"><span ng-hide="faction.factionStatus.id<4">Purchase Qty</span></div>
             </div>
 
-            <!-- factory listing -->
-            <div class="row nbt-hover" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
+            <!-- admin header row -->
+            <div class="row nbt-bold nbt-highlight" ng-show="isAdmin">
+                <div class="col-md-3">Firm</div>
+                <div class="col-md-2">
+                    <span ng-show="planet">Faction</span>
+                    <span ng-hide="planet">Planet</span>
+                </div>
+                <div class="col-md-1">Line</div>
+                <div class="col-md-1">Stock</div>
+                <div class="col-md-1">BO</div>
+                <div class="col-md-1">Base</div>
+                <div class="col-md-1">Max</div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <!-- faction factory listing -->
+            <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
+                <div class="col-md-3">{{factory.firm}}</div>
+                <div class="col-md-2">
+                    <div ng-show="planet">{{factory.owner.displayName}}</div>
+                    <div ng-hide="planet"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}} ({{factory.owner.shortName}})</a></div>
+                </div>
+                <div class="col-md-2">{{factory.combatUnit.designation}}</div>
+                <div class="col-md-1">{{factory.stockLevel}} <span ng-show="factory.queueDepth">({{factory.queueDepth}})</span></div>
+                <div class="col-md-1">{{factory.currentRate|number:1}}</div>
+                <div class="col-md-1 nbt-right-justified">{{factory.currentCost|number}}</div>
+                <div class="col-md-2">
+                    <div ng-hide="faction.factionStatus.id<4">
+                        <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%; color: black">
+                    </div>
+                </div>
+            </div>
+
+            <!-- admin factory listing -->
+            <div class="row nbt-hover" ng-show="isAdmin" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
                 <div class="col-md-3">
                     <span ng-hide="factory.editing">{{factory.firm}}</span>
                     <span ng-show="factory.editing"><input type="text" ng-model="factory.firm" style="width: 90%"></span>
@@ -95,20 +124,19 @@
                         <span ng-show="factory.editing"><select ng-model="factory.planet" ng-options="planet as planet.name for planet in factionPlanets track by planet.id"></select></span>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <span ng-hide="factory.editing">{{factory.combatUnit.designation}}</span>
-                    <span ng-show="factory.editing"><select ng-model="factory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
+                    <span ng-show="factory.editing"><select style="width: 90%" ng-model="factory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
                 </div>
+                <div class="col-md-1">{{factory.stockLevel}}</div>
+                <div class="col-md-1">{{factory.queueDepth || 0}}</div>
                 <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.stockLevel}} <span ng-show="factory.queueDepth">({{factory.queueDepth}})</span></span>
-                    <span ng-show="factory.editing"><input type="number" ng-model="factory.stockLevel" style="width: 90%; color: black"></span>
-                </div>
-                <div class="col-md-1">
-                    <span ng-hide="factory.editing">{{factory.currentRate|number:1}}</span>
+                    <span ng-hide="factory.editing">{{factory.baseRate}}</span>
                     <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
                 </div>
-                <div class="col-md-1 nbt-right-justified">
-                    <span>{{factory.currentCost|number}}</span>
+                <div class="col-md-1">
+                    <span ng-hide="factory.editing">{{factory.maxRate}}</span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.maxRate" style="width: 90%; color: black"></span>
                 </div>
                 <div class="col-md-2">
                     <!-- admin tools -->
@@ -149,12 +177,14 @@
                         <span ng-show="newFactory.editing"><input type="text" size="15" ng-model="newFactory.firm"></span>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <span ng-show="newFactory.editing"><select ng-model="newFactory.owner" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <span ng-show="newFactory.editing"><select ng-model="newFactory.combatUnit" ng-options="unit as unit.name for unit in combatUnits track by unit.id"></select></span>
                 </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-1"></div>
                 <div class="col-md-1">
                     <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.baseRate" style="width: 90%; color: black"></span>
                 </div>
