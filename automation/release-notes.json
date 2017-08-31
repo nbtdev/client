@@ -1,5 +1,23 @@
 [
   {
+    "date": "30 Aug 2017",
+    "changes": {
+      "Features": [
+        "Ledger review and management tool",
+        "Factory review and purchasing, with dropships added",
+        "Sector Raid launching and logging"
+      ],
+      "Bugfixes": [
+        "Fixed congestion in dropships page",
+        "Fixed bug in clan dropship capacities",
+        "Fixed bug where factories do not show for all on starmap"
+      ],
+      "Enhancements": [
+      ]
+    }
+  },
+
+  {
     "date": "20 Aug 2017",
     "changes": {
       "Features": [
