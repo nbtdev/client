@@ -13,6 +13,7 @@
         "Fixed bug where factories do not show for all on starmap"
       ],
       "Enhancements": [
+        "Team tags added to faction listing for active factions"
       ]
     }
   },
