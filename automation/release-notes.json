@@ -1,6 +1,21 @@
 [
   {
-    "date": "30 Aug 2017",
+    "date": "31 Aug 2017 (v1.0.2)",
+    "changes": {
+      "Features": [
+      ],
+      "Bugfixes": [
+        "Fixed bug in LA where could not see jumpships after attack",
+        "Fixed bug with merc jump",
+        "Fixed bug where factions could not see friendly jumpships on the planet with their dropships"
+      ],
+      "Enhancements": [
+      ]
+    }
+  },
+
+  {
+    "date": "30 Aug 2017 (v1.0.0)",
     "changes": {
       "Features": [
         "Ledger review and management tool",
