@@ -23,7 +23,7 @@
 (function() {
     angular
         .module('nbt.app')
-        .controller('LeftBarController', ['$scope', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, nbtIdentity, nbtLeague, nbtPlanet) {
+        .controller('LeftBarController', ['$scope', '$timeout', 'nbtIdentity', 'nbtLeague', 'nbtPlanet', function($scope, $timeout, nbtIdentity, nbtLeague, nbtPlanet) {
             $scope.showTransfer = false;
             $scope.showTransferCombatUnits = false;
             $scope.showDockUndockDropships = false;
@@ -102,11 +102,12 @@
                     }
                 }
 
-                $scope.showTransfer = localShowDockUndockDropships || localShowTransferCombatUnits;
-                $scope.showTransferCombatUnits = localShowTransferCombatUnits;
-                $scope.showDockUndockDropships = localShowDockUndockDropships;
-                $scope.showJumpshipSummary = true;
-                $scope.$digest();
+                $timeout(function() {
+                    $scope.showTransfer = localShowDockUndockDropships || localShowTransferCombatUnits;
+                    $scope.showTransferCombatUnits = localShowTransferCombatUnits;
+                    $scope.showDockUndockDropships = localShowDockUndockDropships;
+                    $scope.showJumpshipSummary = true;
+                }, 0, true);
             });
             $scope.$on('destroy', cbSelectedPlanetChanged);
         }]);

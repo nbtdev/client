@@ -205,6 +205,7 @@
                     // currently, dropships are required in order to be able to transfer something...
                     if (selectedPlanet.dropshipCount && selectedPlanet.dropshipCount > 0) {
                         localShowTransferCombatUnits = true;
+                        $scope.showLeftBar = true;
                     }
 
                     if (selectedPlanet.jumpshipCount && selectedPlanet.jumpshipCount > 0) {
