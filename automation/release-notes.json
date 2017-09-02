@@ -1,5 +1,22 @@
 [
   {
+    "date": "3 Sep 2017 (v1.0.3)",
+    "changes": {
+      "Features": [
+        "Finished implementation of Sector Raid logging and effects"
+      ],
+      "Bugfixes": [
+        "(#133) Allow factions to see owned and friendly dropships and jumpships when one or both are present on a planet",
+        "(#133) Allow factions to dock and undock each others' dropships to/from owned and friendly jumpships"
+      ],
+      "Enhancements": [
+        "Enabled hourly forcedec-generation job, with emails and automation alerts",
+        "Enabled daily factory-production/order-fulfillment job, with emails and automation alerts"
+      ]
+    }
+  },
+
+  {
     "date": "31 Aug 2017 (v1.0.2)",
     "changes": {
       "Features": [
