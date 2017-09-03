@@ -188,13 +188,17 @@
                                 ng-show="battle.status==='Forcedec'"
                                 ng-class="{'disabled': updating}"
                                 title="Log Drop">Log Drop</button>
-                        <button class="btn btn-primary"
+                        <button class="btn"
+                                ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
                                 ng-click="confirmBattle()"
                                 ng-show="battle.status==='Completed'"
                                 title="Confirm the current battle and begin the post-battle logging process">Confirm Results</button>
                         <button class="btn btn-primary"
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 nbt-centered"><span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span></div>
                     </div>
                 </div>
             </div>

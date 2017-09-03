@@ -88,7 +88,7 @@ var _BattleService = (function() {
         }
     };
 
-    // load the list of sector assaults for a faction
+    // toggle this faction's 'ready' state
     BattleService.prototype.toggleBattleReady = function (aBattle, aToken, aCallback) {
         if (aBattle._links.ready) {
             var hdr = new Headers(Header.TOKEN, aToken);
@@ -96,6 +96,24 @@ var _BattleService = (function() {
             http({
                 method: 'PUT', // TODO: GET FROM LINKS!
                 url: aBattle._links.ready.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // toggle this faction's 'confirmed' state
+    BattleService.prototype.toggleBattleConfirm = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.confirm) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.confirm.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {

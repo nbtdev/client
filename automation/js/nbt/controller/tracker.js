@@ -160,6 +160,12 @@
                     $scope.battle.defenderScore = $scope.battle.defenderCreditCount;
                 }
 
+                // set the 'confirmed' flag
+                if (viewerIsAttacker && $scope.battle.attackerConfirm ||
+                    !viewerIsAttacker && $scope.battle.defenderConfirm) {
+                    $scope.battle.confirmed = true;
+                }
+
                 var currentDropIndex = getCurrentDrop($scope.battle, factionIds);
                 if (currentDropIndex >= 0)
                     $scope.drop = $scope.battle.drops[currentDropIndex];
@@ -411,6 +417,18 @@
                 nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
+                });
+            };
+
+            $scope.confirmBattle = function() {
+                $scope.battle.updating = true;
+                nbtBattle.toggleBattleConfirm($scope.battle, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                    $scope.battle.updating = false;
+                }, function(aErr) {
+                    setOperationStatus(aErr.message, false);
+                    $scope.battle.updating = false;
                 });
             };
 
