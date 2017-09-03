@@ -28,6 +28,66 @@
             $scope.selectedUnit = null;
             $scope.usedLimitAmount = 0;
 
+            var descriptions = {
+                1:  'The attacker will be able to steal combat units from the sector\'s ' +
+                     'garrisons. This is a scaled-success mechanic -- greater positive ' +
+                     'differential between the attacker\'s and the defender\'s number of ' +
+                     'credits earned in the raid will increase the detail available to the ' +
+                     'attacker about the combat units present. Each credit is worth 250 tons ' +
+                     'of combat units stolen',
+                2:  'The attacker will be able to steal industry from the total industrial ' +
+                    'production in the sector. This is a scaled-success mechanic -- greater ' +
+                    'positive differential between the attacker\'s and the defender\'s number ' +
+                    'of credits earned in the raid will increase the detail available to the ' +
+                    'attacker about the industrial output in the sector. Each credit is worth ' +
+                    '50,000,000 c-bills of industry stolen.',
+                3:  'The attacker will be able to decrease the total industrial production in the ' +
+                    'sector. This is a scaled-success mechanic -- greater positive differential ' +
+                    'between the attacker\'s and the defender\'s number of credits earned in the ' +
+                    'raid will increase the detail available to the attacker about the industrial ' +
+                    'output in the sector. Each credit is worth 50,000,000 c-bills of industry destroyed.',
+                4:  'The attacker will be able to suspend factory output in the sector for a period of ' +
+                    'time. This is a scaled-success mechanic -- greater positive differential between ' +
+                    'the attacker\'s and the defender\'s number of credits earned in the raid will ' +
+                    'increase the detail available to the attacker about the factories present in the sector. ' +
+                    'Each credit is worth 3 days of factory slot disruption.',
+                5:  'The attacker will be able permanently to reduce factory output in the sector for a ' +
+                    'period of time. This is a scaled-success mechanic -- greater positive differential ' +
+                    'between the attacker\'s and the defender\'s number of credits earned in the raid will ' +
+                    'increase the detail available to the attacker about the factories present in the sector. ' +
+                    'Each credit is worth 1 combat unit worth of factory output reduction.',
+                6:  'The attacker will be able to induce political instability in the sector for a period of time. ' +
+                    'This is NOT a scaled-success mechanic. Each credit is worth 10% chance of inducing political ' +
+                    'instability (cumulative) for 24 hours, or 3 days worth of political instability (on top of ' +
+                    'the base 24 hours). These can be used together; for instance, if an attacker has 10 credits ' +
+                    'to spend, they might spend 8 of them to increase the chance that political instability occurs, ' +
+                    'and the remaining 2 to extend the period to a week (7 days). Or they might spend all 10 to be ' +
+                    'certain that they induce 24 hours of political instability.',
+                7:  'The attacker will be able to place spies in the sector. Mechanics TBD.',
+                8:  'The defender may employ ground- and/or space-based defenses to destroy enemy dropships making ' +
+                    'their way back to their jumpship. This destroys the dropship and any combat units it is carrying. ' +
+                    'Combat units destroyed in this fashion are not subject to repair -- consider them vaporized. ' +
+                    'One credit per 5% chance of destroying one dropship.',
+                9:  'The defender may spend credits to reduce the detail available to the attacker for combat unit or ' +
+                    'industry theft, or industry or factory disruption or damage. 1 defender credit per attacker credit ' +
+                    'offset.',
+                10: 'Similar to how a defender can offset an attackers theft, disruption or destruction effectiveness ' +
+                    'with Enhanced Security, the defender can reduce the effectiveness of spies placed in their space ' +
+                    'by spending credits on counter- intelligence. The number of credits spent reduces the effectiveness ' +
+                    'of enemy spies, from the least effective to the most effective, by reducing their effective attacker ' +
+                    'credit spend by the number of credits the defender spends. If the attacker does not spend anything ' +
+                    'on spies, the Counter-Intelligence credits are lost.',
+                11: 'The defender can spend credits to offset the chance or the length of time that the sector will ' +
+                    'enter political instability, if the attacker chose to spend credits on Political Instability. The ' +
+                    'offset is 1 attacker credit per defender credit, and will offset attacker credits spent on duration ' +
+                    '(all the way to zero) before they offset attacker credits spent on chance of instability (again, ' +
+                    'all the way to zero).',
+                12: 'The defender can spend credits in an effort to prevent future raids on the sector for a period of ' +
+                    'time. This does not affect the ability for an opponent to launch a Sector Assault on the sector. ' +
+                    'Each credit is worth one (1) day worth of immunity from raids (from the date and time the current ' +
+                    'raid was logged).'
+            };
+
             // https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
             function drawRoundedRect(canvas, x, y, w, h, r) {
                 if (w < 2 * r) r = w / 2;
@@ -132,6 +192,17 @@
                 return -1;
             }
 
+            function findEffectById(effectId) {
+                var idx = $scope.raidEffects.findIndex(function(e,i,a) {
+                    return (e.id === effectId);
+                });
+
+                if (idx >= 0)
+                    return $scope.raidEffects[idx];
+
+                return null;
+            }
+
             function processRaidEffects(effects, isAttacker) {
                 $scope.raidEffects.length = 0;
                 effects.forEach(function(e,i,a) {
@@ -139,6 +210,21 @@
                         $scope.raidEffects.push(e);
                     if (!isAttacker && !e.attacker)
                         $scope.raidEffects.push(e);
+
+                    e.description = descriptions[e.id];
+                });
+
+                // go through the battle opponent effects and patch up the raid effects list
+                // with quantities
+                var factionEffects;
+                if (isAttacker) factionEffects = $scope.battle.attackerEffects;
+                else factionEffects = $scope.battle.defenderEffects;
+
+                factionEffects.forEach(function(e) {
+                    var effect = findEffectById(e.effect.id);
+                    if (effect) {
+                        effect.credits = e.credits;
+                    }
                 });
             }
 

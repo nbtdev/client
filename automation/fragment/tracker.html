@@ -121,7 +121,7 @@
                     </div>
 
                     <!-- alternate data entry -- available, used, destroyed -->
-                    <div class="row">
+                    <div class="row" ng-show="battle.status==='Forcedec'">
                         <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
                     </div>
                     <div id="manualDropEntry" class="row collapse">
@@ -187,10 +187,10 @@
                             <div class="col-md-4 nbt-highlight nbt-bold">Effect</div>
                             <div class="col-md-7 nbt-highlight nbt-bold">Description</div>
                         </div>
-                        <div class="row" ng-repeat="effect in raidEffects">
+                        <div class="row nbt-hover" ng-repeat="effect in raidEffects">
                             <div class="col-md-1 nbt-right-justified"><input type="number" min="0" ng-model="effect.credits" style="width: 90%; color: black"></div>
                             <div class="col-md-4">{{effect.name}}</div>
-                            <div class="col-md-7"></div>
+                            <div class="col-md-7">{{effect.description}}</div>
                         </div>
                     </div>
 
