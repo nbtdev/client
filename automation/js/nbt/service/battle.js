@@ -88,6 +88,47 @@ var _BattleService = (function() {
         }
     };
 
+    // load the list of potential raid effects
+    BattleService.prototype.fetchRaidEffects = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // load the list of potential raid effects
+    BattleService.prototype.spendCredits = function (aBattle, aEffects, aToken, aCallback, aFailback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                data: aEffects,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
     // toggle this faction's 'ready' state
     BattleService.prototype.toggleBattleReady = function (aBattle, aToken, aCallback) {
         if (aBattle._links.ready) {

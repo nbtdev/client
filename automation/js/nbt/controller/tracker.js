@@ -132,6 +132,16 @@
                 return -1;
             }
 
+            function processRaidEffects(effects, isAttacker) {
+                $scope.raidEffects.length = 0;
+                effects.forEach(function(e,i,a) {
+                    if (isAttacker && e.attacker)
+                        $scope.raidEffects.push(e);
+                    if (!isAttacker && !e.attacker)
+                        $scope.raidEffects.push(e);
+                });
+            }
+
             function processBattle() {
                 $scope.usedUnits = [];
                 $scope.destroyedUnits = [];
@@ -164,6 +174,14 @@
                 if (viewerIsAttacker && $scope.battle.attackerConfirm ||
                     !viewerIsAttacker && $scope.battle.defenderConfirm) {
                     $scope.battle.confirmed = true;
+                }
+
+                // if the battle status is "Completed", fetch raid effects list
+                if ($scope.battle.status === 'Completed') {
+                    $scope.raidEffects = [];
+                    nbtBattle.fetchRaidEffects($scope.battle, nbtIdentity.get().token, function(aEffects) {
+                        processRaidEffects(aEffects._embedded.effects, viewerIsAttacker);
+                    });
                 }
 
                 var currentDropIndex = getCurrentDrop($scope.battle, factionIds);
@@ -423,6 +441,30 @@
             $scope.confirmBattle = function() {
                 $scope.battle.updating = true;
                 nbtBattle.toggleBattleConfirm($scope.battle, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                    $scope.battle.updating = false;
+                }, function(aErr) {
+                    setOperationStatus(aErr.message, false);
+                    $scope.battle.updating = false;
+                });
+            };
+
+            $scope.spendCredits = function() {
+                effects = [];
+
+                // for each effect, if the credit count is not zero or null, add it to the list
+                $scope.raidEffects.forEach(function(e) {
+                    if (e.credits && e.credits > 0) {
+                        effects.push({
+                            effect: e,
+                            credits: e.credits
+                        });
+                    }
+                });
+
+                $scope.battle.updating = true;
+                nbtBattle.spendCredits($scope.battle, effects, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                     $scope.battle.updating = false;

@@ -181,6 +181,19 @@
                         </div>
                     </div>
 
+                    <div ng-show="raidEffects.length">
+                        <div class="row">
+                            <div class="col-md-1 nbt-right-justified nbt-highlight nbt-bold">Credits</div>
+                            <div class="col-md-4 nbt-highlight nbt-bold">Effect</div>
+                            <div class="col-md-7 nbt-highlight nbt-bold">Description</div>
+                        </div>
+                        <div class="row" ng-repeat="effect in raidEffects">
+                            <div class="col-md-1 nbt-right-justified"><input type="number" min="0" ng-model="effect.credits" style="width: 90%; color: black"></div>
+                            <div class="col-md-4">{{effect.name}}</div>
+                            <div class="col-md-7"></div>
+                        </div>
+                    </div>
+
                     <!-- button(s) to manage the battle manually -->
                     <div class="nbt-centered">
                         <button class="btn btn-primary"
@@ -192,7 +205,11 @@
                                 ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
                                 ng-click="confirmBattle()"
                                 ng-show="battle.status==='Completed'"
-                                title="Confirm the current battle and begin the post-battle logging process">Confirm Results</button>
+                                title="Confirm the current battle and begin the post-battle logging process">Confirm Battle</button>
+                        <button class="btn btn-primary"
+                                ng-click="spendCredits()"
+                                ng-show="battle.status==='Completed' && battle.type==='Sector Raid'"
+                                title="Save or update your raid effect credit spend">Spend Credits</button>
                         <button class="btn btn-primary"
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
