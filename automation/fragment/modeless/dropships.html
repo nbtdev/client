@@ -19,7 +19,7 @@
 
             <div class="row nbt-hover" ng-repeat="dropship in dropships">
                 <div class="col-md-3">
-                    <span ng-hide="dropship.editing">{{dropship.name}}</span>
+                    <span ng-hide="dropship.editing">{{dropship.name}} <span ng-show="dropship.owner.id!==faction.id">({{dropship.owner.shortName}})</span></span>
                     <span ng-show="dropship.editing"><input type="text" style="width: 100%" ng-model="dropship.name" ng-keypress="checkEnterKey($event, this, dropship)"></span>
                 </div>
                 <div class="col-md-3">
@@ -33,14 +33,16 @@
                     <div ng-repeat="capacity in dropship.type.capacities">{{capacity.capacity}} {{capacity.combatUnitType.abbrev}}</div>
                 </div>
                 <div class="col-md-2">
-                    <span ng-hide="dropship.editing">
-                        <a class="ui-interactive" ng-click="onEdit(dropship)"><img src="../../images/edit.png" height="16" width="16"/></a>
-                        <a ng-hide="!(identity.isSiteAdmin||identity.isLeagueAdmin)" class="ui-interactive" ng-click="onDelete(dropship)"><img src="../../images/delete.png" height="16" width="16"/></a>
-                    </span>
-                    <span ng-show="dropship.editing">
-                        <a class="ui-interactive" ng-click="onApply(dropship)"><img src="../../images/check16.png" height="16" width="16"/></a>
-                        <a class="ui-interactive" ng-click="onCancel(dropship)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
-                    </span>
+                    <div ng-show="dropship.owner.id===faction.id">
+                        <span ng-hide="dropship.editing">
+                            <a class="ui-interactive" ng-click="onEdit(dropship)"><img src="../../images/edit.png" height="16" width="16"/></a>
+                            <a ng-hide="!(identity.isSiteAdmin||identity.isLeagueAdmin)" class="ui-interactive" ng-click="onDelete(dropship)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                        </span>
+                        <span ng-show="dropship.editing">
+                            <a class="ui-interactive" ng-click="onApply(dropship)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                            <a class="ui-interactive" ng-click="onCancel(dropship)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                        </span>
+                    </div>
                 </div>
             </div>
 
