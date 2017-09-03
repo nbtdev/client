@@ -34,6 +34,7 @@
             }
 
             function reloadDropships() {
+                $scope.reloading = true;
                 nbtTransport.fetchDropshipsForFaction($scope.faction, nbtIdentity.get().token, function(aDropships) {
                     $scope.dropships = aDropships._embedded.dropships;
 
@@ -43,6 +44,10 @@
                     $timeout(function() {
                         $("#dropshipsDialog a").on("click", onPlanetClicked);
                     }, 0);
+
+                    $scope.reloading = false;
+                }, function(aErr) {
+                    $scope.reloading = false;
                 });
             }
 
@@ -121,6 +126,14 @@
             function onPlanetClicked(event) {
                 $rootScope.$broadcast('planetSearchRequest', event.currentTarget.innerHTML);
             }
+
+            $scope.onJumpshipClick = function(dropship) {
+                $rootScope.$broadcast('planetSearchRequest', dropship.jumpship.planet.name);
+            };
+
+            $scope.onRefresh = function() {
+                reloadDropships();
+            };
 
             // TODO: don't tie this to a specific dialog...
             $("#cmdCloseDropshipsDialog").on("click", function(event) {
