@@ -51,8 +51,8 @@
                     'the attacker\'s and the defender\'s number of credits earned in the raid will ' +
                     'increase the detail available to the attacker about the factories present in the sector. ' +
                     'Each credit is worth 3 days of factory slot disruption.',
-                5:  'The attacker will be able permanently to reduce factory output in the sector for a ' +
-                    'period of time. This is a scaled-success mechanic -- greater positive differential ' +
+                5:  'The attacker will be able permanently to reduce factory output in the sector. ' +
+                    'This is a scaled-success mechanic -- greater positive differential ' +
                     'between the attacker\'s and the defender\'s number of credits earned in the raid will ' +
                     'increase the detail available to the attacker about the factories present in the sector. ' +
                     'Each credit is worth 1 combat unit worth of factory output reduction.',
@@ -192,6 +192,34 @@
                 return -1;
             }
 
+            function groupInstancesForTheft() {
+                try {
+                    var theft = $scope.battle.combatUnitTheft;
+                    var theftDict = {};
+
+                    $scope.battle.theftInstances = [];
+                    $scope.battle.theftLimit = theft.theftTons;
+
+                    theft.instances.forEach(function(e) {
+                        var inst = theftDict[e.template.id];
+                        if (!inst) {
+                            inst = {
+                                id: e.template.id,
+                                name: e.template.name,
+                                template: e.template,
+                                count: 0
+                            };
+                            theftDict[e.template.id] = inst;
+                            $scope.battle.theftInstances.push(inst);
+                        }
+
+                        inst.count++;
+                    });
+                } catch (e) {
+                    return;
+                }
+            }
+
             function findEffectById(effectId) {
                 var idx = $scope.raidEffects.findIndex(function(e,i,a) {
                     return (e.id === effectId);
@@ -232,7 +260,11 @@
                 $scope.usedUnits = [];
                 $scope.destroyedUnits = [];
                 $scope.usedLimitAmount = 0;
+                $scope.stolenUnits = [];
+                $scope.stolenAmount = 0;
                 $scope.drop = null;
+
+                groupInstancesForTheft();
 
                 // set a convenience field to match the number of planets available
                 $scope.battle.sector.planetsInPlay = $scope.battle.sector.planets.length;
@@ -383,6 +415,24 @@
                 return null;
             }
 
+            // find and claim the next available combat unit instance that matches the designation.
+            // For example, the next available CDA. This function will also remove the instance from
+            // the available-to-steal list
+            function stealNextUnitInstance(summary) {
+                var instance = null;
+                $scope.battle.combatUnitTheft.instances.some(function(e) {
+                    if (e.template.name === summary.name) {
+                        removeObjectFromArrayById(e, $scope.battle.combatUnitTheft.instances);
+                        instance = e;
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                return instance;
+            }
+
             function addUsedUnit(instance) {
                 if (!$scope.usedUnits)
                     $scope.usedUnits = [];
@@ -394,6 +444,19 @@
 
                 if (instance.template.battleValue)
                     $scope.usedLimitAmount += instance.template.battleValue;
+            }
+
+            function addStolenUnit(instance) {
+                if (!$scope.stolenUnits)
+                    $scope.stolenUnits = [];
+
+                $scope.stolenUnits.push(instance);
+
+                if (instance.template.tonnage)
+                    $scope.stolenAmount += instance.template.tonnage;
+
+                if (instance.template.battleValue)
+                    $scope.stolenAmount += instance.template.battleValue;
             }
 
             function moveUsedUnitToAvailable(unit) {
@@ -428,6 +491,43 @@
                     $scope.usedLimitAmount -= unit.template.battleValue;
             }
 
+
+            function moveStolenUnitToAvailable(unit) {
+                // remove it from the used array...
+                removeObjectFromArrayById(unit, $scope.stolenUnits);
+
+                // ...and add it back to the faction combat unit summaries...
+                var group = null;
+                $scope.battle.theftInstances.some(function(e) {
+                    if(e.template.id === unit.template.id) {
+                        group = e;
+                        return true;
+                    }
+                });
+
+                if (!group) {
+                    group = {
+                        count: 0,
+                        template: unit.template,
+                        name: unit.template.name,
+                        id: unit.template.id
+                    };
+                    $scope.battle.theftInstances.push(group);
+                }
+
+                group.count++;
+
+                // ...as well as the 'forcedec' unit listings...
+                $scope.battle.combatUnitTheft.instances.push(unit);
+
+                // ...and then update the used-tonnage/BV total
+                if (unit.template.tonnage)
+                    $scope.stolenAmount -= unit.template.tonnage;
+
+                if (unit.template.battleValue)
+                    $scope.stolenAmount -= unit.template.battleValue;
+            }
+
             $scope.useUnit = function(summary) {
                 // limit to 8 instances used at a time
                 if ($scope.usedUnits && $scope.usedUnits.length === 8)
@@ -450,6 +550,23 @@
 
             $scope.unuseUnit = function(unit) {
                 moveUsedUnitToAvailable(unit);
+            };
+
+            $scope.stealUnit = function(summary) {
+                if (summary) {
+                    if (summary.count <= 0)
+                        return;
+
+                    var instance = stealNextUnitInstance(summary);
+                    if (instance) {
+                        addStolenUnit(instance);
+                        summary.count--;
+                    }
+                }
+            };
+
+            $scope.unstealUnit = function(unit) {
+                moveStolenUnitToAvailable(unit);
             };
 
             // move unit from used list to destroyed list
@@ -519,6 +636,14 @@
 
             $scope.reloadBattle = function() {
                 nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                });
+            };
+
+            $scope.commitEffect = function() {
+                
+                nbtBattle.commitEffects($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                 });

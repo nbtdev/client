@@ -120,62 +120,64 @@
                         </div>
 
                         <!-- alternate data entry -- available, used, destroyed -->
-                        <div class="row" ng-show="battle.status==='Forcedec'">
-                            <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
-                        </div>
-                        <div id="manualDropEntry" class="row collapse">
-                            <!-- available -->
-                            <div class="col-md-4">
-                                <h5 class="nbt-h5">Available</h5>
-                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
-                                    <ul style="padding-left: 0">
-                                        <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
-                                            <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
-                                            <ul style="padding-left: 10px">
-                                                <li ng-repeat="summary in factionUnits.units"
-                                                    ng-click="useUnit(summary)"
-                                                    class="nbt-click-only nbt-hover"
-                                                    style="list-style: none; cursor: pointer; padding-left: 10px"
-                                                    ng-class="{'nbt-disabled': summary.count===0}"
-                                                >{{summary.name}}: {{summary.count}} </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </div>
+                        <div  ng-show="battle.status==='Forcedec'">
+                            <div class="row">
+                                <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
                             </div>
-
-                            <!-- used/taken -->
-                            <div class="col-md-4">
-                                <h5 class="nbt-h5">Used</h5>
-                                <div style="height: 240px; border: solid 1px #990000">
-                                    <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}} ({{drop.upperLimit-usedLimitAmount}} remaining)</div>
-                                    <ul style="padding-left: 0">
-                                        <li ng-repeat="unit in usedUnits" style="list-style: none; padding-bottom: 5px">
-                                        <span ng-click="unuseUnit(unit)" style="cursor: pointer;">
-                                            <span class="nbt-highlight" style="padding-right: 10px">
-                                            {{unit.owner.shortName}}</span>{{unit.template.name}}
-                                        </span>
-                                            <button style="float: right; margin-right: 5px"
-                                                    class="btn btn-xs btn-primary"
-                                                    ng-click="destroyUnit(unit)"
-                                                    ng-show="!unit.destroyed"
-                                                    title="Mark Unit As Destroyed">Destroy</button>
-                                        </li>
-                                    </ul>
+                            <div id="manualDropEntry" class="row collapse">
+                                <!-- available -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Available</h5>
+                                    <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
+                                                <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
+                                                <ul style="padding-left: 10px">
+                                                    <li ng-repeat="summary in factionUnits.units"
+                                                        ng-click="useUnit(summary)"
+                                                        class="nbt-click-only nbt-hover"
+                                                        style="list-style: none; cursor: pointer; padding-left: 10px"
+                                                        ng-class="{'nbt-disabled': summary.count===0}"
+                                                    >{{summary.name}}: {{summary.count}} </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- destroyed -->
-                            <div class="col-md-4">
-                                <h5 class="nbt-h5">Destroyed</h5>
-                                <div style="height: 240px; border: solid 1px #990000">
-                                    <ul style="padding-left: 0">
-                                        <li ng-repeat="unit in destroyedUnits"
-                                            class="nbt-hover"
-                                            style="list-style: none; cursor: pointer"
-                                            ng-click="undestroyUnit(unit)"
-                                        ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
-                                    </ul>
+                                <!-- used/taken -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Used</h5>
+                                    <div style="height: 240px; border: solid 1px #990000">
+                                        <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}} ({{drop.upperLimit-usedLimitAmount}} remaining)</div>
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="unit in usedUnits" style="list-style: none; padding-bottom: 5px">
+                                            <span ng-click="unuseUnit(unit)" style="cursor: pointer;">
+                                                <span class="nbt-highlight" style="padding-right: 10px">
+                                                {{unit.owner.shortName}}</span>{{unit.template.name}}
+                                            </span>
+                                                <button style="float: right; margin-right: 5px"
+                                                        class="btn btn-xs btn-primary"
+                                                        ng-click="destroyUnit(unit)"
+                                                        ng-show="!unit.destroyed"
+                                                        title="Mark Unit As Destroyed">Destroy</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- destroyed -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Destroyed</h5>
+                                    <div style="height: 240px; border: solid 1px #990000">
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="unit in destroyedUnits"
+                                                class="nbt-hover"
+                                                style="list-style: none; cursor: pointer"
+                                                ng-click="undestroyUnit(unit)"
+                                            ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -228,6 +230,41 @@
                         </div>
                     </div>
 
+                    <div ng-show="battle.status==='Confirmed'">
+                        <div class="row" ng-show="battle.combatUnitTheft.instances">
+                            <!-- available -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Available</h5>
+                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="summary in battle.theftInstances"
+                                            ng-click="stealUnit(summary)"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            style="list-style: none; cursor: pointer; padding-left: 10px"
+                                            ng-class="{'nbt-disabled': summary.count===0}"
+                                        >{{summary.name}}: {{summary.count}} </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- used/taken -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Stolen</h5>
+                                <div style="height: 240px; border: solid 1px #990000; overflow-y: auto">
+                                    <div class="nbt-bold" ng-class="{'nbt-error': stolenAmount>battle.theftLimit}">{{battle.limitString}}: {{stolenAmount}} ({{battle.theftLimit - stolenAmount}} remaining)</div>
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in stolenUnits"
+                                            style="cursor: pointer; list-style: none; padding-bottom: 5px"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            ng-click="unstealUnit(unit)">
+                                            {{unit.template.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- button(s) to manage the battle manually -->
                     <div class="nbt-centered">
                         <button class="btn btn-primary"
@@ -244,6 +281,10 @@
                                 ng-click="spendCredits()"
                                 ng-show="battle.status==='Completed' && battle.type==='Sector Raid'"
                                 title="Save or update your raid effect credit spend">Spend Credits</button>
+                        <button class="btn btn-primary"
+                                ng-click="commitEffects()"
+                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid'"
+                                title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
                         <button class="btn btn-primary"
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
