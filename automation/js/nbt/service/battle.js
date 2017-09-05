@@ -153,14 +153,14 @@ var _BattleService = (function() {
     };
 
     // load the list of potential raid effects
-    BattleService.prototype.commitRepairs = function (aBattle, aRepairs, aToken, aCallback, aFailback) {
+    BattleService.prototype.commitRepairs = function (aBattle, aToken, aCallback, aFailback) {
         if (aBattle._links.repairs) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'POST', // TODO: GET FROM LINKS!
                 url: aBattle._links.repairs.href,
-                data: aRepairs,
+                data: aBattle.repairsAccepted,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
@@ -228,6 +228,28 @@ var _BattleService = (function() {
 
                     // post event to any subscribers
                     rootScope.$broadcast('nbtBattleChanged', aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
+    // finalize the battle
+    BattleService.prototype.finalizeBattle = function (aBattle, aToken, aCallback, aFailCb) {
+        if (aBattle._links.finalize) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.finalize.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
                 },
                 function (aErr) {
                     if (aFailCb)

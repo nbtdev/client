@@ -45,7 +45,7 @@
             <div class="modal-body nbt-base nbt-modal-body">
                 <div class="container col-md-12">
                     <!-- the battle header -->
-                    <div class="row">
+                    <div class="row" ng-hide="battle.loggingComplete">
                         <div class="col-md-3 nbt-right-justified"><img data-ng-src="{{battle.attacker.logo._links.raw.href}}"></div>
                         <div class="col-md-6 nbt-centered">
                             <div class="container col-md-12">
@@ -235,7 +235,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed' && !battle.repairsOffered" class="nbt-border-n nbt-border-s">
+                    <div ng-show="battle.status==='Confirmed' && !(battle.repairsOffered || battle.repairsAccepted)" class="nbt-border-n nbt-border-s">
                         <div class="row">
                             <!-- attacker's effect choices -->
                             <div class="col-md-6">
@@ -269,7 +269,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed' && !battle.repairsOffered">
+                    <div ng-show="battle.status==='Confirmed' && !(battle.repairsOffered || battle.repairsAccepted)">
                         <div class="row" ng-show="battle.combatUnitTheft.instances">
                             <!-- available -->
                             <div class="col-md-4">
@@ -325,7 +325,7 @@
                                 <h5 class="nbt-h5">Repairs Accepted</h5>
                                 <div style="height: 240px; border: solid 1px #990000; overflow-y: auto">
                                     <ul style="padding-left: 0">
-                                        <li ng-repeat="unit in repairedUnits"
+                                        <li ng-repeat="unit in battle.repairsAccepted"
                                             style="cursor: pointer; list-style: none; padding-bottom: 5px"
                                             class="nbt-click-only nbt-hover ui-interactive"
                                             ng-click="unrepairUnit(unit)">
@@ -335,6 +335,35 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div ng-show="battle.loggingComplete">
+                        <div ng-show="battle.isAttacker && !battle.summary" class="nbt-centered">
+                            <div class="nbt-centered nbt-font-xxxl nbt-error">STOP!</div>
+                            <div class="nbt-para" style="width: 60%; display: inline-block">
+                                You need to pull your forces off of the planet(s) in
+                                this sector! Use the normal tools on the starmap to move your forces from the planet to
+                                their dropships, and then dock the dropships to their jumpships. Anything you cannot fit
+                                into your dropships must be left behind and will become the property of the defender!
+                                Any theft you performed and repairs you made have been transferred to your faction's
+                                ownership, and moved to the planet where you have the most dropships available (if they
+                                were not already on that planet).
+                            </div>
+                            <div class="nbt-para" style="width: 60%; display: inline-block">
+                                When you have completed that step, come back to this page (you can get back here from the
+                                Battles list in your admin tools) and then click the Finalize button below, which will
+                                update the battle, release the sector from lockdown and pay out salvage to (and collect
+                                repair costs from) the victor.
+                            </div>
+                        </div>
+
+                        <div ng-show="battle.summary">
+
+                        </div>
+                    </div>
+
+                    <div ng-show="battle.status==='Verified'">
+
                     </div>
 
                     <!-- button(s) to manage the battle manually -->
@@ -355,12 +384,20 @@
                                 title="Step 2: Confirm the current battle from your side; battle finalizing (including will begin when the opponent has also confirmed">Confirm Battle</button>
                         <button class="btn btn-primary"
                                 ng-click="commitEffects()"
-                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !battle.repairsOffered"
+                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !(battle.repairsOffered || battle.repairsAccepted)"
                                 title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
                         <button class="btn btn-primary"
                                 ng-click="commitRepairs()"
                                 ng-show="battle.status==='Confirmed' && battle.repairsOffered"
                                 title="Commit your repair choices and proceed to final battle logging">Finish</button>
+                        <button class="btn btn-primary"
+                                ng-click="finalizeBattle()"
+                                ng-show="battle.status==='Confirmed' && battle.loggingComplete"
+                                title="Finalize the battle logging process">Finalize</button>
+                        <button class="btn btn-primary"
+                                ng-show="battle.status==='Verified'"
+                                data-dismiss="modal"
+                                title="Close this dialog">Close</button>
                         <button class="btn btn-primary"
                                 ng-hide="battle.repairsOffered"
                                 ng-click="reloadBattle()"
@@ -375,7 +412,7 @@
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                         <a class="ui-interactive"
-                           ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !battle.repairsOffered"
+                           ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !(battle.repairsOffered || battle.repairsAccepted)"
                            data-toggle="popover"
                            data-trigger="hover"
                            data-placement="auto"

@@ -262,7 +262,6 @@
                 $scope.usedLimitAmount = 0;
                 $scope.stolenUnits = [];
                 $scope.stolenAmount = 0;
-                $scope.repairedUnits = [];
                 $scope.drop = null;
 
                 groupInstancesForTheft();
@@ -278,8 +277,10 @@
                 //      * positive numbers for upcoming drops (if known)
                 var factionIds = findInvolvedFactionIds($scope.battle);
                 var viewerIsAttacker = false;
-                if (arrayContains(factionIds.attackers, $scope.faction.id))
+                if (arrayContains(factionIds.attackers, $scope.faction.id)) {
                     viewerIsAttacker = true;
+                    $scope.battle.isAttacker = true;
+                }
 
                 if ($scope.battle.type === 'Sector Assault') {
                     $scope.battle.attackerScore = $scope.battle.attackerPlanetCount;
@@ -293,6 +294,11 @@
                 if (viewerIsAttacker && $scope.battle.attackerConfirm ||
                     !viewerIsAttacker && $scope.battle.defenderConfirm) {
                     $scope.battle.confirmed = true;
+                }
+
+                if (viewerIsAttacker && $scope.battle.attackerLoggingComplete ||
+                    !viewerIsAttacker && $scope.battle.defenderLoggingComplete) {
+                    $scope.battle.loggingComplete = true;
                 }
 
                 // if the battle status is "Completed", fetch raid effects list
@@ -554,16 +560,16 @@
             };
 
             $scope.repairUnit = function(unit) {
-                if (!$scope.repairedUnits)
-                    $scope.repairedUnits = [];
+                if (!$scope.battle.repairsAccepted)
+                    $scope.battle.repairsAccepted = [];
 
-                $scope.repairedUnits.push(unit);
+                $scope.battle.repairsAccepted.push(unit);
                 removeObjectFromArrayById(unit, $scope.battle.repairsOffered);
             };
 
             $scope.unrepairUnit = function(unit) {
                 $scope.battle.repairsOffered.push(unit);
-                removeObjectFromArrayById(unit, $scope.repairedUnits);
+                removeObjectFromArrayById(unit, $scope.battle.repairsAccepted);
             };
 
             $scope.stealUnit = function(summary) {
@@ -681,7 +687,7 @@
             };
 
             $scope.commitRepairs = function() {
-                nbtBattle.commitRepairs($scope.battle, $scope.repairedUnits, nbtIdentity.get().token, function(aData) {
+                nbtBattle.commitRepairs($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battleSummary = aData;
                 }, function (aErr) {
                     setOperationStatus(aErr.message, false);
@@ -698,6 +704,16 @@
                 }, function(aErr) {
                     setOperationStatus(aErr.message, false);
                     $scope.battle.updating = false;
+                });
+            };
+
+            $scope.finalizeBattle = function() {
+                $scope.battle.updating = true;
+                nbtBattle.finalizeBattle($scope.battle, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                }, function(aErr) {
+                    setOperationStatus(aErr.message, false);
                 });
             };
 
