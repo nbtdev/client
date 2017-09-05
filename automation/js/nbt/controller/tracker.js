@@ -262,6 +262,7 @@
                 $scope.usedLimitAmount = 0;
                 $scope.stolenUnits = [];
                 $scope.stolenAmount = 0;
+                $scope.repairedUnits = [];
                 $scope.drop = null;
 
                 groupInstancesForTheft();
@@ -552,6 +553,19 @@
                 moveUsedUnitToAvailable(unit);
             };
 
+            $scope.repairUnit = function(unit) {
+                if (!$scope.repairedUnits)
+                    $scope.repairedUnits = [];
+
+                $scope.repairedUnits.push(unit);
+                removeObjectFromArrayById(unit, $scope.battle.repairsOffered);
+            };
+
+            $scope.unrepairUnit = function(unit) {
+                $scope.battle.repairsOffered.push(unit);
+                removeObjectFromArrayById(unit, $scope.repairedUnits);
+            };
+
             $scope.stealUnit = function(summary) {
                 if (summary) {
                     if (summary.count <= 0)
@@ -661,6 +675,14 @@
                 nbtBattle.commitEffects($scope.battle, theft, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
+                }, function (aErr) {
+                    setOperationStatus(aErr.message, false);
+                });
+            };
+
+            $scope.commitRepairs = function() {
+                nbtBattle.commitRepairs($scope.battle, $scope.repairedUnits, nbtIdentity.get().token, function(aData) {
+                    $scope.battleSummary = aData;
                 }, function (aErr) {
                     setOperationStatus(aErr.message, false);
                 });

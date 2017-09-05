@@ -24,6 +24,17 @@
     </div>
 </div>
 
+<div class="help-commit-repairs" style="display: none">
+    <h5 class="nbt-h5">Repairing Combat Units</h5>
+    <div class="nbt-rules-para">
+        On this page you are offered the option to repair some of the combat units destroyed during the battle. Your
+        choices are based on the differential of credits earned versus your opponent; the larger the differential, the
+        greater the choice. You may choose any of the units offered for repair, or none; you are not required to make
+        repairs. Repairing a combat unit costs you 40% of your market list price for that unit, and this is deducted from
+        your faction's account at final battle logging.
+    </div>
+</div>
+
 <script src="/js/nbt/controller/tracker.js"></script>
 <div id="trackerModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="TrackerController as trackerController">
     <div class="modal-dialog modal-lg with-border">
@@ -224,7 +235,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed'" class="nbt-border-n nbt-border-s">
+                    <div ng-show="battle.status==='Confirmed' && !battle.repairsOffered" class="nbt-border-n nbt-border-s">
                         <div class="row">
                             <!-- attacker's effect choices -->
                             <div class="col-md-6">
@@ -258,7 +269,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed'">
+                    <div ng-show="battle.status==='Confirmed' && !battle.repairsOffered">
                         <div class="row" ng-show="battle.combatUnitTheft.instances">
                             <!-- available -->
                             <div class="col-md-4">
@@ -293,6 +304,39 @@
                         </div>
                     </div>
 
+                    <div ng-show="battle.status==='Confirmed' && battle.repairsOffered">
+                        <div class="row">
+                            <!-- available -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Repairs Offered</h5>
+                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in battle.repairsOffered"
+                                            ng-click="repairUnit(unit)"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            style="list-style: none; cursor: pointer; padding-left: 10px"
+                                        >{{unit.template.name}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- used/taken -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Repairs Accepted</h5>
+                                <div style="height: 240px; border: solid 1px #990000; overflow-y: auto">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in repairedUnits"
+                                            style="cursor: pointer; list-style: none; padding-bottom: 5px"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            ng-click="unrepairUnit(unit)">
+                                            {{unit.template.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- button(s) to manage the battle manually -->
                     <div class="nbt-centered">
                         <button class="btn btn-primary"
@@ -311,9 +355,14 @@
                                 title="Step 2: Confirm the current battle from your side; battle finalizing (including will begin when the opponent has also confirmed">Confirm Battle</button>
                         <button class="btn btn-primary"
                                 ng-click="commitEffects()"
-                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid'"
+                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !battle.repairsOffered"
                                 title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
                         <button class="btn btn-primary"
+                                ng-click="commitRepairs()"
+                                ng-show="battle.status==='Confirmed' && battle.repairsOffered"
+                                title="Commit your repair choices and proceed to final battle logging">Finish</button>
+                        <button class="btn btn-primary"
+                                ng-hide="battle.repairsOffered"
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
                         <a class="ui-interactive"
@@ -326,7 +375,7 @@
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                         <a class="ui-interactive"
-                           ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid'"
+                           ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !battle.repairsOffered"
                            data-toggle="popover"
                            data-trigger="hover"
                            data-placement="auto"
@@ -334,7 +383,15 @@
                            data-contentref=".help-commit-effects">
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
-
+                        <a class="ui-interactive"
+                           ng-show="battle.status==='Confirmed' && battle.repairsOffered"
+                           data-toggle="popover"
+                           data-trigger="hover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-contentref=".help-commit-repairs">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
                     </div>
                     <div class="row" ng-show="gameResolutionIssues">
                         <div class="col-md-12 nbt-centered">
