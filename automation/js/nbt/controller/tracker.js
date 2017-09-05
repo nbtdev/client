@@ -668,6 +668,7 @@
 
             $scope.confirmBattle = function() {
                 $scope.battle.updating = true;
+                $scope.battleStatus = $scope.battle.status;
                 nbtBattle.toggleBattleConfirm($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
@@ -679,7 +680,7 @@
             };
 
             $scope.spendCredits = function() {
-                effects = [];
+                var effects = [];
 
                 // for each effect, if the credit count is not zero or null, add it to the list
                 $scope.raidEffects.forEach(function(e) {
