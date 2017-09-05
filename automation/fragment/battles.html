@@ -6,6 +6,10 @@
                 <h4 class="modal-title text-center">{{faction.displayName}} Battles</h4>
             </div>
             <div class="modal-body nbt-base nbt-modal-body">
+                <div>
+                    <span><input type="checkbox" ng-model="active">Active Only</span>
+                    <span><input type="checkbox" ng-model="all">All League Battles</span>
+                </div>
                 <div class="container col-md-12">
                     <div class="row">
                         <div class="col-md-1"><span class="nbt-bold">ID</span></div>
@@ -38,9 +42,15 @@
                                     title="The battle needs the sector planet order selected by the attacker"
                                     class="btn btn-xs btn-primary"
                                     ng-click="initialize(battle)"
-                                    ng-show="battle.status==='Initialize'&&faction.id===battle.attacker.id"
-                                    data-dismiss="modal">
+                                    ng-show="battle.status==='Initialize'&&faction.id===battle.attacker.id">
                                 Initialize
+                            </button>
+                            <button type="button"
+                                    title="Reset the battle to its 'Drop 1' Forcedec state"
+                                    class="btn btn-xs btn-primary"
+                                    ng-click="reset(battle)"
+                                    ng-show="battle._links.reset">
+                                Reset
                             </button>
                             <button type="button"
                                     title="If both factions indicate 'Ready' prior to the reinforcement timeout, the battle forcedec will be generated and the battle can be fought and logged immediately"

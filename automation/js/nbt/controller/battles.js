@@ -27,6 +27,8 @@
             $scope.league = null;
             $scope.faction = null;
             $scope.battles = null;
+            $scope.all = true;
+            $scope.active = false;
 
             function processBattles() {
                 // go through the battles and add a 'ready' property to each
@@ -41,13 +43,22 @@
 
             $("#battlesModal").on("shown.bs.modal", function() {
                 $scope.battles = null;
-                if ($scope.faction) {
-                    nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(aData) {
+                reloadBattles();
+            });
+
+            function reloadBattles() {
+                if ($scope.all) {
+                    nbtBattle.fetchBattlesForLeague($scope.league, $scope.active, nbtIdentity.get().token, function(aData) {
+                        $scope.battles = aData._embedded.sectorBattles;
+                        processBattles();
+                    });
+                } else {
+                    nbtBattle.fetchBattlesForFaction($scope.faction, $scope.active, nbtIdentity.get().token, function(aData) {
                         $scope.battles = aData._embedded.sectorBattles;
                         processBattles();
                     });
                 }
-            });
+            }
 
             $scope.report = function(battle) {
                 nbtBattle.fetchBattleDetail(battle, nbtIdentity.get().token);
@@ -71,17 +82,27 @@
                 }
 
                 nbtBattle.toggleBattleReady(battle, nbtIdentity.get().token, function(battle) {
-                    // just re-load the battle list
-                    nbtBattle.fetchBattlesForFaction($scope.faction, nbtIdentity.get().token, function(battles) {
-                        $scope.battles = battles._embedded.sectorBattles;
-                        processBattles();
-                    })
+                    reloadBattles();
+                });
+            };
+
+            $scope.reset = function(battle) {
+                nbtBattle.resetBattle(battle, nbtIdentity.get().token, function() {
+                    reloadBattles();
                 });
             };
 
             // notify us of faction changes/loads
             var cb = $scope.$on('nbtFactionChanged', function (event, faction) {
                 $scope.faction = faction;
+                $scope.all = false;
+            });
+            $scope.$on('destroy', cb);
+
+            // notify us of faction changes/loads
+            cb = $scope.$on('nbtLeagueChanged', function (event, league) {
+                $scope.league = league;
+                $scope.all = true;
             });
             $scope.$on('destroy', cb);
         }]);

@@ -50,13 +50,31 @@ var _BattleService = (function() {
     };
 
     // load the list of sector assaults for a faction
-    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aToken, aCallback) {
+    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aActive, aToken, aCallback) {
         if (aFaction._links.battles) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aFaction._links.battles.href,
+                url: aFaction._links.battles.href + "?active=" + aActive,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // load all sector assaults in the league
+    BattleService.prototype.fetchBattlesForLeague = function (aLeague, aActive, aToken, aCallback) {
+        if (aLeague._links.battles) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aLeague._links.battles.href + "?active=" + aActive,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
@@ -183,6 +201,24 @@ var _BattleService = (function() {
             http({
                 method: 'PUT', // TODO: GET FROM LINKS!
                 url: aBattle._links.ready.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // reset the battle back to the beginning
+    BattleService.prototype.resetBattle = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.reset) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.reset.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
