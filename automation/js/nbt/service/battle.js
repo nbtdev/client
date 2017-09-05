@@ -129,6 +129,29 @@ var _BattleService = (function() {
         }
     };
 
+    // load the list of potential raid effects
+    BattleService.prototype.commitEffects = function (aBattle, aTheft, aToken, aCallback, aFailback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                data: aTheft,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
     // toggle this faction's 'ready' state
     BattleService.prototype.toggleBattleReady = function (aBattle, aToken, aCallback) {
         if (aBattle._links.ready) {

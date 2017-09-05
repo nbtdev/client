@@ -289,8 +289,24 @@
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 nbt-centered"><span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span></div>
+                    <div class="row" ng-show="gameResolutionIssues">
+                        <div class="col-md-12 nbt-centered">
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.unresolvedCombatUnitIssues"
+                                 class="nbt-error">
+                                {{player.issue}} ({{player.Username}}, {{player.unitDesignation}})
+                            </div>
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.unresolvedPlayerIssues"
+                                 class="nbt-error">
+                                {{player.issue}}
+                            </div>
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.combatUnitNotFoundIssues"
+                                 class="nbt-error">
+                                {{player.issue}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

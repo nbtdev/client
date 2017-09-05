@@ -623,29 +623,46 @@
 
                 $scope.drop.combatUnitInstances = $scope.usedUnits;
                 $scope.updating = true;
+
+                // if the user empties the field, it comes up with a zero-length string and the backend doesn't
+                // like that -- null it out in this case
+                if ($scope.drop.gameId && $scope.drop.gameId.length === 0)
+                    $scope.drop.gameId = null;
+
                 nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token,
                     function(aData) {
                         checkBattleUpdate(aData);
                     },
                     function(aErr) {
                         $scope.updating = false;
-                        setOperationStatus(aErr.message, false);
+                        if (aErr.message)
+                            setOperationStatus(aErr.message, false);
+                        else {
+                            $scope.gameResolutionIssues = aErr;
+                            setOperationStatus("Unresolved logging issues detected", false);
+                        }
                     }
                 );
             };
 
             $scope.reloadBattle = function() {
+                $scope.gameResolutionIssues = null;
                 nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                 });
             };
 
-            $scope.commitEffect = function() {
-                
-                nbtBattle.commitEffects($scope.battle, nbtIdentity.get().token, function(aData) {
+            $scope.commitEffects = function() {
+                var theft = {
+                    instances: $scope.stolenUnits
+                };
+
+                nbtBattle.commitEffects($scope.battle, theft, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
+                }, function (aErr) {
+                    setOperationStatus(aErr.message, false);
                 });
             };
 
