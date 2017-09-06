@@ -28,7 +28,7 @@
             $scope.faction = null;
             $scope.battles = null;
             $scope.all = true;
-            $scope.active = false;
+            $scope.active = true;
 
             function processBattles() {
                 // go through the battles and add a 'ready' property to each
@@ -91,6 +91,10 @@
                     reloadBattles();
                 });
             };
+
+            $scope.$watch('active', function(newVal, oldVal) {
+                reloadBattles();
+            });
 
             // notify us of faction changes/loads
             var cb = $scope.$on('nbtFactionChanged', function (event, faction) {
