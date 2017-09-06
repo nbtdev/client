@@ -248,12 +248,14 @@
                 if (isAttacker) factionEffects = $scope.battle.attackerEffects;
                 else factionEffects = $scope.battle.defenderEffects;
 
-                factionEffects.forEach(function(e) {
-                    var effect = findEffectById(e.effect.id);
-                    if (effect) {
-                        effect.credits = e.credits;
-                    }
-                });
+                if (factionEffects) {
+                    factionEffects.forEach(function (e) {
+                        var effect = findEffectById(e.effect.id);
+                        if (effect) {
+                            effect.credits = e.credits;
+                        }
+                    });
+                }
             }
 
             function processBattle() {
@@ -263,8 +265,6 @@
                 $scope.stolenUnits = [];
                 $scope.stolenAmount = 0;
                 $scope.drop = null;
-
-                groupInstancesForTheft();
 
                 // set a convenience field to match the number of planets available
                 $scope.battle.sector.planetsInPlay = $scope.battle.sector.planets.length;
@@ -276,11 +276,21 @@
                 //      * 'Current' for the current drop
                 //      * positive numbers for upcoming drops (if known)
                 var factionIds = findInvolvedFactionIds($scope.battle);
-                var viewerIsAttacker = false;
+                $scope.battle.isAttacker = false;
                 if (arrayContains(factionIds.attackers, $scope.faction.id)) {
-                    viewerIsAttacker = true;
                     $scope.battle.isAttacker = true;
+
+                    groupInstancesForTheft();
                 }
+
+                $scope.battle.isWinner = false;
+                if ($scope.battle.isAttacker && $scope.battle.outcome === 'Attacker Victorious')
+                    $scope.battle.isWinner = true;
+                if (!$scope.battle.isAttacker && $scope.battle.outcome === 'Defender Victorious')
+                    $scope.battle.isWinner = true;
+
+                if (!$scope.battle.isWinner)
+                    $scope.battle.repairsOffered = null;
 
                 if ($scope.battle.type === 'Sector Assault') {
                     $scope.battle.attackerScore = $scope.battle.attackerPlanetCount;
@@ -291,21 +301,21 @@
                 }
 
                 // set the 'confirmed' flag
-                if (viewerIsAttacker && $scope.battle.attackerConfirm ||
-                    !viewerIsAttacker && $scope.battle.defenderConfirm) {
+                if ($scope.battle.isAttacker && $scope.battle.attackerConfirm ||
+                    !$scope.battle.isAttacker && $scope.battle.defenderConfirm) {
                     $scope.battle.confirmed = true;
                 }
 
-                if (viewerIsAttacker && $scope.battle.attackerLoggingComplete ||
-                    !viewerIsAttacker && $scope.battle.defenderLoggingComplete) {
+                if ($scope.battle.isAttacker && $scope.battle.attackerLoggingComplete ||
+                    !$scope.battle.isAttacker && $scope.battle.defenderLoggingComplete) {
                     $scope.battle.loggingComplete = true;
                 }
 
                 // if the battle status is "Completed", fetch raid effects list
                 if ($scope.battle.status === 'Completed') {
-                    $scope.raidEffects = [];
                     nbtBattle.fetchRaidEffects($scope.battle, nbtIdentity.get().token, function(aEffects) {
-                        processRaidEffects(aEffects._embedded.effects, viewerIsAttacker);
+                        $scope.raidEffects = [];
+                        processRaidEffects(aEffects._embedded.effects, $scope.battle.isAttacker);
                     });
                 }
 
@@ -355,7 +365,7 @@
                             drop.number = d + 1;
 
                         // annotate the drop results from the perspective of the viewer
-                        if (viewerIsAttacker) {
+                        if ($scope.battle.isAttacker) {
                             drop.myLosses = drop.attackerUnitsDestroyed;
                             drop.theirLosses = drop.defenderUnitsDestroyed;
                         } else {
@@ -642,13 +652,16 @@
                 }
 
                 $scope.drop.combatUnitInstances = $scope.usedUnits;
-                $scope.updating = true;
 
                 // if the user empties the field, it comes up with a zero-length string and the backend doesn't
                 // like that -- null it out in this case
                 if ($scope.drop.gameId && $scope.drop.gameId.length === 0)
                     $scope.drop.gameId = null;
 
+                if (!$scope.drop.gameId && $scope.drop.combatUnitInstances.length===0)
+                    return;
+
+                $scope.updating = true;
                 nbtBattle.logBattleDrop($scope.drop, nbtIdentity.get().token,
                     function(aData) {
                         checkBattleUpdate(aData);

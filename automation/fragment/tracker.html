@@ -220,7 +220,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Completed'">
+                    <div ng-show="battle._links.effects && battle.status!=='Confirmed'">
                         <div ng-show="raidEffects.length">
                             <div class="row">
                                 <div class="col-md-1 nbt-right-justified nbt-highlight nbt-bold">Credits</div>
@@ -235,7 +235,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed' && !(battle.repairsOffered || battle.repairsAccepted)" class="nbt-border-n nbt-border-s">
+                    <div ng-show="battle._links.effects && battle.status==='Confirmed'" class="nbt-border-n nbt-border-s">
                         <div class="row">
                             <!-- attacker's effect choices -->
                             <div class="col-md-6">
@@ -269,7 +269,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed' && !(battle.repairsOffered || battle.repairsAccepted)">
+                    <div ng-show="battle._links.effects && battle.status==='Confirmed'">
                         <div class="row" ng-show="battle.combatUnitTheft.instances">
                             <!-- available -->
                             <div class="col-md-4">
@@ -304,7 +304,7 @@
                         </div>
                     </div>
 
-                    <div ng-show="battle.status==='Confirmed' && battle.repairsOffered">
+                    <div ng-show="battle._links.repairs">
                         <div class="row">
                             <!-- available -->
                             <div class="col-md-4">
@@ -373,22 +373,18 @@
                                 ng-show="battle.status==='Forcedec'"
                                 ng-class="{'disabled': updating}"
                                 title="Log Drop">Log Drop</button>
-                        <button class="btn btn-primary"
-                                ng-click="spendCredits()"
-                                ng-show="battle.status==='Completed' && battle.type==='Sector Raid'"
-                                title="Step 1: Save or update your raid effect credit spend">Save/Update Credits</button>
                         <button class="btn"
                                 ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
-                                ng-click="confirmBattle()"
-                                ng-show="battle.status==='Completed'"
-                                title="Step 2: Confirm the current battle from your side; battle finalizing (including will begin when the opponent has also confirmed">Confirm Battle</button>
+                                ng-click="spendCredits()"
+                                ng-show="battle._links.confirm"
+                                title="Step 2: Save effects allocations and confirm ready for next step">Save And Confirm </button>
                         <button class="btn btn-primary"
                                 ng-click="commitEffects()"
-                                ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !(battle.repairsOffered || battle.repairsAccepted)"
+                                ng-show="battle._links.effects && battle.status==='Confirmed'"
                                 title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
                         <button class="btn btn-primary"
                                 ng-click="commitRepairs()"
-                                ng-show="battle.status==='Confirmed' && battle.repairsOffered"
+                                ng-show="battle._links.repairs"
                                 title="Commit your repair choices and proceed to final battle logging">Finish</button>
                         <button class="btn btn-primary"
                                 ng-click="finalizeBattle()"
@@ -403,7 +399,7 @@
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
                         <a class="ui-interactive"
-                           ng-show="battle.status==='Completed' && battle.type==='Sector Raid'"
+                           ng-show="battle._links.effects && battle.status!=='Confirmed'"
                            data-toggle="popover"
                            data-trigger="hover"
                            data-placement="auto"
@@ -412,7 +408,7 @@
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                         <a class="ui-interactive"
-                           ng-show="battle.status==='Confirmed' && battle.type==='Sector Raid' && !(battle.repairsOffered || battle.repairsAccepted)"
+                           ng-show="battle._links.effects && battle.status==='Confirmed'"
                            data-toggle="popover"
                            data-trigger="hover"
                            data-placement="auto"
@@ -421,7 +417,7 @@
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                         <a class="ui-interactive"
-                           ng-show="battle.status==='Confirmed' && battle.repairsOffered"
+                           ng-show="battle._links.repairs"
                            data-toggle="popover"
                            data-trigger="hover"
                            data-placement="auto"
