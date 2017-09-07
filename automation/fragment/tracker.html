@@ -1,3 +1,40 @@
+<div class="help-spend-credits" style="display: none">
+    <h5 class="nbt-h5">Spending Credits</h5>
+    <div class="nbt-rules-para">
+        On this page you will "spend" any credits you have earned in the battle. Here you are only allocating the credits
+        to one or more effects. if you are choosing an effect that requires further input (such as Combat Unit Theft),
+        that will occur in the next step after Confirm Battle. You may change (and save) your credit "spend" as often as
+        you like, up until the point that both opponents have pressed their respective "Confirm Battle" buttons.
+    </div>
+    <div class="nbt-rules-para">
+        <span class="nbt-bold">NOTE:</span> Both opponents must confirm the battle and their credit spend before either
+        opponent will be allowed to proceed to the next step(s)! This is the final "lock-step" stage in the battle
+        logging process.
+    </div>
+</div>
+
+<div class="help-commit-effects" style="display: none">
+    <h5 class="nbt-h5">Committing Effects</h5>
+    <div class="nbt-rules-para">
+        Some effects, such as Combat Unit Theft, require additional input from the contestant. On this page you will be
+        able to supply that input (such as which combat units you wish to steal, if any), and once you are finished
+        entering the additional data, you must press the Commit Effects button to make the changes official. You may
+        change your mind as often as you like on this page (and press the Commit Effects button as often as you like),
+        but once you leave this page, the effects you have chosen are made permanent.
+    </div>
+</div>
+
+<div class="help-commit-repairs" style="display: none">
+    <h5 class="nbt-h5">Repairing Combat Units</h5>
+    <div class="nbt-rules-para">
+        On this page you are offered the option to repair some of the combat units destroyed during the battle. Your
+        choices are based on the differential of credits earned versus your opponent; the larger the differential, the
+        greater the choice. You may choose any of the units offered for repair, or none; you are not required to make
+        repairs. Repairing a combat unit costs you 40% of your market list price for that unit, and this is deducted from
+        your faction's account at final battle logging.
+    </div>
+</div>
+
 <script src="/js/nbt/controller/tracker.js"></script>
 <div id="trackerModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="TrackerController as trackerController">
     <div class="modal-dialog modal-lg with-border">
@@ -8,7 +45,7 @@
             <div class="modal-body nbt-base nbt-modal-body">
                 <div class="container col-md-12">
                     <!-- the battle header -->
-                    <div class="row">
+                    <div class="row" ng-hide="battle.loggingComplete">
                         <div class="col-md-3 nbt-right-justified"><img data-ng-src="{{battle.attacker.logo._links.raw.href}}"></div>
                         <div class="col-md-6 nbt-centered">
                             <div class="container col-md-12">
@@ -54,131 +91,279 @@
                         <div class="col-md-3"><img data-ng-src="{{battle.sector.owner.logo._links.raw.href}}"></div>
                     </div>
 
-                    <!-- the drop ticker -->
+                    <div ng-hide="battle.status==='Confirmed'">
+                        <!-- header bar -->
+                        <div class="nbt-drop-tracker">
+                            <table class="nbt-tracker-table">
+                                <!-- header row is drop number, '-' if no drop, or 'Current' for the current drop -->
+                                <tr>
+                                    <th>Drop</th>
+                                    <th ng-repeat="drop in battle.drops">{{drop.number}}</th>
+                                </tr>
 
-                    <!-- header bar -->
-                    <div class="nbt-drop-tracker">
-                        <table class="nbt-tracker-table">
-                            <!-- header row is drop number, '-' if no drop, or 'Current' for the current drop -->
-                            <tr>
-                                <th>Drop</th>
-                                <th ng-repeat="drop in battle.drops">{{drop.number}}</th>
-                            </tr>
+                                <!-- second row is drop type, or blank if no drop -->
+                                <tr ng-show="battle.type==='Sector Assault'">
+                                    <td class="nbt-title-cell">Type</td>
+                                    <td ng-repeat="drop in battle.drops" class="nbt-header-cell-2 nbt-bold">{{drop.type}}</td>
+                                </tr>
 
-                            <!-- second row is drop type, or blank if no drop -->
-                            <tr ng-show="battle.type==='Sector Assault'">
-                                <td class="nbt-title-cell">Type</td>
-                                <td ng-repeat="drop in battle.drops" class="nbt-header-cell-2 nbt-bold">{{drop.type}}</td>
-                            </tr>
+                                <!-- third row is relative drop number, or 'Current' if it is the current drop -->
+                                <tr>
+                                    <td class="nbt-title-cell">Map</td>
+                                    <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mapName}}</td>
+                                </tr>
 
-                            <!-- third row is relative drop number, or 'Current' if it is the current drop -->
-                            <tr>
-                                <td class="nbt-title-cell">Map</td>
-                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mapName}}</td>
-                            </tr>
+                                <!-- fourth row is game mode, or '-' if no drop -->
+                                <tr>
+                                    <td class="nbt-title-cell">Mode</td>
+                                    <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mode}}</td>
+                                </tr>
 
-                            <!-- fourth row is game mode, or '-' if no drop -->
-                            <tr>
-                                <td class="nbt-title-cell">Mode</td>
-                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.mode}}</td>
-                            </tr>
+                                <!-- fifth row is drop tonnage/BV, or '-' if no drop -->
+                                <tr>
+                                    <td class="nbt-title-cell">{{battle.limitString}}</td>
+                                    <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.upperLimit}}</td>
+                                </tr>
 
-                            <!-- fifth row is drop tonnage/BV, or '-' if no drop -->
-                            <tr>
-                                <td class="nbt-title-cell">{{battle.limitString}}</td>
-                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.upperLimit}}</td>
-                            </tr>
+                                <!-- sixth row is drop result (from viewer's perspective), or '-' if no/current drop -->
+                                <tr>
+                                    <td class="nbt-title-cell">Result</td>
+                                    <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.result}}</td>
+                                </tr>
 
-                            <!-- sixth row is drop result (from viewer's perspective), or '-' if no/current drop -->
-                            <tr>
-                                <td class="nbt-title-cell">Result</td>
-                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.result}}</td>
-                            </tr>
+                                <!-- seventh row is destroyed count (from viewer's perspective), or '-' if no/current drop -->
+                                <tr>
+                                    <td class="nbt-title-cell">Losses</td>
+                                    <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.theirLosses}}-{{drop.myLosses}}</td>
+                                </tr>
+                            </table>
+                        </div>
 
-                            <!-- seventh row is destroyed count (from viewer's perspective), or '-' if no/current drop -->
-                            <tr>
-                                <td class="nbt-title-cell">Losses</td>
-                                <td ng-repeat="drop in battle.drops" ng-class="{'nbt-current-drop': drop.number==='Current'}">{{drop.theirLosses}}-{{drop.myLosses}}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- drop logging entry -->
-                    <div class="row">
-                        <!--<div class="col-md-4 nbt-right-justified">Match ID: </div>-->
-                        <!--<div class="col-md-3"><input type="text" size="20" ng-model="drop.gameId" placeholder="Match ID From Game"></div>-->
-                        <!--<div class="col-md-5">-->
+                        <!-- drop logging entry -->
+                        <div class="row">
+                            <!--<div class="col-md-4 nbt-right-justified">Match ID: </div>-->
+                            <!--<div class="col-md-3"><input type="text" size="20" ng-model="drop.gameId" placeholder="Match ID From Game"></div>-->
+                            <!--<div class="col-md-5">-->
                             <!--<button type="button"-->
-                                    <!--title="Log drop"-->
-                                    <!--class="btn btn-xs btn-primary"-->
-                                    <!--ng-click="logDrop()">-->
-                                <!--Submit Match ID-->
+                            <!--title="Log drop"-->
+                            <!--class="btn btn-xs btn-primary"-->
+                            <!--ng-click="logDrop()">-->
+                            <!--Submit Match ID-->
                             <!--</button>-->
-                        <!--</div>-->
-                        <div class="col-md-12 nbt-centered">
-                            <input ng-show="battle.outcome==='Pending'" ng-disabled="updating" type="text" size="20" ng-model="drop.gameId" placeholder="Match ID From Game">
+                            <!--</div>-->
+                            <div class="col-md-12 nbt-centered">
+                                <input ng-show="battle.outcome==='Pending'" ng-disabled="updating" type="text" size="20" ng-model="drop.gameId" placeholder="Match ID From Game">
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- alternate data entry -- available, used, destroyed -->
-                    <div class="row">
-                        <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
-                    </div>
-                    <div id="manualDropEntry" class="row collapse">
-                        <!-- available -->
-                        <div class="col-md-4">
-                            <h5 class="nbt-h5">Available</h5>
-                            <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
-                                <ul style="padding-left: 0">
-                                    <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
-                                        <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
-                                        <ul style="padding-left: 10px">
-                                            <li ng-repeat="summary in factionUnits.units"
-                                                ng-click="useUnit(summary)"
-                                                class="nbt-click-only nbt-hover"
-                                                style="list-style: none; cursor: pointer; padding-left: 10px"
-                                                ng-class="{'nbt-disabled': summary.count===0}"
-                                            >{{summary.name}}: {{summary.count}} </li>
+                        <!-- alternate data entry -- available, used, destroyed -->
+                        <div  ng-show="battle.status==='Forcedec'">
+                            <div class="row">
+                                <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
+                            </div>
+                            <div id="manualDropEntry" class="row collapse">
+                                <!-- available -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Available</h5>
+                                    <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="factionUnits in factionCombatUnits" style="list-style: none; margin-left: 10px">
+                                                <span class="nbt-bold nbt-highlight">{{factionUnits.name}}</span>
+                                                <ul style="padding-left: 10px">
+                                                    <li ng-repeat="summary in factionUnits.units"
+                                                        ng-click="useUnit(summary)"
+                                                        class="nbt-click-only nbt-hover"
+                                                        style="list-style: none; cursor: pointer; padding-left: 10px"
+                                                        ng-class="{'nbt-disabled': summary.count===0}"
+                                                    >{{summary.name}}: {{summary.count}} </li>
+                                                </ul>
+                                            </li>
                                         </ul>
-                                    </li>
-                                </ul>
+                                    </div>
+                                </div>
+
+                                <!-- used/taken -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Used</h5>
+                                    <div style="height: 240px; border: solid 1px #990000">
+                                        <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}} ({{drop.upperLimit-usedLimitAmount}} remaining)</div>
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="unit in usedUnits" style="list-style: none; padding-bottom: 5px">
+                                            <span ng-click="unuseUnit(unit)" style="cursor: pointer;">
+                                                <span class="nbt-highlight" style="padding-right: 10px">
+                                                {{unit.owner.shortName}}</span>{{unit.template.name}}
+                                            </span>
+                                                <button style="float: right; margin-right: 5px"
+                                                        class="btn btn-xs btn-primary"
+                                                        ng-click="destroyUnit(unit)"
+                                                        ng-show="!unit.destroyed"
+                                                        title="Mark Unit As Destroyed">Destroy</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- destroyed -->
+                                <div class="col-md-4">
+                                    <h5 class="nbt-h5">Destroyed</h5>
+                                    <div style="height: 240px; border: solid 1px #990000">
+                                        <ul style="padding-left: 0">
+                                            <li ng-repeat="unit in destroyedUnits"
+                                                class="nbt-hover"
+                                                style="list-style: none; cursor: pointer"
+                                                ng-click="undestroyUnit(unit)"
+                                            ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="battle._links.effects && battle.status!=='Confirmed'">
+                        <div ng-show="raidEffects.length">
+                            <div class="row">
+                                <div class="col-md-1 nbt-right-justified nbt-highlight nbt-bold">Credits</div>
+                                <div class="col-md-4 nbt-highlight nbt-bold">Effect</div>
+                                <div class="col-md-7 nbt-highlight nbt-bold">Description</div>
+                            </div>
+                            <div class="row nbt-hover" ng-repeat="effect in raidEffects">
+                                <div class="col-md-1 nbt-right-justified"><input type="number" min="0" ng-model="effect.credits" style="width: 90%; color: black"></div>
+                                <div class="col-md-4">{{effect.name}}</div>
+                                <div class="col-md-7">{{effect.description}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="battle._links.effects && battle.status==='Confirmed'" class="nbt-border-n nbt-border-s">
+                        <div class="row">
+                            <!-- attacker's effect choices -->
+                            <div class="col-md-6">
+                                <div class="nbt-bold nbt-highlight nbt-centered">Attacker Effects</div>
+                                <div class="container col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6 nbt-bold nbt-right-justified">Credits</div>
+                                        <div class="col-md-6 nbt-bold">Effect</div>
+                                    </div>
+                                    <div class="row" ng-repeat="effect in battle.attackerEffects">
+                                        <div class="col-md-6 nbt-right-justified">{{effect.credits}}</div>
+                                        <div class="col-md-6">{{effect.effect.name}}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- defender's effect choices -->
+                            <div class="col-md-6">
+                                <div class="nbt-bold nbt-highlight nbt-centered">Defender Effects</div>
+                                <div class="container col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6 nbt-bold nbt-right-justified">Credits</div>
+                                        <div class="col-md-6 nbt-bold">Effect</div>
+                                    </div>
+                                    <div class="row" ng-repeat="effect in battle.defenderEffects">
+                                        <div class="col-md-6 nbt-right-justified">{{effect.credits}}</div>
+                                        <div class="col-md-6">{{effect.effect.name}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="battle._links.effects && battle.status==='Confirmed'">
+                        <div class="row" ng-show="battle.combatUnitTheft.instances">
+                            <!-- available -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Available</h5>
+                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="summary in battle.theftInstances"
+                                            ng-click="stealUnit(summary)"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            style="list-style: none; cursor: pointer; padding-left: 10px"
+                                            ng-class="{'nbt-disabled': summary.count===0}"
+                                        >{{summary.name}}: {{summary.count}} </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- used/taken -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Stolen</h5>
+                                <div style="height: 240px; border: solid 1px #990000; overflow-y: auto">
+                                    <div class="nbt-bold" ng-class="{'nbt-error': stolenAmount>battle.theftLimit}">{{battle.limitString}}: {{stolenAmount}} ({{battle.theftLimit - stolenAmount}} remaining)</div>
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in stolenUnits"
+                                            style="cursor: pointer; list-style: none; padding-bottom: 5px"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            ng-click="unstealUnit(unit)">
+                                            {{unit.template.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="battle._links.repairs">
+                        <div class="row">
+                            <!-- available -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Repairs Offered</h5>
+                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in battle.repairsOffered"
+                                            ng-click="repairUnit(unit)"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            style="list-style: none; cursor: pointer; padding-left: 10px"
+                                        >{{unit.template.name}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- used/taken -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Repairs Accepted</h5>
+                                <div style="height: 240px; border: solid 1px #990000; overflow-y: auto">
+                                    <ul style="padding-left: 0">
+                                        <li ng-repeat="unit in battle.repairsAccepted"
+                                            style="cursor: pointer; list-style: none; padding-bottom: 5px"
+                                            class="nbt-click-only nbt-hover ui-interactive"
+                                            ng-click="unrepairUnit(unit)">
+                                            {{unit.template.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="battle.loggingComplete">
+                        <div ng-show="battle.isAttacker && !battle.summary" class="nbt-centered">
+                            <div class="nbt-centered nbt-font-xxxl nbt-error">STOP!</div>
+                            <div class="nbt-para" style="width: 60%; display: inline-block">
+                                You need to pull your forces off of the planet(s) in
+                                this sector! Use the normal tools on the starmap to move your forces from the planet to
+                                their dropships, and then dock the dropships to their jumpships. Anything you cannot fit
+                                into your dropships must be left behind and will become the property of the defender!
+                                Any theft you performed and repairs you made have been transferred to your faction's
+                                ownership, and moved to the planet where you have the most dropships available (if they
+                                were not already on that planet).
+                            </div>
+                            <div class="nbt-para" style="width: 60%; display: inline-block">
+                                When you have completed that step, come back to this page (you can get back here from the
+                                Battles list in your admin tools) and then click the Finalize button below, which will
+                                update the battle, release the sector from lockdown and pay out salvage to (and collect
+                                repair costs from) the victor.
                             </div>
                         </div>
 
-                        <!-- used/taken -->
-                        <div class="col-md-4">
-                            <h5 class="nbt-h5">Used</h5>
-                            <div style="height: 240px; border: solid 1px #990000">
-                                <div class="nbt-bold" ng-class="{'nbt-error': usedLimitAmount>drop.upperLimit}">{{battle.limitString}}: {{usedLimitAmount}} ({{drop.upperLimit-usedLimitAmount}} remaining)</div>
-                                <ul style="padding-left: 0">
-                                    <li ng-repeat="unit in usedUnits" style="list-style: none; padding-bottom: 5px">
-                                        <span ng-click="unuseUnit(unit)" style="cursor: pointer;">
-                                            <span class="nbt-highlight" style="padding-right: 10px">
-                                            {{unit.owner.shortName}}</span>{{unit.template.name}}
-                                        </span>
-                                        <button style="float: right; margin-right: 5px"
-                                                class="btn btn-xs btn-primary"
-                                                ng-click="destroyUnit(unit)"
-                                                ng-show="!unit.destroyed"
-                                                title="Mark Unit As Destroyed">Destroy</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <div ng-show="battle.summary">
 
-                        <!-- destroyed -->
-                        <div class="col-md-4">
-                            <h5 class="nbt-h5">Destroyed</h5>
-                            <div style="height: 240px; border: solid 1px #990000">
-                                <ul style="padding-left: 0">
-                                    <li ng-repeat="unit in destroyedUnits"
-                                        class="nbt-hover"
-                                        style="list-style: none; cursor: pointer"
-                                        ng-click="undestroyUnit(unit)"
-                                    ><span class="nbt-highlight" style="padding-right: 10px">{{unit.owner.shortName}}</span>{{unit.template.name}}</li>
-                                </ul>
-                            </div>
                         </div>
+                    </div>
+
+                    <div ng-show="battle.status==='Verified'">
+
                     </div>
 
                     <!-- button(s) to manage the battle manually -->
@@ -188,13 +373,77 @@
                                 ng-show="battle.status==='Forcedec'"
                                 ng-class="{'disabled': updating}"
                                 title="Log Drop">Log Drop</button>
+                        <button class="btn"
+                                ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
+                                ng-click="spendCredits()"
+                                ng-show="battle._links.confirm"
+                                title="Step 2: Save effects allocations and confirm ready for next step">Save And Confirm </button>
                         <button class="btn btn-primary"
-                                ng-click="confirmBattle()"
-                                ng-show="battle.status==='Completed'"
-                                title="Confirm the current battle and begin the post-battle logging process">Confirm Results</button>
+                                ng-click="commitEffects()"
+                                ng-show="battle._links.effects && battle.status==='Confirmed'"
+                                title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
                         <button class="btn btn-primary"
+                                ng-click="commitRepairs()"
+                                ng-show="battle._links.repairs"
+                                title="Commit your repair choices and proceed to final battle logging">Finish</button>
+                        <button class="btn btn-primary"
+                                ng-click="finalizeBattle()"
+                                ng-show="battle.status==='Confirmed' && battle.loggingComplete"
+                                title="Finalize the battle logging process">Finalize</button>
+                        <button class="btn btn-primary"
+                                ng-show="battle.status==='Verified'"
+                                data-dismiss="modal"
+                                title="Close this dialog">Close</button>
+                        <button class="btn btn-primary"
+                                ng-hide="battle.repairsOffered"
                                 ng-click="reloadBattle()"
                                 title="Reload the current battle">Refresh</button>
+                        <a class="ui-interactive"
+                           ng-show="battle._links.effects && battle.status!=='Confirmed'"
+                           data-toggle="popover"
+                           data-trigger="hover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-contentref=".help-spend-credits">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                        <a class="ui-interactive"
+                           ng-show="battle._links.effects && battle.status==='Confirmed'"
+                           data-toggle="popover"
+                           data-trigger="hover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-contentref=".help-commit-effects">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                        <a class="ui-interactive"
+                           ng-show="battle._links.repairs"
+                           data-toggle="popover"
+                           data-trigger="hover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-contentref=".help-commit-repairs">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                    </div>
+                    <div class="row" ng-show="gameResolutionIssues">
+                        <div class="col-md-12 nbt-centered">
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.unresolvedCombatUnitIssues"
+                                 class="nbt-error">
+                                {{player.issue}} ({{player.Username}}, {{player.unitDesignation}})
+                            </div>
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.unresolvedPlayerIssues"
+                                 class="nbt-error">
+                                {{player.issue}}
+                            </div>
+                            <div style="display: inline-block"
+                                 ng-repeat="player in gameResolutionIssues.combatUnitNotFoundIssues"
+                                 class="nbt-error">
+                                {{player.issue}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

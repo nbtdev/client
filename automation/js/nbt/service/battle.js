@@ -50,13 +50,31 @@ var _BattleService = (function() {
     };
 
     // load the list of sector assaults for a faction
-    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aToken, aCallback) {
+    BattleService.prototype.fetchBattlesForFaction = function (aFaction, aActive, aToken, aCallback) {
         if (aFaction._links.battles) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
-                url: aFaction._links.battles.href,
+                url: aFaction._links.battles.href + "?active=" + aActive,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // load all sector assaults in the league
+    BattleService.prototype.fetchBattlesForLeague = function (aLeague, aActive, aToken, aCallback) {
+        if (aLeague._links.battles) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aLeague._links.battles.href + "?active=" + aActive,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
@@ -88,7 +106,94 @@ var _BattleService = (function() {
         }
     };
 
-    // load the list of sector assaults for a faction
+    // load the list of potential raid effects
+    BattleService.prototype.fetchRaidEffects = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // load the list of potential raid effects
+    BattleService.prototype.spendCredits = function (aBattle, aEffects, aToken, aCallback, aFailback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                data: aEffects,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
+    // load the list of potential raid effects
+    BattleService.prototype.commitEffects = function (aBattle, aTheft, aToken, aCallback, aFailback) {
+        if (aBattle._links.effects) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.effects.href,
+                data: aTheft,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
+    // load the list of potential raid effects
+    BattleService.prototype.commitRepairs = function (aBattle, aToken, aCallback, aFailback) {
+        if (aBattle._links.repairs) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.repairs.href,
+                data: aBattle.repairsAccepted,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
+    // toggle this faction's 'ready' state
     BattleService.prototype.toggleBattleReady = function (aBattle, aToken, aCallback) {
         if (aBattle._links.ready) {
             var hdr = new Headers(Header.TOKEN, aToken);
@@ -96,6 +201,42 @@ var _BattleService = (function() {
             http({
                 method: 'PUT', // TODO: GET FROM LINKS!
                 url: aBattle._links.ready.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // reset the battle back to the beginning
+    BattleService.prototype.resetBattle = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.reset) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.reset.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // toggle this faction's 'confirmed' state
+    BattleService.prototype.toggleBattleConfirm = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.confirm) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.confirm.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
@@ -123,6 +264,28 @@ var _BattleService = (function() {
 
                     // post event to any subscribers
                     rootScope.$broadcast('nbtBattleChanged', aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
+    // finalize the battle
+    BattleService.prototype.finalizeBattle = function (aBattle, aToken, aCallback, aFailCb) {
+        if (aBattle._links.finalize) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aBattle._links.finalize.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
                 },
                 function (aErr) {
                     if (aFailCb)
