@@ -747,6 +747,22 @@ input[type=password] {
     border-top: solid 1px;
 }
 
+.nbt-border {
+    border:  solid 1px #660000;
+}
+
+ul.nbt-tree {
+    padding-left: 8px;
+}
+
+.nbt-tree ul {
+    padding-left: 20px;
+}
+
+.nbt-tree li {
+    list-style: none;
+}
+
 @keyframes success-anim {
     0% { background-color: green; }
     100% { background-color: black; }

@@ -141,6 +141,24 @@ var _TransportService = (function() {
         }
     };
 
+    // fetch detailed jumpship information including docked dropships
+    TransportService.prototype.fetchJumpshipDetail = function (aJumpship, aToken, aCallback) {
+        if (aJumpship._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aJumpship._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
     // update jumpship data -- service will limit what can actually be edited by calling user, so send whatever we like
     TransportService.prototype.updateJumpship = function (aJumpship, aToken, aSuccessCb, aFailCb) {
         if (aJumpship._links.self) {
