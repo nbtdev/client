@@ -28,25 +28,7 @@ var _Battle = (function() {
     }
 
     Battle.prototype.getType = function() {
-        if (mBattleObj) {
-            // TODO: i18n
-            switch(mBattleObj.type) {
-                case 'TrespassDispute' : return 'TRESPASS DISPUTE';
-                case 'Reconnaissance' : return 'RECONNAISSANCE';
-                case 'RaidMechTheft' : return 'MECH THEFT RAID';
-                case 'RaidIndustryTheft' : return 'INDUSTRY THEFT RAID';
-                case 'RaidIndustryDestroy' : return 'INDUSTRY DESTRUCTION RAID';
-                case 'RaidFactoryDisrupt' : return 'FACTORY DISRUPTION RAID';
-                case 'RaidFactoryDestroy' : return 'FACTORY DESTRUCTION RAID';
-                case 'GuerrillaRaid' : return 'GUERRILLA RAID';
-                case 'PlanetaryAssault' : return 'PLANETARY ASSAULT';
-                case 'SectorRaid' : return 'SECTOR RAID';
-                case 'SectorAssault' : return 'SECTOR ASSAULT';
-                default: return mBattle.type;
-            }
-        }
-
-        return 'N/A';
+        return mBattleObj.type;
     };
 
     Battle.prototype.getId = function() {

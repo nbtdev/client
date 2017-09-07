@@ -12,13 +12,6 @@
         <div>ID: {{battleId}}</div>
         <div>Attacker: {{battleAttacker}}</div>
         <div>Type: {{battleType}}</div>
-        <div>Launched: {{battleLaunched}}</div>
+        <div>Launched: {{battleLaunched|date:'short'}}</div>
     </div>
-    <div ng-show="chargeStation">
-        <b>Has Charge Station</b>
-    </div>
-    <div ng-show="factory">
-        <div><b>Factory/Factories:</b></div>
-    </div>
-    <!--<div ng-show="description"><b>Description:</b>&nbsp;<span ng-bind-html="description"></span></div>-->
 </div>
