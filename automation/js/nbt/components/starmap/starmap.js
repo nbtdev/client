@@ -1184,9 +1184,8 @@
 
                 var attacker = battleData.getAttacker();
                 $scope.battleAttacker = attacker.name;
-
-                $scope.battleType = 'Sector Assault';
-                $scope.battleLaunched = battleData.getAttackDate().toString();
+                $scope.battleType = battleData.getType();
+                $scope.battleLaunched = battleData.getAttackDate();
             };
 
             this.updatePlanet = function(p) {
