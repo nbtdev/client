@@ -47,15 +47,21 @@
             });
 
             function reloadBattles() {
+                $scope.battles = null;
+
                 if ($scope.all) {
                     nbtBattle.fetchBattlesForLeague($scope.league, $scope.active, nbtIdentity.get().token, function(aData) {
-                        $scope.battles = aData._embedded.sectorBattles;
-                        processBattles();
+                        if (aData._embedded) {
+                            $scope.battles = aData._embedded.sectorBattles;
+                            processBattles();
+                        }
                     });
                 } else {
                     nbtBattle.fetchBattlesForFaction($scope.faction, $scope.active, nbtIdentity.get().token, function(aData) {
-                        $scope.battles = aData._embedded.sectorBattles;
-                        processBattles();
+                        if (aData._embedded) {
+                            $scope.battles = aData._embedded.sectorBattles;
+                            processBattles();
+                        }
                     });
                 }
             }
