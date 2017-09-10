@@ -362,6 +362,21 @@
                         </div>
                     </div>
 
+                    <div class="nbt-para" ng-show="battle._links.finalize && !battle.isAttacker">
+                        Defender logging is complete, you may close this dialog now.
+                    </div>
+
+                    <div class="nbt-para" ng-show="battle.defenderEffectsComplete && !battle.defenderLoggingComplete">
+                        As battle victor, you may have combat unit repairs offered to you. Currently the battle reporting
+                        is waiting for your opponent to perform secondary choices on their effects. When they have
+                        completed that step, you will be able to proceed to the repairs screen and the battle finalize step.
+                        You may close this window and come back to this battle at any time to continue the process.
+                    </div>
+
+                    <div ng-show="battle._links.confirm && !battle.confirmed">
+                        We cannot proceed until the opponent confirms their effects selection; you may refresh this page
+                        until they do, or leave this page and continue with the next step once they have confirmed.
+                    </div>
                     <div ng-show="battle.status==='Verified'">
 
                     </div>
@@ -376,27 +391,27 @@
                         <button class="btn"
                                 ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
                                 ng-click="spendCredits()"
-                                ng-show="battle._links.confirm"
-                                title="Step 2: Save effects allocations and confirm ready for next step">Save And Confirm </button>
+                                ng-show="battle._links.confirm && !battle.confirmed"
+                                title="Step 2: Save effects allocations and confirm ready for next step">Save And Confirm</button>
                         <button class="btn btn-primary"
                                 ng-click="commitEffects()"
                                 ng-show="battle._links.effects && battle.status==='Confirmed'"
-                                title="Commit your theft, destruction, and espionage effect and move to the next step">Commit Effects</button>
+                                title="Commit your theft, destruction, and espionage effect and move to the next step">Save and Continue</button>
                         <button class="btn btn-primary"
                                 ng-click="commitRepairs()"
                                 ng-show="battle._links.repairs"
                                 title="Commit your repair choices and proceed to final battle logging">Finish</button>
                         <button class="btn btn-primary"
                                 ng-click="finalizeBattle()"
-                                ng-show="battle.status==='Confirmed' && battle.loggingComplete"
+                                ng-show="battle.status==='Confirmed' && battle.loggingComplete && battle.isAttacker"
                                 title="Finalize the battle logging process">Finalize</button>
                         <button class="btn btn-primary"
                                 ng-show="battle.status==='Verified'"
                                 data-dismiss="modal"
                                 title="Close this dialog">Close</button>
                         <button class="btn btn-primary"
-                                ng-hide="battle.repairsOffered"
                                 ng-click="reloadBattle()"
+                                ng-hide="battle.status==='Verified'"
                                 title="Reload the current battle">Refresh</button>
                         <a class="ui-interactive"
                            ng-show="battle._links.effects && battle.status!=='Confirmed'"

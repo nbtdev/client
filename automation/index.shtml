@@ -120,6 +120,7 @@
     <!--#include virtual="/fragment/battlePlanetSelect.html" -->
     <!--#include virtual="/fragment/tracker.html" -->
     <!--#include virtual="/fragment/roster.html" -->
+    <!--#include virtual="/fragment/modeless/planets.html" -->
     <!--#include virtual="/fragment/modeless/jumpships.html" -->
     <!--#include virtual="/fragment/modeless/dropships.html" -->
     <!--#include virtual="/fragment/modeless/ledger.html" -->

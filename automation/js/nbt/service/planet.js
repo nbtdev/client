@@ -187,6 +187,24 @@ var _PlanetService = (function() {
         rootScope.$broadcast('nbtPlanetsLoaded', aLeagueId, mPlanets[aLeagueId].planetGroups, mColors[aLeagueId].mapColors);
     };
 
+    PlanetService.prototype.fetchPlanet = function (aPlanet, aToken, aCallback) {
+        if (aPlanet && aPlanet._links.self) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aPlanet._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) {
+                        aCallback(aResp.data);
+                    }
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.fetchPlanetDetail = function (aPlanet, aToken, aCallback) {
         if (aPlanet && aPlanet._links.brief) {
             var hdr = new Headers(Header.TOKEN, aToken);
@@ -234,7 +252,7 @@ var _PlanetService = (function() {
                 headers: hdr.get()
             }).then(
                 function (aResp) {
-                    if (aCallback)
+                    if (aCallback && aResp.data._embedded)
                         aCallback(aResp.data._embedded.combatUnitInstances);
                 }
             );

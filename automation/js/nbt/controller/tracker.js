@@ -700,8 +700,12 @@
             };
 
             $scope.commitRepairs = function() {
+                if (!$scope.battle.repairsAccepted)
+                    $scope.battle.repairsAccepted = [];
+
                 nbtBattle.commitRepairs($scope.battle, nbtIdentity.get().token, function(aData) {
-                    $scope.battleSummary = aData;
+                    $scope.battle = aData;
+                    processBattle();
                 }, function (aErr) {
                     setOperationStatus(aErr.message, false);
                 });
