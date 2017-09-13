@@ -59,6 +59,9 @@
             function reloadFactionFactories() {
                 $scope.factionFactories = null;
 
+                if (!$scope.faction)
+                    return;
+
                 nbtFaction.fetchFactories($scope.faction, nbtIdentity.get().token, function(aFactories) {
                     $timeout(function() {
                         $scope.factionFactories = aFactories._embedded.factories;
