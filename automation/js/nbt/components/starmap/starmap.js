@@ -64,14 +64,47 @@
             this.width = 0;
             this.height = 0;
 
-            $scope.showCapitalPlanets = true;
-            $scope.showChargeStations = true;
-            $scope.showFactories = true;
-            $scope.showBattles = true;
-            $scope.showJumpships = true;
-            $scope.showCombatUnits = true;
-            $scope.showDropships = true;
-            $scope.displaySectorBounds = false;
+            function saveMapPreferences() {
+                var settings = {
+                    showCapitalPlanets: $scope.showCapitalPlanets,
+                    showChargeStations: $scope.showChargeStations,
+                    showFactories: $scope.showFactories,
+                    showBattles: $scope.showBattles,
+                    showJumpships: $scope.showJumpships,
+                    showCombatUnits: $scope.showCombatUnits,
+                    showDropships: $scope.showDropships,
+                    displaySectorBounds: $scope.displaySectorBounds
+                };
+
+                localStorage.setItem("mapPreferences", JSON.stringify(settings));
+            }
+
+            function restoreMapPreferences() {
+                var entry = localStorage.getItem("mapPreferences");
+                if (entry) {
+                    var settings = JSON.parse(entry);
+                    $scope.showCapitalPlanets = settings.showCapitalPlanets ? settings.showCapitalPlanets : true;
+                    $scope.showChargeStations = settings.showChargeStations ? settings.showChargeStations : true;
+                    $scope.showFactories = settings.showFactories ? settings.showFactories : true;
+                    $scope.showBattles = settings.showBattles ? settings.showBattles : true;
+                    $scope.showJumpships = settings.showJumpships ? settings.showJumpships : true;
+                    $scope.showCombatUnits = settings.showCombatUnits ? settings.showCombatUnits : true;
+                    $scope.showDropships = settings.showDropships ? settings.showDropships : true;
+                    $scope.displaySectorBounds = settings.displaySectorBounds ? settings.displaySectorBounds : false;
+                } else {
+                    $scope.showCapitalPlanets = true;
+                    $scope.showChargeStations = true;
+                    $scope.showFactories = true;
+                    $scope.showBattles = true;
+                    $scope.showJumpships = true;
+                    $scope.showCombatUnits = true;
+                    $scope.showDropships = true;
+                    $scope.displaySectorBounds = false;
+                    saveMapPreferences();
+                }
+            }
+
+            restoreMapPreferences();
 
             var updateMapColors = function(aMapColorData) {
                 self.mapColors = aMapColorData;
@@ -700,41 +733,49 @@
             $scope.$watch('showCapitalPlanets', function(newValue, oldValue) {
                 showRings(self.capitalPlanetRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showChargeStations', function(newValue, oldValue) {
                 showRings(self.chargeStationRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showFactories', function(newValue, oldValue) {
                 showRings(self.factoryRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showBattles', function(newValue, oldValue) {
                 showRings(self.battleRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showDropships', function(newValue, oldValue) {
                 showRings(self.dropshipRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showJumpships', function(newValue, oldValue) {
                 showRings(self.jumpshipRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('showCombatUnits', function(newValue, oldValue) {
                 showRings(self.combatUnitRings, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             $scope.$watch('displaySectorBounds', function(newValue, oldValue) {
                 showSectorBounds(self.sectorBounds, newValue);
                 redraw();
+                saveMapPreferences();
             });
 
             this.onPlanetSearch = function(position) {
