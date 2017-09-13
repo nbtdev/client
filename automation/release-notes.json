@@ -1,5 +1,31 @@
 [
   {
+    "date": "13 Sep 2017 (v1.0.4)",
+    "changes": {
+      "Rules": [
+        "Battle reinforcement period extended to 24 hours from 18 hours"
+      ],
+      "Features": [
+        "Battle Alert system (opt-in email and notifications) for battles launched",
+        "First pass on faction-level asset summary (industry, combat units, drosphips, jumpships)",
+        "[Admin] Reset battles to pre-first-drop state"
+      ],
+      "Bugfixes": [
+        "(#139) Could send account into overdraft with factory purchase",
+        "(#138) Can attack own faction",
+        "(#147) Pass-through jumps to unassigned planets were not working",
+        "(#142) Planet popup does not show battle info",
+        "Inactive/active battle filter toggle was not working"
+      ],
+      "Enhancements": [
+        "Sort ledger in descending order by date",
+        "Added dropship purchases and dropship production",
+        "Save/restore Map Tools settings (including sector-boundary-view state)"
+      ]
+    }
+  },
+
+  {
     "date": "3 Sep 2017 (v1.0.3)",
     "changes": {
       "Features": [
