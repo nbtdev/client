@@ -215,12 +215,6 @@
                             self.invalidJumpships.push(js);
                             jumpshipsToRemove[js.id] = js;
                         }
-
-                        if (js.csChargesRemaining < csHops) {
-                            js.reason = js.csChargesRemaining + ' CS jumps available';
-                            self.invalidJumpships.push(js);
-                            jumpshipsToRemove[js.id] = js;
-                        }
                     }
 
                     // remove all invalid jumpships from the jumpships list
