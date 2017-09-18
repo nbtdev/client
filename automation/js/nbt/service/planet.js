@@ -316,6 +316,26 @@ var _PlanetService = (function() {
         }
     };
 
+    PlanetService.prototype.investIndustry = function (aPlanet, aAmount, aToken, aCallback, aFail) {
+        if (aPlanet && aPlanet._links.industry) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'PUT', // TODO: GET FROM LINKS!
+                url: aPlanet._links.industry.href,
+                data: aAmount,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback) aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFail) aFail(aErr.data);
+                }
+            );
+        }
+    };
+
     PlanetService.prototype.deleteFactory = function (aFactory, aToken, aCallback, aFail) {
         if (aFactory && aFactory._links.self) {
             var hdr = new Headers(Header.TOKEN, aToken);

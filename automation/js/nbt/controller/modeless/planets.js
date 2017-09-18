@@ -28,6 +28,10 @@
             $scope.planets = null;
             $scope.identity = null;
 
+            function setOperationStatus(message, success) {
+                setStatusWithTimeout($scope, $timeout, message, success, 5000);
+            }
+
             function reloadPlanets() {
                 nbtFaction.fetchPlanets($scope.faction, nbtIdentity.get().token, function(aPlanets) {
                     $scope.planets = aPlanets._embedded.planets;
@@ -114,6 +118,17 @@
 
             $scope.onBack = function() {
                 $scope.planet = null;
+            };
+
+            $scope.onPurchase = function(planet) {
+                nbtPlanet.investIndustry(planet, $scope.industryPurchase, nbtIdentity.get().token,
+                    function(aData) {
+                        setOperationStatus("Upgrade Request Successful", true);
+                    },
+                    function(aErr) {
+                        setOperationStatus("Upgrade Request Failed: " + aErr.message, false);
+                    }
+                )
             };
 
             // TODO: don't tie this to a specific dialog...

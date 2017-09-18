@@ -28,6 +28,17 @@
     </div>
 </div>
 
+<div class="help-planets-invest-industry" style="display: none">
+    <h5 class="nbt-h5">Investing in Industry</h5>
+    <div class="nbt-rules-para">
+        You may increase your planet's industry by investing additional funds. The cost per c-bill
+        increase is shown to the left, and varies daily between 5 and 13 c-bills per c-bill of increase. For example,
+        if the current cost factor were 8x and you wanted to increase your planet's industry by 100,000,000 c-bills,
+        it would cost you 800,000,000 c-bills. This cost is paid up front; the industry increase will show up 72 hours
+        after the increase was purchased.
+    </div>
+</div>
+
 <div id="planetsDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetsController" ng-cloak>
     <!-- dialog header -->
     <h5 class="nbt-h5 header">
@@ -137,7 +148,22 @@
             <div class="row">
                 <div class="col-md-4">
                     <span class="nbt-bold nbt-highlight">Industry:</span>
-                    {{planet.industry|number}}
+                    {{(planet.industry || 0) | number}}
+                    <div>
+                        <a class="ui-interactive" data-toggle="collapse" data-target="#investIndustry">Purchase Industry</a>&nbsp;(Current Rate: 5x)&nbsp;
+                        <a class="ui-interactive"
+                           data-toggle="popover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-trigger="hover"
+                           data-contentref=".help-planets-invest-industry">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                        <div id="investIndustry" class="collapse">
+                            <input type="number" min="0" max="500000000" step="10000000" ng-model="industryPurchase" style="color: black">&nbsp;<button class="btn btn-primary btn-xs" ng-click="onPurchase(planet)">Invest</button>
+                        </div>
+                        <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <span class="nbt-bold nbt-highlight">Charge Station:</span>
