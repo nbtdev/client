@@ -302,6 +302,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row" ng-show="battle.combatUnitTheft.classes">
+                            <!-- classes to choose from -->
+                            <div class="col-md-4">
+                                <h5 class="nbt-h5">Combat Unit Classes</h5>
+                                <div style="height: 240px; overflow-y: auto; border: solid 1px #990000; padding: 8px">
+                                    <div ng-repeat="class in battle.combatUnitTheft.classes">
+                                        <input type="radio" ng-model="battle.combatUnitTheft.selectedClass" value="{{class}}">{{class}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div ng-show="battle._links.repairs">
