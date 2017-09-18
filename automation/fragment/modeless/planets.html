@@ -1,0 +1,265 @@
+<div class="help-planets-name" style="display: none">
+    <h5 class="nbt-h5">Planet</h5>
+    <div class="nbt-rules-para">
+        Click on the planet name to highlight and center the starmap on the planet. Click on the right-arrow to take you
+        to the detail page for the planet where you can view detailed planet information, including combat units, dropships
+        and jumpships present.
+    </div>
+</div>
+
+<div class="help-planets-combat-units" style="display: none">
+    <h5 class="nbt-h5">Combat Units</h5>
+    <div class="nbt-rules-para">
+        This is the number of combat units on the planet surface (not loaded onto dropships).
+    </div>
+</div>
+
+<div class="help-planets-dropships" style="display: none">
+    <h5 class="nbt-h5">Dropships</h5>
+    <div class="nbt-rules-para">
+        This is the number of dropships on the planet surface (not docked to jumpships).
+    </div>
+</div>
+
+<div class="help-planets-jumpships" style="display: none">
+    <h5 class="nbt-h5">Jumpships</h5>
+    <div class="nbt-rules-para">
+        This is the number of jumpships orbiting the planet.
+    </div>
+</div>
+
+<div class="help-planets-invest-industry" style="display: none">
+    <h5 class="nbt-h5">Investing in Industry</h5>
+    <div class="nbt-rules-para">
+        You may increase your planet's industry by investing additional funds. The cost per c-bill
+        increase is shown to the left, and varies daily between 5 and 13 c-bills per c-bill of increase. For example,
+        if the current cost factor were 8x and you wanted to increase your planet's industry by 100,000,000 c-bills,
+        it would cost you 800,000,000 c-bills. This cost is paid up front; the industry increase will show up 72 hours
+        after the increase was purchased.
+    </div>
+</div>
+
+<div id="planetsDialog" class="nbt-modeless" ng-show="show" ng-controller="PlanetsController" ng-cloak>
+    <!-- dialog header -->
+    <h5 class="nbt-h5 header">
+        <span>Planets - {{faction.displayName}}</span>
+        <span id="cmdClosePlanetsDialog" style="float: right; cursor: pointer">&#10006;</span>
+    </h5>
+
+    <!-- summary view -->
+    <div ng-hide="planet" class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div class="container col-md-12">
+            <!-- header row 1 -->
+            <div class="row nbt-bold nbt-highlight">
+                <div class="col-md-2">
+                    Name
+                    <a class="ui-interactive"
+                       data-toggle="popover"
+                       data-placement="auto"
+                       data-container="body"
+                       data-trigger="hover"
+                       data-contentref=".help-planets-name">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-2">Industry</div>
+                <div class="col-md-2">
+                    Combat Units
+                    <a class="ui-interactive"
+                       data-toggle="popover"
+                       data-placement="auto"
+                       data-container="body"
+                       data-trigger="hover"
+                       data-contentref=".help-planets-combat-units">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    Jumpships
+                    <a class="ui-interactive"
+                       data-toggle="popover"
+                       data-placement="auto"
+                       data-container="body"
+                       data-trigger="hover"
+                       data-contentref=".help-planets-jumpships">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-2">
+                    Dropships
+                    <a class="ui-interactive"
+                       data-toggle="popover"
+                       data-placement="auto"
+                       data-container="body"
+                       data-trigger="hover"
+                       data-contentref=".help-planets-dropships">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
+                <div class="col-md-1">CS</div>
+                <div class="col-md-1">Factory</div>
+            </div>
+            <!-- header row 2 -->
+            <div class="row nbt-bold">
+                <div class="col-md-2">{{planetTotal}}</div>
+                <div class="col-md-2">{{industryTotal | number}}</div>
+                <div class="col-md-2">{{combatUnitTotal | number}}</div>
+                <div class="col-md-2">{{jumpshipTotal}}</div>
+                <div class="col-md-2">{{dropshipTotal}}</div>
+                <div class="col-md-1">{{chargeStationTotal}}</div>
+                <div class="col-md-1">{{factoryPlanetTotal}}</div>
+            </div>
+
+            <hr style="margin: 5px">
+
+            <div style="overflow-y: auto">
+                <div class="row nbt-hover" ng-repeat="planet in planets" style="overflow-y: auto">
+                    <div class="col-md-2">
+                        <a class="ui-interactive" ng-click="onPlanetClick(planet)">{{planet.name}}</a>
+                        <span class="ui-interactive" ng-click="onDetail(planet)" style="float: right"><img src="../../images/forward.png" height="16" width="16"/></span>
+                    </div>
+                    <div class="col-md-2">{{planet.industry | number}}</div>
+                    <div class="col-md-2">{{planet.combatUnitCount || 0}}</div>
+                    <div class="col-md-2">{{planet.dropshipCount || 0}}</div>
+                    <div class="col-md-2">{{planet.jumpshipCount || 0}}</div>
+                    <div class="col-md-1">{{planet.chargeStation ? 'Yes' : ''}}</div>
+                    <div class="col-md-1">{{planet.factory ? 'Yes' : ''}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- detail view -->
+    <div ng-show="planet" class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div class="container col-md-12">
+            <div class="row nbt-centered">
+                <div class="col-md-12">
+                    <span style="float: left">
+                        <a class="ui-interactive" ng-click="onBack()">
+                            <img class="nbt-pseudo-button" src="../images/back.png"/>
+                        </a>
+                    </span>
+                    <h4 style="display: inline-block">{{planet.name}} Summary</h4>
+                </div>
+            </div>
+
+            <hr style="margin: 7px 0 3px 0">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <span class="nbt-bold nbt-highlight">Industry:</span>
+                    {{(planet.industry || 0) | number}}
+                    <div>
+                        <a class="ui-interactive" data-toggle="collapse" data-target="#investIndustry">Purchase Industry</a>&nbsp;(Current Rate: 5x)&nbsp;
+                        <a class="ui-interactive"
+                           data-toggle="popover"
+                           data-placement="auto"
+                           data-container="body"
+                           data-trigger="hover"
+                           data-contentref=".help-planets-invest-industry">
+                            <img src="../../../images/help-16.png" height="16" width="16"/>
+                        </a>
+                        <div id="investIndustry" class="collapse">
+                            <input type="number" min="0" max="500000000" step="10000000" ng-model="industryPurchase" style="color: black">&nbsp;<button class="btn btn-primary btn-xs" ng-click="onPurchase(planet)">Invest</button>
+                        </div>
+                        <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <span class="nbt-bold nbt-highlight">Charge Station:</span>
+                    {{planet.chargeStation ? 'Yes' : 'No'}}
+                </div>
+                <div class="col-md-4">
+                    <span class="nbt-bold nbt-highlight">Factory:</span>
+                    {{planet.factory ? 'Yes' : 'No'}}
+                </div>
+            </div>
+
+            <!--<div class="row" style="margin-top: 10px; margin-bottom: 10px">-->
+                <!--<div class="col-md-1 "><span class="nbt-bold nbt-highlight">Description: </span></div>-->
+                <!--<div class="col-md-11">{{planet.description}}</div>-->
+            <!--</div>-->
+
+            <div class="row" style="margin-top: 20px">
+                <div class="col-md-4">
+                    <div class="nbt-bold">Combat Units</div>
+                    <ul class="nbt-base nbt-tree nbt-border">
+                        <li ng-repeat="(class, summaries) in planet.combatUnitSummaryGroups">
+                            <span class="nbt-highlight">{{class}}</span>
+                            <ul>
+                                <li ng-repeat="summary in summaries">
+                                    <div style="display: inline-block; width: 50%">{{summary.template.name}}</div>
+                                    <div style="display: inline-block">{{summary.count}}</div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="nbt-bold">Jumpships</div>
+                    <ul class="nbt-base nbt-tree nbt-border">
+                        <li ng-repeat="jumpship in planet.jumpships">
+                            <span class="nbt-highlight">{{jumpship.name}}</span>
+                            <ul>
+                                <li>
+                                    <span class="nbt-bold">Type:</span>
+                                    {{jumpship.type.name}}
+                                </li>
+                                <li>
+                                    <span class="nbt-bold">Hardpoints:</span>
+                                    {{jumpship.type.hardpoints - (jumpship.dropships.length || 0)}} of {{jumpship.type.hardpoints}} available
+                                </li>
+                                <li>
+                                    <span class="nbt-bold">Ready:</span>
+                                    <span ng-show="jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0" class="nbt-error">{{jumpship.hoursToFullCharge}} hours</span>
+                                    <span ng-hide="jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0">Yes</span>
+                                </li>
+                                <li>
+                                    <span class="nbt-bold nbt-highlight">Dropships:</span>
+                                    <ul>
+                                        <li ng-repeat="dropship in jumpship.dropships">
+                                            <span class="nbt-highlight">{{dropship.name}}</span>
+                                            <ul>
+                                                <li>
+                                                    <span class="nbt-bold">Type:</span>
+                                                    {{dropship.type.name}}
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="nbt-bold">Dropships</div>
+                    <ul class="nbt-base nbt-tree nbt-border">
+                        <li ng-repeat="dropship in planet.dropships">
+                            <span class="nbt-highlight">{{dropship.name}}</span>
+                            <ul>
+                                <li>
+                                    <span class="nbt-bold">Type:</span>
+                                    {{dropship.type.name}}
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- controller module for this dialog -->
+<script src="/js/nbt/controller/modeless/planets.js"></script>
+
+<!-- additional post-DOM-load initialization for this dialog -->
+<script language="JavaScript">
+    $(function() {
+        var dlgs = $("#planetsDialog");
+        dlgs.on("resize", saveModelessState)
+            .on("drag", saveModelessState);
+        restoreModelessState(dlgs[0]);
+    });
+</script>
