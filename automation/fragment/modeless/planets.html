@@ -150,7 +150,7 @@
                     <span class="nbt-bold nbt-highlight">Industry:</span>
                     {{(planet.industry || 0) | number}}
                     <div>
-                        <a class="ui-interactive" data-toggle="collapse" data-target="#investIndustry">Purchase Industry</a>&nbsp;(Current Rate: 5x)&nbsp;
+                        <a class="ui-interactive" data-toggle="collapse" data-target="#investIndustry">Purchase Industry</a>&nbsp;(Current Rate: {{faction.industryFactor}}x)&nbsp;
                         <a class="ui-interactive"
                            data-toggle="popover"
                            data-placement="auto"
