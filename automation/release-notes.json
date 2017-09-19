@@ -4,7 +4,7 @@
     "changes": {
       "Rules": [
         "'Diminishing returns' added for combat unit theft raid effect, for a max of 800 tons per raid",
-        "Industry raid effects reduced by half, to 25M per credit",
+        "Industry raid effects reduced by half, to 25M per credit"
       ],
       "Features": [
         "(#105) Industry upgrade purchases"
