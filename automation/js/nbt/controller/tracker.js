@@ -688,9 +688,12 @@
 
             $scope.commitEffects = function() {
                 var theft = {
-                    instances: $scope.stolenUnits,
-                    selectedClass: $scope.battle.combatUnitTheft.selectedClass
+                    instances: $scope.stolenUnits
                 };
+
+                if ($scope.battle.combatUnitTheft) {
+                    theft['selectedClass'] = $scope.battle.combatUnitTheft.selectedClass;
+                }
 
                 nbtBattle.commitEffects($scope.battle, theft, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
