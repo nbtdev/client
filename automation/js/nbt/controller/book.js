@@ -105,7 +105,24 @@
             };
 
             $scope.onDelete = function(event) {
-                
+                var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
+
+                $http({
+                    method: 'DELETE',
+                    headers: hdrs.get(),
+                    url: event._links.self.href
+                }).then(
+                    function (aResp) {
+                        processEvents(aResp.data);
+                    },
+                    function (aErr) {
+                        event.operationFailure = true;
+
+                        $timeout(function() {
+                            event.operationFailure = null;
+                        }, 2000);
+                    }
+                );
             };
 
             $scope.onEdit = function(obj) {
