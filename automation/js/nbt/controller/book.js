@@ -45,7 +45,12 @@
             };
 
             function processEvents(data) {
-                $scope.events = data._embedded.bookEvents;
+                try {
+                    $scope.events = data._embedded.bookEvents;
+                } catch (e) {
+                    $scope.events = [];
+                }
+
                 $scope.events._links = data._links;
             }
 
@@ -148,7 +153,8 @@
             $scope.onAdd = function() {
                 $scope.newEvent = {
                     id: -1,
-                    editing: true
+                    editing: true,
+                    _links: { self: {} }
                 };
 
                 $scope.events.push($scope.newEvent);
