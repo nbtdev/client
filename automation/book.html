@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <link href="/css/nbt.css" rel="stylesheet" />
+    <script src="/js/nbt/api.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Comstar eSportsBook</title>
+
+    <script language="JavaScript">
+        var app = angular.module('esportsbook', []);
+        app.controller('ESportsBookController', function($scope, $http) {
+            $scope.root = null;
+            $scope.events = null;
+
+            function fetchRoot() {
+                $http({
+                    method: 'GET',
+                    url: API_URL
+                }).then(
+                    function (aResp) {
+                        $scope.root = aResp.data;
+                        fetchEvents();
+                    }
+                );
+            }
+
+            function fetchEvents() {
+                $http({
+                    method: 'GET',
+                    url: $scope.root._links.book.href
+                }).then(
+                    function (aResp) {
+                        $scope.events = aResp.data._embedded.bookEvents;
+                    }
+                );
+            }
+
+            fetchRoot();
+        });
+    </script>
+
+    <style>
+        .event-listing {
+            padding: 15px;
+        }
+
+        .events li {
+            list-style: none;
+        }
+
+        .event-header {
+            background: #660000;
+            width: 50%;
+            padding: 3px;
+        }
+
+        .event-footer {
+            height: 30px;
+        }
+
+        .contestant-name {
+            display: inline-block;
+            width: 250px;
+        }
+    </style>
+</head>
+<body ng-app="esportsbook" class="nbt-base">
+
+    <div ng-controller="ESportsBookController" class="event-listing">
+        <ul class="events">
+            <li ng-repeat="event in events">
+                <div class="event-header">{{event.name}}</div>
+                <ul>
+                    <li ng-repeat="contestant in event.participants">
+                        <div class="nbt-highlight nbt-bold contestant-name">{{contestant.name}}</div>  {{contestant.line}}
+                    </li>
+                </ul>
+                <div class="event-footer"></div>
+            </li>
+        </ul>
+    </div>
+
+</body>
+</html>
