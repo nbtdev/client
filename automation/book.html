@@ -54,7 +54,8 @@
                 <div class="event-header">{{event.name}}</div>
                 <ul>
                     <li ng-repeat="contestant in event.participants">
-                        <div class="nbt-highlight nbt-bold contestant-name">{{contestant.name}}</div>  {{contestant.line}}
+                        <div class="nbt-highlight nbt-bold contestant-name">{{contestant.name}}</div>
+                        <div class="nbt-right-justified contestant-line">{{contestant.line}}</div>
                     </li>
                 </ul>
                 <div class="event-footer"></div>
