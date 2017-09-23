@@ -13,6 +13,7 @@
                                 <div ng-hide="event.editing" ng-dblclick="onEdit(event)">
                                     {{event.name}}
                                     <span style="float: right" ng-click="onAddContestant(event)" class="ui-interactive"><img src="../images/add-icon.png" height="16" width="16"/></span>
+                                    <span style="float: right" ng-click="onDelete(event)" class="ui-interactive"><img src="../images/delete-16.png"/></span>
                                 </div>
                                 <div ng-show="event.editing">
                                     <input type="text" ng-model="event.name">

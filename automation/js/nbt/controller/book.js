@@ -104,6 +104,10 @@
                 event.participants.push(contestant);
             };
 
+            $scope.onDelete = function(event) {
+                
+            };
+
             $scope.onEdit = function(obj) {
                 obj.editing = true;
             };
