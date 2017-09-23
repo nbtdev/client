@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <link href="/css/nbt.css" rel="stylesheet" />
+
+    <meta charset="UTF-8">
+    <title>Test</title>
+
+    <script language="JavaScript">
+        var app = angular.module('matchviewer', []);
+        app.controller('MatchViewController', function($scope, $http) {
+            $scope.matchId = null;
+            $scope.apiKey = null;
+
+            $scope.onFetch = function() {
+                $http({
+                    method: 'GET',
+                    url: 'http://api-home.netbattletech.com/mwomercs/' + $scope.matchId + '?api_token=' + $scope.apiKey
+                }).then(
+                    function (aResp) {
+                        $scope.match = aResp.data;
+
+                        $scope.team1Players = [];
+                        $scope.team2Players = [];
+                        $scope.team1Kills = 0;
+                        $scope.team2Kills = 0;
+
+                        $scope.match.UserDetails.forEach(function(e) {
+                            if (!e.IsSpectator && e.Team === '1') {
+                                $scope.team1Players.push(e);
+
+                                if (e.HealthPercentage===0)
+                                    $scope.team2Kills++;
+                            }
+                            if (!e.IsSpectator && e.Team === '2') {
+                                $scope.team2Players.push(e);
+
+                                if (e.HealthPercentage===0)
+                                    $scope.team1Kills++;
+                            }
+                        });
+                    }
+                );
+            };
+        });
+    </script>
+</head>
+<body ng-app="matchviewer" class="nbt-base">
+
+    <div ng-controller="MatchViewController">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2 nbt-right-justified">Match ID:</div>
+                <div class="col-md-10">
+                    <input type="text" ng-model="matchId">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 nbt-right-justified">API Key:</div>
+                <div class="col-md-10">
+                    <input type="password" ng-model="apiKey">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-10">
+                    <button class="btn btn-primary" ng-click="onFetch()">Fetch Game Data</button>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="container" ng-show="match">
+            <div class="row">
+                <div class="col-md-2 nbt-right-justified">
+                    <span class="nbt-highlight nbt-bold">Map: </span>
+                </div>
+                <div class="col-md-2">
+                    {{match.MatchDetails.Map}}
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2 nbt-right-justified">
+                    <span class="nbt-highlight nbt-bold">Mode: </span>
+                </div>
+                <div class="col-md-4">
+                    {{match.MatchDetails.GameMode}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 nbt-right-justified">
+                    <span class="nbt-highlight nbt-bold">Region: </span>
+                </div>
+                <div class="col-md-2">
+                    {{match.MatchDetails.Region}}
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2 nbt-right-justified">
+                    <span class="nbt-highlight nbt-bold">Duration: </span>
+                </div>
+                <div class="col-md-4">
+                    {{match.MatchDetails.MatchDuration / 60 | number:0}}m {{match.MatchDetails.MatchDuration % 60}}s
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 nbt-border-e">
+                    <div class="nbt-font-xl">Team 1 {{match.MatchDetails.Team1Score}}</div>
+                </div>
+
+                <div class="col-md-6 nbt-right-justified">
+                    <div class="nbt-font-xl">Team 2 {{match.MatchDetails.Team2Score}}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 nbt-border-e">
+                    <div class="row">
+                        <div class="col-md-4 nbt-highlight nbt-bold">Pilot</div>
+                        <div class="col-md-3 nbt-highlight nbt-bold">Mech</div>
+                        <div class="col-md-2 nbt-highlight nbt-bold">Score</div>
+                        <div class="col-md-2 nbt-highlight nbt-bold">Damage</div>
+                        <div class="col-md-1 nbt-highlight nbt-bold">Kills</div>
+                    </div>
+                    <div class="row" ng-repeat="player in team1Players" ng-class="{'nbt-error': player.HealthPercentage===0}">
+                        <div class="col-md-4">{{player.Username}}</div>
+                        <div class="col-md-3">{{player.MechName|uppercase}}</div>
+                        <div class="col-md-2">{{player.MatchScore}}</div>
+                        <div class="col-md-2">{{player.Damage}}</div>
+                        <div class="col-md-1">{{player.Kills}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-11"></div>
+                        <div class="col-md-1 nbt-border-n">{{team1Kills}}</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 container">
+                    <div class="row">
+                        <div class="col-md-4 nbt-highlight nbt-bold">Pilot</div>
+                        <div class="col-md-3 nbt-highlight nbt-bold">Mech</div>
+                        <div class="col-md-2 nbt-highlight nbt-bold">Score</div>
+                        <div class="col-md-2 nbt-highlight nbt-bold">Damage</div>
+                        <div class="col-md-1 nbt-highlight nbt-bold">Kills</div>
+                    </div>
+                    <div class="row" ng-repeat="player in team2Players" ng-class="{'nbt-error': player.HealthPercentage===0}">
+                        <div class="col-md-4">{{player.Username}}</div>
+                        <div class="col-md-3">{{player.MechName|uppercase}}</div>
+                        <div class="col-md-2">{{player.MatchScore}}</div>
+                        <div class="col-md-2">{{player.Damage}}</div>
+                        <div class="col-md-1">{{player.Kills}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-11"></div>
+                        <div class="col-md-1 nbt-border-n">{{team2Kills}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
