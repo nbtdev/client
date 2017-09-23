@@ -107,6 +107,7 @@
     <!--#include virtual="/fragment/admin/factions.html" -->
     <!--#include virtual="/fragment/admin/fundsIssuer.html" -->
     <!--#include virtual="/fragment/admin/modeless/planetFactories.html" -->
+    <!--#include virtual="/fragment/book.html" -->
     <!--#include virtual="/fragment/about.html" -->
     <!--#include virtual="/fragment/factionListing.html" -->
     <!--#include virtual="/fragment/profile.html" -->

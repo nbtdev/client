@@ -783,3 +783,31 @@ ul.nbt-tree {
     animation-name: failure-anim;
     animation-duration: 1.2s;
 }
+
+.event-listing {
+    padding: 15px;
+    width: 50%;
+}
+
+.events li {
+    list-style: none;
+}
+
+.event-header {
+    background: #660000;
+    padding: 3px;
+}
+
+.event-footer {
+    height: 30px;
+}
+
+.contestant-name {
+    display: inline-block;
+    width: 20%;
+}
+
+.contestant-line {
+    display: inline-block;
+    width: 20%;
+}

@@ -1,0 +1,51 @@
+<script src="/js/nbt/controller/book.js"></script>
+<div id="bookModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="ESportsBookController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content nbt-base">
+            <div class="modal-header nbt-modal-header">
+                <h4 class="modal-title text-center">Comstar eSportsBook</h4>
+            </div>
+            <div class="modal-body nbt-modal-body">
+                <div class="event-listing">
+                    <ul class="events">
+                        <li ng-repeat="event in events">
+                            <div class="event-header nbt-click-only">
+                                <div ng-hide="event.editing" ng-dblclick="onEdit(event)">{{event.name}}</div>
+                                <div ng-show="event.editing">
+                                    <input type="text" ng-model="event.name">
+                                    <img class="ui-interactive" ng-click="onApply(event)" src="../images/check16.png" height="16" width="16"/>
+                                    <img class="ui-interactive" ng-click="onCancel(event)" src="../images/cancel16.png" height="16" width="16"/>
+                                </div>
+                            </div>
+                            <ul>
+                                <li ng-repeat="contestant in event.participants"
+                                    class="nbt-hover"
+                                    ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}"
+                                    ng-dblclick="onEdit(contestant)">
+                                    <div ng-hide="contestant.editing">
+                                        <div class="nbt-highlight nbt-bold contestant-name">{{contestant.name}}</div>
+                                        <div class="nbt-right-justified contestant-line">{{contestant.line}}</div>
+                                    </div>
+                                    <div ng-show="contestant.editing">
+                                        <div class="nbt-highlight nbt-bold contestant-name">
+                                            <input type="text" ng-model="contestant.name" style="width: 90%">
+                                        </div>
+                                        <div class="nbt-right-justified contestant-line">
+                                            <input type="number" ng-model="contestant.line" style="width: 90%">
+                                        </div>
+                                        <img class="ui-interactive" ng-click="onApply(contestant)" src="../images/check16.png" height="16" width="16"/>
+                                        <img class="ui-interactive" ng-click="onCancel(contestant)" src="../images/cancel16.png" height="16" width="16"/>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="event-footer"></div>
+                        </li>
+                        <li ng-hide="newEvent">
+                            <img class="ui-interactive" src="../images/add-icon.png" ng-click="onAdd()" height="24" width="24"/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
