@@ -10,10 +10,13 @@
                     <ul class="events">
                         <li ng-repeat="event in events">
                             <div class="event-header nbt-click-only">
-                                <div ng-hide="event.editing" ng-dblclick="onEdit(event)">{{event.name}}</div>
+                                <div ng-hide="event.editing" ng-dblclick="onEdit(event)">
+                                    {{event.name}}
+                                    <span style="float: right" ng-click="onAddContestant(event)" class="ui-interactive"><img src="../images/add-icon.png" height="16" width="16"/></span>
+                                </div>
                                 <div ng-show="event.editing">
                                     <input type="text" ng-model="event.name">
-                                    <img class="ui-interactive" ng-click="onApply(event)" src="../images/check16.png" height="16" width="16"/>
+                                    <img class="ui-interactive" ng-click="onApplyEvent(event)" src="../images/check16.png" height="16" width="16"/>
                                     <img class="ui-interactive" ng-click="onCancel(event)" src="../images/cancel16.png" height="16" width="16"/>
                                 </div>
                             </div>
@@ -31,17 +34,18 @@
                                             <input type="text" ng-model="contestant.name" style="width: 90%">
                                         </div>
                                         <div class="nbt-right-justified contestant-line">
-                                            <input type="number" ng-model="contestant.line" style="width: 90%">
+                                            <input type="number" ng-model="contestant.line" style="width: 90%; color: black">
                                         </div>
-                                        <img class="ui-interactive" ng-click="onApply(contestant)" src="../images/check16.png" height="16" width="16"/>
+                                        <img class="ui-interactive" ng-click="onApplyContestant(event, contestant)" src="../images/check16.png" height="16" width="16"/>
                                         <img class="ui-interactive" ng-click="onCancel(contestant)" src="../images/cancel16.png" height="16" width="16"/>
                                     </div>
                                 </li>
                             </ul>
                             <div class="event-footer"></div>
                         </li>
-                        <li ng-hide="newEvent">
-                            <img class="ui-interactive" src="../images/add-icon.png" ng-click="onAdd()" height="24" width="24"/>
+                        <li>
+                            <img ng-hide="newEvent" class="ui-interactive" src="../images/add-icon.png" ng-click="onAdd()" height="24" width="24"/>
+                            <button class="btn btn-primary" ng-click="onReload()">Refresh</button>
                         </li>
                     </ul>
                 </div>

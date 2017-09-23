@@ -40,21 +40,25 @@
                 );
             }
 
+            $scope.onReload = function() {
+                fetchEvents();
+            };
+
             function processEvents(data) {
                 $scope.events = data._embedded.bookEvents;
                 $scope.events._links = data._links;
             }
 
-            function saveChanges(obj) {
+            function saveChanges(obj, collectionUrl, selfUrl) {
                 var method = 'PUT';
-                var isAdd = obj.id < 0;
+                var isAdd = obj.id <= 0;
                 var url;
 
                 if (isAdd) {
                     method = 'POST';
-                    url = $scope.events._links.self.href;
+                    url = collectionUrl;
                 } else {
-                    url = obj._links.self.href;
+                    url = selfUrl;
                 }
 
                 var hdrs = new Headers(Header.TOKEN, nbtIdentity.get().token);
@@ -87,6 +91,19 @@
                 );
             }
 
+            $scope.onAddContestant = function(event) {
+                var contestant = {
+                    id: -1,
+                    editing: true,
+                    _links: { self: {} }
+                };
+
+                if (!event.participants)
+                    event.participants = [];
+
+                event.participants.push(contestant);
+            };
+
             $scope.onEdit = function(obj) {
                 obj.editing = true;
             };
@@ -116,8 +133,12 @@
                 $scope.events.push($scope.newEvent);
             };
 
-            $scope.onApply = function(obj) {
-                saveChanges(obj);
+            $scope.onApplyEvent = function(obj) {
+                saveChanges(obj, $scope.events._links.self.href, obj._links.self.href);
+            };
+
+            $scope.onApplyContestant = function(event, obj) {
+                saveChanges(obj, event._links.contestants.href, obj._links.self.href);
             };
 
             fetchEvents();
