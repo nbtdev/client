@@ -166,6 +166,11 @@
         });
         $scope.$on('destroy', cbLeague);
 
+        cb = $scope.$on('nbtFactionsChanged', function (event, factions) {
+            $scope.factions = factions;
+        });
+        $scope.$on('destroy', cb);
+
         $scope.onLeagueClicked = function(leagueId) {
             localStorage.setItem("leagueId", leagueId);
             setCurrentLeague(leagueId);

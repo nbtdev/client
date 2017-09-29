@@ -75,8 +75,21 @@
                     <a class="ui-interactive" data-toggle="modal" data-target="#registerModal">Register</a>
                 </li>
 
-                <li ng-show="isLoggedIn()">
-                    <a class="ui-interactive" onmouseover="" style="color: white">Logged in as: <span ng-bind="getUsername()"></span></a>
+                <li ng-show="isLoggedIn()" class="nbt-centered">
+                    Logged in as: <span ng-bind="getUsername()"></span>
+                    <br>
+                    <a class="nbt-interactive" data-toggle="dropdown" class="dropdown-toggle">
+                        <span ng-show="faction" class="nbt-highlight nbt-font-s">{{faction.displayName}}</span>
+                        <span ng-hide="faction" class="nbt-font-s" style="opacity: .6;">(Impersonate Faction)</span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" style="height: 500px; overflow-y: auto">
+                        <li ng-repeat="f in factions">
+                            <a class="ui-interactive" ng-click="onFactionClicked(f)">
+                                {{f.displayName}}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li ng-show="isLoggedIn()">

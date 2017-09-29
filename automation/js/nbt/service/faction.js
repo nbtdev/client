@@ -128,6 +128,7 @@ var _FactionService = (function() {
                     // populate faction database with response
                     var factions = aResp.data._embedded.factionExes;
                     mFactions[aLeague.id] = factions;
+                    rootScope.$broadcast('nbtFactionsChanged', factions);
 
                     // trigger a load of faction classes and statuses too; the links will be sent with the factions collection
                     http({
