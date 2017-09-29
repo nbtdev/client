@@ -289,13 +289,13 @@
                 if (!$scope.battle.isAttacker && $scope.battle.outcome === 'Defender Victorious')
                     $scope.battle.isWinner = true;
 
-                if (!$scope.battle.isWinner)
-                    $scope.battle.repairsOffered = null;
-
                 if ($scope.battle.type === 'Sector Assault') {
                     $scope.battle.attackerScore = $scope.battle.attackerPlanetCount;
                     $scope.battle.defenderScore = $scope.battle.defenderPlanetCount;
                 } else {
+                    if (!$scope.battle.isWinner)
+                        $scope.battle.repairsOffered = null;
+
                     $scope.battle.attackerScore = $scope.battle.attackerCreditCount;
                     $scope.battle.defenderScore = $scope.battle.defenderCreditCount;
                 }
@@ -680,10 +680,7 @@
 
             $scope.reloadBattle = function() {
                 $scope.gameResolutionIssues = null;
-                nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token, function(aData) {
-                    $scope.battle = aData;
-                    processBattle();
-                });
+                nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token);
             };
 
             $scope.commitEffects = function() {
@@ -708,6 +705,18 @@
                     $scope.battle.repairsAccepted = [];
 
                 nbtBattle.commitRepairs($scope.battle, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                }, function (aErr) {
+                    setOperationStatus(aErr.message, false);
+                });
+            };
+
+            $scope.commitDropRepairs = function() {
+                if (!$scope.battle.repairsAccepted)
+                    $scope.battle.repairsAccepted = [];
+
+                nbtBattle.commitDropRepairs($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                 }, function (aErr) {
