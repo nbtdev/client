@@ -157,7 +157,7 @@
                         </div>
 
                         <!-- alternate data entry -- available, used, destroyed -->
-                        <div  ng-show="battle.status==='Forcedec'">
+                        <div  ng-show="battle.status==='Forcedec' && !battle._links.repairs">
                             <div class="row">
                                 <div class="col-md-12"><a style="cursor: pointer" data-toggle="collapse" data-target="#manualDropEntry">Available Units, Manual Drop Logging And Drop Calculator</a></div>
                             </div>
@@ -396,7 +396,7 @@
                     <div class="nbt-centered">
                         <button class="btn btn-primary"
                                 ng-click="logDrop()"
-                                ng-show="battle.status==='Forcedec'"
+                                ng-show="battle.status==='Forcedec' && !battle._links.repairs"
                                 ng-class="{'disabled': updating}"
                                 title="Log Drop">Log Drop</button>
                         <button class="btn"
@@ -410,8 +410,12 @@
                                 title="Commit your theft, destruction, and espionage effect and move to the next step">Save and Continue</button>
                         <button class="btn btn-primary"
                                 ng-click="commitRepairs()"
-                                ng-show="battle._links.repairs"
+                                ng-show="battle._links.repairs && battle.type !== 'Sector Assault'"
                                 title="Commit your repair choices and proceed to final battle logging">Finish</button>
+                        <button class="btn btn-primary"
+                                ng-click="commitDropRepairs()"
+                                ng-show="battle._links.repairs && battle.type === 'Sector Assault'"
+                                title="Commit your repair choices and continue to next drop">Save And Continue</button>
                         <button class="btn btn-primary"
                                 ng-click="finalizeBattle()"
                                 ng-show="battle.status==='Confirmed' && battle.loggingComplete && battle.isAttacker"
@@ -422,7 +426,7 @@
                                 title="Close this dialog">Close</button>
                         <button class="btn btn-primary"
                                 ng-click="reloadBattle()"
-                                ng-hide="battle.status==='Verified'"
+                                ng-hide="battle.status==='Verified' || battle._links.repairs"
                                 title="Reload the current battle">Refresh</button>
                         <a class="ui-interactive"
                            ng-show="battle._links.effects && battle.status!=='Confirmed'"

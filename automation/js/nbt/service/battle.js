@@ -170,8 +170,29 @@ var _BattleService = (function() {
         }
     };
 
-    // load the list of potential raid effects
     BattleService.prototype.commitRepairs = function (aBattle, aToken, aCallback, aFailback) {
+        if (aBattle._links.repairs) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.repairs.href,
+                data: aBattle.repairsAccepted,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailback)
+                        aFailback(aErr.data);
+                }
+            );
+        }
+    };
+
+    BattleService.prototype.commitDropRepairs = function (aBattle, aToken, aCallback, aFailback) {
         if (aBattle._links.repairs) {
             var hdr = new Headers(Header.TOKEN, aToken);
 
