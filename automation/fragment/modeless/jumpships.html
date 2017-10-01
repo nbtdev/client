@@ -14,7 +14,8 @@
                 <div class="col-md-2">Location</div>
                 <div class="col-md-2">Type</div>
                 <div class="col-md-2">Hardpoints</div>
-                <div class="col-md-3"></div>
+                <div class="col-md-2">Charge Status</div>
+                <div class="col-md-1"></div>
             </div>
 
             <div class="row nbt-hover" ng-repeat="jumpship in jumpships">
@@ -27,7 +28,8 @@
                 </div>
                 <div class="col-md-2">{{jumpship.type.name}}</div>
                 <div class="col-md-2">{{jumpship.type.hardpoints}}</div>
-                <div class="col-md-3">
+                <div class="col-md-2" ng-class="{'nbt-error': jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0}">{{jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0 ? jumpship.hoursToFullCharge : jumpship.csChargesRemaining}}</div>
+                <div class="col-md-1">
                     <span ng-hide="jumpship.editing">
                         <a class="ui-interactive" ng-click="onEdit(jumpship)"><img src="../../images/edit.png" height="16" width="16"/></a>
                         <a ng-hide="!(identity.isSiteAdmin||identity.isLeagueAdmin)" class="ui-interactive" ng-click="onDelete(jumpship)"><img src="../../images/delete.png" height="16" width="16"/></a>
