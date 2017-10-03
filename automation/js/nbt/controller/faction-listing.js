@@ -78,6 +78,67 @@
 
             reloadFactions();
 
+            function updateDiplomacy() {
+                if (!($scope.alliances && $scope.factions))
+                    return;
+
+                $scope.factions.forEach(function(e,i,a) {
+                    var setting = $scope.alliances[e.id];
+                    if (setting) {
+                        e.diplomacy = setting;
+                    } else {
+                        e.diplomacy = { level: 0 };
+                    }
+                });
+            }
+
+            function processAlliances(alliances) {
+                // update the alliance levels for each in $scope.factions
+                $scope.alliances = {};
+
+                // populate alliance lookup table
+                alliances.forEach(function (e, i, a) {
+                    $scope.alliances[e.ally.id] = e;
+                });
+
+                updateDiplomacy();
+            }
+
+            function pilotNameCompare(a, b) {
+                if (a.name < b.name) return -1;
+                else if (a.name > b.name) return 1;
+                else return 0;
+            }
+
+            $scope.onDetail = function(faction) {
+                $scope.faction = faction;
+
+                // fetch and process faction roster
+                nbtFaction.fetchRoster(faction, nbtIdentity.get().token, function(roster) {
+                    var admins = [];
+                    var pilots = [];
+
+                    roster._embedded.pilots.forEach(function(e) {
+                        if (e.admin) admins.push(e);
+                        else pilots.push(e);
+                    });
+
+                    admins = admins.sort(pilotNameCompare);
+                    var sorted = admins.concat(pilots.sort(pilotNameCompare));
+
+                    $scope.faction.roster = sorted;
+                });
+
+                // fetch and process faction diplomacy
+                nbtFaction.fetchDiplomacyData(faction, nbtIdentity.get().token, function(diplomacy) {
+                    $scope.faction.diplomacy = diplomacy._embedded.alliances;
+                });
+            };
+
+            $scope.onBack = function() {
+                $scope.faction = null;
+            };
+
             $scope.canApplyToFaction = function(faction) {
                 return faction && faction._links && faction._links.apply && !faction.application && faction.status==='Vacant';
             };

@@ -11,144 +11,196 @@
 <div id="factionsModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="FactionListingController as factionListingController">
     <div class="modal-dialog modal-lg with-border">
         <div class="modal-content nbt-base">
+            <!-- Header -->
             <div class="modal-header nbt-modal-header">
-                <h4 class="modal-title text-center">{{league.name}} Factions</h4>
+                <div ng-hide="faction">
+                    <h4 class="modal-title text-center">{{league.name}} Factions</h4>
+                </div>
+                <div ng-show="faction">
+                    <span style="float: left">
+                        <a class="ui-interactive" ng-click="onBack()">
+                            <img class="nbt-pseudo-button" src="../images/back.png"/>
+                        </a>
+                    </span>
+                    <h4 class="modal-title text-center">{{faction.displayName}} - Details</h4>
+                </div>
             </div>
-            <div ng-hide="showApplyToggle && canApply()">
+            <div ng-hide="showApplyToggle && canApply() || faction">
                 <a class="ui-interactive" data-toggle="popover" data-contentref=".faction-signup-tip">How can I apply for a faction?</a>
             </div>
-            <div class="modal-body nbt-modal-body">
-                <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
 
-                <div ng-show="showApplyForm" style="padding: 15px;" class="container col-md-12">
-                    <div class="row">
-                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': nameError}">Your Team's Name</div>
-                        <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.name" placeholder="(required) Your team's name"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': tagsError}">Your Team's In-Game Tags</div>
-                        <div class="col-md-8"><input type="text" size="40" maxlength="8" ng-model="applicationData.tags" placeholder="(optional) Max length: 8 characters"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': pilotCountError}">Team Active Pilot Count</div>
-                        <div class="col-md-8"><input style="color: black" type="number" min="{{league.minPilotCount}}" ng-model="applicationData.pilotCount"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': geoError}">Team Geographic Area(s) (at least one required)</div>
-                        <div class="col-md-8">
-                            <div><input type="checkbox" value="NA" ng-model="geoNA">&nbsp;North American</div>
-                            <div><input type="checkbox" value="EU" ng-model="geoEU">&nbsp;European</div>
-                            <div><input type="checkbox" value="AP" ng-model="geoAP">&nbsp;Oceanic/Asia-Pacific</div>
+            <!-- Body -->
+            <div class="modal-body nbt-modal-body">
+                <div ng-hide="faction">
+                    <div ng-show="showApplyToggle && canApply()"><input type="checkbox" ng-model="showApplyForm">&nbsp; I wish to apply to a faction on behalf of my team (Vacant factions only)</div>
+
+                    <div ng-show="showApplyForm" style="padding: 15px;" class="container col-md-12">
+                        <div class="row">
+                            <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': nameError}">Your Team's Name</div>
+                            <div class="col-md-8"><input type="text" size="40" ng-model="applicationData.name" placeholder="(required) Your team's name"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': tagsError}">Your Team's In-Game Tags</div>
+                            <div class="col-md-8"><input type="text" size="40" maxlength="8" ng-model="applicationData.tags" placeholder="(optional) Max length: 8 characters"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': pilotCountError}">Team Active Pilot Count</div>
+                            <div class="col-md-8"><input style="color: black" type="number" min="{{league.minPilotCount}}" ng-model="applicationData.pilotCount"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 nbt-right-justified" ng-class="{'nbt-error': geoError}">Team Geographic Area(s) (at least one required)</div>
+                            <div class="col-md-8">
+                                <div><input type="checkbox" value="NA" ng-model="geoNA">&nbsp;North American</div>
+                                <div><input type="checkbox" value="EU" ng-model="geoEU">&nbsp;European</div>
+                                <div><input type="checkbox" value="AP" ng-model="geoAP">&nbsp;Oceanic/Asia-Pacific</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                We understand that not everyone who is interested in NBT is able to field a full team for a
+                                particular faction. Additionally, scheduling with teams in other geographic regions could be
+                                easier if a faction is populated by teams from different regions. If you are willing to share
+                                a faction with other interested teams, NBT can help facilitate that conversation.
+                            </div>
+                            <div class="col-md-8">
+                                <div><input type="checkbox" ng-model="applicationData.collaborate">&nbsp;I am willing to lead a shared faction, or
+                                    participate in a faction led by another team</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Whether or not you are interested in sharing a faction with another team, can we show your
+                                team tags in the faction listing, so that others know you have interest in a particular faction?
+                                If you decline, your application will show up, but masked as
+                                <span style="white-space: nowrap">&lt;?&gt;</span> in the listing.
+                            </div>
+                            <div class="col-md-8">
+                                <div><input type="checkbox" ng-model="applicationData.showPublic">&nbsp;Yes, you may show that we have applied</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <hr/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 nbt-right-justified">Additional Comments</div>
+                            <div class="col-md-8">
+                        <textarea
+                                cols="40"
+                                rows="6"
+                                ng-model="applicationData.comments"
+                                style="color: black"
+                                placeholder="(optional) Any additional comments you have about your team or your application, including additional faction choices">
+                        </textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">&nbsp;</div>
+                            <div class="col-md-6">
+                                <input type="checkbox" ng-model="applicationData.acceptedToS">&nbsp; I have read and
+                                understand the rules and requirements to join the {{league.name}} league and agree to
+                                abide by them at all times while participating in league activities.
+                                <span class="nbt-important">You must check this box to reveal the Apply buttons in the
+                        faction listing below.</span>
+                            </div>
+                            <div class="col-md-3">&nbsp;</div>
                         </div>
                     </div>
-                    <div class="row">
-                        <hr/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            We understand that not everyone who is interested in NBT is able to field a full team for a
-                            particular faction. Additionally, scheduling with teams in other geographic regions could be
-                            easier if a faction is populated by teams from different regions. If you are willing to share
-                            a faction with other interested teams, NBT can help facilitate that conversation.
+
+                    <div class="container col-md-12">
+                        <div class="row">
+                            <div class="col-md-4 bold">Name</div>
+                            <div class="col-md-3 bold">Type</div>
+                            <div class="col-md-1 bold">Status</div>
+                            <div class="col-md-1 bold">Apply</div>
+                            <div class="col-md-2 bold nbt-centered">Applications &amp; Teams</div>
                         </div>
-                        <div class="col-md-8">
-                            <div><input type="checkbox" ng-model="applicationData.collaborate">&nbsp;I am willing to lead a shared faction, or
-                                participate in a faction led by another team</div>
+
+                        <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
+                            <div class="col-md-4">
+                                {{faction.displayName}}
+                                <span class="ui-interactive" ng-click="onDetail(faction)" style="float: right" title="View faction details and contact information">
+                            <img src="../../images/forward.png" height="16" width="16"/>
+                        </span>
+                            </div>
+                            <div class="col-md-3">{{faction.class}}</div>
+                            <div class="col-md-1">{{faction.status}}</div>
+                            <div class="col-md-1">
+                                <button type="button"
+                                        class="btn btn-xs"
+                                        ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                        ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && faction._links.apply"
+                                        ng-click="apply(faction)">
+                                    Apply
+                                </button>
+                                <span ng-show="showApplyForm && applicationData.acceptedToS && faction.application">
+                        <button type="button"
+                                title="Save changes and close the application form"
+                                class="btn btn-xs"
+                                ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                ng-click="update(faction)">
+                            Update
+                        </button>
+                        <button type="button"
+                                class="btn btn-xs"
+                                title="Close the form without saving changes"
+                                ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                ng-click="cancel(faction)">
+                            Cancel
+                        </button>
+                        <button type="button"
+                                title="Withdraw your application from the league"
+                                class="btn btn-xs"
+                                ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
+                                ng-click="cancelApplication(faction)">
+                            Cancel Application
+                        </button>
+                        </span>
+                                <div ng-show="faction.application.status!=='Resolved' && !showApplyForm" class="nbt-info">
+                                    <a href="javascript: void(0)" title="Click to revise your application or submit for a different faction" ng-click="edit(faction)">{{faction.application.status}}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-2 nbt-centered">
+                                <span ng-show="faction.factionStatus.id===1">{{faction.pendingApplications.join(', ')}}</span>
+                                <span ng-hide="faction.factionStatus.id===1">{{faction.tags}}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <hr/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            Whether or not you are interested in sharing a faction with another team, can we show your
-                            team tags in the faction listing, so that others know you have interest in a particular faction?
-                            If you decline, your application will show up, but masked as
-                            <span style="white-space: nowrap">&lt;?&gt;</span> in the listing.
-                        </div>
-                        <div class="col-md-8">
-                            <div><input type="checkbox" ng-model="applicationData.showPublic">&nbsp;Yes, you may show that we have applied</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <hr/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 nbt-right-justified">Additional Comments</div>
-                        <div class="col-md-8">
-                            <textarea
-                                    cols="40"
-                                    rows="6"
-                                    ng-model="applicationData.comments"
-                                    style="color: black"
-                                    placeholder="(optional) Any additional comments you have about your team or your application, including additional faction choices">
-                            </textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3">&nbsp;</div>
-                        <div class="col-md-6">
-                            <input type="checkbox" ng-model="applicationData.acceptedToS">&nbsp; I have read and
-                            understand the rules and requirements to join the {{league.name}} league and agree to
-                            abide by them at all times while participating in league activities.
-                            <span class="nbt-important">You must check this box to reveal the Apply buttons in the
-                            faction listing below.</span>
-                        </div>
-                        <div class="col-md-3">&nbsp;</div>
                     </div>
                 </div>
 
-                <div class="container col-md-12">
-                    <div class="row">
-                        <div class="col-md-3 bold">Name</div>
-                        <div class="col-md-3 bold">Type</div>
-                        <div class="col-md-1 bold">Status</div>
-                        <div class="col-md-2 bold">Apply</div>
-                        <div class="col-md-3 bold">Applications/Teams</div>
-                    </div>
-
-                    <div class="row nbt-hover-highlight" ng-repeat="faction in factions">
-                        <div class="col-md-3">{{faction.displayName}}</div>
-                        <div class="col-md-3">{{faction.class}}</div>
-                        <div class="col-md-1">{{faction.status}}</div>
-                        <div class="col-md-2">
-                            <button type="button"
-                                    class="btn btn-xs"
-                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
-                                    ng-show="showApplyButtons && showApplyForm && applicationData.acceptedToS && faction._links.apply"
-                                    ng-click="apply(faction)">
-                                Apply
-                            </button>
-                            <span ng-show="showApplyForm && applicationData.acceptedToS && faction.application">
-                            <button type="button"
-                                    title="Save changes and close the application form"
-                                    class="btn btn-xs"
-                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
-                                    ng-click="update(faction)">
-                                Update
-                            </button>
-                            <button type="button"
-                                    class="btn btn-xs"
-                                    title="Close the form without saving changes"
-                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
-                                    ng-click="cancel(faction)">
-                                Cancel
-                            </button>
-                            <button type="button"
-                                    title="Withdraw your application from the league"
-                                    class="btn btn-xs"
-                                    ng-class="{'btn-primary': !formError, 'btn-danger': formError}"
-                                    ng-click="cancelApplication(faction)">
-                                Cancel Application
-                            </button>
-                            </span>
-                            <div ng-show="faction.application.status!=='Resolved' && !showApplyForm" class="nbt-info">
-                                <a href="javascript: void(0)" title="Click to revise your application or submit for a different faction" ng-click="edit(faction)">{{faction.application.status}}</a>
+                <div ng-show="faction">
+                    <div class="modal-body nbt-modal-body">
+                        <div class="container col-md-12">
+                            <div class="row">
+                                <!-- roster cell -->
+                                <div class="col-md-4">
+                                    <div class="nbt-bold">Roster</div>
+                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto">
+                                        <div ng-repeat="pilot in faction.roster"
+                                             ng-class="{'nbt-highlight': pilot.admin}">
+                                            {{pilot.name}}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <span ng-show="faction.factionStatus.id===1">{{faction.pendingApplications.join(', ')}}</span>
-                            <span ng-hide="faction.factionStatus.id===1">{{faction.tags}}</span>
+
+                            <div class="row">
+                                <!-- diplomacy cell -->
+                                <div class="col-md-4">
+                                    <div class="nbt-bold" style="margin-top: 10px;">Diplomacy</div>
+                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto">
+                                        <div ng-repeat="relationship in faction.diplomacy">
+                                            <div style="display: inline-block; width: 60%">{{relationship.ally.displayName}}</div>
+                                            <div style="display: inline-block; width: 20%">{{relationship.level}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

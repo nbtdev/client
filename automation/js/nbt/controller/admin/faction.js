@@ -51,6 +51,24 @@
                 }, 5000);
             }
 
+            function fileSelected(event) {
+                try {
+                    var file = event.target.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        event.target.logo = {
+                            data: btoa(reader.result),
+                            mimeType: file.type,
+                            type: 'IMAGE'
+                        };
+                    };
+
+                    reader.readAsBinaryString(file);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
             var reloadFactions = function() {
                 nbtFaction.fetchFactionsForLeague($scope.league, nbtIdentity.get().token, function(aData) {
                     // set up the inverse of 'hidden' on each faction
@@ -62,6 +80,20 @@
                     }
 
                     $scope.factions = aData;
+
+                    // attach a change listener to all of the file-input elements so we can read in the data when they
+                    // select a new file
+                    $timeout(function() {
+                        $scope.factions.forEach(function(faction) {
+                            var logoElem = $('#factionLogo' + faction.id)[0];
+                            logoElem.addEventListener('change', fileSelected);
+                            logoElem.faction = faction;
+
+                            var iconElem = $('#factionIcon' + faction.id)[0];
+                            iconElem.addEventListener('change', fileSelected);
+                            iconElem.faction = faction;
+                        });
+                    }, 0);
                 });
             };
 
@@ -122,6 +154,9 @@
             $scope.onApply = function(faction) {
                 var logoElem = $('#factionLogo' + faction.id)[0];
                 var iconElem = $('#factionIcon' + faction.id)[0];
+
+                if (logoElem.logo) faction.logo = logoElem.logo;
+                if (iconElem.logo) faction.logoSmall = iconElem.logo;
 
                 if (faction.isNew) {
                     nbtFaction.addFaction(
