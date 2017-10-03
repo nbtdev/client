@@ -51,6 +51,27 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.fetchFactionBattles = function(aFaction, activeOnly, aToken, aSuccessCb) {
+        if (aFaction && aFaction._links.battles) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+            var url = aFaction._links.battles.href;
+
+            if (!activeOnly)
+                url += '?active=false';
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: url,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.deleteFaction = function(aFaction, aToken, aSuccessCb, aFailCb) {
     };
 

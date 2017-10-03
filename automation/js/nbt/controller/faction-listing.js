@@ -114,6 +114,7 @@
                 $scope.faction = faction;
 
                 // fetch and process faction roster
+                $scope.faction.roster = null;
                 nbtFaction.fetchRoster(faction, nbtIdentity.get().token, function(roster) {
                     var admins = [];
                     var pilots = [];
@@ -130,9 +131,41 @@
                 });
 
                 // fetch and process faction diplomacy
+                $scope.faction.diplomacy = null;
                 nbtFaction.fetchDiplomacyData(faction, nbtIdentity.get().token, function(diplomacy) {
                     $scope.faction.diplomacy = diplomacy._embedded.alliances;
                 });
+
+                // fetch and process faction battles
+                $scope.faction.battles = null;
+                nbtFaction.fetchFactionBattles(faction, false, nbtIdentity.get().token, function(battles) {
+                    $scope.faction.battles = battles._embedded.sectorBattles;
+
+                    $scope.faction.wins = 0;
+                    $scope.faction.losses = 0;
+                    $scope.faction.defends = 0;
+                    $scope.faction.attacks = 0;
+
+                    $scope.faction.battles.forEach(function(e) {
+                        var isAttacker = e.attacker.id === $scope.faction.id;
+                        var isDefender = !isAttacker;
+
+                        if (isAttacker && (e.outcome === 'Attacker Victorious' || e.outcome === 'Defender Retreat'))
+                            $scope.faction.wins++;
+                        if (isDefender && (e.outcome === 'Defender Victorious' || e.outcome === 'Attacker Retreat'))
+                            $scope.faction.wins++;
+                        if (isAttacker && (e.outcome === 'Defender Victorious' || e.outcome === 'Attacker Retreat'))
+                            $scope.faction.losses++;
+                        if (isDefender && (e.outcome === 'Attacker Victorious' || e.outcome === 'Defender Retreat'))
+                            $scope.faction.losses++;
+
+                        e.isActive = (e.status !== 'Verified');
+                        if (isAttacker && e.isActive)
+                            $scope.faction.attacks++;
+                        if (isDefender && e.isActive)
+                            $scope.faction.defends++;
+                    });
+                })
             };
 
             $scope.onBack = function() {

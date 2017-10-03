@@ -177,24 +177,64 @@
                     <div class="modal-body nbt-modal-body">
                         <div class="container col-md-12">
                             <div class="row">
-                                <!-- roster cell -->
-                                <div class="col-md-4">
-                                    <div class="nbt-bold">Roster</div>
-                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto">
-                                        <div ng-repeat="pilot in faction.roster"
-                                             ng-class="{'nbt-highlight': pilot.admin}">
-                                            {{pilot.name}}
+                                <div class="col-md-8">
+                                    <!-- details -->
+                                    <div>
+                                        <div style="display: inline-block">
+                                            <img src="{{faction.logo._links.raw.href}}">
+                                        </div>
+                                        <div style="display: inline-block">
+                                            <div><span class="nbt-highlight nbt-bold">Class:</span> {{faction.factionClass.displayName}}</div>
+                                            <div><span class="nbt-highlight nbt-bold">Status:</span> {{faction.factionStatus.displayName}}</div>
+                                            <div><span class="nbt-highlight nbt-bold">W/L:</span> {{faction.wins}} - {{faction.losses}}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- summaries/reports -->
+                                    <div>
+                                        <div>
+                                            <span class="nbt-bold">Battles</span>
+                                            <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Total:</span> {{faction.battles.length}}
+                                            <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Active:</span> {{faction.defends + faction.attacks}}
+                                            <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Defends:</span> {{faction.defends}}
+                                            <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Attacks:</span> {{faction.attacks}}
+                                        </div>
+                                        <div id="factionBattles" class="nbt-font-s nbt-border">
+                                            <div class="container col-md-12 nbt-border">
+                                                <div class="row nbt-highlight">
+                                                    <div class="col-md-1">ID</div>
+                                                    <div class="col-md-2">Location</div>
+                                                    <div class="col-md-3">Attacker</div>
+                                                    <div class="col-md-3">Defender</div>
+                                                    <div class="col-md-3">Outcome</div>
+                                                </div>
+                                                <div class="row nbt-hover" ng-repeat="battle in faction.battles" ng-class="{'nbt-disabled': !battle.isActive}">
+                                                    <div class="col-md-1">{{battle.id}}</div>
+                                                    <div class="col-md-2">{{battle.sector.name}}</div>
+                                                    <div class="col-md-3">{{battle.attacker.displayName}}</div>
+                                                    <div class="col-md-3">{{battle.sector.owner.displayName}}</div>
+                                                    <div class="col-md-3">{{battle.outcome}}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <!-- diplomacy cell -->
+                                <!-- roster cell -->
                                 <div class="col-md-4">
+                                    <div class="nbt-bold">Roster: {{faction.roster.length}} pilots</div>
+                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto; padding: 5px">
+                                        <div ng-repeat="pilot in faction.roster"
+                                             ng-class="{'nbt-highlight': pilot.admin}"
+                                             class="nbt-hover">
+                                            {{pilot.name}}
+                                        </div>
+                                    </div>
+
+                                    <!-- diplomacy cell -->
                                     <div class="nbt-bold" style="margin-top: 10px;">Diplomacy</div>
-                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto">
-                                        <div ng-repeat="relationship in faction.diplomacy">
+                                    <div class="nbt-border" style="max-height: 400px; overflow-y: auto; padding: 5px">
+                                        <div ng-repeat="relationship in faction.diplomacy" class="nbt-hover">
                                             <div style="display: inline-block; width: 60%">{{relationship.ally.displayName}}</div>
                                             <div style="display: inline-block; width: 20%">{{relationship.level}}</div>
                                         </div>
