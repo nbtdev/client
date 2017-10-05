@@ -16,6 +16,10 @@
     -->
 
     <link href="/css/nbt.css" rel="stylesheet" />
+    <link href="/css/nbt-wide.css" media="only screen and (min-width: 1680px), only screen and (min-device-width: 1680px)" rel="stylesheet" />
+    <link href="/css/nbt-HD.css" media="only screen and (min-width: 1920px), only screen and (min-device-width: 1920px)" rel="stylesheet" />
+    <link href="/css/nbt-2K.css" media="only screen and (min-width: 2048px), only screen and (min-device-width: 2048px)" rel="stylesheet" />
+    <link href="/css/nbt-4K.css" media="only screen and (min-width: 3840px), only screen and (min-device-width: 3840px)" rel="stylesheet" />
 
     <!-- online
     -->

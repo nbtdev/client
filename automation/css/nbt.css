@@ -811,3 +811,9 @@ ul.nbt-tree {
     display: inline-block;
     width: 20%;
 }
+
+@media (min-width: 992px) {
+    .nbt-modal-wide {
+        width: 900px;
+    }
+}

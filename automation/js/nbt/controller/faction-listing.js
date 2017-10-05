@@ -104,7 +104,7 @@
                 updateDiplomacy();
             }
 
-            function pilotNameCompare(a, b) {
+            function nameCompare(a, b) {
                 if (a.name < b.name) return -1;
                 else if (a.name > b.name) return 1;
                 else return 0;
@@ -124,8 +124,8 @@
                         else pilots.push(e);
                     });
 
-                    admins = admins.sort(pilotNameCompare);
-                    var sorted = admins.concat(pilots.sort(pilotNameCompare));
+                    admins = admins.sort(nameCompare);
+                    var sorted = admins.concat(pilots.sort(nameCompare));
 
                     $scope.faction.roster = sorted;
                 });
@@ -134,12 +134,16 @@
                 $scope.faction.diplomacy = null;
                 nbtFaction.fetchDiplomacyData(faction, nbtIdentity.get().token, function(diplomacy) {
                     $scope.faction.diplomacy = diplomacy._embedded.alliances;
+
+                    $scope.faction.diplomacy.sort(function(a,b) { return nameCompare(a.ally, b.ally); } );
                 });
 
                 // fetch and process faction battles
                 $scope.faction.battles = null;
                 nbtFaction.fetchFactionBattles(faction, false, nbtIdentity.get().token, function(battles) {
                     $scope.faction.battles = battles._embedded.sectorBattles;
+
+                    $scope.faction.battles.sort(function(a, b) { return b.id - a.id; });
 
                     $scope.faction.wins = 0;
                     $scope.faction.losses = 0;
