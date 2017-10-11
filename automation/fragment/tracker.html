@@ -46,7 +46,7 @@
                 <div class="container col-md-12">
                     <!-- the battle header -->
                     <div class="row" ng-hide="battle.loggingComplete">
-                        <div class="col-md-3 nbt-right-justified"><img data-ng-src="{{battle.attacker.logo._links.raw.href}}"></div>
+                        <div class="col-md-3 nbt-right-justified"><img data-ng-src="/images/unit-logos/{{battle.attacker.id}}_200.gif"></div>
                         <div class="col-md-6 nbt-centered">
                             <div class="container col-md-12">
                                 <div class="row" ng-show="battle.status==='Forcedec'">
@@ -72,6 +72,10 @@
                                     <div class="col-md-6 nbt-left-justified">{{battle.id}}</div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Type: </div>
+                                    <div class="col-md-6 nbt-left-justified">{{battle.type}}</div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6 nbt-right-justified nbt-bold nbt-highlight">Attacker: </div>
                                     <div class="col-md-6 nbt-left-justified">{{battle.attacker.displayName}}</div>
                                 </div>
@@ -88,7 +92,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3"><img data-ng-src="{{battle.sector.owner.logo._links.raw.href}}"></div>
+                        <div class="col-md-3"><img data-ng-src="/images/unit-logos/{{battle.sector.owner.id}}_200.gif"></div>
                     </div>
 
                     <div ng-hide="battle.status==='Confirmed'">
