@@ -110,11 +110,9 @@
                 else return 0;
             }
 
-            $scope.onDetail = function(faction) {
-                $scope.faction = faction;
-
+            function fetchRoster(faction) {
                 // fetch and process faction roster
-                $scope.faction.roster = null;
+                faction.roster = null;
                 nbtFaction.fetchRoster(faction, nbtIdentity.get().token, function(roster) {
                     var admins = [];
                     var pilots = [];
@@ -127,49 +125,66 @@
                     admins = admins.sort(nameCompare);
                     var sorted = admins.concat(pilots.sort(nameCompare));
 
-                    $scope.faction.roster = sorted;
+                    faction.roster = sorted;
                 });
+            }
 
+            function fetchDiplomacy(faction) {
                 // fetch and process faction diplomacy
-                $scope.faction.diplomacy = null;
+                faction.diplomacy = null;
                 nbtFaction.fetchDiplomacyData(faction, nbtIdentity.get().token, function(diplomacy) {
-                    $scope.faction.diplomacy = diplomacy._embedded.alliances;
+                    faction.diplomacy = diplomacy._embedded.alliances;
 
-                    $scope.faction.diplomacy.sort(function(a,b) { return nameCompare(a.ally, b.ally); } );
+                    faction.diplomacy.sort(function(a,b) { return nameCompare(a.ally, b.ally); } );
                 });
+            }
 
+            function fetchBattles(faction) {
                 // fetch and process faction battles
-                $scope.faction.battles = null;
+                faction.battles = null;
                 nbtFaction.fetchFactionBattles(faction, false, nbtIdentity.get().token, function(battles) {
-                    $scope.faction.battles = battles._embedded.sectorBattles;
+                    faction.battles = battles._embedded.sectorBattles;
 
-                    $scope.faction.battles.sort(function(a, b) { return b.id - a.id; });
+                    faction.battles.sort(function(a, b) { return b.id - a.id; });
 
-                    $scope.faction.wins = 0;
-                    $scope.faction.losses = 0;
-                    $scope.faction.defends = 0;
-                    $scope.faction.attacks = 0;
+                    faction.wins = 0;
+                    faction.losses = 0;
+                    faction.defends = 0;
+                    faction.attacks = 0;
 
-                    $scope.faction.battles.forEach(function(e) {
-                        var isAttacker = e.attacker.id === $scope.faction.id;
+                    faction.battles.forEach(function(e) {
+                        var isAttacker = e.attacker.id === faction.id;
                         var isDefender = !isAttacker;
 
                         if (isAttacker && (e.outcome === 'Attacker Victorious' || e.outcome === 'Defender Retreat'))
-                            $scope.faction.wins++;
+                            faction.wins++;
                         if (isDefender && (e.outcome === 'Defender Victorious' || e.outcome === 'Attacker Retreat'))
-                            $scope.faction.wins++;
+                            faction.wins++;
                         if (isAttacker && (e.outcome === 'Defender Victorious' || e.outcome === 'Attacker Retreat'))
-                            $scope.faction.losses++;
+                            faction.losses++;
                         if (isDefender && (e.outcome === 'Attacker Victorious' || e.outcome === 'Defender Retreat'))
-                            $scope.faction.losses++;
+                            faction.losses++;
 
                         e.isActive = (e.status !== 'Verified');
                         if (isAttacker && e.isActive)
-                            $scope.faction.attacks++;
+                            faction.attacks++;
                         if (isDefender && e.isActive)
-                            $scope.faction.defends++;
+                            faction.defends++;
                     });
                 })
+            }
+
+            $scope.onDetail = function(faction) {
+                $scope.faction = faction;
+
+                // fetch some further faction detail, including defend data
+                nbtFaction.fetchFactionDetail(faction, nbtIdentity.get().token, function(data) {
+                    $scope.faction = data;
+
+                    fetchRoster(data);
+                    fetchDiplomacy(data);
+                    fetchBattles(data);
+                });
             };
 
             $scope.onBack = function() {

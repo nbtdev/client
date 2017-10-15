@@ -23,6 +23,15 @@
     </div>
 </div>
 
+<div class="help-faction-defends" style="display: none">
+    <h5 class="nbt-h5">Faction Defends</h5>
+    <div class="nbt-rules-para">
+        If the label for this value is red, the faction cannot be attacked (all of their defend slots are currently
+        filled). If you are planning to attack this faction, you will need to wait until at least one of their current
+        active defends is completed.
+    </div>
+</div>
+
 <div class="help-faction-battles" style="display: none">
     <h5 class="nbt-h5">Faction Battle History</h5>
     <div class="nbt-rules-para">
@@ -228,7 +237,18 @@
                                             </span>
                                             <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Total:</span> {{faction.battles.length}}
                                             <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Active:</span> {{faction.defends + faction.attacks}}
-                                            <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Defends:</span> {{faction.defends}}
+                                            <span style="margin-left: 10px"
+                                                  class="nbt-bold"
+                                                  ng-class="{'nbt-highlight': faction.availableDefends > 0, 'nbt-error': faction.availableDefends <= 0}">
+                                                Defends:</span> {{faction.defends}}
+                                            <a class="ui-interactive"
+                                               data-toggle="popover"
+                                               data-placement="auto"
+                                               data-container="body"
+                                               data-trigger="hover"
+                                               data-contentref=".help-faction-defends">
+                                                <img src="../../../images/help-16.png" height="16" width="16"/>
+                                            </a>
                                             <span style="margin-left: 10px" class="nbt-highlight nbt-bold">Attacks:</span> {{faction.attacks}}
                                         </div>
                                         <div id="factionBattles" class="nbt-font-s nbt-border">
