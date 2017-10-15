@@ -1,5 +1,21 @@
 [
   {
+    "date": "8 Oct 2017 (v1.0.6)",
+    "changes": {
+      "Rules": [
+        "Scaled success returned to raids, by making objective loss effectively destroy 8 mechs"
+      ],
+      "Features": [
+        "(#67, #117, #131) Public display of faction roster, battles, and diplomacy, in a 'faction detail' view accessible from the Factions listing"
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+      ]
+    }
+  },
+
+  {
     "date": "18 Sep 2017 (v1.0.5)",
     "changes": {
       "Rules": [
