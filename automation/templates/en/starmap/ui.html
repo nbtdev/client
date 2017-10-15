@@ -15,7 +15,7 @@
                 </div>
                 <br>
                 <div class="ui-contentitem">
-                    <div><a href="javascript: void(0)" data-toggle="collapse" data-target="#legend">Map Legend</a></div>
+                    <div><a class="ui-interactive" data-toggle="collapse" data-target="#legend">Map Legend</a></div>
                     <ul id="legend" class="collapse">
                         <li style="list-style: none"><img src="/images/red-circle-64.png" width="10" height="10">&nbsp;Battle In Progress</li>
                         <li style="list-style: none"><img src="/images/green-circle-64.png" width="10" height="10">&nbsp;Combat Units</li>
@@ -24,6 +24,16 @@
                         <li style="list-style: none"><img src="/images/cyan-circle-64.png" width="10" height="10">&nbsp;Dropships</li>
                         <li style="list-style: none"><img src="/images/yellow-circle-64.png" width="10" height="10">&nbsp;Charge Station</li>
                         <li style="list-style: none"><img src="/images/white-circle-64.png" width="10" height="10">&nbsp;Factory</li>
+                    </ul>
+                </div>
+                <br>
+                <div class="ui-contentitem">
+                    <div><a class="ui-interactive" data-toggle="collapse" data-target="#terrains">Planet Terrains</a></div>
+                    <ul id="terrains" class="collapse">
+                        <li style="list-style: none" ng-repeat="terrainMap in terrainMaps">
+                            <span class="nbt-bold nbt-highlight">{{terrainMap.terrainClass.name}}: </span>
+                            <span ng-repeat="map in terrainMap.maps">{{map.name}}<span ng-hide="$last">, </span></span>
+                        </li>
                     </ul>
                 </div>
                 <br>

@@ -252,6 +252,29 @@ var _LeagueService = (function() {
         );
     };
 
+    LeagueService.prototype.fetchTerrainClasses = function(aLeague, aToken, aSuccessCb, aFailCb) {
+        if (!aLeague._links.terrainClasses)
+            return;
+
+        // fetch the leagues from the service
+        var hdrs = new Headers(Header.TOKEN, aToken);
+
+        http({
+            method: 'GET', // TODO: get from links!
+            url: aLeague._links.terrainClasses.href,
+            headers: hdrs.get()
+        }).then(
+            function (resp) {
+                if (aSuccessCb)
+                    aSuccessCb(resp.data._embedded.terrainMaps);
+            },
+            function (err) {
+                if (aFailCb)
+                    aFailCb(err);
+            }
+        );
+    };
+
     LeagueService.prototype.dismissAlert = function(aAlert, aToken, aSuccessCb, aFailCb) {
         if (!aAlert._links.self)
             return;

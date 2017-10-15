@@ -26,6 +26,7 @@
         .controller('StarmapUiController', ['$sce', '$scope', 'nbtFaction', 'nbtPlanet', 'nbtLeague', 'nbtIdentity', function($sce, $scope, nbtFaction, nbtPlanet, nbtLeague, nbtIdentity) {
             $scope.factions = [];
             $scope.league = null;
+            $scope.terrainMaps = null;
 
             var reloadFactions = function(league) {
                 nbtFaction.fetchFactionsForLeague(league, nbtIdentity.get().token, function (factions) {
@@ -135,6 +136,10 @@
             var cbLeagueChanged = $scope.$on('nbtLeagueChanged', function (event, league) {
                 $scope.league = league;
                 reloadFactions(league);
+
+                nbtLeague.fetchTerrainClasses(league, nbtIdentity.get().token, function(data) {
+                    $scope.terrainMaps = data;
+                });
             });
             $scope.$on('destroy', cbLeagueChanged);
         }]);
