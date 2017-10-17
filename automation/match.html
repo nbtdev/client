@@ -125,16 +125,18 @@
             <div class="row">
                 <div class="col-md-6 nbt-border-e">
                     <div class="row">
-                        <div class="col-md-4 nbt-highlight nbt-bold">Pilot</div>
+                        <div class="col-md-3 nbt-highlight nbt-bold">Pilot</div>
                         <div class="col-md-3 nbt-highlight nbt-bold">Mech</div>
                         <div class="col-md-2 nbt-highlight nbt-bold">Score</div>
+                        <div class="col-md-1 nbt-highlight nbt-bold">Health</div>
                         <div class="col-md-2 nbt-highlight nbt-bold">Damage</div>
                         <div class="col-md-1 nbt-highlight nbt-bold">Kills</div>
                     </div>
                     <div class="row" ng-repeat="player in team1Players" ng-class="{'nbt-error': player.HealthPercentage===0}">
-                        <div class="col-md-4">{{player.Username}}</div>
+                        <div class="col-md-3">{{player.Username}}</div>
                         <div class="col-md-3">{{player.MechName|uppercase}}</div>
                         <div class="col-md-2">{{player.MatchScore}}</div>
+                        <div class="col-md-1">{{player.HealthPercentage}}</div>
                         <div class="col-md-2">{{player.Damage}}</div>
                         <div class="col-md-1">{{player.Kills}}</div>
                     </div>
@@ -146,16 +148,18 @@
 
                 <div class="col-md-6 container">
                     <div class="row">
-                        <div class="col-md-4 nbt-highlight nbt-bold">Pilot</div>
+                        <div class="col-md-3 nbt-highlight nbt-bold">Pilot</div>
                         <div class="col-md-3 nbt-highlight nbt-bold">Mech</div>
                         <div class="col-md-2 nbt-highlight nbt-bold">Score</div>
+                        <div class="col-md-1 nbt-highlight nbt-bold">Health</div>
                         <div class="col-md-2 nbt-highlight nbt-bold">Damage</div>
                         <div class="col-md-1 nbt-highlight nbt-bold">Kills</div>
                     </div>
                     <div class="row" ng-repeat="player in team2Players" ng-class="{'nbt-error': player.HealthPercentage===0}">
-                        <div class="col-md-4">{{player.Username}}</div>
+                        <div class="col-md-3">{{player.Username}}</div>
                         <div class="col-md-3">{{player.MechName|uppercase}}</div>
                         <div class="col-md-2">{{player.MatchScore}}</div>
+                        <div class="col-md-1">{{player.HealthPercentage}}</div>
                         <div class="col-md-2">{{player.Damage}}</div>
                         <div class="col-md-1">{{player.Kills}}</div>
                     </div>
