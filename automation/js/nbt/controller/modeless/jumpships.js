@@ -118,6 +118,46 @@
                 shallowCopy(jumpship, temp);
             };
 
+            function makeUnitInstanceSummary(instances) {
+                var summary = {};
+
+                instances.forEach(function(e) {
+                    var entry = summary[e.template.id];
+                    if (!entry) {
+                        entry = {
+                            name: e.template.name,
+                            count: 0
+                        };
+
+                        summary[e.template.id] = entry;
+                    }
+                    
+                    entry.count++;
+                });
+
+                return summary;
+            }
+
+            $scope.onDetail = function(jumpship) {
+                nbtTransport.fetchJumpshipDetail(jumpship, nbtIdentity.get().token, function(aData) {
+                    $scope.jumpship = aData;
+
+                    // fetch information about combat units on dropships
+                    if (aData.dropships) {
+                        aData.dropships.forEach(function (e) {
+                            nbtTransport.fetchDropshipUnitInstances(e, nbtIdentity.get().token, function (instances) {
+                                if (instances._embedded)
+                                    e.combatUnitInstances = makeUnitInstanceSummary(instances._embedded.combatUnitInstances);
+                            })
+                        });
+                    }
+                });
+            };
+
+            $scope.onBack = function() {
+                $scope.jumpship = null;
+            };
+
             function onPlanetClicked(event) {
                 $rootScope.$broadcast('planetSearchRequest', event.currentTarget.innerHTML);
             }

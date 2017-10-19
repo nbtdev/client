@@ -141,7 +141,7 @@ var _TransportService = (function() {
         }
     };
 
-    // fetch detailed jumpship information including docked dropships
+    // fetch detailed jumpship information including docked dropships and jump log
     TransportService.prototype.fetchJumpshipDetail = function (aJumpship, aToken, aCallback) {
         if (aJumpship._links.self) {
             var hdr = new Headers(Header.TOKEN, aToken);
@@ -149,6 +149,24 @@ var _TransportService = (function() {
             http({
                 method: 'GET', // TODO: GET FROM LINKS!
                 url: aJumpship._links.self.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
+    // fetch list of combat unit instances on the dropship
+    TransportService.prototype.fetchDropshipUnitInstances = function (aDropship, aToken, aCallback) {
+        if (aDropship._links.unitInstances) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'GET', // TODO: GET FROM LINKS!
+                url: aDropship._links.unitInstances.href,
                 headers: hdr.get()
             }).then(
                 function (aResp) {
