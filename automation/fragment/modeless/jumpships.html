@@ -1,3 +1,12 @@
+<div class="help-jumpships-charge-status" style="display: none">
+    <h5 class="nbt-h5">Charge Status</h5>
+    <div class="nbt-rules-para">
+        Values in red are the hours left to charge on this jumpship (time left before it can jump again, in other words).
+        Values in white are the number of consecutive Charge Station hops left for this jumpship, before it will need
+        a full recharge.
+    </div>
+</div>
+
 <div id="jumpshipsDialog" class="nbt-modeless" ng-show="show" ng-controller="JumpshipsController" ng-cloak>
     <!-- dialog header -->
     <h5 class="nbt-h5 header">
@@ -7,27 +16,40 @@
 
     <!-- dialog body -->
     <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
-        <div class="container col-md-12">
+        <div ng-hide="jumpship" class="container col-md-12">
             <!-- the rows of data -->
             <div class="row nbt-bold">
                 <div class="col-md-3">Name</div>
                 <div class="col-md-2">Location</div>
                 <div class="col-md-2">Type</div>
-                <div class="col-md-2">Hardpoints</div>
-                <div class="col-md-2">Charge Status</div>
+                <div class="col-md-1">Hardpoints</div>
+                <div class="col-md-1">Dropships</div>
+                <div class="col-md-2">
+                    Charge&nbsp;Status
+                    <a class="ui-interactive"
+                       data-toggle="popover"
+                       data-placement="auto"
+                       data-container="body"
+                       data-trigger="hover"
+                       data-contentref=".help-jumpships-charge-status">
+                        <img src="../../../images/help-16.png" height="16" width="16"/>
+                    </a>
+                </div>
                 <div class="col-md-1"></div>
             </div>
 
             <div class="row nbt-hover" ng-repeat="jumpship in jumpships">
                 <div class="col-md-3">
                     <span ng-hide="jumpship.editing">{{jumpship.name}}</span>
+                    <span ng-hide="jumpship.editing" class="ui-interactive" ng-click="onDetail(jumpship)" style="float: right"><img src="../../images/forward.png" height="16" width="16"/></span>
                     <span ng-show="jumpship.editing"><input type="text" style="width: 100%" ng-model="jumpship.name" ng-keypress="checkEnterKey($event, this, jumpship)"></span>
                 </div>
                 <div class="col-md-2">
                     <span><a class="ui-interactive" title="Locate on map">{{jumpship.planet.name}}</a></span>
                 </div>
                 <div class="col-md-2">{{jumpship.type.name}}</div>
-                <div class="col-md-2">{{jumpship.type.hardpoints}}</div>
+                <div class="col-md-1">{{jumpship.type.hardpoints}}</div>
+                <div class="col-md-1">{{jumpship.dropships.length}}</div>
                 <div class="col-md-2" ng-class="{'nbt-error': jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0}">{{jumpship.hoursToFullCharge && jumpship.hoursToFullCharge > 0 ? jumpship.hoursToFullCharge : jumpship.csChargesRemaining}}</div>
                 <div class="col-md-1">
                     <span ng-hide="jumpship.editing">
@@ -48,6 +70,58 @@
                     <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
                 </div>
                 <div class="col-md-3"></div>
+            </div>
+        </div>
+
+        <div ng-show="jumpship">
+            <!-- header -->
+            <div class="nbt-centered" style="width: 100%">
+                <span style="float: left">
+                    <a class="ui-interactive" ng-click="onBack()">
+                        <img class="nbt-pseudo-button" src="../images/back.png"/>
+                    </a>
+                </span>
+                <h4 style="display: inline-block">{{jumpship.name}} Detail</h4>
+            </div>
+
+            <div style="display: inline-block; width: 50%">
+                <div class="col-md-12">
+                    Jump Log
+                </div>
+                <div class="container col-md-12 nbt-base nbt-font-s nbt-border">
+                    <div class="row">
+                        <div class="col-md-3 nbt-bold nbt-highlight">Date/Time</div>
+                        <div class="col-md-2 nbt-bold nbt-highlight">Origin</div>
+                        <div class="col-md-2 nbt-bold nbt-highlight">Destination</div>
+                        <div class="col-md-2 nbt-bold nbt-highlight">Type</div>
+                        <div class="col-md-1 nbt-bold nbt-highlight">CS&nbsp;Jump</div>
+                        <div class="col-md-2 nbt-bold nbt-highlight">Jumped&nbsp;By</div>
+                    </div>
+                    <div class="row nbt-hover" ng-repeat="logEntry in jumpship.jumpLog">
+                        <div class="col-md-3">{{logEntry.jumpDateTime|date:'short'}}</div>
+                        <div class="col-md-2">{{logEntry.origin.name}}</div>
+                        <div class="col-md-2">{{logEntry.destination.name}}</div>
+                        <div class="col-md-2">{{logEntry.type.name}}</div>
+                        <div class="col-md-1">{{logEntry.csJump ? 'Yes' : null}}</div>
+                        <div class="col-md-2">{{logEntry.jumpedBy}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: inline-block; width: 45%; vertical-align: top">
+                <div style="width: 100%">
+                    Dropships (Total Hardpoint: {{jumpship.type.hardpoints}})
+                </div>
+                <div class="nbt-border">
+                    <ul class="nbt-base nbt-font-s">
+                        <li style="list-style: none" ng-repeat="dropship in jumpship.dropships">
+                            <span class="nbt-highlight nbt-bold">{{dropship.name}}</span>
+                            <ul>
+                                <li style="list-style: none" ng-repeat="(key, summary) in dropship.combatUnitInstances">{{summary.name}}: {{summary.count}}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
