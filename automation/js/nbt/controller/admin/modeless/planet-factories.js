@@ -40,7 +40,7 @@
             var temp = null;
 
             // load allied factory visibility from settings, if present
-            $scope.showAlliedFactories = localStorage.showAlliedFactories;
+            $scope.showAlliedFactories = (localStorage.showAlliedFactories && localStorage.showAlliedFactories === 'true');
 
             function setOperationStatus(message, success) {
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
@@ -315,7 +315,9 @@
 
             $scope.$watch('showAlliedFactories', function(newVal, oldVal) {
                 localStorage.showAlliedFactories = newVal;
-                $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
+
+                if ($scope.factoryList)
+                    $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
             });
 
             // when the user signs in or out, we want to know

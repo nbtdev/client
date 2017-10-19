@@ -39,7 +39,7 @@
                 Edit All Factories For: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
             </div>
 
-            <div class="row">
+            <div class="row" ng-hide="isAdmin">
                 <input type="checkbox" ng-model="showAlliedFactories">&nbsp;Show Allied Factories
             </div>
 
