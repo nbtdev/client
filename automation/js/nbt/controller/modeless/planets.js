@@ -32,6 +32,16 @@
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
             }
 
+            function compareName(a, b) {
+                if (a.name < b.name) return -1;
+                else if (a.name > b.name) return 1;
+                return 0;
+            }
+
+            function compareTonnage(a, b) {
+                return a.tonnage - b.tonnage;
+            }
+
             function reloadPlanets() {
                 nbtFaction.fetchPlanets($scope.faction, nbtIdentity.get().token, function(aPlanets) {
                     $scope.planets = aPlanets._embedded.planets;
@@ -54,6 +64,8 @@
                         $scope.factoryPlanetTotal += (e.factory ? 1 : 0);
                     });
 
+                    $scope.planets.sort(compareName);
+
                     // when users click on a planet link in the listing, we want to trigger a camera move
                     // on the starmap to that planet; in order to get these bindings to happen after the next digest,
                     // we put a zero timeout in the queue to perform this
@@ -61,6 +73,34 @@
                         $("#planetsDialog a").on("click", onPlanetClicked);
                     }, 0);
                 });
+            }
+
+            function makeUnitInstanceSummary(instances) {
+                var summary = {};
+
+                instances.forEach(function(e) {
+                    var entry = summary[e.template.id];
+                    if (!entry) {
+                        entry = {
+                            name: e.template.name,
+                            tonnage: e.template.tonnage,
+                            count: 0
+                        };
+
+                        summary[e.template.id] = entry;
+                    }
+
+                    entry.count++;
+                });
+
+                var list = [];
+                Object.values(summary).forEach(function(v) {
+                    list.push(v);
+                });
+
+                list.sort(compareTonnage);
+
+                return list;
             }
 
             function onPlanetClicked(event) {
@@ -81,6 +121,7 @@
                     if (!summary) {
                         summary = {
                             template: e.template,
+                            tonnage: e.template.tonnage,
                             count: 0
                         };
                         summaries[e.template.id] = summary;
@@ -96,15 +137,42 @@
 
                 planet.combatUnitSummaries = summaries;
                 planet.combatUnitSummaryGroups = summaryGroups;
+                summaryGroups.Light.sort(compareTonnage);
+                summaryGroups.Medium.sort(compareTonnage);
+                summaryGroups.Heavy.sort(compareTonnage);
+                summaryGroups.Assault.sort(compareTonnage);
 
                 // fetch dropships in the jumpships
-                planet.jumpships.forEach(function(e, i, a) {
-                    nbtTransport.fetchJumpshipDetail(e, nbtIdentity.get().token, function(aJumpship) {
-                        $timeout(function() {
-                            a[i] = aJumpship;
-                        }, 0);
+                if (planet.jumpships) {
+                    planet.jumpships.forEach(function (e, i, a) {
+                        nbtTransport.fetchJumpshipDetail(e, nbtIdentity.get().token, function (aJumpship) {
+                            if (aJumpship.dropships) {
+                                aJumpship.dropships.forEach(function (e) {
+                                    nbtTransport.fetchDropshipUnitInstances(e, nbtIdentity.get().token, function (instances) {
+                                        if (instances._embedded) {
+                                            e.combatUnitInstances = makeUnitInstanceSummary(instances._embedded.combatUnitInstances);
+                                        }
+                                    });
+                                });
+                            }
+
+                            $timeout(function () {
+                                a[i] = aJumpship;
+                            }, 0);
+                        });
                     });
-                });
+                }
+
+                // fetch dropship details
+                if (planet.dropships) {
+                    planet.dropships.forEach(function (e, i, a) {
+                        nbtTransport.fetchDropshipUnitInstances(e, nbtIdentity.get().token, function (instances) {
+                            if (instances._embedded) {
+                                e.combatUnitInstances = makeUnitInstanceSummary(instances._embedded.combatUnitInstances);
+                            }
+                        });
+                    });
+                }
             }
 
             $scope.onDetail = function(planet) {

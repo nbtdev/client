@@ -224,6 +224,15 @@
                                                     <span class="nbt-bold">Type:</span>
                                                     {{dropship.type.name}}
                                                 </li>
+                                                <li>
+                                                    <span class="nbt-bold">Combat Units:</span>
+                                                    <ul>
+                                                        <li ng-repeat="(key, summary) in dropship.combatUnitInstances">
+                                                            <div style="display: inline-block; width: 50%">{{summary.name}}</div>
+                                                            <div style="display: inline-block">{{summary.count}}</div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -241,6 +250,15 @@
                                 <li>
                                     <span class="nbt-bold">Type:</span>
                                     {{dropship.type.name}}
+                                </li>
+                                <li>
+                                    <span class="nbt-bold">Combat Units:</span>
+                                    <ul>
+                                        <li ng-repeat="(key, summary) in dropship.combatUnitInstances">
+                                            <div style="display: inline-block; width: 50%">{{summary.name}}</div>
+                                            <div style="display: inline-block">{{summary.count}}</div>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </li>
