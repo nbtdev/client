@@ -233,13 +233,20 @@
             $scope.$on('destroy', cb);
 
             $scope.$watch('nameFilter', function(newValue, oldValue) {
+                if (!newValue || newValue.length === 0) {
+                    $scope.filteredPlanets = $scope.planets;
+                    return;
+                }
+
                 // filter out planets whose name does not begin with newValue
                 var filtered = [];
 
-                $scope.planets.forEach(function(e) {
-                    if (e.name.startsWith(newValue))
-                        filtered.push(e);
-                });
+                if ($scope.planets) {
+                    $scope.planets.forEach(function (e) {
+                        if (e.name.startsWith(newValue))
+                            filtered.push(e);
+                    });
+                }
 
                 $scope.filteredPlanets = filtered;
             });

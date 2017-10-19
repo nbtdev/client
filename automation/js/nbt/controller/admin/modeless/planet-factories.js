@@ -27,6 +27,7 @@
             $scope.league = null;
             $scope.planet = null;
             $scope.factories = null;
+            $scope.filteredFactories = null;
             $scope.factions = null;
             $scope.combatUnits = null;
             $scope.isAdmin = false;
@@ -37,6 +38,9 @@
             $scope.faction = null;
 
             var temp = null;
+
+            // load allied factory visibility from settings, if present
+            $scope.showAlliedFactories = localStorage.showAlliedFactories;
 
             function setOperationStatus(message, success) {
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
@@ -88,6 +92,13 @@
                 });
             }
 
+            function alliedFactoryFilter(f) {
+                if (f.owner.id === $scope.faction.id)
+                    return true;
+
+                return $scope.showAlliedFactories;
+            }
+
             function refreshListing() {
                 // first, skip this all if we are not showing
                 if (!$scope.show)
@@ -97,16 +108,18 @@
                 $timeout(function() {
                     if ($scope.planet && $scope.factionFactories) {
                         var factoryList = [];
-                        for (var i=0; i<$scope.factionFactories.length; ++i) {
-                            var f = $scope.factionFactories[i];
-                            if (f.planet.id === $scope.planet.id)
+                        $scope.factionFactories.forEach(function(f) {
+                            if (f.planet.id === $scope.planet.id) {
                                 factoryList.push(f);
-                        }
+                            }
+                        });
 
                         $scope.factoryList = factoryList;
                     } else {
                         $scope.factoryList = $scope.factionFactories;
                     }
+
+                    $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
                 }, 0, true);
             }
 
@@ -296,8 +309,13 @@
                 $scope.isAdmin = (ident.isSiteAdmin() || ident.isLeagueAdmin());
             }
 
-            $scope.$watch('faction', function(oldVal, newVal) {
+            $scope.$watch('faction', function(newVal, oldVal) {
                 reloadFactionFactories();
+            });
+
+            $scope.$watch('showAlliedFactories', function(newVal, oldVal) {
+                localStorage.showAlliedFactories = newVal;
+                $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
             });
 
             // when the user signs in or out, we want to know

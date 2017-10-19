@@ -39,6 +39,10 @@
                 Edit All Factories For: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
             </div>
 
+            <div class="row">
+                <input type="checkbox" ng-model="showAlliedFactories">&nbsp;Show Allied Factories
+            </div>
+
             <!-- faction header row -->
             <div class="row nbt-bold nbt-highlight" ng-hide="isAdmin">
                 <div class="col-md-3">Firm</div>
@@ -91,7 +95,7 @@
             </div>
 
             <!-- faction factory listing -->
-            <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
+            <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in filteredFactories" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
                 <div class="col-md-3">{{factory.firm}}</div>
                 <div class="col-md-2">
                     <div ng-show="planet">{{factory.owner.displayName}}</div>

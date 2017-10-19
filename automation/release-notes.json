@@ -1,5 +1,21 @@
 [
   {
+    "date": "Oct 2017 (v1.0.7)",
+    "changes": {
+      "Rules": [
+      ],
+      "Features": [
+      ],
+      "Bugfixes": [
+      ],
+      "Enhancements": [
+        "User experience improvements to the Planets page (combat unit summaries on dropships, better sorting, filter by planet name)",
+        "User experience improvements to the Jumpships page (detail page with jump log and combat unit summaries on dropships docked to the jumpship)"
+      ]
+    }
+  },
+
+  {
     "date": "8 Oct 2017 (v1.0.6)",
     "changes": {
       "Rules": [
