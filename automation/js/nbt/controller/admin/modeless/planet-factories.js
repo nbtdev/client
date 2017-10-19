@@ -358,6 +358,14 @@
                 return filtered;
             }
 
+            $scope.alliedPurchaseChanged = function(factory) {
+                nbtPlanet.updateFactory(factory, nbtIdentity.get().token, function(aData) {
+                    appendOperationStatus("Factory updated");
+                }, function(aErr) {
+                    appendOperationStatus(aErr);
+                });
+            };
+
             function applyAlliedFilter(list) {
                 if (list)
                     return list.filter(alliedFactoryFilter);

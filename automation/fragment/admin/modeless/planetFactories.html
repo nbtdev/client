@@ -43,6 +43,8 @@
                 <input type="checkbox" ng-model="showAlliedFactories">&nbsp;Show Allied Factories
             </div>
 
+            <hr>
+
             <!-- faction header row -->
             <div class="row nbt-bold nbt-highlight" ng-hide="isAdmin">
                 <div class="col-md-3">
@@ -104,7 +106,10 @@
 
             <!-- faction factory listing -->
             <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in filteredFactories" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
-                <div class="col-md-3">{{factory.firm}}</div>
+                <div class="col-md-3">
+                    <input type="checkbox" ng-model="factory.allyPurchase" ng-change="alliedPurchaseChanged(factory)" title="When checked, enables allied purchases from this factory">
+                    {{factory.firm}}
+                </div>
                 <div class="col-md-2">
                     <div ng-show="planet">{{factory.owner.displayName}}</div>
                     <div ng-hide="planet"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}} ({{factory.owner.shortName}})</a></div>
