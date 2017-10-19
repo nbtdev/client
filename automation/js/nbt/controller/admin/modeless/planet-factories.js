@@ -340,30 +340,38 @@
                 reloadFactionFactories();
             });
 
-            $scope.$watch('showAlliedFactories', function(newVal, oldVal) {
-                localStorage.showAlliedFactories = newVal;
-
-                if ($scope.factoryList)
-                    $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
-            });
-
-            $scope.$watch('lineFilter', function(newValue, oldValue) {
-                if (!newValue || newValue.length === 0) {
-                    $scope.filteredFactories = $scope.factoryList;
-                    return;
+            function applyLineFilter(list) {
+                if (!$scope.lineFilter || !$scope.lineFilter.length) {
+                    return list;
                 }
 
                 // filter out planets whose name does not begin with newValue
                 var filtered = [];
 
-                if ($scope.factoryList) {
-                    $scope.factoryList.forEach(function (e) {
-                        if (e.combatUnit.designation.startsWith(newValue))
+                if (list) {
+                    list.forEach(function (e) {
+                        if (e.combatUnit.designation.startsWith($scope.lineFilter))
                             filtered.push(e);
                     });
                 }
 
-                $scope.filteredFactories = filtered;
+                return filtered;
+            }
+
+            function applyAlliedFilter(list) {
+                if (list)
+                    return list.filter(alliedFactoryFilter);
+            }
+
+            $scope.$watch('showAlliedFactories', function(newVal, oldVal) {
+                localStorage.showAlliedFactories = newVal;
+                $scope.filteredFactories = applyAlliedFilter($scope.factoryList);
+                $scope.filteredFactories = applyLineFilter($scope.filteredFactories);
+            });
+
+            $scope.$watch('lineFilter', function(newValue, oldValue) {
+                $scope.filteredFactories = applyAlliedFilter($scope.factoryList);
+                $scope.filteredFactories = applyLineFilter($scope.filteredFactories);
             });
 
             // when the user signs in or out, we want to know

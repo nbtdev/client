@@ -10,7 +10,8 @@
       ],
       "Enhancements": [
         "User experience improvements to the Planets page (combat unit summaries on dropships, better sorting, filter by planet name)",
-        "User experience improvements to the Jumpships page (detail page with jump log and combat unit summaries on dropships docked to the jumpship)"
+        "User experience improvements to the Jumpships page (detail page with jump log and combat unit summaries on dropships docked to the jumpship)",
+        "User experience improvements to the Factories page (sort by firm name and line; editable filter by line designation; show/hide allied factories)"
       ]
     }
   },
