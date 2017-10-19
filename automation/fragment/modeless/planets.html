@@ -101,7 +101,13 @@
             </div>
             <!-- header row 2 -->
             <div class="row nbt-bold">
-                <div class="col-md-2">{{planetTotal}}</div>
+                <div class="col-md-2">
+                    {{planetTotal}}
+                    <input type="text"
+                           style="width: 70%;float: right; background:  black; color: white; font-size: 0.8em;"
+                           placeholder="Filter by name"
+                           ng-model="nameFilter">
+                </div>
                 <div class="col-md-2">{{industryTotal | number}}</div>
                 <div class="col-md-2">{{combatUnitTotal | number}}</div>
                 <div class="col-md-2">{{jumpshipTotal}}</div>
@@ -113,7 +119,7 @@
             <hr style="margin: 5px">
 
             <div style="overflow-y: auto">
-                <div class="row nbt-hover" ng-repeat="planet in planets" style="overflow-y: auto">
+                <div class="row nbt-hover" ng-repeat="planet in filteredPlanets" style="overflow-y: auto">
                     <div class="col-md-2">
                         <a class="ui-interactive" ng-click="onPlanetClick(planet)">{{planet.name}}</a>
                         <span class="ui-interactive" ng-click="onDetail(planet)" style="float: right"><img src="../../images/forward.png" height="16" width="16"/></span>

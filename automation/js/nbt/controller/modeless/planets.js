@@ -27,6 +27,7 @@
             $scope.faction = null;
             $scope.planets = null;
             $scope.identity = null;
+            $scope.filteredPlanets = null;
 
             function setOperationStatus(message, success) {
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
@@ -65,6 +66,7 @@
                     });
 
                     $scope.planets.sort(compareName);
+                    $scope.filteredPlanets = $scope.planets;
 
                     // when users click on a planet link in the listing, we want to trigger a camera move
                     // on the starmap to that planet; in order to get these bindings to happen after the next digest,
@@ -229,6 +231,18 @@
                 $scope.identity = identity;
             });
             $scope.$on('destroy', cb);
+
+            $scope.$watch('nameFilter', function(newValue, oldValue) {
+                // filter out planets whose name does not begin with newValue
+                var filtered = [];
+
+                $scope.planets.forEach(function(e) {
+                    if (e.name.startsWith(newValue))
+                        filtered.push(e);
+                });
+
+                $scope.filteredPlanets = filtered;
+            });
 
             $scope.checkEnterKey = checkEnterKeyAndSubmit;
         }]);
