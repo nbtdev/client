@@ -1,10 +1,11 @@
 [
   {
-    "date": "Oct 2017 (v1.0.7)",
+    "date": "18 Oct 2017 (v1.0.7)",
     "changes": {
       "Rules": [
       ],
       "Features": [
+        "Implemented per-factory allied purchase control (enable/disable)"
       ],
       "Bugfixes": [
       ],
