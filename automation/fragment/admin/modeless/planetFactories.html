@@ -45,14 +45,22 @@
 
             <!-- faction header row -->
             <div class="row nbt-bold nbt-highlight" ng-hide="isAdmin">
-                <div class="col-md-3">Firm</div>
+                <div class="col-md-3">
+                    <a class="ui-interactive" ng-click="onSort('firm')">Firm</a>
+                </div>
 
                 <div class="col-md-2">
                     <span ng-show="planet">Faction</span>
                     <span ng-hide="planet">Planet</span>
                 </div>
 
-                <div class="col-md-2">Line</div>
+                <div class="col-md-2">
+                    <a class="ui-interactive" ng-click="onSort('line')">Line</a>
+                    <input type="text"
+                           style="width: 70%;float: right; background:  black; color: white; font-size: 0.8em;"
+                           placeholder="Filter by line"
+                           ng-model="lineFilter">
+                </div>
 
                 <div class="col-md-1">
                     Stock&nbsp;

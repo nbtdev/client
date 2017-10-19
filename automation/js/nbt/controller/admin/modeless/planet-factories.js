@@ -37,6 +37,11 @@
             $scope.factionPlanets = null;
             $scope.faction = null;
 
+            $scope.sortDirections = {
+                firm: 1,
+                line: 1
+            };
+
             var temp = null;
 
             // load allied factory visibility from settings, if present
@@ -265,6 +270,28 @@
                 });
             };
 
+            $scope.onSort = function(column) {
+                if (column === 'line') {
+                    $scope.filteredFactories.sort(function(a, b) {
+                        if (a.combatUnit.designation < b.combatUnit.designation) return -1 * $scope.sortDirections.line;
+                        else if (a.combatUnit.designation > b.combatUnit.designation) return 1 * $scope.sortDirections.line;
+                        return 0;
+                    });
+
+                    $scope.sortDirections.line *= -1;
+                }
+
+                if (column === 'firm') {
+                    $scope.filteredFactories.sort(function(a, b) {
+                        if (a.firm < b.firm) return -1 * $scope.sortDirections.firm;
+                        else if (a.firm > b.firm) return 1 * $scope.sortDirections.firm;
+                        return 0;
+                    });
+
+                    $scope.sortDirections.firm *= -1;
+                }
+            };
+
             // TODO: don't tie this to a specific dialog...
             $("#cmdClosePlanetFactoriesDialog").on("click", function(event) {
                 if ($scope.factionFactories)
@@ -318,6 +345,25 @@
 
                 if ($scope.factoryList)
                     $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
+            });
+
+            $scope.$watch('lineFilter', function(newValue, oldValue) {
+                if (!newValue || newValue.length === 0) {
+                    $scope.filteredFactories = $scope.factoryList;
+                    return;
+                }
+
+                // filter out planets whose name does not begin with newValue
+                var filtered = [];
+
+                if ($scope.factoryList) {
+                    $scope.factoryList.forEach(function (e) {
+                        if (e.combatUnit.designation.startsWith(newValue))
+                            filtered.push(e);
+                    });
+                }
+
+                $scope.filteredFactories = filtered;
             });
 
             // when the user signs in or out, we want to know
