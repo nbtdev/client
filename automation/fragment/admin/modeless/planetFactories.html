@@ -111,7 +111,7 @@
                            ng-model="factory.allyPurchase"
                            ng-disabled="factory.owner.id!==faction.id"
                            ng-change="alliedPurchaseChanged(factory)"
-                           title="When checked, enables allied purchases from this factory">
+                           title="When checked, allied purchases are enabled from this factory">
                     {{factory.firm}}
                 </div>
                 <div class="col-md-2">
@@ -124,7 +124,12 @@
                 <div class="col-md-1 nbt-right-justified">{{factory.currentCost|number}}</div>
                 <div class="col-md-2">
                     <div ng-hide="faction.factionStatus.id<4">
-                        <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%; color: black">
+                        <input type="number"
+                               ng-model="factory.purchaseQty"
+                               ng-disabled="factory.owner.id!==faction.id && !factory.allyPurchase"
+                               min="0"
+                               ng-change="onQuantityChange(factory)"
+                               style="width: 40%; color: black">
                     </div>
                 </div>
             </div>
