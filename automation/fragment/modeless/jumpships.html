@@ -117,7 +117,10 @@
                         <li style="list-style: none" ng-repeat="dropship in jumpship.dropships">
                             <span class="nbt-highlight nbt-bold">{{dropship.name}}</span>
                             <ul>
-                                <li style="list-style: none" ng-repeat="(key, summary) in dropship.combatUnitInstances">{{summary.name}}: {{summary.count}}</li>
+                                <li style="list-style: none" ng-repeat="(key, summary) in dropship.combatUnitInstances">
+                                    <div style="display: inline-block; width: 50%">{{summary.name}}</div>
+                                    <div style="display: inline-block">{{summary.count}}</div>
+                                </li>
                             </ul>
                         </li>
                     </ul>

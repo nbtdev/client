@@ -27,6 +27,7 @@
             $scope.league = null;
             $scope.planet = null;
             $scope.factories = null;
+            $scope.filteredFactories = null;
             $scope.factions = null;
             $scope.combatUnits = null;
             $scope.isAdmin = false;
@@ -36,7 +37,15 @@
             $scope.factionPlanets = null;
             $scope.faction = null;
 
+            $scope.sortDirections = {
+                firm: 1,
+                line: 1
+            };
+
             var temp = null;
+
+            // load allied factory visibility from settings, if present
+            $scope.showAlliedFactories = (localStorage.showAlliedFactories && localStorage.showAlliedFactories === 'true');
 
             function setOperationStatus(message, success) {
                 setStatusWithTimeout($scope, $timeout, message, success, 5000);
@@ -88,6 +97,13 @@
                 });
             }
 
+            function alliedFactoryFilter(f) {
+                if (f.owner.id === $scope.faction.id)
+                    return true;
+
+                return $scope.showAlliedFactories;
+            }
+
             function refreshListing() {
                 // first, skip this all if we are not showing
                 if (!$scope.show)
@@ -97,16 +113,18 @@
                 $timeout(function() {
                     if ($scope.planet && $scope.factionFactories) {
                         var factoryList = [];
-                        for (var i=0; i<$scope.factionFactories.length; ++i) {
-                            var f = $scope.factionFactories[i];
-                            if (f.planet.id === $scope.planet.id)
+                        $scope.factionFactories.forEach(function(f) {
+                            if (f.planet.id === $scope.planet.id) {
                                 factoryList.push(f);
-                        }
+                            }
+                        });
 
                         $scope.factoryList = factoryList;
                     } else {
                         $scope.factoryList = $scope.factionFactories;
                     }
+
+                    $scope.filteredFactories = $scope.factoryList.filter(alliedFactoryFilter);
                 }, 0, true);
             }
 
@@ -252,6 +270,28 @@
                 });
             };
 
+            $scope.onSort = function(column) {
+                if (column === 'line') {
+                    $scope.filteredFactories.sort(function(a, b) {
+                        if (a.combatUnit.designation < b.combatUnit.designation) return -1 * $scope.sortDirections.line;
+                        else if (a.combatUnit.designation > b.combatUnit.designation) return 1 * $scope.sortDirections.line;
+                        return 0;
+                    });
+
+                    $scope.sortDirections.line *= -1;
+                }
+
+                if (column === 'firm') {
+                    $scope.filteredFactories.sort(function(a, b) {
+                        if (a.firm < b.firm) return -1 * $scope.sortDirections.firm;
+                        else if (a.firm > b.firm) return 1 * $scope.sortDirections.firm;
+                        return 0;
+                    });
+
+                    $scope.sortDirections.firm *= -1;
+                }
+            };
+
             // TODO: don't tie this to a specific dialog...
             $("#cmdClosePlanetFactoriesDialog").on("click", function(event) {
                 if ($scope.factionFactories)
@@ -296,8 +336,50 @@
                 $scope.isAdmin = (ident.isSiteAdmin() || ident.isLeagueAdmin());
             }
 
-            $scope.$watch('faction', function(oldVal, newVal) {
+            $scope.$watch('faction', function(newVal, oldVal) {
                 reloadFactionFactories();
+            });
+
+            function applyLineFilter(list) {
+                if (!$scope.lineFilter || !$scope.lineFilter.length) {
+                    return list;
+                }
+
+                // filter out planets whose name does not begin with newValue
+                var filtered = [];
+
+                if (list) {
+                    list.forEach(function (e) {
+                        if (e.combatUnit.designation.startsWith($scope.lineFilter))
+                            filtered.push(e);
+                    });
+                }
+
+                return filtered;
+            }
+
+            $scope.alliedPurchaseChanged = function(factory) {
+                nbtPlanet.updateFactory(factory, nbtIdentity.get().token, function(aData) {
+                    appendOperationStatus("Factory updated");
+                }, function(aErr) {
+                    appendOperationStatus(aErr);
+                });
+            };
+
+            function applyAlliedFilter(list) {
+                if (list)
+                    return list.filter(alliedFactoryFilter);
+            }
+
+            $scope.$watch('showAlliedFactories', function(newVal, oldVal) {
+                localStorage.showAlliedFactories = newVal;
+                $scope.filteredFactories = applyAlliedFilter($scope.factoryList);
+                $scope.filteredFactories = applyLineFilter($scope.filteredFactories);
+            });
+
+            $scope.$watch('lineFilter', function(newValue, oldValue) {
+                $scope.filteredFactories = applyAlliedFilter($scope.factoryList);
+                $scope.filteredFactories = applyLineFilter($scope.filteredFactories);
             });
 
             // when the user signs in or out, we want to know

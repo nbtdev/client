@@ -39,16 +39,30 @@
                 Edit All Factories For: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
             </div>
 
+            <div class="row" ng-hide="isAdmin">
+                <input type="checkbox" ng-model="showAlliedFactories">&nbsp;Show Allied Factories
+            </div>
+
+            <hr>
+
             <!-- faction header row -->
             <div class="row nbt-bold nbt-highlight" ng-hide="isAdmin">
-                <div class="col-md-3">Firm</div>
+                <div class="col-md-3">
+                    <a class="ui-interactive" ng-click="onSort('firm')">Firm</a>
+                </div>
 
                 <div class="col-md-2">
                     <span ng-show="planet">Faction</span>
                     <span ng-hide="planet">Planet</span>
                 </div>
 
-                <div class="col-md-2">Line</div>
+                <div class="col-md-2">
+                    <a class="ui-interactive" ng-click="onSort('line')">Line</a>
+                    <input type="text"
+                           style="width: 70%;float: right; background:  black; color: white; font-size: 0.8em;"
+                           placeholder="Filter by line"
+                           ng-model="lineFilter">
+                </div>
 
                 <div class="col-md-1">
                     Stock&nbsp;
@@ -91,8 +105,11 @@
             </div>
 
             <!-- faction factory listing -->
-            <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in factoryList" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
-                <div class="col-md-3">{{factory.firm}}</div>
+            <div class="row nbt-hover" ng-hide="isAdmin" ng-repeat="factory in filteredFactories" ng-class="{'nbt-background-success-anim': factory.operationSuccess, 'nbt-background-failure-anim': factory.operationFailure}">
+                <div class="col-md-3">
+                    <input type="checkbox" ng-model="factory.allyPurchase" ng-change="alliedPurchaseChanged(factory)" title="When checked, enables allied purchases from this factory">
+                    {{factory.firm}}
+                </div>
                 <div class="col-md-2">
                     <div ng-show="planet">{{factory.owner.displayName}}</div>
                     <div ng-hide="planet"><a class="ui-interactive" ng-click="onPlanetClicked(factory.planet)">{{factory.planet.name}} ({{factory.owner.shortName}})</a></div>

@@ -126,6 +126,7 @@
                     if (!entry) {
                         entry = {
                             name: e.template.name,
+                            tonnage: e.template.tonnage,
                             count: 0
                         };
 
@@ -135,7 +136,16 @@
                     entry.count++;
                 });
 
-                return summary;
+                var list = [];
+                Object.values(summary).forEach(function(v) {
+                    list.push(v);
+                });
+
+                list.sort(function(a, b) {
+                    return a.tonnage - b.tonnage;
+                });
+
+                return list;
             }
 
             $scope.onDetail = function(jumpship) {
@@ -146,8 +156,9 @@
                     if (aData.dropships) {
                         aData.dropships.forEach(function (e) {
                             nbtTransport.fetchDropshipUnitInstances(e, nbtIdentity.get().token, function (instances) {
-                                if (instances._embedded)
+                                if (instances._embedded) {
                                     e.combatUnitInstances = makeUnitInstanceSummary(instances._embedded.combatUnitInstances);
+                                }
                             })
                         });
                     }
