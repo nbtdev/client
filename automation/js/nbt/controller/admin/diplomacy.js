@@ -89,12 +89,13 @@
             $scope.onApply = function(entry) {
                 nbtFaction.updateDiplomacyData($scope.faction, entry, nbtIdentity.get().token, function(data) {
                     entry.operationSuccess = true;
-                    $scope.newEntry = null;
-                    $scope.diplomacy = data._embedded.alliances;
+                    entry.editing = null;
+                    entry.newEntry = null;
 
                     // make the extra class go away after two seconds
                     $timeout(function() {
                         entry.operationSuccess = null;
+                        $scope.diplomacy = data._embedded.alliances;
                     }, 2000);
                 }, function (err) {
                     entry.operationFailure = true;
