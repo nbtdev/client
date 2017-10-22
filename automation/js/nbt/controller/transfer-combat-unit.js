@@ -59,6 +59,15 @@
                 return entry !== null;
             }
 
+            function compareByTonnageThenName(a, b) {
+                if (a.template.tonnage !== b.template.tonnage)
+                    return a.template.tonnage - b.template.tonnage;
+
+                if (a.template.name < b.template.name) return -1;
+                else if (a.template.name > b.template.name) return 1;
+                else return 0;
+            }
+
             $scope.planet = null;
             $scope.combatUnits = [];
             $scope.dropships = [];
@@ -144,11 +153,14 @@
                                     ownerAbbr: unit.owner.shortName,
                                     template: unit.template
                                 });
+
+                                $scope.combatUnits.sort(compareByTonnageThenName);
                             }
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.originState;
                         dropship.combatUnitInstances = data.originState;
+                        dropship.combatUnitInstances.sort(compareByTonnageThenName);
 
                         updateStatus("Transfer Succeeded");
                         updateAvailability(dropship);
@@ -191,11 +203,14 @@
                                     ownerAbbr: unit.owner.shortName,
                                     template: unit.template
                                 });
+
+                                $scope.combatUnits.sort(compareByTonnageThenName);
                             }
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.destinationState;
                         dropship.combatUnitInstances = data.destinationState;
+                        dropship.combatUnitInstances.sort(compareByTonnageThenName);
 
                         updateStatus("Transfer Succeeded");
                         updateAvailability(dropship);
@@ -233,6 +248,8 @@
                             ownerAbbr: unit.owner.shortName,
                             template: unit.template
                         });
+
+                        $scope.combatUnits.sort(compareByTonnageThenName);
                     }
                 });
 
@@ -244,6 +261,7 @@
                     // make an entry in the scope for each dropship combat unit list
                     for (var i=0; i<data.length; ++i) {
                         var ds = data[i];
+                        ds.combatUnitInstances.sort(compareByTonnageThenName);
                         $scope.dropshipCombatUnits[ds.id] = ds.combatUnitInstances;
                         $scope.selectedDropshipCombatUnits[ds.id] = [];
                         updateAvailability(ds);
