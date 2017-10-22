@@ -817,3 +817,8 @@ ul.nbt-tree {
         width: 900px;
     }
 }
+
+input[type='number'] {
+    color: white;
+    background: black;
+}

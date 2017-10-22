@@ -445,6 +445,38 @@ var _FactionService = (function() {
         }
     };
 
+    FactionService.prototype.updateDiplomacyData = function(aFaction, aData, aToken, aSuccessCb, aFailCb) {
+        // the diplomacy update actually comes from the alliance entry (aData), and will be a PUT; any
+        // new entries will be a POST to aFaction._links.alliances
+        var method = 'PUT';
+        var link = (aData && aData._links) ? aData._links.self : null;
+
+        if (!link) {
+            link = aFaction._links.alliances || null;
+            method = 'POST';
+        }
+
+        if (link) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: method,
+                url: link.href,
+                data: aData,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aSuccessCb)
+                        aSuccessCb(aResp.data);
+                },
+                function (aErr) {
+                    if (aFailCb)
+                        aFailCb(aErr.data);
+                }
+            );
+        }
+    };
+
     FactionService.prototype.submitFactoryOrder = function(aFactory, aQty, aToken, aSuccessCb, aFailCb) {
         if (aFactory && aFactory._links.factoryOrders) {
             var hdr = new Headers(Header.TOKEN, aToken);

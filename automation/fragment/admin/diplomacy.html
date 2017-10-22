@@ -1,0 +1,47 @@
+<script src="/js/nbt/controller/admin/diplomacy.js"></script>
+<div id="diplomacyAdminModal" class="modal fade" tabindex="-1" role="dialog" ng-controller="DiplomacyAdminController">
+    <div class="modal-dialog modal-lg with-border">
+        <div class="modal-content">
+            <div class="modal-header nbt-base nbt-modal-header">
+                <h4 class="modal-title text-center">{{league.name}} Diplomacy</h4>
+            </div>
+            <div class="modal-body nbt-base nbt-modal-body">
+                Pivot Faction: <select ng-model="faction" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select>
+                <button class="btn btn-primary btn-xs" ng-click="onReload()">Reload</button>
+                <div style="display: inline-block">
+                    <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
+                    <div ng-show="errorMessages" class="nbt-error" ng-repeat="msg in errorMessages">{{msg}}</div>
+                </div>
+
+                <div ng-show="faction">
+                    <ul>
+                        <li ng-repeat="entry in diplomacy"
+                            class="nbt-hover"
+                            ng-class="{'nbt-background-success-anim': entry.operationSuccess, 'nbt-background-failure-anim': entry.operationFailure}"
+                            style="list-style: none; width: 90%">
+                            <div style="display: inline-block; width: 50%">
+                                <span ng-hide="entry.newEntry">{{entry.ally.displayName}}</span>
+                                <span ng-show="entry.newEntry"><select ng-model="entry.ally" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
+                                <span ng-hide="entry.editing" style="float: right" class="ui-interactive" ng-click="onEdit(entry)">{{entry.level}}</span>
+                                <span ng-show="entry.editing" style="float: right">
+                                    <input type="number" ng-model="entry.level" min="-25" max="25" style="width: 90%">
+                                </span>
+                            </div>
+                            <div ng-show="entry.editing" style="display: inline-block; width: 20%">
+                                <img class="ui-interactive" ng-click="onApply(entry)" src="../../images/check16.png" height="16" width="16"/>
+                                <img class="ui-interactive" ng-click="onCancel(entry)" src="../../images/cancel16.png" height="16" width="16"/>
+                            </div>
+                        </li>
+                        <li style="list-style: none; width: 90%" ng-hide="newEntry">
+                            <img class="ui-interactive"
+                                 ng-click="onAdd()"
+                                 src="../../images/add-icon.png"
+                                 height="16"
+                                 width="16"/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
