@@ -153,14 +153,17 @@
                                     ownerAbbr: unit.owner.shortName,
                                     template: unit.template
                                 });
-
-                                $scope.combatUnits.sort(compareByTonnageThenName);
                             }
+
+                            if ($scope.combatUnits)
+                                $scope.combatUnits.sort(compareByTonnageThenName);
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.originState;
                         dropship.combatUnitInstances = data.originState;
-                        dropship.combatUnitInstances.sort(compareByTonnageThenName);
+
+                        if (dropship.combatUnitInstances)
+                            dropship.combatUnitInstances.sort(compareByTonnageThenName);
 
                         updateStatus("Transfer Succeeded");
                         updateAvailability(dropship);
@@ -203,14 +206,17 @@
                                     ownerAbbr: unit.owner.shortName,
                                     template: unit.template
                                 });
-
-                                $scope.combatUnits.sort(compareByTonnageThenName);
                             }
+
+                            if ($scope.combatUnits)
+                                $scope.combatUnits.sort(compareByTonnageThenName);
                         }
 
                         $scope.dropshipCombatUnits[dropship.id] = data.destinationState;
                         dropship.combatUnitInstances = data.destinationState;
-                        dropship.combatUnitInstances.sort(compareByTonnageThenName);
+
+                        if (dropship.combatUnitInstances)
+                            dropship.combatUnitInstances.sort(compareByTonnageThenName);
 
                         updateStatus("Transfer Succeeded");
                         updateAvailability(dropship);
@@ -248,9 +254,10 @@
                             ownerAbbr: unit.owner.shortName,
                             template: unit.template
                         });
-
-                        $scope.combatUnits.sort(compareByTonnageThenName);
                     }
+
+                    if ($scope.combatUnits)
+                        $scope.combatUnits.sort(compareByTonnageThenName);
                 });
 
                 // grab any dropships on the planet too
@@ -261,7 +268,9 @@
                     // make an entry in the scope for each dropship combat unit list
                     for (var i=0; i<data.length; ++i) {
                         var ds = data[i];
-                        ds.combatUnitInstances.sort(compareByTonnageThenName);
+                        if (ds.combatUnitInstances)
+                            ds.combatUnitInstances.sort(compareByTonnageThenName);
+
                         $scope.dropshipCombatUnits[ds.id] = ds.combatUnitInstances;
                         $scope.selectedDropshipCombatUnits[ds.id] = [];
                         updateAvailability(ds);
