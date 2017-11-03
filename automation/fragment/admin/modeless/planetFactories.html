@@ -129,7 +129,7 @@
                                ng-disabled="factory.owner.id!==faction.id && !factory.allyPurchase"
                                min="0"
                                ng-change="onQuantityChange(factory)"
-                               style="width: 40%; color: black">
+                               style="width: 40%">
                     </div>
                 </div>
             </div>
@@ -158,11 +158,11 @@
                 <div class="col-md-1">{{factory.queueDepth || 0}}</div>
                 <div class="col-md-1">
                     <span ng-hide="factory.editing">{{factory.baseRate}}</span>
-                    <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate" style="width: 90%; color: black"></span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.baseRate"></span>
                 </div>
                 <div class="col-md-1">
                     <span ng-hide="factory.editing">{{factory.maxRate}}</span>
-                    <span ng-show="factory.editing"><input type="number" ng-model="factory.maxRate" style="width: 90%; color: black"></span>
+                    <span ng-show="factory.editing"><input type="number" ng-model="factory.maxRate"></span>
                 </div>
                 <div class="col-md-2">
                     <!-- admin tools -->
@@ -179,7 +179,7 @@
 
                     <!-- faction tools -->
                     <div ng-hide="isAdmin || faction.factionStatus.id<4">
-                        <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%; color: black">
+                        <input type="number" ng-model="factory.purchaseQty" min="0" ng-change="onQuantityChange(factory)" style="width: 40%">
                     </div>
                 </div>
             </div>
@@ -212,10 +212,10 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-1"></div>
                 <div class="col-md-1">
-                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.baseRate" style="width: 90%; color: black"></span>
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.baseRate"></span>
                 </div>
                 <div class="col-md-1">
-                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.maxRate" style="width: 90%; color: black"></span>
+                    <span ng-show="newFactory.editing"><input type="number" ng-model="newFactory.maxRate"></span>
                 </div>
                 <div class="col-md-2">
                     <span ng-show="newFactory.editing">

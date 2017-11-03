@@ -821,4 +821,5 @@ ul.nbt-tree {
 input[type='number'] {
     color: white;
     background: black;
+    width: 90%;
 }

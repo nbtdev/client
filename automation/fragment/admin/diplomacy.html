@@ -24,7 +24,7 @@
                                 <span ng-show="entry.newEntry"><select ng-model="entry.ally" ng-options="faction as faction.displayName for faction in factions track by faction.id"></select></span>
                                 <span ng-hide="entry.editing" style="float: right" class="ui-interactive" ng-click="onEdit(entry)">{{entry.level}}</span>
                                 <span ng-show="entry.editing" style="float: right">
-                                    <input type="number" ng-model="entry.level" min="-25" max="25" style="width: 90%">
+                                    <input type="number" ng-model="entry.level" min="-25" max="25">
                                 </span>
                             </div>
                             <div ng-show="entry.editing" style="display: inline-block; width: 20%">

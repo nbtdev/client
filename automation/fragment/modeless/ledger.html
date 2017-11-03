@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-md-2 nbt-font-m">{{faction.accountBalance | number}} c-bills</div>
                             <div class="col-md-3"><select ng-options="f as f.displayName for f in factions track by f.id" ng-model="tx.recipient"></select></div>
-                            <div class="col-md-3"><input type="number" style="color: black; width: 90%" ng-model="tx.credit"></div>
+                            <div class="col-md-3"><input type="number" ng-model="tx.credit"></div>
                             <div class="col-md-2"><input type="text" style="color: black; width: 90%" ng-model="tx.note"></div>
                             <div class="col-md-2"></div>
                         </div>
