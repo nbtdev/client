@@ -109,10 +109,24 @@
             });
             $scope.$on('destroy', cb);
 
-            // notify us of faction changes/loads
+            // notify us of league changes/loads
             cb = $scope.$on('nbtLeagueChanged', function (event, league) {
                 $scope.league = league;
                 $scope.all = true;
+            });
+            $scope.$on('destroy', cb);
+
+            // when the user changes/reloads a battle, we want to update it in our listing
+            cb = $scope.$on('nbtBattleChanged', function (event, battle) {
+                var battles = [];
+                $scope.battles.forEach(function(e) {
+                    if (e.id === battle.id)
+                        battles.push(battle);
+                    else
+                        battles.push(e);
+                });
+
+                $scope.battles = battles;
             });
             $scope.$on('destroy', cb);
         }]);

@@ -50,7 +50,7 @@
                 );
             };
 
-            // when the user chooses a different league, we want to update out cached league
+            // fired from the Battle listing, this means the user wants to initialize the battle
             var cb = $scope.$on('nbtBattlePlanetsRequested', function(event, battle) {
                 $scope.battle = battle;
                 nbtPlanet.fetchSectorDetail(battle.sector, nbtIdentity.get().token, function(sector) {
