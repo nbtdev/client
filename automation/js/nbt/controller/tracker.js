@@ -683,6 +683,16 @@
                 nbtBattle.fetchBattleDetail($scope.battle, nbtIdentity.get().token);
             };
 
+            $scope.retreatBattle = function() {
+                if (!confirm("Are you sure you want to retreat this battle?"))
+                    return;
+
+                nbtBattle.retreatBattle($scope.battle, nbtIdentity.get().token, function(battle) {
+                    $scope.battle = battle;
+                    processBattle();
+                });
+            };
+
             $scope.commitEffects = function() {
                 var theft = {
                     instances: $scope.stolenUnits

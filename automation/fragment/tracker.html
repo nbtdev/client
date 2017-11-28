@@ -432,6 +432,10 @@
                                 ng-click="reloadBattle()"
                                 ng-hide="battle.status==='Verified' || battle._links.repairs"
                                 title="Reload the current battle">Refresh</button>
+                        <button class="btn btn-primary"
+                                ng-click="retreatBattle()"
+                                ng-show="battle._links.retreat"
+                                title="Retreat the current battle">Retreat</button>
                         <a class="ui-interactive"
                            ng-show="battle._links.effects && battle.status!=='Confirmed'"
                            data-toggle="popover"

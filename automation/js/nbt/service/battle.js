@@ -250,6 +250,24 @@ var _BattleService = (function() {
         }
     };
 
+    // user wishes to retreat from this battle
+    BattleService.prototype.retreatBattle = function (aBattle, aToken, aCallback) {
+        if (aBattle._links.retreat) {
+            var hdr = new Headers(Header.TOKEN, aToken);
+
+            http({
+                method: 'POST', // TODO: GET FROM LINKS!
+                url: aBattle._links.retreat.href,
+                headers: hdr.get()
+            }).then(
+                function (aResp) {
+                    if (aCallback)
+                        aCallback(aResp.data);
+                }
+            );
+        }
+    };
+
     // toggle this faction's 'confirmed' state
     BattleService.prototype.toggleBattleConfirm = function (aBattle, aToken, aCallback) {
         if (aBattle._links.confirm) {
