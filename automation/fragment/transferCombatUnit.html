@@ -22,7 +22,7 @@
                         <div class="col-md-6">
                             <div class="nbt-centered nbt-font-l">Dropships</div>
                             <div ng-repeat="dropship in dropships">
-                                <div class="nbt-highlight">{{dropship.name}}</div>
+                                <div class="nbt-highlight">{{dropship.name}} ({{dropship.owner.shortName}})</div>
                                 <div class="nbt-font-s">Remaining Capacities:
                                     <div style="margin-left: 10px" ng-repeat="capacity in dropship.type.capacities">{{capacity.available}} of {{capacity.capacity}} {{capacity.combatUnitType.abbrev}}</div>
                                 </div>
