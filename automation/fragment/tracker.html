@@ -388,7 +388,7 @@
                         You may close this window and come back to this battle at any time to continue the process.
                     </div>
 
-                    <div ng-show="battle._links.confirm && !battle.confirmed">
+                    <div ng-show="battle._links.confirm && battle._links.effects && !battle.confirmed">
                         We cannot proceed until the opponent confirms their effects selection; you may refresh this page
                         until they do, or leave this page and continue with the next step once they have confirmed.
                     </div>
@@ -406,8 +406,13 @@
                         <button class="btn"
                                 ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
                                 ng-click="spendCredits()"
-                                ng-show="battle._links.confirm && !battle.confirmed"
+                                ng-show="battle._links.confirm && !battle.confirmed && battle.type === 'Sector Raid'"
                                 title="Step 2: Save effects allocations and confirm ready for next step">Save And Confirm</button>
+                        <button class="btn"
+                                ng-class="{'btn-primary': !battle.confirmed, 'btn-success': battle.confirmed, 'disabled': battle.updating}"
+                                ng-click="confirmAssault()"
+                                ng-show="battle._links.confirm && !battle.confirmed && battle.type === 'Sector Assault'"
+                                title="Confirm the results of the assault as shown above, and complete logging">Confirm Results</button>
                         <button class="btn btn-primary"
                                 ng-click="commitEffects()"
                                 ng-show="battle._links.effects && battle.status==='Confirmed'"
