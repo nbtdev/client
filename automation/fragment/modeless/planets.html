@@ -166,7 +166,8 @@
                             <img src="../../../images/help-16.png" height="16" width="16"/>
                         </a>
                         <div id="investIndustry" class="collapse">
-                            <input type="number" min="0" max="500000000" step="10000000" ng-model="industryPurchase">&nbsp;<button class="btn btn-primary btn-xs" ng-click="onPurchase(planet)">Invest</button>
+                            <input type="number" min="0" max="500000000" step="10000000" ng-model="industryPurchase" style="width: 100px">&nbsp<button class="btn btn-primary btn-xs" ng-click="onPurchase(planet)">Invest</button>
+                            <span>Total Cost: {{((industryPurchase * faction.industryFactor) || 0) | number}} c-bills</span>
                         </div>
                         <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
                     </div>
