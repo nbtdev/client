@@ -17,6 +17,9 @@
 
     <!-- dialog body -->
     <div class="content nbt-base" style="overflow-y: auto; height: calc(100%  - 35px)">
+        <div>
+            <input type="checkbox" ng-model="showAlliedDropships">&nbsp;Show allied dropships
+        </div>
         <div class="container col-md-12">
             <!-- the rows of data -->
             <div class="row nbt-bold">
@@ -32,7 +35,7 @@
                 <div class="col-md-2"></div>
             </div>
 
-            <div class="row nbt-hover" ng-repeat="dropship in dropships">
+            <div class="row nbt-hover" ng-repeat="dropship in filteredDropships">
                 <div class="col-md-3">
                     <span ng-hide="dropship.editing">{{dropship.name}} <span ng-show="dropship.owner.id!==faction.id">({{dropship.owner.shortName}})</span></span>
                     <span ng-show="dropship.editing"><input type="text" style="width: 100%" ng-model="dropship.name" ng-keypress="checkEnterKey($event, this, dropship)"></span>
