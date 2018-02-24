@@ -27,6 +27,8 @@
             $scope.faction = null;
             $scope.dropships = null;
             $scope.identity = null;
+            $scope.showAlliedDropships = false;
+            $scope.filteredDropships = [];
             var temp = null;
 
             function setOperationStatus(message, success) {
@@ -37,6 +39,7 @@
                 $scope.reloading = true;
                 nbtTransport.fetchDropshipsForFaction($scope.faction, nbtIdentity.get().token, function(aDropships) {
                     $scope.dropships = aDropships._embedded.dropships;
+                    filterDropshipListing();
 
                     // when users click on a planet link in the jumpship listing, we want to trigger a camera move
                     // on the starmap to that planet; in order to get these bindings to happen after the next digest,
@@ -139,6 +142,24 @@
             $("#cmdCloseDropshipsDialog").on("click", function(event) {
                 $scope.show = false;
                 $scope.$apply();
+            });
+
+            function filterDropshipListing() {
+                $scope.filteredDropships = [];
+
+                if (!$scope.dropships)
+                    return;
+
+                $scope.dropships.forEach(function(e) {
+                    if (!$scope.showAlliedDropships && e.owner.id !== $scope.faction.id)
+                        return;
+
+                    $scope.filteredDropships.push(e);
+                });
+            }
+
+            $scope.$watch('showAlliedDropships', function(newValue, oldValue) {
+                filterDropshipListing();
             });
 
             // when the user clicks the Faction Tools "Jumpships" menu item...
