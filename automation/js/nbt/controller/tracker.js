@@ -30,11 +30,14 @@
 
             var descriptions = {
                 1:  'The attacker will be able to steal combat units from the sector\'s ' +
-                     'garrisons. This is a scaled-success mechanic -- greater positive ' +
-                     'differential between the attacker\'s and the defender\'s number of ' +
-                     'credits earned in the raid will increase the detail available to the ' +
-                     'attacker about the combat units present. Each credit is worth 250 tons ' +
-                     'of combat units stolen',
+                    'garrisons. This is a scaled-success mechanic -- greater positive ' +
+                    'differential between the attacker\'s and the defender\'s number of ' +
+                    'credits earned in the raid will increase the detail available to the ' +
+                    'attacker about the combat units present. The first two credits spent are ' +
+                    'each worth 250 tons of combat units stolen; the third and fourth credits spent ' +
+                    'are each worth 100 tons of combat units stolen; the fifth and sixth are worth 50 ' +
+                    'tons each, and more than that are worth zero each; therefore the maximum combat unit ' +
+                    'theft possible is 600 tons.',
                 2:  'The attacker will be able to steal industry from the total industrial ' +
                     'production in the sector. This is a scaled-success mechanic -- greater ' +
                     'positive differential between the attacker\'s and the defender\'s number ' +
@@ -762,6 +765,18 @@
 
                 $scope.battle.updating = true;
                 nbtBattle.spendCredits($scope.battle, effects, nbtIdentity.get().token, function(aData) {
+                    $scope.battle = aData;
+                    processBattle();
+                    $scope.battle.updating = false;
+                }, function(aErr) {
+                    setOperationStatus(aErr.message, false);
+                    $scope.battle.updating = false;
+                });
+            };
+
+            $scope.confirmAssault = function() {
+                $scope.battle.updating = true;
+                nbtBattle.toggleBattleConfirm($scope.battle, nbtIdentity.get().token, function(aData) {
                     $scope.battle = aData;
                     processBattle();
                     $scope.battle.updating = false;
