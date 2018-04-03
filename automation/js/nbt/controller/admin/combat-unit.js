@@ -45,9 +45,9 @@
                 }
 
                 // fetch the unit types too
-                // nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
-                //     $scope.unitTypes = aData._embedded.combatUnitTypes;
-                // })
+                nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
+                    $scope.unitTypes = aData._embedded.combatUnitTypes;
+                })
 
                 // fetch faction classes (for unit price editing)
 
