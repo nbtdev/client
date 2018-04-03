@@ -30,6 +30,7 @@
             $scope.newUnit = null;
             $scope.message = null;
             $scope.success = null;
+            $scope.factionClasses = [];
 
             // when editing, we want to save off the old values in case we need to restore
             // them on a cancel
@@ -44,9 +45,12 @@
                 }
 
                 // fetch the unit types too
-                nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
-                    $scope.unitTypes = aData._embedded.combatUnitTypes;
-                })
+                // nbtCombat.fetchCombatUnitTypes($scope.league, nbtIdentity.get().token, function(aData) {
+                //     $scope.unitTypes = aData._embedded.combatUnitTypes;
+                // })
+
+                // fetch faction classes (for unit price editing)
+
             }
 
             var timeoutPromise = null;
@@ -74,6 +78,44 @@
             $("#combatUnitAdminModal").on("shown.bs.modal", function() {
                 reloadCombatUnits();
             });
+
+            $scope.onEditPrice = function(price) {
+                if (!price)
+                    return;
+
+                price.editing = true;
+            };
+
+            $scope.onEndPriceEdit = function(unit, price, $event) {
+                $event.stopPropagation();
+
+                nbtCombat.updateCombatUnit(
+                    unit,
+                    nbtIdentity.get().token,
+                    function(aData) {
+                        delete price.editing;
+                        setStatus(null, true);
+                    },
+                    function(aErr) {
+                        setStatus(aErr.data.message, false);
+                    }
+                );
+            };
+
+            $scope.onAddUnitPrice = function(unit) {
+                if (!unit.prices)
+                    unit.prices = [];
+
+                unit.prices.push({
+                    price: {
+                        baseCost: 0,
+                        costFactor: 1,
+                        baseLeadTime: 72,
+                        leadTimeFactor: 1
+                    },
+                    factionClass: null
+                });
+            };
 
             $scope.onAdd = function() {
                 $scope.newUnit = {
@@ -167,6 +209,14 @@
             // when the user chooses a different league, we want to update our cached league
             var cb = $scope.$on('nbtLeagueChanged', function(event, league) {
                 $scope.league = league;
+            });
+            $scope.$on('destroy', cb);
+
+            // when the faction service updates its list of faction classes, we want to know
+            cb = $scope.$on('nbtFactionClassesChanged', function(event, classes) {
+                $scope.factionClasses = classes._embedded.factionClasses;
+                for (var i=0; i<$scope.factionClasses.length; ++i)
+                    delete $scope.factionClasses[i]._links;
             });
             $scope.$on('destroy', cb);
         }]);

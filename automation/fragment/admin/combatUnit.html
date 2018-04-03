@@ -7,59 +7,114 @@
             </div>
             <div class="modal-body nbt-base nbt-modal-body">
                 <div class="container col-md-12">
-                    <!-- status/error message -->
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-6 nbt-centered">
-                            <span ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">{{message}}</span>
-                        </div>
-                        <div class="col-md-3"></div>
-                    </div>
-
                     <!-- the rows of data -->
                     <div class="row nbt-bold">
                         <div class="col-md-1">Avail</div>
-                        <div class="col-md-2">Name</div>
-                        <div class="col-md-1">Code</div>
+                        <div class="col-md-3">Name</div>
+                        <div class="col-md-2">Code</div>
                         <div class="col-md-2">Type</div>
                         <div class="col-md-1">BV</div>
                         <div class="col-md-1">Tonnage</div>
-                        <div class="col-md-4"></div>
+                        <div class="col-md-2"></div>
                     </div>
-                    <div class="row" ng-repeat="unit in data._embedded.combatUnits">
-                        <div class="col-md-1">
-                            <input type="checkbox" ng-disabled="!unit.editing" ng-model="unit.enabledInLeague">
+                    <div class="row nbt-hover" ng-repeat="unit in data._embedded.combatUnits">
+                        <!-- combat unit basics -->
+                        <div class="container col-md-12">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <input type="checkbox" ng-disabled="!unit.editing" ng-model="unit.enabledInLeague">
+                                    <span class="caret ui-interactive" style="float: right" data-toggle="collapse" data-target="#combatUnitAdminRow{{unit.id}}"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span ng-hide="unit.editing">{{unit.name}}</span>
+                                    <span ng-show="unit.editing"><input type="text" size="10" ng-model="unit.name"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span ng-hide="unit.editing">{{unit.designation}}</span>
+                                    <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.designation"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span ng-hide="unit.editing">{{unit.type.name}}</span>
+                                    <select ng-show="unit.editing" ng-model="unit.type" ng-options="type as type.name for type in unitTypes track by type.id"></select>
+                                </div>
+                                <div class="col-md-1">
+                                    <span ng-hide="unit.editing">{{unit.battleValue}}</span>
+                                    <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.battleValue"></span>
+                                </div>
+                                <div class="col-md-1">
+                                    <span ng-hide="unit.editing">{{unit.tonnage}}</span>
+                                    <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.tonnage"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span ng-hide="unit.editing">
+                                        <a class="ui-interactive" ng-click="onEdit(unit)"><img src="../../images/edit.png" height="16" width="16"/></a>
+                                        <a class="ui-interactive" ng-click="onDelete(unit)"><img src="../../images/delete.png" height="16" width="16"/></a>
+                                    </span>
+                                    <span ng-show="unit.editing">
+                                        <a class="ui-interactive" ng-click="onApply(unit)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                        <a class="ui-interactive" ng-click="onCancel(unit)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <span ng-hide="unit.editing">{{unit.name}}</span>
-                            <span ng-show="unit.editing"><input type="text" size="10" ng-model="unit.name"></span>
+
+                        <!-- pricing information, if any -->
+                        <div class="col-md-12 collapse nbt-font-s" id="combatUnitAdminRow{{unit.id}}" style="padding: 0px">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2 nbt-highlight">Faction Class</div>
+                                    <div class="col-md-2 nbt-highlight">Base Cost</div>
+                                    <div class="col-md-2 nbt-highlight">Cost Factor</div>
+                                    <div class="col-md-2 nbt-highlight">Base Lead Time</div>
+                                    <div class="col-md-2 nbt-highlight">Lead Time Factor</div>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                <div class="row" ng-click="onEditPrice(price)" ng-repeat="price in unit.prices" ng-class="{'nbt-background-success-anim': price.success, 'nbt-background-failure-anim': price.editing && !success}">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">
+                                        <select ng-show="price.editing" ng-model="price.factionClass" ng-options="class as class.displayName for class in factionClasses track by class.id"></select>
+                                        <span ng-hide="price.editing">{{price.factionClass.displayName}}</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span ng-show="price.editing"><input type="text" ng-model="price.price.baseCost" class="nbt-expand-width"></span>
+                                        <span ng-hide="price.editing">{{price.price.baseCost}}</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span ng-show="price.editing"><input type="text" ng-model="price.price.costFactor" class="nbt-expand-width"></span>
+                                        <span ng-hide="price.editing">{{price.price.costFactor}}</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span ng-show="price.editing"><input type="text" ng-model="price.price.baseLeadTime" class="nbt-expand-width"></span>
+                                        <span ng-hide="price.editing">{{price.price.baseLeadTime}}</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span ng-show="price.editing"><input type="text" ng-model="price.price.leadTimeFactor" class="nbt-expand-width"></span>
+                                        <span ng-hide="price.editing">{{price.price.leadTimeFactor}}</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <span ng-show="price.editing">
+                                            <a class="ui-interactive" ng-click="onEndPriceEdit(unit, price, $event)"><img src="../../images/check16.png" height="16" width="16"/></a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <a class="ui-interactive" ng-click="onAddUnitPrice(unit)"><img src="../../images/add-icon.png" height="16" width="16"/></a>
+                                    </div>
+                                    <div class="col-md-11"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-1">
-                            <span ng-hide="unit.editing">{{unit.designation}}</span>
-                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.designation"></span>
+                    </div>
+
+                    <!-- status/error message -->
+                    <div class="row" ng-show="message" ng-class="{'nbt-error': !success, 'nbt-info': success}">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 nbt-centered">
+                            <span>{{message}}</span>
                         </div>
-                        <div class="col-md-2">
-                            <span ng-hide="unit.editing">{{unit.type.name}}</span>
-                            <select ng-show="unit.editing" ng-model="unit.type" ng-options="type as type.name for type in unitTypes track by type.id"></select>
-                        </div>
-                        <div class="col-md-1">
-                            <span ng-hide="unit.editing">{{unit.battleValue}}</span>
-                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.battleValue"></span>
-                        </div>
-                        <div class="col-md-1">
-                            <span ng-hide="unit.editing">{{unit.tonnage}}</span>
-                            <span ng-show="unit.editing"><input type="text" size="4" ng-model="unit.tonnage"></span>
-                        </div>
-                        <div class="col-md-4">
-                            <span ng-hide="unit.editing">
-                                <a class="ui-interactive" ng-click="onEdit(unit)"><img src="../../images/edit.png" height="16" width="16"/></a>
-                                <a class="ui-interactive" ng-click="onDelete(unit)"><img src="../../images/delete.png" height="16" width="16"/></a>
-                            </span>
-                            <span ng-show="unit.editing">
-                                <a class="ui-interactive" ng-click="onApply(unit)"><img src="../../images/check16.png" height="16" width="16"/></a>
-                                <a class="ui-interactive" ng-click="onCancel(unit)"><img src="../../images/cancel16.png" height="16" width="16"/></a>
-                            </span>
-                        </div>
+                        <div class="col-md-3"></div>
                     </div>
 
                     <!-- the "add item" row-->

@@ -280,6 +280,14 @@ input[type=password] {
     width: 200%;
 }
 
+.nbt-full-width {
+    width: 100%;
+}
+
+.nbt-expand-width {
+    width: 90%;
+}
+
 .tool-panel-label {
     font-size: larger;
     font-weight: bold;
