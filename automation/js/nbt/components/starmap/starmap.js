@@ -131,10 +131,13 @@
 
                 for (var g=0; g < aPlanets.length; ++g) {
                     var group = aPlanets[g];
-                    if (!group.owner) {
-                        console.log('error');
+                    var ownerName;
+
+                    try {
+                        ownerName = group.owner.displayName;
+                    } catch (e) {
+                        ownerName = 'Unassigned';
                     }
-                    var ownerName = group.owner.displayName;
 
                     for (var i = 0; i < group.planets.length; ++i) {
                         var p = group.planets[i];
@@ -452,7 +455,7 @@
                     planetObj.add(ringObj);
                 }
 
-                if (p.parentGroup._links.battle) {
+                if (p.parentGroup._links && p.parentGroup._links.battle) {
                     var ringObj = makeRingMesh(2.4, 2.6, ringMaterials[Color.RED]);
                     ringObj.layers.set(MapLayer.BATTLES);
                     planetObj.add(ringObj);
@@ -478,7 +481,15 @@
             }
 
             function getGroupColor(group) {
-                var mapColor = self.mapColors[group.owner.displayName];
+                var name;
+
+                try {
+                    name = group.owner.displayName;
+                } catch (e) {
+                    name = 'Unassigned';
+                }
+
+                var mapColor = self.mapColors[name];
                 return (mapColor.planetColor.red << 16) | (mapColor.planetColor.green << 8) | (mapColor.planetColor.blue << 0);
             }
 
@@ -513,7 +524,7 @@
                     }
 
                     // 598? Don't draw sector bounds "north" of Antinisus, it just gets messy
-                    if (group.owner.displayName !== 'Unassigned' && points.length > 3 && p.y < 598) {
+                    if (group.owner && points.length > 3 && p.y < 598) {
                         var sectorGeom = new THREE.ConvexBufferGeometry(points);
                         var sectorMtl = new THREE.MeshBasicMaterial();
                         sectorMtl.color.set(groupColor);
@@ -1092,7 +1103,11 @@
                     var vpX = nx * vpW + p.xtextOffset;
                     var vpY = (1.0 - ny) * vpH + p.ytextOffset;
 
-                    var mc = self.mapColors[p.parentGroup.owner.displayName];
+                    var ownerName = 'Unassigned';
+                    if (p.parentGroup.owner)
+                        ownerName = p.parentGroup.owner.displayName;
+                    
+                    var mc = self.mapColors[ownerName];
                     var tc = new THREE.Color(mc.textColor.red / 255.0, mc.textColor.green / 255.0, mc.textColor.blue / 255.0);
 
                     text.css({
