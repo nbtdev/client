@@ -56,4 +56,21 @@ public class EmbeddedCollectionResponse<E> extends HALResponse implements Iterab
 
         return _embedded.values().iterator().next().size();
     }
+
+    public E at(int index) {
+        if (_embedded == null) {
+            return null;
+        }
+
+        if (_embedded.size() != 1) {
+            return null;
+        }
+
+        List<E> values = _embedded.values().iterator().next();
+        if (index < 0 || index >= values.size()) {
+            return null;
+        }
+
+        return values.get(index);
+    }
 }

@@ -6,6 +6,7 @@ import com.google.api.client.util.Key;
 import com.netbattletech.client.common.APIContext;
 import com.netbattletech.client.common.AuthenticatedClient;
 import com.netbattletech.client.common.HALResponse;
+import com.netbattletech.client.common.NbtException;
 import com.netbattletech.client.security.Identity;
 
 import java.net.URI;
@@ -28,6 +29,11 @@ public class Lobby extends HALResponse {
     // non-serializable members
     Requestor requestor;
 
+    @Override
+    public String toString() {
+        return owner.callsign;
+    }
+
     private static class Requestor extends AuthenticatedClient {
         public Requestor(APIContext context, Identity identity) {
             super(context, identity);
@@ -43,7 +49,8 @@ public class Lobby extends HALResponse {
                 return null;
             }
 
-            HttpResponse resp = createRequest(new URI(players.href), HttpMethod.POST, new Player()).execute();
+            HttpRequest req = createRequest(new URI(players.href), HttpMethod.POST, new Player());
+            HttpResponse resp = execute(req);
             lobby = resp.parseAs(Lobby.class);
             lobby.setContext(context, identity);
             return lobby;
@@ -51,30 +58,41 @@ public class Lobby extends HALResponse {
 
         public Lobby leave(Lobby lobby, Player player) throws Exception {
             if (lobby == null || player == null) {
-                return null;
+                throw new NullPointerException("Lobby and player must be non-null");
             }
 
             Link link = null;
 
             for (Player p : lobby.players) {
-                if (p.userId == player.userId) {
+                if (p.userId.equals(player.userId)) {
                     link = p._links.get("lobbySelf");
                 }
             }
 
             if (link == null) {
-                // player not found
-                return null;
+                // try the lobby owner
+                if (player.userId.equals(lobby.owner.userId)) {
+                    link = lobby.owner._links.get("lobbySelf");
+                }
             }
 
-            // also remove from the "live" object
-            lobby.players.removeIf(pl -> (pl.userId==player.userId));
+            // if still not found, then the player isn't in this lobby at all, except
+            if (link == null) {
+                throw new NbtException(String.format("Player '%s' not found in this lobby", player.callsign));
+            }
 
             // else, remove the player from the lobby
             HttpRequest req = createRequest(new URI(link.href), HttpMethod.DELETE);
-            HttpResponse resp = req.execute();
-            lobby = resp.parseAs(Lobby.class);
-            lobby.setContext(context, identity);
+            HttpResponse resp = execute(req);
+
+            try {
+                lobby = resp.parseAs(Lobby.class);
+                lobby.setContext(context, identity);
+            } catch (IllegalArgumentException e) {
+                // the return value is empty if the lobby was removed, return null in this case
+                lobby = null;
+            }
+
             return lobby;
         }
     }
@@ -92,10 +110,18 @@ public class Lobby extends HALResponse {
     }
 
     public Lobby leave() throws Exception {
+        Integer userId = identity.userId();
+
         Player player = players.stream()
-                .filter(pl -> (pl.userId==identity.userId()))
+                .filter(pl -> (pl.userId.equals(userId)))
                 .findAny()
                 .orElse(null);
+
+        if (player == null) {
+            if (userId.equals(owner.userId)) {
+                player = owner;
+            }
+        }
 
         return getRequestor().leave(this, player);
     }

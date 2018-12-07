@@ -5,9 +5,8 @@ import com.google.api.client.http.HttpResponse;
 import com.netbattletech.client.collections.Leagues;
 import com.netbattletech.client.model.League;
 import com.netbattletech.client.security.Authenticator;
+import com.netbattletech.client.security.CredentialRequestListener;
 import com.netbattletech.client.security.Identity;
-
-import java.io.IOException;
 import java.net.URI;
 
 public class API {
@@ -17,8 +16,12 @@ public class API {
 
     Leagues leagues;
 
-    public API(URI apiRootUri) throws IOException {
-        context = new APIContext(apiRootUri);
+    public API(URI apiRootUri) throws Exception {
+        this(apiRootUri, null);
+    }
+
+    public API(URI apiRootUri, CredentialRequestListener credentialRequestListener) throws Exception {
+        context = new APIContext(apiRootUri, credentialRequestListener);
     }
 
     public API(URI apiRootUri, String username, String password) throws Exception {
@@ -33,7 +36,7 @@ public class API {
 
         Leagues getLeagues() throws Exception {
             HttpRequest req = createRequest(context.getLeaguesRoot());
-            HttpResponse resp = req.execute();
+            HttpResponse resp = execute(req);
             Leagues leagues = resp.parseAs(Leagues.class);
             leagues.setContext(context, identity);
 
@@ -53,17 +56,10 @@ public class API {
         return requestor;
     }
 
-    public boolean authenticate(String username, String password) {
-        try {
-            if (identity == null) {
-                Authenticator authenticator = new Authenticator(context);
-                identity = authenticator.login(username, password);
-            }
-
-            return true;
-        } catch (NbtException e) {
-            e.printStackTrace();
-            return false;
+    public void authenticate(String username, String password) throws NbtException {
+        if (identity == null) {
+            Authenticator authenticator = new Authenticator(context);
+            identity = authenticator.login(username, password);
         }
     }
 

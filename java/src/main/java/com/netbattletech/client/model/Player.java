@@ -8,4 +8,9 @@ public class Player extends HALResponse {
     public String callsign;
     @Key
     public Integer userId;
+
+    @Override
+    public String toString() {
+        return callsign;
+    }
 }

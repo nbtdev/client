@@ -39,6 +39,11 @@ public class League extends HALResponse {
     public League() {
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     private static class Requestor extends AuthenticatedClient {
         League league;
 
@@ -54,7 +59,7 @@ public class League extends HALResponse {
             }
 
             HttpRequest req = createRequest(link.getURI());
-            HttpResponse resp = req.execute();
+            HttpResponse resp = execute(req);
             Lobbies lobbies = resp.parseAs(Lobbies.class);
             lobbies.setContext(context, identity);
             lobbies.setLeague(league);

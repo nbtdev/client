@@ -1,16 +1,24 @@
 package com.netbattletech.client.common;
 
 import com.google.api.client.http.*;
+import com.netbattletech.client.security.CredentialRequestListener;
 
 import java.io.IOException;
 import java.net.URI;
 
 public class APIContext extends APIClient {
     HALResponse apiRoot;
+    CredentialRequestListener credentialRequestListener;
 
     public APIContext(URI rootUri) throws IOException {
         HttpResponse resp = createRequest(rootUri).execute();
         apiRoot = resp.parseAs(HALResponse.class);
+    }
+
+    public APIContext(URI rootUri, CredentialRequestListener credentialRequestListener) throws IOException {
+        HttpResponse resp = createRequest(rootUri).execute();
+        apiRoot = resp.parseAs(HALResponse.class);
+        this.credentialRequestListener = credentialRequestListener;
     }
 
     public URI getLoginRoot() throws Exception {
@@ -47,5 +55,9 @@ public class APIContext extends APIClient {
             throw new NbtException(String.format("'%s' rel not found at API context root", rel));
         }
         return loginLink;
+    }
+
+    public CredentialRequestListener getCredentialRequestListener() {
+        return credentialRequestListener;
     }
 }

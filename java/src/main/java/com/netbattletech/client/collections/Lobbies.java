@@ -30,7 +30,7 @@ public class Lobbies extends EmbeddedCollectionResponse<Lobby>  {
             }
 
             HttpRequest req = createRequest(new URI(lobbiesLink.href), HttpMethod.POST, lobbyParams);
-            HttpResponse resp = req.execute();
+            HttpResponse resp = execute(req);
             Lobby lobby = resp.parseAs(Lobby.class);
 
             lobby.setContext(context, identity);
@@ -60,6 +60,7 @@ public class Lobbies extends EmbeddedCollectionResponse<Lobby>  {
     Map<String, ArrayList<Lobby>> getEmbedded() {
         if (_embedded == null) {
             _embedded = new HashMap<>();
+            _embedded.put("lobbies", new ArrayList<>());
         }
 
         return _embedded;

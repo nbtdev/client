@@ -1,6 +1,8 @@
 package com.netbattletech.client.security;
 
-public class UserIdentity implements Identity {
+import com.netbattletech.client.common.HALResponse;
+
+public class UserIdentity extends HALResponse implements Identity {
     Token token;
 
     protected UserIdentity(Token token) {
