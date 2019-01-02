@@ -4,6 +4,7 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.util.Key;
 import com.netbattletech.client.collections.Lobbies;
+import com.netbattletech.client.collections.Matches;
 import com.netbattletech.client.common.APIContext;
 import com.netbattletech.client.common.AuthenticatedClient;
 import com.netbattletech.client.common.HALResponse;
@@ -34,6 +35,7 @@ public class League extends HALResponse {
 
     // non-serializable members
     Lobbies lobbies;
+    Matches matches;
     Requestor requestor;
 
     public League() {
@@ -71,6 +73,26 @@ public class League extends HALResponse {
 
             return lobbies;
         }
+
+        Matches fetchMatches() throws Exception {
+            Link link = league.getLink("matches");
+            if (link == null) {
+                return new Matches();
+            }
+
+            HttpRequest req = createRequest(link.getURI());
+            HttpResponse resp = execute(req);
+            Matches matches = resp.parseAs(Matches.class);
+            matches.setContext(context, identity);
+            matches.setLeague(league);
+
+            // and for each in the collection
+            for (Match m : matches) {
+                m.setContext(context, identity);
+            }
+
+            return matches;
+        }
     }
 
     Requestor getRequestor() {
@@ -93,11 +115,31 @@ public class League extends HALResponse {
         return lobbies;
     }
 
+    public Matches fetchMatches() throws Exception {
+        return getRequestor().fetchMatches();
+    }
+
+    public Matches getMatches() throws Exception {
+        if (matches == null) {
+            matches = fetchMatches();
+        }
+
+        return matches;
+    }
+
     public Lobby createLobby(Lobby lobby) throws Exception {
         return getLobbies().add(lobby);
     }
 
     public void removeLobby(Lobby lobby) throws Exception {
         getLobbies().remove(lobby);
+    }
+
+    public Match createMatch(Lobby lobby) throws Exception {
+        return getMatches().add(lobby);
+    }
+
+    public void removeMatch(Match match) throws Exception {
+        getMatches().remove(match);
     }
 }
