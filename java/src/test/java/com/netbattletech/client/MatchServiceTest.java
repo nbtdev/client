@@ -36,7 +36,10 @@ public class MatchServiceTest {
         Lobby lobby = league.createLobby(lobbyData);
 
         Matches matches = league.fetchMatches();
+        int matchCount = matches.size();
+
         Match match = matches.add(lobby);
+        assertEquals(matchCount+1, (int)matches.size());
 
         assertEquals(lobby.id, match.lobbyId);
         assertEquals(lobby.leagueId, match.leagueId);
@@ -44,6 +47,9 @@ public class MatchServiceTest {
         assertEquals(lobby.upperLimit, match.upperLimit);
 
         league.removeMatch(match);
+        matches = league.fetchMatches();
+        assertEquals(matchCount, (int)matches.size());
+
         league.removeLobby(lobby);
     }
 
